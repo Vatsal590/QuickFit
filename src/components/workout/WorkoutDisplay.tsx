@@ -7,7 +7,6 @@ import { Workout } from '@/types';
 import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { AspectRatio } from '@/components/ui/aspect-ratio';
 
 interface WorkoutDisplayProps {
   workout: Workout;
@@ -109,18 +108,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
             
             {activeExerciseIndex === index && (
               <div className="px-4 pb-4 border-t bg-gray-50">
-                {exercise.imageUrl && (
-                  <div className="mb-3 mt-3 border rounded overflow-hidden">
-                    <AspectRatio ratio={16/9} className="bg-muted">
-                      <img 
-                        src={exercise.imageUrl} 
-                        alt={exercise.name}
-                        className="object-cover w-full h-full rounded"
-                      />
-                    </AspectRatio>
-                  </div>
-                )}
-                <div className="text-sm mb-3">
+                <div className="text-sm mb-3 pt-3">
                   {exercise.description}
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
