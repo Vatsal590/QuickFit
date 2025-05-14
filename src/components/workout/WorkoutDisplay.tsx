@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Workout } from '@/types';
-import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer, Image } from 'lucide-react';
+import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { AspectRatio } from '@/components/ui/aspect-ratio';

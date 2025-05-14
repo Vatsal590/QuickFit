@@ -246,7 +246,7 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   
   // Adjust exercises for the given intensity and time
   const adjustedExercises = limitedExercises.map(ex => 
-    adjustExerciseForIntensity(ex, intensity, mainWorkoutTime)
+    adjustExerciseForIntensity(ex, intensity, time)
   );
   
   // Generate warmup and cooldown exercises
