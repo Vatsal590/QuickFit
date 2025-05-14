@@ -20,7 +20,7 @@ const Home = () => {
       
       toast({
         title: "Workout generated",
-        description: `Your ${newWorkout.duration} minute workout is ready!`,
+        description: `Your ${newWorkout.duration} minute workout is ready with 5-min warmup and cooldown!`,
       });
       
       // Automatically save to history

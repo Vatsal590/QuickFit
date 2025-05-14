@@ -30,7 +30,9 @@ export type Workout = {
   intensity: IntensityLevel;
   targetMuscleGroups: MuscleGroup[];
   equipment: Equipment[];
+  warmupExercises: Exercise[];
   exercises: Exercise[];
+  cooldownExercises: Exercise[];
 };
 
 export type Exercise = {

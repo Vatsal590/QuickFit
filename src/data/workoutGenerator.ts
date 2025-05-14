@@ -63,6 +63,147 @@ const adjustExerciseForIntensity = (
   return adjustedExercise;
 };
 
+// Generate warmup exercises
+const generateWarmupExercises = (equipment: Equipment[]): Exercise[] => {
+  const warmupExercises: Exercise[] = [
+    {
+      id: uuidv4(),
+      name: "Light Jogging in Place",
+      muscleGroup: "cardio",
+      equipment: ["none"],
+      sets: 1,
+      reps: 60, // seconds
+      restTime: 0,
+      description: "Jog lightly in place for 60 seconds to increase your heart rate and warm up your muscles."
+    },
+    {
+      id: uuidv4(),
+      name: "Arm Circles",
+      muscleGroup: "shoulders",
+      equipment: ["none"],
+      sets: 1,
+      reps: 20,
+      restTime: 0,
+      description: "Extend arms to the sides and make small circles, gradually increasing in size."
+    },
+    {
+      id: uuidv4(),
+      name: "Hip Rotations",
+      muscleGroup: "core",
+      equipment: ["none"],
+      sets: 1,
+      reps: 10,
+      restTime: 0,
+      description: "Stand on one leg and rotate the other leg at the hip, then switch sides."
+    },
+    {
+      id: uuidv4(),
+      name: "Bodyweight Squats",
+      muscleGroup: "legs",
+      equipment: ["none"],
+      sets: 1,
+      reps: 15,
+      restTime: 0,
+      description: "Perform light squats to warm up your legs and increase blood flow."
+    },
+    {
+      id: uuidv4(),
+      name: "Shoulder Stretches",
+      muscleGroup: "shoulders",
+      equipment: ["none"],
+      sets: 1,
+      reps: 10,
+      restTime: 0,
+      description: "Cross one arm across your chest and hold, then switch arms."
+    }
+  ];
+  
+  // Select 3-4 warmup exercises
+  return warmupExercises.slice(0, 4);
+};
+
+// Generate cooldown exercises
+const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[] => {
+  const cooldownExercises: Exercise[] = [
+    {
+      id: uuidv4(),
+      name: "Deep Breathing",
+      muscleGroup: "core",
+      equipment: ["none"],
+      sets: 1,
+      reps: 10,
+      restTime: 0,
+      description: "Deep breaths in through the nose, out through the mouth to lower heart rate."
+    },
+    {
+      id: uuidv4(),
+      name: "Quad Stretch",
+      muscleGroup: "legs",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30, // seconds per side
+      restTime: 0,
+      description: "Stand on one leg, grab your ankle and pull your heel toward your glutes."
+    },
+    {
+      id: uuidv4(),
+      name: "Hamstring Stretch",
+      muscleGroup: "legs",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30, // seconds per side
+      restTime: 0,
+      description: "Sit with one leg extended, reach toward your toes and hold."
+    },
+    {
+      id: uuidv4(),
+      name: "Child's Pose",
+      muscleGroup: "back",
+      equipment: ["none"],
+      sets: 1,
+      reps: 60, // seconds
+      restTime: 0,
+      description: "Kneel and extend arms forward on the floor, stretching your back."
+    },
+    {
+      id: uuidv4(),
+      name: "Shoulder Stretch",
+      muscleGroup: "shoulders",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30, // seconds per side
+      restTime: 0,
+      description: "Pull your arm across your chest and hold with your other arm."
+    },
+    {
+      id: uuidv4(),
+      name: "Chest Stretch",
+      muscleGroup: "chest",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30, // seconds
+      restTime: 0,
+      description: "Clasp hands behind your back and lift slightly to stretch your chest."
+    }
+  ];
+  
+  // Filter cooldown exercises to match some of the target muscle groups
+  let targetSpecificCooldowns = cooldownExercises.filter(ex => 
+    targetMuscleGroups.includes(ex.muscleGroup)
+  );
+  
+  // If we don't have enough specific stretches, add some general ones
+  if (targetSpecificCooldowns.length < 3) {
+    const generalCooldowns = cooldownExercises.filter(ex => 
+      !targetMuscleGroups.includes(ex.muscleGroup)
+    );
+    targetSpecificCooldowns = [...targetSpecificCooldowns, ...generalCooldowns];
+  }
+  
+  // Select 3-4 cooldown exercises
+  return targetSpecificCooldowns.slice(0, 4);
+};
+
 export const generateWorkout = (formData: WorkoutFormData): Workout => {
   const { time, equipment, muscleGroups, intensity } = formData;
   
@@ -83,14 +224,19 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   }
   
   // Limit the number of exercises based on time available
+  // Reduce main workout time to account for warmup and cooldown
+  const mainWorkoutTime = time - 10; // 5 min warmup + 5 min cooldown
   let maxExercises: number;
-  if (time <= 10) {
+  
+  if (mainWorkoutTime <= 0) {
+    maxExercises = 2; // Very short workout
+  } else if (mainWorkoutTime <= 10) {
     maxExercises = 3;
-  } else if (time <= 20) {
+  } else if (mainWorkoutTime <= 20) {
     maxExercises = 4;
-  } else if (time <= 30) {
+  } else if (mainWorkoutTime <= 30) {
     maxExercises = 6;
-  } else if (time <= 45) {
+  } else if (mainWorkoutTime <= 45) {
     maxExercises = 8;
   } else {
     maxExercises = 10;
@@ -100,8 +246,12 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   
   // Adjust exercises for the given intensity and time
   const adjustedExercises = limitedExercises.map(ex => 
-    adjustExerciseForIntensity(ex, intensity, time)
+    adjustExerciseForIntensity(ex, intensity, mainWorkoutTime)
   );
+  
+  // Generate warmup and cooldown exercises
+  const warmupExercises = generateWarmupExercises(equipment);
+  const cooldownExercises = generateCooldownExercises(muscleGroups);
   
   // Generate a workout title
   const title = generateWorkoutTitle(muscleGroups, intensity);
@@ -114,7 +264,9 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
     intensity,
     targetMuscleGroups: muscleGroups,
     equipment,
-    exercises: adjustedExercises
+    warmupExercises,
+    exercises: adjustedExercises,
+    cooldownExercises
   };
   
   return workout;

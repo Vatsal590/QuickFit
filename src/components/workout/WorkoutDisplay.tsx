@@ -4,8 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Workout } from '@/types';
-import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft } from 'lucide-react';
+import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 interface WorkoutDisplayProps {
   workout: Workout;
@@ -16,6 +17,7 @@ interface WorkoutDisplayProps {
 const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) => {
   const { toast } = useToast();
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
+  const [activeSection, setActiveSection] = useState<'main' | 'warmup' | 'cooldown'>('main');
   
   // Format equipment names for display
   const formatEquipmentList = (equipment: string[]): string => {
@@ -37,8 +39,11 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       return total + (exercise.sets * (timePerSet + exercise.restTime));
     }, 0);
     
+    // Add warmup and cooldown time (5 minutes each)
+    const warmupCooldownTime = 10 * 60;
+    
     // Convert to minutes and round up
-    return Math.ceil(exerciseTime / 60);
+    return Math.ceil((exerciseTime + warmupCooldownTime) / 60);
   };
   
   const handleCompleteWorkout = () => {
@@ -55,6 +60,73 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
     } else {
       setActiveExerciseIndex(index);
     }
+  };
+  
+  const renderExerciseList = (
+    exercises: Array<any>, 
+    isWarmupOrCooldown: boolean = false
+  ) => {
+    return (
+      <div className="space-y-3">
+        {exercises.map((exercise, index) => (
+          <div 
+            key={exercise.id}
+            className="border rounded-lg overflow-hidden"
+          >
+            <button
+              onClick={() => toggleExerciseDetails(index)}
+              className="flex items-center justify-between w-full p-3 text-left hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center">
+                <span className="bg-fitness-primary/10 text-fitness-primary w-7 h-7 rounded-full flex items-center justify-center text-sm mr-3">
+                  {index + 1}
+                </span>
+                <div>
+                  <h4 className="font-medium">{exercise.name}</h4>
+                  <p className="text-xs text-gray-500">
+                    {isWarmupOrCooldown 
+                      ? `${exercise.sets} set × ${typeof exercise.reps === 'number' && exercise.reps > 30 
+                          ? `${exercise.reps} seconds` 
+                          : `${exercise.reps} reps`}`
+                      : `${exercise.sets} sets × ${exercise.reps} reps • ${exercise.restTime}s rest`
+                    }
+                  </p>
+                </div>
+              </div>
+              <div className="text-fitness-primary">
+                {activeExerciseIndex === index ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                  </svg>
+                )}
+              </div>
+            </button>
+            
+            {activeExerciseIndex === index && (
+              <div className="p-4 border-t bg-gray-50">
+                <div className="text-sm mb-3">
+                  {exercise.description}
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div>
+                    <span className="text-gray-500">Muscle Group:</span>{' '}
+                    {exercise.muscleGroup.charAt(0).toUpperCase() + exercise.muscleGroup.slice(1)}
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Equipment:</span>{' '}
+                    {formatEquipmentList(exercise.equipment)}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
   
   return (
@@ -115,62 +187,58 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
         </CardHeader>
         
         <CardContent>
-          <h3 className="font-medium mb-3 text-lg">Exercises ({workout.exercises.length})</h3>
-          
-          <div className="space-y-3">
-            {workout.exercises.map((exercise, index) => (
-              <div 
-                key={exercise.id}
-                className="border rounded-lg overflow-hidden"
-              >
-                <button
-                  onClick={() => toggleExerciseDetails(index)}
-                  className="flex items-center justify-between w-full p-3 text-left hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-center">
-                    <span className="bg-fitness-primary/10 text-fitness-primary w-7 h-7 rounded-full flex items-center justify-center text-sm mr-3">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <h4 className="font-medium">{exercise.name}</h4>
-                      <p className="text-xs text-gray-500">
-                        {exercise.sets} sets × {exercise.reps} reps • {exercise.restTime}s rest
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-fitness-primary">
-                    {activeExerciseIndex === index ? (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" />
-                      </svg>
-                    ) : (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                      </svg>
-                    )}
-                  </div>
-                </button>
-                
-                {activeExerciseIndex === index && (
-                  <div className="p-4 border-t bg-gray-50">
-                    <div className="text-sm mb-3">
-                      {exercise.description}
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div>
-                        <span className="text-gray-500">Muscle Group:</span>{' '}
-                        {exercise.muscleGroup.charAt(0).toUpperCase() + exercise.muscleGroup.slice(1)}
-                      </div>
-                      <div>
-                        <span className="text-gray-500">Equipment:</span>{' '}
-                        {formatEquipmentList(exercise.equipment)}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+          <div className="flex mb-4 border-b">
+            <Button
+              variant={activeSection === 'warmup' ? 'default' : 'ghost'}
+              onClick={() => setActiveSection('warmup')}
+              className={activeSection === 'warmup' ? 'bg-fitness-primary text-white' : ''}
+            >
+              <Timer className="h-4 w-4 mr-2" />
+              5-Min Warmup
+            </Button>
+            <Button
+              variant={activeSection === 'main' ? 'default' : 'ghost'}
+              onClick={() => setActiveSection('main')}
+              className={activeSection === 'main' ? 'bg-fitness-primary text-white' : ''}
+            >
+              Main Workout
+            </Button>
+            <Button
+              variant={activeSection === 'cooldown' ? 'default' : 'ghost'}
+              onClick={() => setActiveSection('cooldown')}
+              className={activeSection === 'cooldown' ? 'bg-fitness-primary text-white' : ''}
+            >
+              <Timer className="h-4 w-4 mr-2" />
+              5-Min Cooldown
+            </Button>
           </div>
+          
+          {activeSection === 'warmup' && (
+            <>
+              <div className="flex items-center mb-4">
+                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 mr-2">Warmup</Badge>
+                <h3 className="font-medium text-lg">5-Minute Warmup ({workout.warmupExercises.length})</h3>
+              </div>
+              {renderExerciseList(workout.warmupExercises, true)}
+            </>
+          )}
+          
+          {activeSection === 'main' && (
+            <>
+              <h3 className="font-medium mb-3 text-lg">Main Exercises ({workout.exercises.length})</h3>
+              {renderExerciseList(workout.exercises)}
+            </>
+          )}
+          
+          {activeSection === 'cooldown' && (
+            <>
+              <div className="flex items-center mb-4">
+                <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mr-2">Cooldown</Badge>
+                <h3 className="font-medium text-lg">5-Minute Cooldown ({workout.cooldownExercises.length})</h3>
+              </div>
+              {renderExerciseList(workout.cooldownExercises, true)}
+            </>
+          )}
         </CardContent>
         
         <CardFooter className="flex flex-col">
