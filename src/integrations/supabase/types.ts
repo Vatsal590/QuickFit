@@ -9,7 +9,93 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      Email: {
+        Row: {
+          created_at: string
+          id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      workouts: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          cooldown_exercises: Json
+          created_at: string
+          duration: number
+          equipment: string[]
+          exercises: Json
+          id: string
+          intensity: string
+          target_muscle_groups: string[]
+          title: string
+          user_id: string
+          warmup_exercises: Json
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          cooldown_exercises: Json
+          created_at?: string
+          duration: number
+          equipment: string[]
+          exercises: Json
+          id?: string
+          intensity: string
+          target_muscle_groups: string[]
+          title: string
+          user_id: string
+          warmup_exercises: Json
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          cooldown_exercises?: Json
+          created_at?: string
+          duration?: number
+          equipment?: string[]
+          exercises?: Json
+          id?: string
+          intensity?: string
+          target_muscle_groups?: string[]
+          title?: string
+          user_id?: string
+          warmup_exercises?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
