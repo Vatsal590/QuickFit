@@ -5,9 +5,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { SubscriptionProvider } from "./contexts/SubscriptionContext";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import Auth from "./pages/Auth";
+import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
@@ -78,6 +80,14 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/subscription" 
+        element={
+          <ProtectedRoute>
+            <Subscription />
+          </ProtectedRoute>
+        } 
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -89,9 +99,11 @@ const App = () => (
       <Toaster />
       <Sonner />
       <AuthProvider>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
+        <SubscriptionProvider>
+          <BrowserRouter>
+            <AppRoutes />
+          </BrowserRouter>
+        </SubscriptionProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

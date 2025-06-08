@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { Workout, WorkoutHistoryItem, TimeFrame, MuscleGroup, Equipment, IntensityLevel } from '../types';
+import { Workout, WorkoutHistoryItem, TimeFrame, MuscleGroup, Equipment, IntensityLevel, Exercise } from '../types';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -47,9 +47,9 @@ export const useWorkoutHistory = () => {
           intensity: workout.intensity as IntensityLevel,
           targetMuscleGroups: workout.target_muscle_groups as MuscleGroup[],
           equipment: workout.equipment as Equipment[],
-          exercises: workout.exercises,
-          warmupExercises: workout.warmup_exercises,
-          cooldownExercises: workout.cooldown_exercises
+          exercises: (workout.exercises as Exercise[]) || [],
+          warmupExercises: (workout.warmup_exercises as Exercise[]) || [],
+          cooldownExercises: (workout.cooldown_exercises as Exercise[]) || []
         }));
 
         setHistory(workoutHistory);
