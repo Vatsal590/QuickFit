@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,6 +11,7 @@ import Auth from "./pages/Auth";
 import Subscription from "./pages/Subscription";
 import NotFound from "./pages/NotFound";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
+import Store from "./pages/Store";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +85,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Subscription />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/store" 
+        element={
+          <ProtectedRoute>
+            <Store />
           </ProtectedRoute>
         } 
       />

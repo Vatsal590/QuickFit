@@ -24,6 +24,51 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_workouts: {
+        Row: {
+          category: string
+          cooldown_exercises: Json
+          created_at: string
+          description: string | null
+          duration: number
+          exercises: Json
+          id: string
+          level: string
+          name: string
+          price: number
+          updated_at: string
+          warmup_exercises: Json
+        }
+        Insert: {
+          category: string
+          cooldown_exercises: Json
+          created_at?: string
+          description?: string | null
+          duration: number
+          exercises: Json
+          id?: string
+          level: string
+          name: string
+          price?: number
+          updated_at?: string
+          warmup_exercises: Json
+        }
+        Update: {
+          category?: string
+          cooldown_exercises?: Json
+          created_at?: string
+          description?: string | null
+          duration?: number
+          exercises?: Json
+          id?: string
+          level?: string
+          name?: string
+          price?: number
+          updated_at?: string
+          warmup_exercises?: Json
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -47,6 +92,44 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      purchases: {
+        Row: {
+          amount: number
+          id: string
+          premium_workout_id: string
+          purchased_at: string
+          status: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          id?: string
+          premium_workout_id: string
+          purchased_at?: string
+          status?: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          id?: string
+          premium_workout_id?: string
+          purchased_at?: string
+          status?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchases_premium_workout_id_fkey"
+            columns: ["premium_workout_id"]
+            isOneToOne: false
+            referencedRelation: "premium_workouts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       workouts: {
         Row: {
