@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Crown, Clock, Star, CheckCircle } from 'lucide-react';
+import WorkoutPreview from '@/components/workout/WorkoutPreview';
 
 interface PremiumWorkout {
   id: string;
@@ -28,6 +28,8 @@ const Store = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [purchasingId, setPurchasingId] = useState<string | null>(null);
+  const [previewWorkout, setPreviewWorkout] = useState<PremiumWorkout | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   // Fetch premium workouts
   const { data: premiumWorkouts, isLoading: loadingWorkouts } = useQuery({
@@ -64,7 +66,7 @@ const Store = () => {
 
   const purchasedWorkoutIds = purchases?.map(p => p.premium_workout_id) || [];
 
-  const handlePurchase = async (workoutId: string, price: number) => {
+  const handlePurchaseClick = (workout: PremiumWorkout) => {
     if (!user) {
       toast({
         title: "Login Required",
@@ -74,12 +76,18 @@ const Store = () => {
       return;
     }
 
-    setPurchasingId(workoutId);
+    setPreviewWorkout(workout);
+    setShowPreview(true);
+  };
+
+  const handlePurchase = async () => {
+    if (!previewWorkout) return;
+    
+    setPurchasingId(previewWorkout.id);
     
     try {
-      // Create one-time payment session for this specific workout
       const { data, error } = await supabase.functions.invoke('create-workout-purchase', {
-        body: { workoutId, price }
+        body: { workoutId: previewWorkout.id, price: previewWorkout.price }
       });
       
       if (error) throw error;
@@ -96,6 +104,7 @@ const Store = () => {
       });
     } finally {
       setPurchasingId(null);
+      setShowPreview(false);
     }
   };
 
@@ -120,6 +129,62 @@ const Store = () => {
       case 'hiit': return '⚡';
       default: return '💪';
     }
+  };
+
+  const renderWorkoutCard = (workout: PremiumWorkout) => {
+    const isPurchased = purchasedWorkoutIds.includes(workout.id);
+    
+    return (
+      <Card key={workout.id} className={`relative ${isPurchased ? 'border-green-500 bg-green-50' : ''}`}>
+        {isPurchased && (
+          <div className="absolute -top-2 -right-2">
+            <Badge className="bg-green-500 text-white">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Owned
+            </Badge>
+          </div>
+        )}
+        
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <CardTitle className="text-lg">{workout.name}</CardTitle>
+            <Badge className={getLevelColor(workout.level)}>
+              {workout.level}
+            </Badge>
+          </div>
+          <CardDescription>{workout.description}</CardDescription>
+        </CardHeader>
+
+        <CardContent className="space-y-4">
+          <div className="flex items-center text-sm text-gray-500">
+            <Clock className="h-4 w-4 mr-1" />
+            {workout.duration} minutes
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <Crown className="h-5 w-5 text-yellow-500 mr-1" />
+              <span className="text-2xl font-bold">${(workout.price / 100).toFixed(2)}</span>
+            </div>
+            
+            {isPurchased ? (
+              <Button disabled variant="outline">
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Purchased
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => handlePurchaseClick(workout)}
+                disabled={purchasingId === workout.id}
+                className="bg-fitness-primary hover:bg-fitness-primary/90"
+              >
+                {purchasingId === workout.id ? 'Processing...' : 'Buy Now'}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
   };
 
   if (loadingWorkouts || loadingPurchases) {
@@ -163,60 +228,7 @@ const Store = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {premiumWorkouts
                     ?.filter(workout => workout.category === category)
-                    .map(workout => {
-                      const isPurchased = purchasedWorkoutIds.includes(workout.id);
-                      return (
-                        <Card key={workout.id} className={`relative ${isPurchased ? 'border-green-500 bg-green-50' : ''}`}>
-                          {isPurchased && (
-                            <div className="absolute -top-2 -right-2">
-                              <Badge className="bg-green-500 text-white">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Owned
-                              </Badge>
-                            </div>
-                          )}
-                          
-                          <CardHeader>
-                            <div className="flex justify-between items-start">
-                              <CardTitle className="text-lg">{workout.name}</CardTitle>
-                              <Badge className={getLevelColor(workout.level)}>
-                                {workout.level}
-                              </Badge>
-                            </div>
-                            <CardDescription>{workout.description}</CardDescription>
-                          </CardHeader>
-
-                          <CardContent className="space-y-4">
-                            <div className="flex items-center text-sm text-gray-500">
-                              <Clock className="h-4 w-4 mr-1" />
-                              {workout.duration} minutes
-                            </div>
-
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center">
-                                <Crown className="h-5 w-5 text-yellow-500 mr-1" />
-                                <span className="text-2xl font-bold">${(workout.price / 100).toFixed(2)}</span>
-                              </div>
-                              
-                              {isPurchased ? (
-                                <Button disabled variant="outline">
-                                  <CheckCircle className="h-4 w-4 mr-2" />
-                                  Purchased
-                                </Button>
-                              ) : (
-                                <Button 
-                                  onClick={() => handlePurchase(workout.id, workout.price)}
-                                  disabled={purchasingId === workout.id}
-                                  className="bg-fitness-primary hover:bg-fitness-primary/90"
-                                >
-                                  {purchasingId === workout.id ? 'Processing...' : 'Buy Now'}
-                                </Button>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })}
+                    .map(renderWorkoutCard)}
                 </div>
               </div>
             ))}
@@ -227,64 +239,19 @@ const Store = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {premiumWorkouts
                   ?.filter(workout => workout.category === category)
-                  .map(workout => {
-                    const isPurchased = purchasedWorkoutIds.includes(workout.id);
-                    return (
-                      <Card key={workout.id} className={`relative ${isPurchased ? 'border-green-500 bg-green-50' : ''}`}>
-                        {isPurchased && (
-                          <div className="absolute -top-2 -right-2">
-                            <Badge className="bg-green-500 text-white">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Owned
-                            </Badge>
-                          </div>
-                        )}
-                        
-                        <CardHeader>
-                          <div className="flex justify-between items-start">
-                            <CardTitle className="text-lg">{workout.name}</CardTitle>
-                            <Badge className={getLevelColor(workout.level)}>
-                              {workout.level}
-                            </Badge>
-                          </div>
-                          <CardDescription>{workout.description}</CardDescription>
-                        </CardHeader>
-
-                        <CardContent className="space-y-4">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Clock className="h-4 w-4 mr-1" />
-                            {workout.duration} minutes
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <Crown className="h-5 w-5 text-yellow-500 mr-1" />
-                              <span className="text-2xl font-bold">${(workout.price / 100).toFixed(2)}</span>
-                            </div>
-                            
-                            {isPurchased ? (
-                              <Button disabled variant="outline">
-                                <CheckCircle className="h-4 w-4 mr-2" />
-                                Purchased
-                              </Button>
-                            ) : (
-                              <Button 
-                                onClick={() => handlePurchase(workout.id, workout.price)}
-                                disabled={purchasingId === workout.id}
-                                className="bg-fitness-primary hover:bg-fitness-primary/90"
-                              >
-                                {purchasingId === workout.id ? 'Processing...' : 'Buy Now'}
-                              </Button>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                  .map(renderWorkoutCard)}
               </div>
             </TabsContent>
           ))}
         </Tabs>
+
+        <WorkoutPreview
+          isOpen={showPreview}
+          onClose={() => setShowPreview(false)}
+          workout={previewWorkout}
+          onPurchase={handlePurchase}
+          isPurchasing={purchasingId === previewWorkout?.id}
+        />
       </div>
     </div>
   );
