@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
+import PurchasedWorkouts from '../components/workout/PurchasedWorkouts';
 import { Workout, WorkoutFormData } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { generateWorkout } from '../data/workoutGenerator';
@@ -68,6 +69,9 @@ const Home = () => {
             </Button>
           </div>
         </div>
+
+        {/* Premium Workouts Section */}
+        <PurchasedWorkouts />
 
         {currentWorkout ? (
           <WorkoutDisplay
