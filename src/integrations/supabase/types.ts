@@ -24,48 +24,42 @@ export type Database = {
         }
         Relationships: []
       }
-      premium_workouts: {
+      fitness_profiles: {
         Row: {
-          category: string
-          cooldown_exercises: Json
+          available_equipment: string[]
+          body_type: string
           created_at: string
-          description: string | null
-          duration: number
-          exercises: Json
+          fitness_goal: string
+          height: number
           id: string
-          level: string
-          name: string
-          price: number
           updated_at: string
-          warmup_exercises: Json
+          user_id: string
+          weight: number
+          workout_days_per_week: number
         }
         Insert: {
-          category: string
-          cooldown_exercises: Json
+          available_equipment?: string[]
+          body_type: string
           created_at?: string
-          description?: string | null
-          duration: number
-          exercises: Json
+          fitness_goal: string
+          height: number
           id?: string
-          level: string
-          name: string
-          price?: number
           updated_at?: string
-          warmup_exercises: Json
+          user_id: string
+          weight: number
+          workout_days_per_week: number
         }
         Update: {
-          category?: string
-          cooldown_exercises?: Json
+          available_equipment?: string[]
+          body_type?: string
           created_at?: string
-          description?: string | null
-          duration?: number
-          exercises?: Json
+          fitness_goal?: string
+          height?: number
           id?: string
-          level?: string
-          name?: string
-          price?: number
           updated_at?: string
-          warmup_exercises?: Json
+          user_id?: string
+          weight?: number
+          workout_days_per_week?: number
         }
         Relationships: []
       }
@@ -93,40 +87,46 @@ export type Database = {
         }
         Relationships: []
       }
-      purchases: {
+      workout_plans: {
         Row: {
-          amount: number
+          created_at: string
+          daily_workouts: Json
+          fitness_goal: string
           id: string
-          premium_workout_id: string
-          purchased_at: string
-          status: string
-          stripe_session_id: string | null
+          is_active: boolean
+          plan_name: string
+          profile_id: string
+          total_days: number
           user_id: string
         }
         Insert: {
-          amount: number
+          created_at?: string
+          daily_workouts: Json
+          fitness_goal: string
           id?: string
-          premium_workout_id: string
-          purchased_at?: string
-          status?: string
-          stripe_session_id?: string | null
+          is_active?: boolean
+          plan_name: string
+          profile_id: string
+          total_days?: number
           user_id: string
         }
         Update: {
-          amount?: number
+          created_at?: string
+          daily_workouts?: Json
+          fitness_goal?: string
           id?: string
-          premium_workout_id?: string
-          purchased_at?: string
-          status?: string
-          stripe_session_id?: string | null
+          is_active?: boolean
+          plan_name?: string
+          profile_id?: string
+          total_days?: number
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "purchases_premium_workout_id_fkey"
-            columns: ["premium_workout_id"]
+            foreignKeyName: "workout_plans_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
-            referencedRelation: "premium_workouts"
+            referencedRelation: "fitness_profiles"
             referencedColumns: ["id"]
           },
         ]
