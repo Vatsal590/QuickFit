@@ -56,34 +56,32 @@ const Home = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
-            Free Personalized <span className="text-fitness-primary">Fitness Plans</span>
+            Custom <span className="text-fitness-primary">Workout Generator</span>
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Get custom 30-day workout plans based on your goals, body type, and available equipment.
-            Perfect for muscle gain, fat loss, or athletic training.
+            Generate instant custom workouts based on your available time, equipment, and target muscle groups.
+            Perfect for quick sessions when you need a workout right now.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Left Column - 30-Day Plans */}
-          <div>
-            {profile && <UserWorkoutPlans />}
-          </div>
+        {/* 30-Day Plans Section */}
+        <div className="mb-8">
+          {profile && <UserWorkoutPlans />}
+        </div>
 
-          {/* Right Column - Quick Workout Generator */}
-          <div>
-            {currentWorkout ? (
-              <WorkoutDisplay
-                workout={currentWorkout}
-                onBack={() => setCurrentWorkout(null)}
-                onComplete={handleCompleteWorkout}
-              />
-            ) : (
-              <WorkoutForm 
-                onSubmit={handleCreateWorkout}
-              />
-            )}
-          </div>
+        {/* Custom Workout Generator Section */}
+        <div className="max-w-3xl mx-auto">
+          {currentWorkout ? (
+            <WorkoutDisplay
+              workout={currentWorkout}
+              onBack={() => setCurrentWorkout(null)}
+              onComplete={handleCompleteWorkout}
+            />
+          ) : (
+            <WorkoutForm 
+              onSubmit={handleCreateWorkout}
+            />
+          )}
         </div>
       </div>
     </PageContainer>
