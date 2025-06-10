@@ -40,9 +40,11 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-8">
               <Link to="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-fitness-primary rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">Q</span>
-                </div>
+                <img 
+                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                  alt="QuickFit Logo" 
+                  className="w-8 h-8"
+                />
                 <span className="text-xl font-bold text-fitness-primary">QuickFit</span>
               </Link>
               

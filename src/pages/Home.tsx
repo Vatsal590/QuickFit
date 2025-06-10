@@ -64,20 +64,27 @@ const Home = () => {
           </p>
         </div>
 
-        {/* User's 30-Day Plans Section */}
-        {profile && <UserWorkoutPlans />}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Left Column - 30-Day Plans */}
+          <div>
+            {profile && <UserWorkoutPlans />}
+          </div>
 
-        {currentWorkout ? (
-          <WorkoutDisplay
-            workout={currentWorkout}
-            onBack={() => setCurrentWorkout(null)}
-            onComplete={handleCompleteWorkout}
-          />
-        ) : (
-          <WorkoutForm 
-            onSubmit={handleCreateWorkout}
-          />
-        )}
+          {/* Right Column - Quick Workout Generator */}
+          <div>
+            {currentWorkout ? (
+              <WorkoutDisplay
+                workout={currentWorkout}
+                onBack={() => setCurrentWorkout(null)}
+                onComplete={handleCompleteWorkout}
+              />
+            ) : (
+              <WorkoutForm 
+                onSubmit={handleCreateWorkout}
+              />
+            )}
+          </div>
+        </div>
       </div>
     </PageContainer>
   );
