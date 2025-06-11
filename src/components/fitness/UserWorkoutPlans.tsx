@@ -62,6 +62,14 @@ const UserWorkoutPlans = () => {
     }
   };
 
+  const capitalizeWords = (str: string) => {
+    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
+  const getCompletedDays = (dailyWorkouts: any[]) => {
+    return dailyWorkouts ? dailyWorkouts.filter(day => day.completed).length : 0;
+  };
+
   if (isLoading) {
     return (
       <div className="animate-pulse mb-8">
@@ -94,39 +102,49 @@ const UserWorkoutPlans = () => {
         
         {workoutPlans && workoutPlans.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {workoutPlans.map((plan) => (
-              <Card key={plan.id} className="border-green-200 bg-green-50">
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <span className="text-2xl">{getGoalEmoji(plan.fitness_goal)}</span>
-                      {plan.plan_name}
-                    </CardTitle>
-                    <Badge className={getGoalColor(plan.fitness_goal)}>
-                      {plan.fitness_goal.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                  <CardDescription>
-                    Created on {new Date(plan.created_at).toLocaleDateString()}
-                  </CardDescription>
-                </CardHeader>
+            {workoutPlans.map((plan) => {
+              const completedDays = getCompletedDays(plan.daily_workouts);
+              const remainingDays = plan.total_days - completedDays;
+              
+              return (
+                <Card key={plan.id} className="border-green-200 bg-green-50">
+                  <CardHeader>
+                    <div className="flex justify-between items-start">
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        <span className="text-2xl">{getGoalEmoji(plan.fitness_goal)}</span>
+                        {plan.plan_name}
+                      </CardTitle>
+                      <Badge className={getGoalColor(plan.fitness_goal)}>
+                        {capitalizeWords(plan.fitness_goal)}
+                      </Badge>
+                    </div>
+                    <CardDescription>
+                      Created on {new Date(plan.created_at).toLocaleDateString()}
+                    </CardDescription>
+                  </CardHeader>
 
-                <CardContent className="space-y-4">
-                  <div className="flex items-center text-sm text-gray-500">
-                    <Calendar className="h-4 w-4 mr-1" />
-                    {plan.total_days} days total
-                  </div>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center text-gray-500">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        {completedDays}/{plan.total_days} completed
+                      </div>
+                      <div className="font-medium text-fitness-primary">
+                        {remainingDays} days left
+                      </div>
+                    </div>
 
-                  <Button 
-                    onClick={() => setSelectedPlan(plan)}
-                    className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
-                  >
-                    <Play className="h-4 w-4 mr-2" />
-                    View Plan
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    <Button 
+                      onClick={() => setSelectedPlan(plan)}
+                      className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      View Plan
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         ) : (
           <Card className="text-center py-8">

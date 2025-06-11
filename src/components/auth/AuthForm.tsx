@@ -6,16 +6,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Dumbbell } from 'lucide-react';
+import { Loader2, Dumbbell, ArrowLeft } from 'lucide-react';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, resetPassword } = useAuth();
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,23 +25,28 @@ const AuthForm = () => {
 
     try {
       let result;
-      if (isLogin) {
-        result = await signIn(email, password);
-      } else {
-        result = await signUp(email, password, fullName);
-      }
-
-      if (result.error) {
-        toast({
-          title: "Error",
-          description: result.error.message,
-          variant: "destructive"
-        });
-      } else {
-        if (!isLogin) {
+      if (isForgotPassword) {
+        result = await resetPassword(email);
+        if (result.error) {
           toast({
-            title: "Success!",
-            description: "Account created successfully. Please check your email to verify your account.",
+            title: "Error",
+            description: result.error.message,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Password reset email sent",
+            description: "Check your email for instructions to reset your password.",
+          });
+          setIsForgotPassword(false);
+        }
+      } else if (isLogin) {
+        result = await signIn(email, password);
+        if (result.error) {
+          toast({
+            title: "Error",
+            description: result.error.message,
+            variant: "destructive"
           });
         } else {
           toast({
@@ -48,6 +54,20 @@ const AuthForm = () => {
             description: "You've been signed in successfully.",
           });
           window.location.href = '/';
+        }
+      } else {
+        result = await signUp(email, password, fullName);
+        if (result.error) {
+          toast({
+            title: "Error",
+            description: result.error.message,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Success!",
+            description: "Account created successfully. Please check your email to verify your account.",
+          });
         }
       }
     } catch (error) {
@@ -71,18 +91,20 @@ const AuthForm = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">
-            {isLogin ? 'Welcome Back' : 'Get Started'}
+            {isForgotPassword ? 'Reset Password' : isLogin ? 'Welcome Back' : 'Get Started'}
           </CardTitle>
           <CardDescription>
-            {isLogin 
-              ? 'Sign in to your QuickFit account' 
-              : 'Create your QuickFit account'
+            {isForgotPassword 
+              ? 'Enter your email to receive reset instructions'
+              : isLogin 
+                ? 'Sign in to your QuickFit account' 
+                : 'Create your QuickFit account'
             }
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
+            {!isLogin && !isForgotPassword && (
               <div className="space-y-2">
                 <Label htmlFor="fullName">Full Name</Label>
                 <Input
@@ -108,18 +130,20 @@ const AuthForm = () => {
               />
             </div>
             
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
+            {!isForgotPassword && (
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+            )}
             
             <Button 
               type="submit" 
@@ -127,21 +151,45 @@ const AuthForm = () => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? 'Sign In' : 'Sign Up'}
+              {isForgotPassword ? 'Send Reset Email' : isLogin ? 'Sign In' : 'Sign Up'}
             </Button>
           </form>
           
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-fitness-primary hover:underline"
-            >
-              {isLogin 
-                ? "Don't have an account? Sign up" 
-                : "Already have an account? Sign in"
-              }
-            </button>
+          <div className="mt-4 text-center space-y-2">
+            {isForgotPassword ? (
+              <button
+                type="button"
+                onClick={() => setIsForgotPassword(false)}
+                className="text-sm text-fitness-primary hover:underline flex items-center justify-center mx-auto"
+              >
+                <ArrowLeft className="h-3 w-3 mr-1" />
+                Back to sign in
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsLogin(!isLogin)}
+                  className="text-sm text-fitness-primary hover:underline"
+                >
+                  {isLogin 
+                    ? "Don't have an account? Sign up" 
+                    : "Already have an account? Sign in"
+                  }
+                </button>
+                {isLogin && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => setIsForgotPassword(true)}
+                      className="text-sm text-fitness-primary hover:underline"
+                    >
+                      Forgot your password?
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </CardContent>
       </Card>

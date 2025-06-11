@@ -22,6 +22,10 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
   const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
 
+  const capitalizeWords = (str: string) => {
+    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
+
   const generateWorkoutPlan = async () => {
     if (!user || !profile) return;
 
@@ -30,7 +34,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
       // Generate a comprehensive 30-day workout plan based on user's profile
       const dailyWorkouts = generatePersonalizedPlan(profile);
       
-      const planName = `${profile.fitness_goal.replace('_', ' ')} Plan - ${new Date().toLocaleDateString()}`;
+      const planName = `${capitalizeWords(profile.fitness_goal)} Plan - ${new Date().toLocaleDateString()}`;
       
       const { data, error } = await supabase
         .from('workout_plans')
@@ -84,7 +88,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
             <CardTitle className="text-lg">Your Profile Summary</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
-            <div><strong>Goal:</strong> {profile.fitness_goal.replace('_', ' ')}</div>
+            <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
             <div><strong>Body Type:</strong> {profile.body_type}</div>
             <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
             <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
@@ -133,13 +137,15 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
       dailyWorkouts.push({
         day,
         isRestDay: false,
-        workout
+        workout,
+        completed: false
       });
     } else {
       dailyWorkouts.push({
         day,
         isRestDay: true,
-        restType: getRestDayActivity(fitness_goal)
+        restType: getRestDayActivity(fitness_goal),
+        completed: false
       });
     }
   }
@@ -157,7 +163,7 @@ const generateDayWorkout = (day: number, goal: string, bodyType: string, equipme
   // Focus areas based on goal and day
   let focusArea = '';
   if (goal === 'muscle_gain') {
-    const focusAreas = ['chest_triceps', 'back_biceps', 'legs', 'shoulders', 'full_body'];
+    const focusAreas = ['chest_triceps', 'back_biceps', 'legs', 'shoulders', 'core'];
     focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
   } else if (goal === 'fat_loss') {
     const focusAreas = ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'];
@@ -172,7 +178,7 @@ const generateDayWorkout = (day: number, goal: string, bodyType: string, equipme
     focus: focusArea,
     intensity,
     duration: getDuration(goal, bodyType),
-    exercises: generateExercises(focusArea, equipment, intensity),
+    exercises: generateExercises(focusArea, equipment, intensity, day),
     notes: getWorkoutNotes(goal, bodyType, week)
   };
 };
@@ -183,32 +189,99 @@ const getDuration = (goal: string, bodyType: string) => {
   return bodyType === 'ectomorph' ? 45 : 50;
 };
 
-const generateExercises = (focusArea: string, equipment: string[], intensity: string) => {
-  // This would normally call an AI API, but for now we'll generate structured exercises
-  const baseExercises = {
+const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number) => {
+  // Exercise variations based on day to add variety
+  const exercisePool = {
     chest_triceps: [
-      { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s' },
-      { name: 'Tricep Dips', sets: 3, reps: '10-12', rest: '60s' },
-      { name: 'Chest Press', sets: 3, reps: '10-12', rest: '90s' }
+      // Day 1, 4, 7, etc.
+      [
+        { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s' },
+        { name: 'Tricep Dips', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Chest Press', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s' }
+      ],
+      // Day 4, 7, 10, etc.
+      [
+        { name: 'Incline Push-ups', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Overhead Press', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Tricep Extensions', sets: 3, reps: '12-15', rest: '60s' },
+        { name: 'Chest Flyes', sets: 2, reps: '10-12', rest: '60s' }
+      ],
+      // Day 7, 10, 13, etc.
+      [
+        { name: 'Wide Push-ups', sets: 3, reps: '8-12', rest: '60s' },
+        { name: 'Close-grip Push-ups', sets: 3, reps: '6-10', rest: '60s' },
+        { name: 'Pike Push-ups', sets: 2, reps: '8-10', rest: '90s' },
+        { name: 'Tricep Push-ups', sets: 2, reps: '8-10', rest: '60s' }
+      ]
     ],
     back_biceps: [
-      { name: 'Pull-ups/Rows', sets: 3, reps: '8-12', rest: '90s' },
-      { name: 'Bicep Curls', sets: 3, reps: '12-15', rest: '60s' },
-      { name: 'Lat Pulldowns', sets: 3, reps: '10-12', rest: '90s' }
+      [
+        { name: 'Pull-ups/Rows', sets: 3, reps: '8-12', rest: '90s' },
+        { name: 'Bicep Curls', sets: 3, reps: '12-15', rest: '60s' },
+        { name: 'Lat Pulldowns', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Reverse Flyes', sets: 2, reps: '12-15', rest: '60s' }
+      ],
+      [
+        { name: 'Bent-over Rows', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Hammer Curls', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Face Pulls', sets: 3, reps: '15-20', rest: '60s' },
+        { name: 'Superman', sets: 2, reps: '15-20', rest: '45s' }
+      ],
+      [
+        { name: 'Inverted Rows', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Concentration Curls', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Single-arm Rows', sets: 3, reps: '8-10 each', rest: '90s' },
+        { name: 'Prone Y-raises', sets: 2, reps: '12-15', rest: '60s' }
+      ]
     ],
     legs: [
-      { name: 'Squats', sets: 4, reps: '12-15', rest: '90s' },
-      { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s' },
-      { name: 'Calf Raises', sets: 3, reps: '15-20', rest: '45s' }
+      [
+        { name: 'Squats', sets: 4, reps: '12-15', rest: '90s' },
+        { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s' },
+        { name: 'Calf Raises', sets: 3, reps: '15-20', rest: '45s' },
+        { name: 'Wall Sit', sets: 2, reps: '30-45s', rest: '60s' }
+      ],
+      [
+        { name: 'Jump Squats', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Bulgarian Split Squats', sets: 3, reps: '8-10 each', rest: '90s' },
+        { name: 'Single-leg Calf Raises', sets: 3, reps: '10-12 each', rest: '45s' },
+        { name: 'Glute Bridges', sets: 3, reps: '15-20', rest: '60s' }
+      ],
+      [
+        { name: 'Goblet Squats', sets: 3, reps: '12-15', rest: '90s' },
+        { name: 'Reverse Lunges', sets: 3, reps: '10 each leg', rest: '60s' },
+        { name: 'Step-ups', sets: 3, reps: '8-10 each', rest: '90s' },
+        { name: 'Single-leg Deadlifts', sets: 2, reps: '8-10 each', rest: '90s' }
+      ]
     ],
     hiit_cardio: [
-      { name: 'Burpees', sets: 4, reps: '30s on/30s off', rest: '60s' },
-      { name: 'Mountain Climbers', sets: 4, reps: '30s on/30s off', rest: '60s' },
-      { name: 'Jump Squats', sets: 4, reps: '30s on/30s off', rest: '60s' }
+      [
+        { name: 'Burpees', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Mountain Climbers', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Jump Squats', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'High Knees', sets: 3, reps: '30s on/30s off', rest: '60s' }
+      ],
+      [
+        { name: 'Jump Jacks', sets: 4, reps: '45s on/15s off', rest: '60s' },
+        { name: 'Plank Jacks', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Squat Thrusts', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Butt Kickers', sets: 3, reps: '30s on/30s off', rest: '60s' }
+      ],
+      [
+        { name: 'Star Jumps', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Bear Crawls', sets: 3, reps: '30s on/30s off', rest: '90s' },
+        { name: 'Jump Lunges', sets: 4, reps: '30s on/30s off', rest: '60s' },
+        { name: 'Tuck Jumps', sets: 3, reps: '20s on/40s off', rest: '60s' }
+      ]
     ]
   };
   
-  return baseExercises[focusArea as keyof typeof baseExercises] || baseExercises.chest_triceps;
+  // Calculate which variation to use based on day
+  const variationIndex = Math.floor((day - 1) / 3) % 3;
+  const baseExercises = exercisePool[focusArea as keyof typeof exercisePool];
+  
+  return baseExercises ? baseExercises[variationIndex] : exercisePool.chest_triceps[0];
 };
 
 const getRestDayActivity = (goal: string) => {
