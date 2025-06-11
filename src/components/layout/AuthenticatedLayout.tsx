@@ -41,7 +41,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
             <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
               <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
                 <img 
-                  src="/lovable-uploads/b4db4ad7-8e22-4fac-ab2e-c47be0bc44b1.png" 
+                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
                   alt="QuickFit Logo" 
                   className="w-8 h-8"
                 />
