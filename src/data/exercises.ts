@@ -170,11 +170,11 @@ export const exercises: Exercise[] = [
     description: "Hold weight in front of thighs, feet hip-width apart. Hinge at hips sending butt backward, lowering weight while keeping back flat. Return to standing."
   },
 
-  // Arms exercises
+  // Biceps exercises
   {
     id: "dumbbell-bicep-curl",
     name: "Dumbbell Bicep Curl",
-    muscleGroup: "arms",
+    muscleGroup: "biceps",
     equipment: ["dumbbells"],
     sets: 3,
     reps: 12,
@@ -182,19 +182,19 @@ export const exercises: Exercise[] = [
     description: "Hold dumbbells at sides, palms facing forward. Curl weights up toward shoulders while keeping elbows close to sides, then lower back down."
   },
   {
-    id: "tricep-dips",
-    name: "Tricep Dips",
-    muscleGroup: "arms",
-    equipment: ["bench"],
+    id: "hammer-curl",
+    name: "Hammer Curl",
+    muscleGroup: "biceps",
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 12,
     restTime: 45,
-    description: "Sit on bench edge, hands gripping edge beside hips. Slide buttocks off bench, lower body by bending elbows, then push back up."
+    description: "Hold dumbbells at sides with palms facing each other. Curl weights up toward shoulders without rotating wrists, then lower back down."
   },
   {
     id: "resistance-band-curl",
     name: "Resistance Band Curl",
-    muscleGroup: "arms",
+    muscleGroup: "biceps",
     equipment: ["resistance bands"],
     sets: 3,
     reps: 15,
@@ -202,14 +202,56 @@ export const exercises: Exercise[] = [
     description: "Stand on band with feet shoulder-width apart. Hold handles with palms facing forward, curl hands toward shoulders, then lower."
   },
   {
+    id: "barbell-curl",
+    name: "Barbell Curl",
+    muscleGroup: "biceps",
+    equipment: ["barbell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Hold barbell with underhand grip, arms extended. Curl the bar up toward your chest while keeping elbows stationary, then lower back down."
+  },
+
+  // Triceps exercises
+  {
+    id: "tricep-dips",
+    name: "Tricep Dips",
+    muscleGroup: "triceps",
+    equipment: ["bench"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Sit on bench edge, hands gripping edge beside hips. Slide buttocks off bench, lower body by bending elbows, then push back up."
+  },
+  {
     id: "overhead-tricep-extension",
     name: "Overhead Tricep Extension",
-    muscleGroup: "arms",
+    muscleGroup: "triceps",
     equipment: ["dumbbells"],
     sets: 3,
     reps: 12,
     restTime: 45,
     description: "Hold one dumbbell with both hands above head, elbows bent. Straighten arms to lift weight, then lower back behind head with control."
+  },
+  {
+    id: "tricep-pushdown",
+    name: "Tricep Pushdown",
+    muscleGroup: "triceps",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Stand at cable machine with rope or bar attachment. Keep elbows at sides and push weight down until arms are fully extended, then return to start."
+  },
+  {
+    id: "close-grip-push-up",
+    name: "Close-Grip Push-up",
+    muscleGroup: "triceps",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Perform a push-up with hands close together, forming a diamond shape with your fingers. This targets the triceps more than regular push-ups."
   },
 
   // Core exercises

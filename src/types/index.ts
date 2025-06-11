@@ -4,7 +4,8 @@ export type MuscleGroup =
   | "back" 
   | "shoulders" 
   | "legs" 
-  | "arms" 
+  | "biceps"
+  | "triceps" 
   | "core" 
   | "full body" 
   | "cardio";

@@ -38,36 +38,37 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-8">
-              <Link to="/" className="flex items-center space-x-2">
+            <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
+              <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
                 <img 
-                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                  src="/lovable-uploads/b4db4ad7-8e22-4fac-ab2e-c47be0bc44b1.png" 
                   alt="QuickFit Logo" 
                   className="w-8 h-8"
                 />
-                <span className="text-xl font-bold text-fitness-primary">QuickFit</span>
+                <span className="text-xl font-bold text-fitness-primary hidden sm:block">QuickFit</span>
               </Link>
               
-              <nav className="flex space-x-4">
-                <Link to="/">
+              {/* Navigation - scrollable on mobile */}
+              <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
+                <Link to="/" className="flex-shrink-0">
                   <Button 
                     variant={isActive('/') ? 'default' : 'ghost'} 
                     size="sm"
                     className={isActive('/') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
-                    <Home className="h-4 w-4 mr-2" />
-                    Home
+                    <Home className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Home</span>
                   </Button>
                 </Link>
                 
-                <Link to="/history">
+                <Link to="/history" className="flex-shrink-0">
                   <Button 
                     variant={isActive('/history') ? 'default' : 'ghost'} 
                     size="sm"
                     className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
-                    <History className="h-4 w-4 mr-2" />
-                    History
+                    <History className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">History</span>
                   </Button>
                 </Link>
 
@@ -75,20 +76,21 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   variant="ghost" 
                   size="sm"
                   onClick={() => setShowCustomizeForm(true)}
+                  className="flex-shrink-0"
                 >
-                  <Settings className="h-4 w-4 mr-2" />
-                  Customize
+                  <Settings className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Customize</span>
                 </Button>
               </nav>
             </div>
             
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
               {/* Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <User className="h-4 w-4 mr-2" />
-                    Profile
+                  <Button variant="outline" size="sm" className="flex-shrink-0">
+                    <User className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Profile</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-56 bg-white" align="end">

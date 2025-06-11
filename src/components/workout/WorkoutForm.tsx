@@ -40,7 +40,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     { value: "back", label: "Back" },
     { value: "shoulders", label: "Shoulders" },
     { value: "legs", label: "Legs" },
-    { value: "arms", label: "Arms" },
+    { value: "biceps", label: "Biceps" },
+    { value: "triceps", label: "Triceps" },
     { value: "core", label: "Core" },
     { value: "full body", label: "Full Body" },
     { value: "cardio", label: "Cardio" }
@@ -143,7 +144,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
   };
 
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-lg">
+    <Card className="w-full shadow-lg">
       <CardHeader>
         <CardTitle className="text-2xl">Create Your Workout</CardTitle>
         <CardDescription>
