@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -125,7 +124,7 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
   
   const dailyWorkouts = [];
   
-  // Create a pattern of 2 workout days, 1 rest day
+  // Create a pattern of 2 workout days, 1 rest day as requested
   const workoutPattern = [true, true, false]; // 2 workout, 1 rest
   
   for (let day = 1; day <= 30; day++) {
