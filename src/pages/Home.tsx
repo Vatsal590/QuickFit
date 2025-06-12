@@ -6,6 +6,7 @@ import WorkoutDisplay from '../components/workout/WorkoutDisplay';
 import UserWorkoutPlans from '../components/fitness/UserWorkoutPlans';
 import { Workout, WorkoutFormData } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
+import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
@@ -15,6 +16,7 @@ const Home = () => {
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
   const { profile, isLoading: profileLoading } = useFitnessProfile();
+  const { workoutPlans, loading: plansLoading, deleteWorkoutPlan } = useWorkoutPlans();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
     try {
@@ -46,9 +48,20 @@ const Home = () => {
     // TODO: Implement plan selection logic
   };
 
-  const handleDeletePlan = (planId: string) => {
-    console.log("Delete plan:", planId);
-    // TODO: Implement plan deletion logic
+  const handleDeletePlan = async (planId: string) => {
+    try {
+      await deleteWorkoutPlan(planId);
+      toast({
+        title: "Plan deleted",
+        description: "Your workout plan has been deleted successfully.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete workout plan. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
 
   if (profileLoading) {
@@ -78,7 +91,7 @@ const Home = () => {
         <div className="mb-8">
           {profile && (
             <UserWorkoutPlans 
-              workoutPlans={[]}
+              workoutPlans={workoutPlans}
               onSelectPlan={handleSelectPlan}
               onDeletePlan={handleDeletePlan}
             />
