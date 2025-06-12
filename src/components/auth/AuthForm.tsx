@@ -28,13 +28,34 @@ const AuthForm = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const type = urlParams.get('type');
     const accessToken = urlParams.get('access_token');
+    const refreshToken = urlParams.get('refresh_token');
     
-    if (type === 'recovery' && accessToken) {
+    console.log('URL params:', { type, accessToken: !!accessToken, refreshToken: !!refreshToken });
+    
+    if (type === 'recovery' && (accessToken || refreshToken)) {
+      console.log('Password reset detected, showing reset form');
       setIsPasswordReset(true);
       setIsLogin(false);
       setIsForgotPassword(false);
+      
+      // Set the session from URL params if available
+      if (accessToken && refreshToken) {
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        }).then(({ error }) => {
+          if (error) {
+            console.error('Error setting session:', error);
+            toast({
+              title: "Error",
+              description: "Failed to validate reset link. Please try again.",
+              variant: "destructive"
+            });
+          }
+        });
+      }
     }
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +101,11 @@ const AuthForm = () => {
             title: "Password updated!",
             description: "Your password has been successfully updated. You are now logged in.",
           });
-          window.location.href = '/';
+          // Clear URL params and redirect to home
+          window.history.replaceState({}, document.title, '/');
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 1000);
         }
       } else if (isForgotPassword) {
         result = await resetPassword(email);
@@ -93,9 +118,10 @@ const AuthForm = () => {
         } else {
           toast({
             title: "Password reset email sent",
-            description: "Check your email for instructions to reset your password.",
+            description: "Check your email for instructions to reset your password. The link will take you to a password reset page.",
           });
           setIsForgotPassword(false);
+          setEmail(''); // Clear email field
         }
       } else if (isLogin) {
         result = await signIn(email, password);
@@ -266,6 +292,8 @@ const AuthForm = () => {
                 onClick={() => {
                   setIsPasswordReset(false);
                   setIsLogin(true);
+                  // Clear URL params
+                  window.history.replaceState({}, document.title, '/auth');
                 }}
                 className="text-sm text-fitness-primary hover:underline flex items-center justify-center mx-auto"
               >
