@@ -61,3 +61,16 @@ export type WorkoutFormData = {
   muscleGroups: MuscleGroup[];
   intensity: IntensityLevel;
 };
+
+export type WorkoutPlan = {
+  id: string;
+  title: string;
+  goal: string;
+  type: string;
+  duration: number;
+  daysLeft: number;
+  equipment: Equipment[];
+  exercises?: Exercise[];
+  schedule?: any[];
+  createdAt: string;
+};

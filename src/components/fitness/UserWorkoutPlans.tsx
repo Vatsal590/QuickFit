@@ -8,13 +8,17 @@ import { Calendar, Clock, Target, Dumbbell, Play, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface UserWorkoutPlansProps {
-  workoutPlans: WorkoutPlan[];
-  onSelectPlan: (plan: WorkoutPlan) => void;
-  onDeletePlan: (planId: string) => void;
+  workoutPlans?: WorkoutPlan[];
+  onSelectPlan?: (plan: WorkoutPlan) => void;
+  onDeletePlan?: (planId: string) => void;
 }
 
-const UserWorkoutPlans = ({ workoutPlans, onSelectPlan, onDeletePlan }: UserWorkoutPlansProps) => {
-  if (workoutPlans.length === 0) {
+const UserWorkoutPlans = ({ 
+  workoutPlans = [], 
+  onSelectPlan = () => {}, 
+  onDeletePlan = () => {} 
+}: UserWorkoutPlansProps) => {
+  if (!workoutPlans || workoutPlans.length === 0) {
     return (
       <Card className="shadow-sm">
         <CardHeader>
@@ -75,11 +79,11 @@ const UserWorkoutPlans = ({ workoutPlans, onSelectPlan, onDeletePlan }: UserWork
                 <div className="flex items-center gap-2 text-sm">
                   <Dumbbell className="h-4 w-4 text-fitness-primary" />
                   <span className="text-gray-600">
-                    Equipment: {plan.equipment.includes("none") && plan.equipment.length === 1
+                    Equipment: {plan.equipment && plan.equipment.includes("none") && plan.equipment.length === 1
                       ? "No equipment needed"
-                      : plan.equipment.length > 2
+                      : plan.equipment && plan.equipment.length > 2
                         ? "Multiple equipment"
-                        : plan.equipment
+                        : (plan.equipment || [])
                             .filter(eq => eq !== "none")
                             .map(eq => eq.charAt(0).toUpperCase() + eq.slice(1))
                             .join(", ")}

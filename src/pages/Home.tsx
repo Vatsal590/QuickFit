@@ -41,6 +41,16 @@ const Home = () => {
     markWorkoutCompleted(workout.id);
   };
 
+  const handleSelectPlan = (plan: any) => {
+    console.log("Selected plan:", plan);
+    // TODO: Implement plan selection logic
+  };
+
+  const handleDeletePlan = (planId: string) => {
+    console.log("Delete plan:", planId);
+    // TODO: Implement plan deletion logic
+  };
+
   if (profileLoading) {
     return (
       <PageContainer>
@@ -66,7 +76,13 @@ const Home = () => {
 
         {/* 30-Day Plans Section */}
         <div className="mb-8">
-          {profile && <UserWorkoutPlans />}
+          {profile && (
+            <UserWorkoutPlans 
+              workoutPlans={[]}
+              onSelectPlan={handleSelectPlan}
+              onDeletePlan={handleDeletePlan}
+            />
+          )}
         </div>
 
         {/* Custom Workout Generator Section */}
