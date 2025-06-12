@@ -37,7 +37,7 @@ export const useWorkoutPlans = () => {
           daysLeft: plan.total_days || 30,
           equipment: [],
           createdAt: plan.created_at,
-          dailyWorkouts: plan.daily_workouts
+          dailyWorkouts: Array.isArray(plan.daily_workouts) ? plan.daily_workouts : []
         }));
         setWorkoutPlans(plans);
       }
@@ -49,9 +49,10 @@ export const useWorkoutPlans = () => {
     }
   };
 
-  useEffect(() => {
-    loadWorkoutPlans();
-  }, [user]);
+  // Add a function to manually add a workout plan (for immediate UI updates)
+  const addWorkoutPlan = (plan: WorkoutPlan) => {
+    setWorkoutPlans(prev => [plan, ...prev]);
+  };
 
   const deleteWorkoutPlan = async (planId: string) => {
     if (!user) return;
@@ -117,10 +118,15 @@ export const useWorkoutPlans = () => {
     }
   };
 
+  useEffect(() => {
+    loadWorkoutPlans();
+  }, [user]);
+
   return {
     workoutPlans,
     loading,
     loadWorkoutPlans,
+    addWorkoutPlan,
     deleteWorkoutPlan,
     markDayComplete
   };

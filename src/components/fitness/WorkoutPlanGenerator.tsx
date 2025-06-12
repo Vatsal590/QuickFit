@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -5,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
 import { FitnessProfile } from '../../hooks/useFitnessProfile';
 import { Loader2, Sparkles } from 'lucide-react';
 
@@ -13,12 +13,12 @@ interface WorkoutPlanGeneratorProps {
   isOpen: boolean;
   onClose: () => void;
   profile: FitnessProfile;
+  onPlanGenerated?: (plan: any) => void;
 }
 
-const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGeneratorProps) => {
+const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: WorkoutPlanGeneratorProps) => {
   const { toast } = useToast();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const capitalizeWords = (str: string) => {
@@ -50,6 +50,24 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
 
       if (error) throw error;
 
+      // Create the plan object for immediate UI update
+      const newPlan = {
+        id: data.id,
+        title: data.plan_name,
+        goal: data.fitness_goal,
+        type: 'custom',
+        duration: data.total_days,
+        daysLeft: data.total_days,
+        equipment: profile.available_equipment,
+        createdAt: data.created_at,
+        dailyWorkouts: data.daily_workouts
+      };
+
+      // Call the callback to immediately add the plan to the UI
+      if (onPlanGenerated) {
+        onPlanGenerated(newPlan);
+      }
+
       toast({
         title: "Plan generated successfully!",
         description: "Your personalized 30-day workout plan is ready to use."
@@ -58,7 +76,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
       // Dispatch custom event to notify Home component
       window.dispatchEvent(new CustomEvent('planGenerated'));
       
-      queryClient.invalidateQueries({ queryKey: ['workout-plans', user.id] });
       onClose();
     } catch (error) {
       console.error('Error generating workout plan:', error);

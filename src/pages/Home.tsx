@@ -5,6 +5,7 @@ import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
 import UserWorkoutPlans from '../components/fitness/UserWorkoutPlans';
 import WorkoutPlanViewer from '../components/fitness/WorkoutPlanViewer';
+import WorkoutPlanGenerator from '../components/fitness/WorkoutPlanGenerator';
 import { Workout, WorkoutFormData, WorkoutPlan } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
@@ -16,9 +17,10 @@ const Home = () => {
   const { toast } = useToast();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
+  const [showPlanGenerator, setShowPlanGenerator] = useState(false);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
   const { profile, isLoading: profileLoading } = useFitnessProfile();
-  const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans } = useWorkoutPlans();
+  const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans, addWorkoutPlan } = useWorkoutPlans();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
     try {
@@ -82,14 +84,18 @@ const Home = () => {
     }
   };
 
+  const handlePlanGenerated = (newPlan: WorkoutPlan) => {
+    addWorkoutPlan(newPlan);
+  };
+
   // Listen for plan generation events to refresh the plans
   React.useEffect(() => {
-    const handlePlanGenerated = () => {
+    const handlePlanGeneratedEvent = () => {
       loadWorkoutPlans();
     };
 
-    window.addEventListener('planGenerated', handlePlanGenerated);
-    return () => window.removeEventListener('planGenerated', handlePlanGenerated);
+    window.addEventListener('planGenerated', handlePlanGeneratedEvent);
+    return () => window.removeEventListener('planGenerated', handlePlanGeneratedEvent);
   }, [loadWorkoutPlans]);
 
   if (profileLoading) {
@@ -133,13 +139,11 @@ const Home = () => {
           <>
             {/* 30-Day Plans Section */}
             <div className="mb-8">
-              {profile && (
-                <UserWorkoutPlans 
-                  workoutPlans={workoutPlans}
-                  onSelectPlan={handleSelectPlan}
-                  onDeletePlan={handleDeletePlan}
-                />
-              )}
+              <UserWorkoutPlans 
+                workoutPlans={workoutPlans}
+                onSelectPlan={handleSelectPlan}
+                onDeletePlan={handleDeletePlan}
+              />
             </div>
 
             {/* Custom Workout Generator Section */}
@@ -157,6 +161,16 @@ const Home = () => {
               )}
             </div>
           </>
+        )}
+
+        {/* Workout Plan Generator Dialog */}
+        {profile && (
+          <WorkoutPlanGenerator
+            isOpen={showPlanGenerator}
+            onClose={() => setShowPlanGenerator(false)}
+            profile={profile}
+            onPlanGenerated={handlePlanGenerated}
+          />
         )}
       </div>
     </PageContainer>
