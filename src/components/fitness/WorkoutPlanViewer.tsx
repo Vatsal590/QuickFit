@@ -1,209 +1,142 @@
 
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
+import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, Clock, Target, CheckCircle, Circle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/contexts/AuthContext';
+import { Clock, Target, Calendar, CheckCircle } from 'lucide-react';
+
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: string;
+  rest: string;
+}
+
+interface WorkoutDay {
+  day: number;
+  type: 'workout' | 'rest';
+  focus?: string;
+  exercises?: Exercise[];
+  completed?: boolean;
+}
 
 interface WorkoutPlan {
   id: string;
-  plan_name: string;
-  fitness_goal: string;
-  total_days: number;
-  daily_workouts: any[];
-  created_at: string;
-  is_active: boolean;
+  type: string;
+  duration: number;
+  daysLeft: number;
+  schedule: WorkoutDay[];
+  createdAt: string;
 }
 
 interface WorkoutPlanViewerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  plan: WorkoutPlan | null;
+  plan: WorkoutPlan;
+  onMarkComplete: (planId: string, dayNumber: number) => void;
 }
 
-const WorkoutPlanViewer = ({ isOpen, onClose, plan }: WorkoutPlanViewerProps) => {
-  const [selectedWeek, setSelectedWeek] = useState(1);
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
-  
-  if (!plan) return null;
-
-  const weeks = Array.from({ length: 5 }, (_, i) => i + 1); // 30 days = ~4.3 weeks, so 5 weeks
-  
-  const getWeekDays = (week: number) => {
-    const startDay = (week - 1) * 7 + 1;
-    const endDay = Math.min(week * 7, 30);
-    return plan.daily_workouts.slice(startDay - 1, endDay);
-  };
-
-  const getGoalColor = (goal: string) => {
-    switch (goal) {
-      case 'muscle_gain': return 'bg-blue-100 text-blue-800';
-      case 'fat_loss': return 'bg-red-100 text-red-800';
-      case 'athlete_training': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const capitalizeWords = (str: string) => {
-    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  };
-
-  const completedDays = plan.daily_workouts.filter(day => day.completed).length;
-  const remainingDays = plan.total_days - completedDays;
-
-  const markDayComplete = async (dayIndex: number) => {
-    try {
-      const updatedWorkouts = [...plan.daily_workouts];
-      updatedWorkouts[dayIndex] = { ...updatedWorkouts[dayIndex], completed: true };
-
-      const { error } = await supabase
-        .from('workout_plans')
-        .update({ daily_workouts: updatedWorkouts })
-        .eq('id', plan.id);
-
-      if (error) throw error;
-
-      toast({
-        title: "Day completed!",
-        description: `Great job! ${remainingDays - 1} days remaining.`,
-      });
-
-      queryClient.invalidateQueries({ queryKey: ['workout-plans', user?.id] });
-    } catch (error) {
-      console.error('Error marking day complete:', error);
-      toast({
-        title: "Error",
-        description: "Failed to mark day as complete. Please try again.",
-        variant: "destructive"
-      });
-    }
-  };
+const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkComplete }) => {
+  // Capitalize the plan type for display
+  const capitalizedPlanType = plan.type
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            {plan.plan_name}
-          </DialogTitle>
-          <DialogDescription className="flex items-center gap-2 flex-wrap">
-            <Badge className={getGoalColor(plan.fitness_goal)}>
-              {capitalizeWords(plan.fitness_goal)}
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-2xl">{capitalizedPlanType} Plan</CardTitle>
+              <p className="text-gray-600 mt-2">
+                {plan.daysLeft} days remaining of {plan.duration}-day program
+              </p>
+            </div>
+            <Badge variant="secondary" className="bg-fitness-primary/10 text-fitness-primary">
+              <Target className="h-3 w-3 mr-1" />
+              {capitalizedPlanType}
             </Badge>
-            <span>•</span>
-            <span>{completedDays}/{plan.total_days} days completed</span>
-            <span>•</span>
-            <span className="font-medium text-fitness-primary">{remainingDays} days remaining</span>
-            <span>•</span>
-            <span>Created {new Date(plan.created_at).toLocaleDateString()}</span>
-          </DialogDescription>
-        </DialogHeader>
+          </div>
+        </CardHeader>
+      </Card>
 
-        <Tabs value={selectedWeek.toString()} onValueChange={(value) => setSelectedWeek(parseInt(value))}>
-          <TabsList className="grid w-full grid-cols-5">
-            {weeks.map((week) => (
-              <TabsTrigger key={week} value={week.toString()}>
-                Week {week}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-
-          {weeks.map((week) => (
-            <TabsContent key={week} value={week.toString()} className="space-y-4">
-              <div className="grid gap-4">
-                {getWeekDays(week).map((dayPlan, index) => {
-                  const dayNumber = (week - 1) * 7 + index + 1;
-                  const globalDayIndex = dayNumber - 1;
-                  
-                  return (
-                    <Card key={dayNumber} className={`${dayPlan.isRestDay ? 'bg-gray-50' : 'bg-white'} ${dayPlan.completed ? 'border-green-500 bg-green-50' : ''}`}>
-                      <CardHeader>
-                        <CardTitle className="flex items-center justify-between">
-                          <span className="flex items-center gap-2">
-                            {dayPlan.completed ? (
-                              <CheckCircle className="h-5 w-5 text-green-600" />
-                            ) : (
-                              <Calendar className="h-4 w-4" />
-                            )}
-                            Day {dayNumber}
-                            {dayPlan.isRestDay ? ' - Rest Day' : ` - ${dayPlan.workout?.title || ''}`}
-                            {dayPlan.completed && <Badge variant="outline" className="bg-green-100 text-green-800">Completed</Badge>}
-                          </span>
-                          <div className="flex items-center gap-2">
-                            {!dayPlan.isRestDay && (
-                              <Badge variant="outline">
-                                <Clock className="h-3 w-3 mr-1" />
-                                {dayPlan.workout?.duration || 45}min
-                              </Badge>
-                            )}
-                            {!dayPlan.completed && (
-                              <Button
-                                size="sm"
-                                onClick={() => markDayComplete(globalDayIndex)}
-                                className="bg-green-600 hover:bg-green-700 text-white"
-                              >
-                                Mark Complete
-                              </Button>
-                            )}
-                          </div>
-                        </CardTitle>
-                      </CardHeader>
-
-                      <CardContent>
-                        {dayPlan.isRestDay ? (
-                          <div className="text-center py-4">
-                            <Circle className="h-8 w-8 mx-auto mb-2 text-gray-400" />
-                            <p className="text-gray-600">{dayPlan.restType}</p>
-                          </div>
-                        ) : (
-                          <div className="space-y-4">
-                            {dayPlan.workout?.notes && (
-                              <div className="bg-blue-50 p-3 rounded-lg">
-                                <p className="text-sm text-blue-800">{dayPlan.workout.notes}</p>
-                              </div>
-                            )}
-                            
-                            <div className="space-y-3">
-                              <h4 className="font-medium">Exercises:</h4>
-                              {dayPlan.workout?.exercises?.map((exercise: any, exerciseIndex: number) => (
-                                <div key={exerciseIndex} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                                  <div>
-                                    <h5 className="font-medium">{exercise.name}</h5>
-                                    <p className="text-sm text-gray-600">
-                                      {exercise.sets} sets × {exercise.reps} reps
-                                    </p>
-                                  </div>
-                                  <div className="text-right">
-                                    <p className="text-sm text-gray-500">Rest: {exercise.rest}</p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  );
-                })}
+      <div className="grid gap-4">
+        {plan.schedule.map((day) => (
+          <Card key={day.day} className={`${day.completed ? 'bg-green-50 border-green-200' : ''}`}>
+            <CardHeader className="pb-3">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    day.completed 
+                      ? 'bg-green-500 text-white' 
+                      : day.type === 'rest' 
+                        ? 'bg-gray-200 text-gray-600' 
+                        : 'bg-fitness-primary text-white'
+                  }`}>
+                    {day.completed ? <CheckCircle className="h-4 w-4" /> : day.day}
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Day {day.day}</h3>
+                    <p className="text-sm text-gray-600">
+                      {day.type === 'rest' ? 'Rest Day' : `${day.focus} Training`}
+                    </p>
+                  </div>
+                </div>
+                {day.type === 'workout' && !day.completed && (
+                  <Button
+                    onClick={() => onMarkComplete(plan.id, day.day)}
+                    variant="outline"
+                    size="sm"
+                    className="border-green-500 text-green-600 hover:bg-green-50"
+                  >
+                    Mark Complete
+                  </Button>
+                )}
+                {day.completed && (
+                  <Badge variant="secondary" className="bg-green-100 text-green-700">
+                    Completed
+                  </Badge>
+                )}
               </div>
-            </TabsContent>
-          ))}
-        </Tabs>
+            </CardHeader>
 
-        <div className="flex justify-end">
-          <Button onClick={onClose}>Close</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+            {day.type === 'workout' && day.exercises && (
+              <CardContent className="pt-0">
+                <div className="space-y-3">
+                  {day.exercises.map((exercise, index) => (
+                    <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                      <div>
+                        <h4 className="font-medium">{exercise.name}</h4>
+                        <p className="text-sm text-gray-600">
+                          {exercise.sets} sets × {exercise.reps}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {exercise.rest} rest
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            )}
+
+            {day.type === 'rest' && (
+              <CardContent className="pt-0">
+                <div className="p-3 bg-blue-50 rounded-lg">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 text-blue-600 mr-2" />
+                    <p className="text-blue-700">Rest and recovery day. Stay hydrated and get good sleep!</p>
+                  </div>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        ))}
+      </div>
+    </div>
   );
 };
 

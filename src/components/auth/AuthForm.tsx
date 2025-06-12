@@ -25,23 +25,15 @@ const AuthForm = () => {
 
   // Check if this is a password reset callback
   useEffect(() => {
-    const handlePasswordReset = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (data?.session) {
-        // Check if this session is from a password reset
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-        
-        if (type === 'recovery') {
-          setIsPasswordReset(true);
-          setIsLogin(false);
-          setIsForgotPassword(false);
-        }
-      }
-    };
-
-    handlePasswordReset();
+    const urlParams = new URLSearchParams(window.location.search);
+    const type = urlParams.get('type');
+    const accessToken = urlParams.get('access_token');
+    
+    if (type === 'recovery' && accessToken) {
+      setIsPasswordReset(true);
+      setIsLogin(false);
+      setIsForgotPassword(false);
+    }
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
