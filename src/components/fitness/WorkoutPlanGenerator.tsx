@@ -55,6 +55,9 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
         description: "Your personalized 30-day workout plan is ready to use."
       });
 
+      // Dispatch custom event to notify Home component
+      window.dispatchEvent(new CustomEvent('planGenerated'));
+      
       queryClient.invalidateQueries({ queryKey: ['workout-plans', user.id] });
       onClose();
     } catch (error) {
@@ -118,7 +121,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile }: WorkoutPlanGenerator
   );
 };
 
-// Helper function to generate personalized workout plan
+// Helper function to generate personalized workout plan with more exercise variety
 const generatePersonalizedPlan = (profile: FitnessProfile) => {
   const { fitness_goal, body_type, workout_days_per_week, available_equipment } = profile;
   
@@ -189,29 +192,29 @@ const getDuration = (goal: string, bodyType: string) => {
 };
 
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number) => {
-  // Exercise variations based on day to add variety
+  // Enhanced exercise pool with more variety
   const exercisePool = {
     chest_triceps: [
-      // Day 1, 4, 7, etc.
+      // Week 1-2 exercises
       [
         { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s' },
         { name: 'Tricep Dips', sets: 3, reps: '10-12', rest: '60s' },
-        { name: 'Chest Press', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Incline Push-ups', sets: 3, reps: '10-12', rest: '90s' },
         { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s' }
       ],
-      // Day 4, 7, 10, etc.
+      // Week 3-4 exercises
       [
-        { name: 'Incline Push-ups', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Wide Push-ups', sets: 3, reps: '10-12', rest: '60s' },
         { name: 'Overhead Press', sets: 3, reps: '8-10', rest: '90s' },
         { name: 'Tricep Extensions', sets: 3, reps: '12-15', rest: '60s' },
         { name: 'Chest Flyes', sets: 2, reps: '10-12', rest: '60s' }
       ],
-      // Day 7, 10, 13, etc.
+      // Advanced exercises
       [
-        { name: 'Wide Push-ups', sets: 3, reps: '8-12', rest: '60s' },
+        { name: 'Decline Push-ups', sets: 3, reps: '8-12', rest: '60s' },
         { name: 'Close-grip Push-ups', sets: 3, reps: '6-10', rest: '60s' },
         { name: 'Pike Push-ups', sets: 2, reps: '8-10', rest: '90s' },
-        { name: 'Tricep Push-ups', sets: 2, reps: '8-10', rest: '60s' }
+        { name: 'Single-arm Push-ups', sets: 2, reps: '5-8 each', rest: '90s' }
       ]
     ],
     back_biceps: [
@@ -228,10 +231,10 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Superman', sets: 2, reps: '15-20', rest: '45s' }
       ],
       [
-        { name: 'Inverted Rows', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Wide-grip Pull-ups', sets: 3, reps: '6-10', rest: '90s' },
         { name: 'Concentration Curls', sets: 3, reps: '10-12', rest: '60s' },
         { name: 'Single-arm Rows', sets: 3, reps: '8-10 each', rest: '90s' },
-        { name: 'Prone Y-raises', sets: 2, reps: '12-15', rest: '60s' }
+        { name: 'Archer Pull-ups', sets: 2, reps: '5-8 each', rest: '120s' }
       ]
     ],
     legs: [
@@ -248,10 +251,10 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Glute Bridges', sets: 3, reps: '15-20', rest: '60s' }
       ],
       [
-        { name: 'Goblet Squats', sets: 3, reps: '12-15', rest: '90s' },
-        { name: 'Reverse Lunges', sets: 3, reps: '10 each leg', rest: '60s' },
-        { name: 'Step-ups', sets: 3, reps: '8-10 each', rest: '90s' },
-        { name: 'Single-leg Deadlifts', sets: 2, reps: '8-10 each', rest: '90s' }
+        { name: 'Pistol Squats', sets: 3, reps: '5-8 each', rest: '120s' },
+        { name: 'Shrimp Squats', sets: 2, reps: '3-5 each', rest: '120s' },
+        { name: 'Dragon Squats', sets: 3, reps: '8-10 each', rest: '90s' },
+        { name: 'Single-leg Hip Thrusts', sets: 3, reps: '10-12 each', rest: '90s' }
       ]
     ],
     hiit_cardio: [
@@ -268,16 +271,17 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Butt Kickers', sets: 3, reps: '30s on/30s off', rest: '60s' }
       ],
       [
-        { name: 'Star Jumps', sets: 4, reps: '30s on/30s off', rest: '60s' },
-        { name: 'Bear Crawls', sets: 3, reps: '30s on/30s off', rest: '90s' },
-        { name: 'Jump Lunges', sets: 4, reps: '30s on/30s off', rest: '60s' },
-        { name: 'Tuck Jumps', sets: 3, reps: '20s on/40s off', rest: '60s' }
+        { name: 'Tabata Burpees', sets: 4, reps: '20s on/10s off', rest: '60s' },
+        { name: 'Sprint Intervals', sets: 5, reps: '30s on/30s off', rest: '90s' },
+        { name: 'Bear Crawl Sprints', sets: 3, reps: '20s on/40s off', rest: '90s' },
+        { name: 'Battle Rope Waves', sets: 4, reps: '30s on/30s off', rest: '60s' }
       ]
     ]
   };
   
-  // Calculate which variation to use based on day
-  const variationIndex = Math.floor((day - 1) / 3) % 3;
+  // Use week number to determine exercise variation
+  const week = Math.ceil(day / 7);
+  const variationIndex = Math.min(week - 1, 2); // Cap at index 2
   const baseExercises = exercisePool[focusArea as keyof typeof exercisePool];
   
   return baseExercises ? baseExercises[variationIndex] : exercisePool.chest_triceps[0];

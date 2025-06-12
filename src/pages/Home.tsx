@@ -4,7 +4,8 @@ import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
 import UserWorkoutPlans from '../components/fitness/UserWorkoutPlans';
-import { Workout, WorkoutFormData } from '../types';
+import WorkoutPlanViewer from '../components/fitness/WorkoutPlanViewer';
+import { Workout, WorkoutFormData, WorkoutPlan } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { generateWorkout } from '../data/workoutGenerator';
@@ -14,9 +15,10 @@ import { useFitnessProfile } from '../hooks/useFitnessProfile';
 const Home = () => {
   const { toast } = useToast();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
   const { profile, isLoading: profileLoading } = useFitnessProfile();
-  const { workoutPlans, loading: plansLoading, deleteWorkoutPlan } = useWorkoutPlans();
+  const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans } = useWorkoutPlans();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
     try {
@@ -43,9 +45,9 @@ const Home = () => {
     markWorkoutCompleted(workout.id);
   };
 
-  const handleSelectPlan = (plan: any) => {
+  const handleSelectPlan = (plan: WorkoutPlan) => {
     console.log("Selected plan:", plan);
-    // TODO: Implement plan selection logic
+    setSelectedPlan(plan);
   };
 
   const handleDeletePlan = async (planId: string) => {
@@ -63,6 +65,32 @@ const Home = () => {
       });
     }
   };
+
+  const handleMarkDayComplete = async (planId: string, dayNumber: number) => {
+    try {
+      await markDayComplete(planId, dayNumber);
+      toast({
+        title: "Day completed!",
+        description: "Great job! Your progress has been saved.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to mark day as complete. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Listen for plan generation events to refresh the plans
+  React.useEffect(() => {
+    const handlePlanGenerated = () => {
+      loadWorkoutPlans();
+    };
+
+    window.addEventListener('planGenerated', handlePlanGenerated);
+    return () => window.removeEventListener('planGenerated', handlePlanGenerated);
+  }, [loadWorkoutPlans]);
 
   if (profileLoading) {
     return (
@@ -87,31 +115,49 @@ const Home = () => {
           </p>
         </div>
 
-        {/* 30-Day Plans Section */}
-        <div className="mb-8">
-          {profile && (
-            <UserWorkoutPlans 
-              workoutPlans={workoutPlans}
-              onSelectPlan={handleSelectPlan}
-              onDeletePlan={handleDeletePlan}
+        {/* Show Plan Viewer if a plan is selected */}
+        {selectedPlan ? (
+          <div className="mb-8">
+            <button
+              onClick={() => setSelectedPlan(null)}
+              className="mb-4 text-fitness-primary hover:text-fitness-primary/80 flex items-center gap-2"
+            >
+              ← Back to Plans
+            </button>
+            <WorkoutPlanViewer
+              plan={selectedPlan}
+              onMarkComplete={handleMarkDayComplete}
             />
-          )}
-        </div>
+          </div>
+        ) : (
+          <>
+            {/* 30-Day Plans Section */}
+            <div className="mb-8">
+              {profile && (
+                <UserWorkoutPlans 
+                  workoutPlans={workoutPlans}
+                  onSelectPlan={handleSelectPlan}
+                  onDeletePlan={handleDeletePlan}
+                />
+              )}
+            </div>
 
-        {/* Custom Workout Generator Section */}
-        <div className="max-w-3xl mx-auto">
-          {currentWorkout ? (
-            <WorkoutDisplay
-              workout={currentWorkout}
-              onBack={() => setCurrentWorkout(null)}
-              onComplete={handleCompleteWorkout}
-            />
-          ) : (
-            <WorkoutForm 
-              onSubmit={handleCreateWorkout}
-            />
-          )}
-        </div>
+            {/* Custom Workout Generator Section */}
+            <div className="max-w-3xl mx-auto">
+              {currentWorkout ? (
+                <WorkoutDisplay
+                  workout={currentWorkout}
+                  onBack={() => setCurrentWorkout(null)}
+                  onComplete={handleCompleteWorkout}
+                />
+              ) : (
+                <WorkoutForm 
+                  onSubmit={handleCreateWorkout}
+                />
+              )}
+            </div>
+          </>
+        )}
       </div>
     </PageContainer>
   );

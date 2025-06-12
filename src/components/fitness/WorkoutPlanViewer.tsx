@@ -4,30 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Target, Calendar, CheckCircle } from 'lucide-react';
-
-interface Exercise {
-  name: string;
-  sets: number;
-  reps: string;
-  rest: string;
-}
-
-interface WorkoutDay {
-  day: number;
-  type: 'workout' | 'rest';
-  focus?: string;
-  exercises?: Exercise[];
-  completed?: boolean;
-}
-
-interface WorkoutPlan {
-  id: string;
-  type: string;
-  duration: number;
-  daysLeft: number;
-  schedule: WorkoutDay[];
-  createdAt: string;
-}
+import { WorkoutPlan } from '@/types';
 
 interface WorkoutPlanViewerProps {
   plan: WorkoutPlan;
@@ -35,11 +12,12 @@ interface WorkoutPlanViewerProps {
 }
 
 const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkComplete }) => {
-  // Capitalize the plan type for display
-  const capitalizedPlanType = plan.type
-    .split(' ')
+  const capitalizedPlanType = plan.goal
+    .split('_')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ');
+
+  const dailyWorkouts = plan.dailyWorkouts || [];
 
   return (
     <div className="space-y-6">
@@ -47,7 +25,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-2xl">{capitalizedPlanType} Plan</CardTitle>
+              <CardTitle className="text-2xl">{plan.title}</CardTitle>
               <p className="text-gray-600 mt-2">
                 {plan.daysLeft} days remaining of {plan.duration}-day program
               </p>
@@ -61,7 +39,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       </Card>
 
       <div className="grid gap-4">
-        {plan.schedule.map((day) => (
+        {dailyWorkouts.map((day: any) => (
           <Card key={day.day} className={`${day.completed ? 'bg-green-50 border-green-200' : ''}`}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-center">
@@ -69,7 +47,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                     day.completed 
                       ? 'bg-green-500 text-white' 
-                      : day.type === 'rest' 
+                      : day.isRestDay 
                         ? 'bg-gray-200 text-gray-600' 
                         : 'bg-fitness-primary text-white'
                   }`}>
@@ -78,11 +56,11 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                   <div>
                     <h3 className="font-semibold">Day {day.day}</h3>
                     <p className="text-sm text-gray-600">
-                      {day.type === 'rest' ? 'Rest Day' : `${day.focus} Training`}
+                      {day.isRestDay ? 'Rest Day' : `${day.workout?.focus?.replace('_', ' ')} Training`}
                     </p>
                   </div>
                 </div>
-                {day.type === 'workout' && !day.completed && (
+                {!day.isRestDay && !day.completed && (
                   <Button
                     onClick={() => onMarkComplete(plan.id, day.day)}
                     variant="outline"
@@ -100,10 +78,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
               </div>
             </CardHeader>
 
-            {day.type === 'workout' && day.exercises && (
+            {!day.isRestDay && day.workout?.exercises && (
               <CardContent className="pt-0">
                 <div className="space-y-3">
-                  {day.exercises.map((exercise, index) => (
+                  {day.workout.exercises.map((exercise: any, index: number) => (
                     <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
                       <div>
                         <h4 className="font-medium">{exercise.name}</h4>
@@ -123,12 +101,12 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
               </CardContent>
             )}
 
-            {day.type === 'rest' && (
+            {day.isRestDay && (
               <CardContent className="pt-0">
                 <div className="p-3 bg-blue-50 rounded-lg">
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 text-blue-600 mr-2" />
-                    <p className="text-blue-700">Rest and recovery day. Stay hydrated and get good sleep!</p>
+                    <p className="text-blue-700">{day.restType || 'Rest and recovery day. Stay hydrated and get good sleep!'}</p>
                   </div>
                 </div>
               </CardContent>

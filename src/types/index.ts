@@ -72,5 +72,6 @@ export type WorkoutPlan = {
   equipment: Equipment[];
   exercises?: Exercise[];
   schedule?: any[];
+  dailyWorkouts?: any[];
   createdAt: string;
 };

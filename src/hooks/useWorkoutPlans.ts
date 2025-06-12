@@ -36,7 +36,8 @@ export const useWorkoutPlans = () => {
           duration: plan.total_days || 30,
           daysLeft: plan.total_days || 30,
           equipment: [],
-          createdAt: plan.created_at
+          createdAt: plan.created_at,
+          dailyWorkouts: plan.daily_workouts
         }));
         setWorkoutPlans(plans);
       }
@@ -72,10 +73,55 @@ export const useWorkoutPlans = () => {
     }
   };
 
+  const markDayComplete = async (planId: string, dayNumber: number) => {
+    if (!user) return;
+
+    try {
+      // Get the current plan
+      const currentPlan = workoutPlans.find(p => p.id === planId);
+      if (!currentPlan?.dailyWorkouts) return;
+
+      // Update the specific day as completed
+      const updatedDailyWorkouts = currentPlan.dailyWorkouts.map((day: any) => 
+        day.day === dayNumber ? { ...day, completed: true } : day
+      );
+
+      // Calculate new days left
+      const completedDays = updatedDailyWorkouts.filter((day: any) => day.completed).length;
+      const newDaysLeft = Math.max(0, currentPlan.duration - completedDays);
+
+      const { error } = await supabase
+        .from('workout_plans')
+        .update({ 
+          daily_workouts: updatedDailyWorkouts 
+        })
+        .eq('id', planId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error updating workout plan:', error);
+      } else {
+        // Update local state
+        setWorkoutPlans(prev => prev.map(plan => 
+          plan.id === planId 
+            ? { 
+                ...plan, 
+                dailyWorkouts: updatedDailyWorkouts,
+                daysLeft: newDaysLeft
+              }
+            : plan
+        ));
+      }
+    } catch (error) {
+      console.error('Error marking day complete:', error);
+    }
+  };
+
   return {
     workoutPlans,
     loading,
     loadWorkoutPlans,
-    deleteWorkoutPlan
+    deleteWorkoutPlan,
+    markDayComplete
   };
 };
