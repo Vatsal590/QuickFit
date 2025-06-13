@@ -30,6 +30,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-up.gif',
       'push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-up.gif',
       'pushups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-up.gif',
+      'standard push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-up.gif',
       'incline push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Push-Up.gif',
       'incline push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Push-Up.gif',
       'incline push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Push-Up.gif',
@@ -39,12 +40,15 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'wide push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wide-Grip-Push-Up.gif',
       'wide push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wide-Grip-Push-Up.gif',
       'wide push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wide-Grip-Push-Up.gif',
+      'wide-grip push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wide-Grip-Push-Up.gif',
       'decline push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Push-up.gif',
       'decline push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Push-up.gif',
       'decline push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Decline-Push-up.gif',
       'close-grip push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Push-Up.gif',
       'close-grip push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Push-Up.gif',
       'close grip push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Close-Grip-Push-Up.gif',
+      'archer push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Archer-Push-Up.gif',
+      'archer push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Archer-Push-Up.gif',
       'dumbbell chest press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif',
       'dumbbell bench press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Bench-Press.gif',
       'incline dumbbell press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Incline-Dumbbell-Press.gif',
@@ -53,7 +57,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'chest flys': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Flyes.gif',
       'dumbbell flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Flyes.gif',
       'chest dips': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Dips.gif',
-      'dips': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Chest-Dips.gif',
+      'pec deck flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pec-Deck-Fly.gif',
       
       // Back exercises
       'pull-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-up.gif',
@@ -77,6 +81,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'face pull': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif',
       'superman': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Superman-Exercise.gif',
       'supermans': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Superman-Exercise.gif',
+      'reverse flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
+      'reverse flys': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
       
       // Shoulder exercises
       'dumbbell shoulder press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
@@ -91,8 +97,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'pike push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-Push-up.gif',
       'pike push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-Push-up.gif',
       'rear delt flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
-      'reverse flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
-      'reverse flys': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
+      'handstand push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Handstand-Push-Up.gif',
+      'handstand push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Handstand-Push-Up.gif',
       
       // Leg exercises
       'bodyweight squat': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bodyweight-Squat.gif',
@@ -116,6 +122,10 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'glute bridge': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Glute-Bridge.gif',
       'single-leg deadlifts': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Single-Leg-Deadlift.gif',
       'single leg deadlifts': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Single-Leg-Deadlift.gif',
+      'pistol squats': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pistol-Squat.gif',
+      'pistol squat': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pistol-Squat.gif',
+      'wall sit': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wall-Sit.gif',
+      'wall sits': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Wall-Sit.gif',
       
       // Bicep exercises
       'dumbbell bicep curl': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
@@ -137,7 +147,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'triceps dips': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Tricep-Dips.gif',
       'dips': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Tricep-Dips.gif',
       'overhead tricep extension': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Triceps-Extension.gif',
-      'overhead triceps extension': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Triceps-Extension.gif',
+      'overhead tricep extension': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Triceps-Extension.gif',
       'tricep extensions': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Triceps-Extension.gif',
       'triceps extensions': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Overhead-Triceps-Extension.gif',
       'tricep pushdown': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Triceps-Pushdown.gif',
@@ -173,6 +183,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'reverse crunch': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Crunch.gif',
       'flutter kicks': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Flutter-Kicks.gif',
       'flutter kick': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Flutter-Kicks.gif',
+      'plank to downward dog': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Plank-to-Downward-Dog.gif',
       
       // Cardio exercises
       'jumping jacks': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jumping-Jacks.gif',
