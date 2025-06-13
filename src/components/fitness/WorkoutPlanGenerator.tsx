@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
     setIsGenerating(true);
     try {
-      // Generate a comprehensive 30-day workout plan based on user's profile
       const dailyWorkouts = generatePersonalizedPlan(profile);
       
       const planName = `${capitalizeWords(profile.fitness_goal)} Plan - ${new Date().toLocaleDateString()}`;
@@ -50,7 +48,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
       if (error) throw error;
 
-      // Create the plan object for immediate UI update
       const newPlan = {
         id: data.id,
         title: data.plan_name,
@@ -63,7 +60,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
         dailyWorkouts: data.daily_workouts
       };
 
-      // Call the callback to immediately add the plan to the UI
       if (onPlanGenerated) {
         onPlanGenerated(newPlan);
       }
@@ -73,7 +69,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
         description: "Your personalized 30-day workout plan is ready to use."
       });
 
-      // Dispatch custom event to notify Home component
       window.dispatchEvent(new CustomEvent('planGenerated'));
       
       onClose();
@@ -212,23 +207,26 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   // Enhanced exercise pool with more variety
   const exercisePool = {
     chest_triceps: [
-      // Week 1-2 exercises
+      // Week 1-2 exercises - More gym-like chest exercises
       [
         { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s' },
-        { name: 'Tricep Dips', sets: 3, reps: '10-12', rest: '60s' },
-        { name: 'Incline Push-ups', sets: 3, reps: '10-12', rest: '90s' },
-        { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s' }
+        { name: 'Dumbbell Bench Press', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Incline Push-ups', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Tricep Dips', sets: 3, reps: '8-12', rest: '60s' },
+        { name: 'Chest Flyes', sets: 2, reps: '12-15', rest: '60s' }
       ],
       // Week 3-4 exercises
       [
+        { name: 'Incline Dumbbell Press', sets: 3, reps: '10-12', rest: '90s' },
         { name: 'Wide Push-ups', sets: 3, reps: '10-12', rest: '60s' },
-        { name: 'Overhead Press', sets: 3, reps: '8-10', rest: '90s' },
-        { name: 'Tricep Extensions', sets: 3, reps: '12-15', rest: '60s' },
-        { name: 'Chest Flyes', sets: 2, reps: '10-12', rest: '60s' }
+        { name: 'Overhead Tricep Extension', sets: 3, reps: '12-15', rest: '60s' },
+        { name: 'Chest Dips', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s' }
       ],
       // Advanced exercises
       [
         { name: 'Decline Push-ups', sets: 3, reps: '8-12', rest: '60s' },
+        { name: 'Dumbbell Pullovers', sets: 3, reps: '10-12', rest: '90s' },
         { name: 'Close-grip Push-ups', sets: 3, reps: '6-10', rest: '60s' },
         { name: 'Pike Push-ups', sets: 2, reps: '8-10', rest: '90s' },
         { name: 'Single-arm Push-ups', sets: 2, reps: '5-8 each', rest: '90s' }
@@ -272,6 +270,30 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Shrimp Squats', sets: 2, reps: '3-5 each', rest: '120s' },
         { name: 'Dragon Squats', sets: 3, reps: '8-10 each', rest: '90s' },
         { name: 'Single-leg Hip Thrusts', sets: 3, reps: '10-12 each', rest: '90s' }
+      ]
+    ],
+    // Updated core exercises with proper abs exercises
+    core: [
+      [
+        { name: 'Plank', sets: 3, reps: '30-45s', rest: '60s' },
+        { name: 'Crunches', sets: 3, reps: '15-20', rest: '45s' },
+        { name: 'Bicycle Crunches', sets: 3, reps: '20 each side', rest: '45s' },
+        { name: 'Dead Bug', sets: 3, reps: '10 each side', rest: '45s' },
+        { name: 'Russian Twists', sets: 2, reps: '20', rest: '45s' }
+      ],
+      [
+        { name: 'Sit-ups', sets: 3, reps: '12-15', rest: '45s' },
+        { name: 'Leg Raises', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Mountain Climbers', sets: 3, reps: '20 each leg', rest: '45s' },
+        { name: 'Side Plank', sets: 2, reps: '20-30s each side', rest: '60s' },
+        { name: 'V-ups', sets: 3, reps: '10-12', rest: '45s' }
+      ],
+      [
+        { name: 'Hanging Knee Raises', sets: 3, reps: '8-12', rest: '90s' },
+        { name: 'Dragon Flags', sets: 2, reps: '5-8', rest: '120s' },
+        { name: 'L-sit Hold', sets: 3, reps: '15-30s', rest: '90s' },
+        { name: 'Hollow Body Hold', sets: 3, reps: '20-40s', rest: '60s' },
+        { name: 'Ab Wheel Rollouts', sets: 3, reps: '8-10', rest: '90s' }
       ]
     ],
     hiit_cardio: [
