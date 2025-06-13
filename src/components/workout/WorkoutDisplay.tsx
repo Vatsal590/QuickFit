@@ -25,7 +25,6 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
     const normalizedName = exerciseName.toLowerCase().trim();
     
     const exerciseMap: { [key: string]: string } = {
-      // Chest exercises - various naming patterns
       'push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
       'push ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
       'pushups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
@@ -75,21 +74,21 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'superman': 'https://newlife.com.cy/wp-content/uploads/2019/11/08041301-Superman_Waist_360.gif',
       'supermans': 'https://newlife.com.cy/wp-content/uploads/2019/11/08041301-Superman_Waist_360.gif',
       
+      
       // Shoulder exercises
-      'dumbbell shoulder press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
+        'overhead press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
       'shoulder press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
-      'overhead press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
-      'lateral raise': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lateral-Raise.gif',
-      'lateral raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lateral-Raise.gif',
-      'side raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lateral-Raise.gif',
-      'front raise': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Front-Raise.gif',
-      'front raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Front-Raise.gif',
-      'resistance band face pull': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Face-Pull.gif',
-      'pike push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-Push-up.gif',
-      'pike push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-Push-up.gif',
-      'rear delt flyes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Reverse-Fly.gif',
-      'handstand push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Handstand-Push-Up.gif',
-      'handstand push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Handstand-Push-Up.gif',
+      'dumbbell shoulder press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
+      'lateral raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Seated-Dumbbell-Lateral-Raise.gif',
+      'lateral raise': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Seated-Dumbbell-Lateral-Raise.gif',
+      'side raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Seated-Dumbbell-Lateral-Raise.gif',
+      'front raises': 'https://homeworkouts.org/wp-content/uploads/anim-dumbbell-front-raises.gif',
+      'front raise': 'https://homeworkouts.org/wp-content/uploads/anim-dumbbell-front-raises.gif',
+      'rear delt flyes': 'https://liftmanual.com/wp-content/uploads/2023/04/dumbbell-rear-delt-fly.gif',
+      'pike push-ups': 'https://cdn-cccio.nitrocdn.com/sQAAylIpwgMYZgBLSXcMgCkUIbfIzHvb/assets/images/optimized/rev-586a700/www.aleanlife.com/wp-content/uploads/2023/03/performing-pike-push-ups.gif',
+      'pike push ups': 'https://cdn-cccio.nitrocdn.com/sQAAylIpwgMYZgBLSXcMgCkUIbfIzHvb/assets/images/optimized/rev-586a700/www.aleanlife.com/wp-content/uploads/2023/03/performing-pike-push-ups.gif',
+      'handstand push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/02/handstand-pushup.gif',
+      'handstand push ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/02/handstand-pushup.gif',
       
       // Leg exercises
       'bodyweight squat': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bodyweight-Squat.gif',
