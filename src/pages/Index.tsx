@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
-import WorkoutPlanGenerator from '@/components/fitness/WorkoutPlanGenerator';
 import UserWorkoutPlans from '@/components/fitness/UserWorkoutPlans';
 import SubscriptionSuccess from '@/components/subscription/SubscriptionSuccess';
 
@@ -48,7 +47,6 @@ const Index = () => {
           </p>
         </div>
         
-        <WorkoutPlanGenerator />
         <UserWorkoutPlans />
       </div>
     </PageContainer>
