@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { WorkoutPlan } from '@/types';
-import { Calendar, Clock, Target, Dumbbell, Play, Trash2 } from 'lucide-react';
+import { Calendar, Clock, Target, Play, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface UserWorkoutPlansProps {
@@ -74,20 +74,6 @@ const UserWorkoutPlans = ({
                     <Target className="h-4 w-4 text-fitness-primary mr-1" />
                     <span>{plan.daysLeft} days left</span>
                   </div>
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <Dumbbell className="h-4 w-4 text-fitness-primary" />
-                  <span className="text-gray-600">
-                    Equipment: {plan.equipment && plan.equipment.includes("none") && plan.equipment.length === 1
-                      ? "No equipment needed"
-                      : plan.equipment && plan.equipment.length > 2
-                        ? "Multiple equipment"
-                        : (plan.equipment || [])
-                            .filter(eq => eq !== "none")
-                            .map(eq => eq.charAt(0).toUpperCase() + eq.slice(1))
-                            .join(", ")}
-                  </span>
                 </div>
               </div>
               
