@@ -44,8 +44,9 @@ const PremiumPlansModal = ({ isOpen, onClose }: PremiumPlansModalProps) => {
       price: 'Free',
       icon: <Sparkles className="h-6 w-6" />,
       features: [
-        'Workout generator',
-        '30 day custom training plan'
+        'Daily motivation',
+        'Free fitness & wellness tips',
+        'Community support'
       ],
       buttonText: 'Current Plan',
       buttonVariant: 'outline' as const,
@@ -94,7 +95,9 @@ const PremiumPlansModal = ({ isOpen, onClose }: PremiumPlansModalProps) => {
           {plans.map((plan, index) => (
             <div 
               key={plan.name}
-              className="p-6 rounded-lg border-2 border-gray-200"
+              className={`p-6 rounded-lg border-2 ${
+                index === 1 ? 'border-fitness-primary bg-fitness-primary/5' : 'border-gray-200'
+              }`}
             >
               <div className="flex items-center gap-2 mb-4">
                 {plan.icon}
