@@ -51,6 +51,8 @@ export const useFitnessProfile = () => {
     mutationFn: async (profileData: CreateFitnessProfileData) => {
       if (!user) throw new Error('User not authenticated');
       
+      console.log('Creating profile with data:', profileData);
+      
       const { data, error } = await supabase
         .from('fitness_profiles')
         .insert({
@@ -58,9 +60,14 @@ export const useFitnessProfile = () => {
           ...profileData
         })
         .select()
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating profile:', error);
+        throw error;
+      }
+      
+      console.log('Profile created successfully:', data);
       return data;
     },
     onSuccess: () => {
@@ -72,6 +79,8 @@ export const useFitnessProfile = () => {
     mutationFn: async (profileData: Partial<CreateFitnessProfileData>) => {
       if (!user || !profile) throw new Error('User not authenticated or profile not found');
       
+      console.log('Updating profile with data:', profileData);
+      
       const { data, error } = await supabase
         .from('fitness_profiles')
         .update({
@@ -80,9 +89,14 @@ export const useFitnessProfile = () => {
         })
         .eq('id', profile.id)
         .select()
-        .single();
+        .maybeSingle();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating profile:', error);
+        throw error;
+      }
+      
+      console.log('Profile updated successfully:', data);
       return data;
     },
     onSuccess: () => {
