@@ -183,12 +183,21 @@ const generateDayWorkout = (day: number, goal: string, bodyType: string, equipme
     const focusAreas = ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'];
     focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
   } else if (goal === 'athlete_training') {
-    const focusAreas = ['power', 'agility', 'strength', 'endurance', 'speed'];
+    // Comprehensive athlete training cycle
+    const focusAreas = [
+      'explosive_power', 
+      'agility_speed', 
+      'functional_strength', 
+      'sport_specific_conditioning', 
+      'movement_mobility',
+      'plyometric_training',
+      'core_stability'
+    ];
     focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
   }
   
   return {
-    title: `Day ${day} - ${focusArea.replace('_', ' ')}`,
+    title: `Day ${day} - ${focusArea.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
     focus: focusArea,
     intensity,
     duration: getDuration(goal, bodyType),
@@ -204,10 +213,171 @@ const getDuration = (goal: string, bodyType: string) => {
 };
 
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number) => {
-  // Enhanced exercise pool with more variety
+  // Enhanced exercise pool with comprehensive athlete training
   const exercisePool = {
+    // Athlete-specific training modules
+    explosive_power: [
+      [
+        { name: 'Medicine Ball Slams', sets: 4, reps: '8-10', rest: '90s' },
+        { name: 'Jump Squats', sets: 4, reps: '6-8', rest: '90s' },
+        { name: 'Explosive Push-ups', sets: 3, reps: '5-8', rest: '60s' },
+        { name: 'Box Jumps', sets: 3, reps: '5-8', rest: '120s' },
+        { name: 'Kettlebell Swings', sets: 3, reps: '10-12', rest: '60s' }
+      ],
+      [
+        { name: 'Power Cleans', sets: 4, reps: '5-6', rest: '120s' },
+        { name: 'Broad Jumps', sets: 4, reps: '5-6', rest: '90s' },
+        { name: 'Plyometric Push-ups', sets: 3, reps: '6-8', rest: '90s' },
+        { name: 'Single-leg Box Jumps', sets: 3, reps: '4-6 each', rest: '90s' },
+        { name: 'Battle Rope Slams', sets: 3, reps: '30s', rest: '60s' }
+      ],
+      [
+        { name: 'Olympic Lifts Complex', sets: 4, reps: '3-5', rest: '150s' },
+        { name: 'Depth Jumps', sets: 3, reps: '3-5', rest: '120s' },
+        { name: 'Explosive Burpees', sets: 3, reps: '5-8', rest: '90s' },
+        { name: 'Medicine Ball Throws', sets: 4, reps: '6-8', rest: '90s' },
+        { name: 'Sprint Starts', sets: 4, reps: '10m x 5', rest: '120s' }
+      ]
+    ],
+    agility_speed: [
+      [
+        { name: 'Ladder Drills', sets: 4, reps: '30s each', rest: '45s' },
+        { name: 'Cone Weaving', sets: 3, reps: '10 rounds', rest: '60s' },
+        { name: 'Lateral Shuffles', sets: 3, reps: '20 each way', rest: '45s' },
+        { name: 'High Knees', sets: 3, reps: '30s', rest: '30s' },
+        { name: 'Butt Kickers', sets: 3, reps: '30s', rest: '30s' }
+      ],
+      [
+        { name: 'T-Drill', sets: 4, reps: '5 rounds', rest: '90s' },
+        { name: '5-10-5 Shuttle', sets: 4, reps: '3 rounds', rest: '120s' },
+        { name: 'Reactive Cuts', sets: 3, reps: '10 each way', rest: '60s' },
+        { name: 'Sprint Intervals', sets: 4, reps: '30s on/60s off', rest: '60s' },
+        { name: 'Direction Changes', sets: 3, reps: '15 changes', rest: '90s' }
+      ],
+      [
+        { name: 'Complex Agility Course', sets: 4, reps: '3 rounds', rest: '150s' },
+        { name: 'Reactive Agility', sets: 3, reps: '8-10 reactions', rest: '120s' },
+        { name: 'Multi-directional Sprints', sets: 4, reps: '20s', rest: '100s' },
+        { name: 'Chaos Training', sets: 3, reps: '45s', rest: '90s' },
+        { name: 'Sport-specific Movements', sets: 4, reps: '10-12', rest: '90s' }
+      ]
+    ],
+    functional_strength: [
+      [
+        { name: 'Functional Squats', sets: 4, reps: '12-15', rest: '90s' },
+        { name: 'Single-arm Rows', sets: 3, reps: '10-12 each', rest: '60s' },
+        { name: 'Farmer\'s Walk', sets: 3, reps: '40m', rest: '90s' },
+        { name: 'Turkish Get-ups', sets: 2, reps: '5 each side', rest: '120s' },
+        { name: 'Bear Crawl', sets: 3, reps: '20m', rest: '60s' }
+      ],
+      [
+        { name: 'Unilateral Deadlifts', sets: 3, reps: '8-10 each', rest: '90s' },
+        { name: 'Overhead Carries', sets: 3, reps: '30m', rest: '90s' },
+        { name: 'Rotational Throws', sets: 3, reps: '10 each side', rest: '60s' },
+        { name: 'Suitcase Carries', sets: 3, reps: '40m each side', rest: '90s' },
+        { name: 'Crawling Patterns', sets: 3, reps: '30s each', rest: '60s' }
+      ],
+      [
+        { name: 'Complex Movement Chains', sets: 3, reps: '6-8', rest: '120s' },
+        { name: 'Asymmetrical Loading', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Multi-planar Movements', sets: 3, reps: '10-12', rest: '90s' },
+        { name: 'Unstable Surface Training', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Functional Integration', sets: 3, reps: '5-8', rest: '120s' }
+      ]
+    ],
+    sport_specific_conditioning: [
+      [
+        { name: 'Sport Movement Prep', sets: 3, reps: '10-15', rest: '45s' },
+        { name: 'Position-specific Drills', sets: 4, reps: '30s', rest: '60s' },
+        { name: 'Game-pace Intervals', sets: 3, reps: '45s on/90s off', rest: '60s' },
+        { name: 'Competition Simulation', sets: 2, reps: '2 min rounds', rest: '120s' },
+        { name: 'Recovery Protocols', sets: 1, reps: '5 min', rest: '0s' }
+      ],
+      [
+        { name: 'Advanced Sport Patterns', sets: 4, reps: '8-12', rest: '90s' },
+        { name: 'Tactical Conditioning', sets: 3, reps: '60s work', rest: '90s' },
+        { name: 'Pressure Training', sets: 3, reps: '30s max effort', rest: '120s' },
+        { name: 'Skill Integration', sets: 3, reps: '10-15', rest: '60s' },
+        { name: 'Mental Conditioning', sets: 2, reps: '3 min', rest: '90s' }
+      ],
+      [
+        { name: 'Elite Performance Protocols', sets: 4, reps: 'Variable', rest: '120s' },
+        { name: 'Competition Simulation', sets: 3, reps: 'Game time', rest: '180s' },
+        { name: 'Peak Performance Training', sets: 3, reps: 'Max effort', rest: '150s' },
+        { name: 'Advanced Integration', sets: 2, reps: '5-8', rest: '180s' },
+        { name: 'Performance Analysis', sets: 1, reps: '10 min', rest: '0s' }
+      ]
+    ],
+    movement_mobility: [
+      [
+        { name: 'Dynamic Warm-up', sets: 2, reps: '10 each', rest: '30s' },
+        { name: 'Hip Circles', sets: 2, reps: '10 each way', rest: '30s' },
+        { name: 'Leg Swings', sets: 2, reps: '15 each', rest: '30s' },
+        { name: 'Arm Circles', sets: 2, reps: '15 each way', rest: '30s' },
+        { name: 'Spinal Waves', sets: 2, reps: '10', rest: '30s' }
+      ],
+      [
+        { name: 'Flow Sequences', sets: 3, reps: '5-8 transitions', rest: '45s' },
+        { name: 'Multi-joint Mobility', sets: 3, reps: '8-12', rest: '45s' },
+        { name: 'Movement Chains', sets: 3, reps: '6-10', rest: '60s' },
+        { name: 'Corrective Exercises', sets: 2, reps: '12-15', rest: '45s' },
+        { name: 'Flexibility Integration', sets: 2, reps: '30s holds', rest: '30s' }
+      ],
+      [
+        { name: 'Advanced Movement Patterns', sets: 3, reps: '5-8', rest: '60s' },
+        { name: 'Complex Mobility Flows', sets: 3, reps: '3-5 rounds', rest: '90s' },
+        { name: 'Specialized Protocols', sets: 2, reps: '8-12', rest: '60s' },
+        { name: 'Performance Mobility', sets: 3, reps: '5-10', rest: '90s' },
+        { name: 'Integration Assessment', sets: 1, reps: '10 min', rest: '0s' }
+      ]
+    ],
+    plyometric_training: [
+      [
+        { name: 'Basic Jump Training', sets: 3, reps: '8-10', rest: '90s' },
+        { name: 'Skipping Variations', sets: 3, reps: '20m', rest: '60s' },
+        { name: 'Bounding', sets: 3, reps: '15m', rest: '90s' },
+        { name: 'Hop Progressions', sets: 3, reps: '10 each leg', rest: '60s' },
+        { name: 'Landing Mechanics', sets: 2, reps: '10', rest: '60s' }
+      ],
+      [
+        { name: 'Multi-directional Jumps', sets: 3, reps: '6-8', rest: '120s' },
+        { name: 'Reactive Plyometrics', sets: 3, reps: '5-8', rest: '120s' },
+        { name: 'Complex Jump Patterns', sets: 3, reps: '5-6', rest: '90s' },
+        { name: 'Plyometric Circuits', sets: 3, reps: '45s', rest: '90s' },
+        { name: 'Power Endurance', sets: 2, reps: '60s', rest: '120s' }
+      ],
+      [
+        { name: 'Advanced Plyometric Sequences', sets: 3, reps: '4-6', rest: '150s' },
+        { name: 'Elite Jump Training', sets: 3, reps: '3-5', rest: '180s' },
+        { name: 'Competition Plyometrics', sets: 2, reps: '5-8', rest: '180s' },
+        { name: 'Maximal Power Development', sets: 3, reps: '3-5', rest: '180s' },
+        { name: 'Performance Testing', sets: 1, reps: '5 attempts', rest: '180s' }
+      ]
+    ],
+    core_stability: [
+      [
+        { name: 'Plank Progressions', sets: 3, reps: '30-45s', rest: '60s' },
+        { name: 'Dead Bug', sets: 3, reps: '10 each side', rest: '45s' },
+        { name: 'Bird Dog', sets: 3, reps: '10 each side', rest: '45s' },
+        { name: 'Pallof Press', sets: 3, reps: '12 each side', rest: '45s' },
+        { name: 'Stability Ball Exercises', sets: 2, reps: '15', rest: '45s' }
+      ],
+      [
+        { name: 'Anti-rotation Training', sets: 3, reps: '45s', rest: '60s' },
+        { name: 'Single-arm/leg Challenges', sets: 3, reps: '30s each', rest: '60s' },
+        { name: 'Dynamic Stability', sets: 3, reps: '10-12', rest: '60s' },
+        { name: 'Core Integration', sets: 3, reps: '8-10', rest: '60s' },
+        { name: 'Power Core Training', sets: 2, reps: '6-8', rest: '90s' }
+      ],
+      [
+        { name: 'Advanced Core Protocols', sets: 3, reps: '5-8', rest: '90s' },
+        { name: 'Sport-specific Core', sets: 3, reps: '30-60s', rest: '90s' },
+        { name: 'Maximal Stability Challenges', sets: 2, reps: '20-45s', rest: '120s' },
+        { name: 'Complex Core Integration', sets: 3, reps: '5-8', rest: '90s' },
+        { name: 'Performance Core Testing', sets: 1, reps: 'Max time', rest: '0s' }
+      ]
+    ],
     chest_triceps: [
-      // Week 1-2 exercises - More gym-like chest exercises
       [
         { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s' },
         { name: 'Dumbbell Bench Press', sets: 3, reps: '10-12', rest: '90s' },
@@ -215,7 +385,6 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Tricep Dips', sets: 3, reps: '8-12', rest: '60s' },
         { name: 'Chest Flyes', sets: 2, reps: '12-15', rest: '60s' }
       ],
-      // Week 3-4 exercises
       [
         { name: 'Incline Dumbbell Press', sets: 3, reps: '10-12', rest: '90s' },
         { name: 'Wide Push-ups', sets: 3, reps: '10-12', rest: '60s' },
@@ -223,7 +392,6 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Chest Dips', sets: 3, reps: '8-10', rest: '90s' },
         { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s' }
       ],
-      // Advanced exercises
       [
         { name: 'Decline Push-ups', sets: 3, reps: '8-12', rest: '60s' },
         { name: 'Dumbbell Pullovers', sets: 3, reps: '10-12', rest: '90s' },
@@ -272,30 +440,6 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
         { name: 'Single-leg Hip Thrusts', sets: 3, reps: '10-12 each', rest: '90s' }
       ]
     ],
-    // Updated core exercises with proper abs exercises
-    core: [
-      [
-        { name: 'Plank', sets: 3, reps: '30-45s', rest: '60s' },
-        { name: 'Crunches', sets: 3, reps: '15-20', rest: '45s' },
-        { name: 'Bicycle Crunches', sets: 3, reps: '20 each side', rest: '45s' },
-        { name: 'Dead Bug', sets: 3, reps: '10 each side', rest: '45s' },
-        { name: 'Russian Twists', sets: 2, reps: '20', rest: '45s' }
-      ],
-      [
-        { name: 'Sit-ups', sets: 3, reps: '12-15', rest: '45s' },
-        { name: 'Leg Raises', sets: 3, reps: '10-12', rest: '60s' },
-        { name: 'Mountain Climbers', sets: 3, reps: '20 each leg', rest: '45s' },
-        { name: 'Side Plank', sets: 2, reps: '20-30s each side', rest: '60s' },
-        { name: 'V-ups', sets: 3, reps: '10-12', rest: '45s' }
-      ],
-      [
-        { name: 'Hanging Knee Raises', sets: 3, reps: '8-12', rest: '90s' },
-        { name: 'Dragon Flags', sets: 2, reps: '5-8', rest: '120s' },
-        { name: 'L-sit Hold', sets: 3, reps: '15-30s', rest: '90s' },
-        { name: 'Hollow Body Hold', sets: 3, reps: '20-40s', rest: '60s' },
-        { name: 'Ab Wheel Rollouts', sets: 3, reps: '8-10', rest: '90s' }
-      ]
-    ],
     hiit_cardio: [
       [
         { name: 'Burpees', sets: 4, reps: '30s on/30s off', rest: '60s' },
@@ -323,12 +467,12 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   const variationIndex = Math.min(week - 1, 2); // Cap at index 2
   const baseExercises = exercisePool[focusArea as keyof typeof exercisePool];
   
-  return baseExercises ? baseExercises[variationIndex] : exercisePool.chest_triceps[0];
+  return baseExercises ? baseExercises[variationIndex] : exercisePool.explosive_power[0];
 };
 
 const getRestDayActivity = (goal: string) => {
   if (goal === 'fat_loss') return 'Light cardio (walking, stretching)';
-  if (goal === 'athlete_training') return 'Active recovery (mobility, light movement)';
+  if (goal === 'athlete_training') return 'Active recovery (mobility, light movement, skill work)';
   return 'Complete rest or gentle stretching';
 };
 
@@ -336,12 +480,12 @@ const getWorkoutNotes = (goal: string, bodyType: string, week: number) => {
   const baseNotes = {
     muscle_gain: 'Focus on progressive overload. Increase weight when you can complete all reps easily.',
     fat_loss: 'Maintain high intensity. Focus on form over speed.',
-    athlete_training: 'Explosive movements. Focus on power and technique.'
+    athlete_training: 'Focus on explosive movements, proper technique, and sport-specific adaptations. Train like your sport depends on it.'
   };
   
-  const weekNotes = week === 1 ? ' Start conservatively to learn proper form.' : 
-                   week <= 2 ? ' Increase intensity gradually.' : 
-                   ' Push your limits while maintaining good form.';
+  const weekNotes = week === 1 ? ' Start conservatively to build movement patterns.' : 
+                   week <= 2 ? ' Increase intensity and complexity.' : 
+                   ' Peak performance training - push your athletic limits.';
   
   return baseNotes[goal as keyof typeof baseNotes] + weekNotes;
 };
