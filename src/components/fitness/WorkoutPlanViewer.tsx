@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,30 +20,6 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
     .join(' ');
 
   const dailyWorkouts = plan.dailyWorkouts || [];
-
-  // Get proper focus display name
-  const getFocusDisplayName = (focus: string) => {
-    if (!focus) return 'Training';
-    
-    const focusMap: { [key: string]: string } = {
-      'strength': 'Strength Training',
-      'power': 'Power Training',
-      'agility': 'Agility Training',
-      'endurance': 'Endurance Training',
-      'conditioning': 'Conditioning',
-      'recovery': 'Recovery',
-      'plyometric': 'Plyometric Training',
-      'functional': 'Functional Training',
-      'core': 'Core Training',
-      'movement': 'Movement Training',
-      'cardio': 'Cardio Training',
-      'muscle_gain': 'Muscle Building',
-      'fat_loss': 'Fat Loss Training',
-      'athlete_training': 'Athletic Training'
-    };
-    
-    return focusMap[focus] || focus.charAt(0).toUpperCase() + focus.slice(1).replace(/_/g, ' ');
-  };
 
   // Get detailed exercise descriptions
   const getExerciseDescription = (exerciseName: string): string => {
@@ -76,6 +51,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'broad jumps': 'Stand with feet shoulder-width apart. Jump forward as far as possible, landing on both feet. Swing arms for momentum. Focus on distance and soft landing.',
       'single-leg hops': 'Hop forward, backward, or laterally on one leg. Focus on quick ground contact and maintaining balance. Complete all reps on one leg before switching.',
 
+      // Olympic Lifts (Simplified)
+      'hang cleans': 'Start with bar at mid-thigh. Explosively extend hips and shrug shoulders. Pull bar up and catch in front rack position. Focus on speed and timing.',
+      'push press': 'Start with bar in front rack position. Dip slightly at knees, then drive up explosively while pressing bar overhead. Use leg drive to assist press.',
+
       // Core & Stability
       'plank variations': 'Hold plank position with proper alignment - straight line from head to heels. Variations include side planks, plank up-downs, or adding arm/leg movements.',
       'russian twists': 'Sit with knees bent, lean back slightly. Rotate torso side to side, touching ground beside hips. Keep chest up and core engaged throughout movement.',
@@ -86,16 +65,14 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'mountain climbers': 'Start in plank position. Alternately bring knees toward chest in running motion. Keep hips level and core engaged.',
       'battle ropes': 'Hold rope ends with feet shoulder-width apart. Create waves by alternately raising and lowering arms explosively. Maintain athletic stance.',
 
-      // Standard exercises from existing pool
-      'push-ups': 'Start in plank position. Lower body until chest nearly touches ground. Push back up to starting position. Keep body in straight line throughout.',
-      'bicep curls': 'Stand with weights at sides. Curl weights up by flexing biceps. Lower with control. Keep elbows at sides throughout movement.',
-      'tricep dips': 'Sit on edge of bench, hands beside hips. Lower body by bending elbows. Push back up to starting position. Keep body close to bench.',
-      'calf raises': 'Stand with feet hip-width apart. Rise up onto toes by contracting calves. Lower with control. Can be done on flat ground or elevated surface.',
-      'glute bridges': 'Lie on back, knees bent. Lift hips by squeezing glutes. Hold briefly at top. Lower with control. Focus on glute activation.',
-      'bicycle crunches': 'Lie on back, hands behind head. Bring opposite elbow to knee while extending other leg. Alternate in cycling motion.',
-      'leg raises': 'Lie on back, legs straight. Lift legs until vertical or as high as possible. Lower with control without touching ground.',
-      'jump jacks': 'Start with feet together, arms at sides. Jump feet apart while raising arms overhead. Return to starting position. Maintain rhythm.',
-      'arm circles': 'Extend arms to sides. Make small circles, gradually increasing size. Reverse direction. Good for warming up shoulders.'
+      // Flexibility & Mobility
+      'dynamic stretching': 'Perform controlled movements through full range of motion. Examples include leg swings, arm circles, walking lunges with reach. Prepare muscles for activity.',
+      'foam rolling': 'Use foam roller to apply pressure to tight muscles. Roll slowly, pausing on tender spots. Focus on major muscle groups used in training.',
+
+      // Sport-Specific Drills
+      'sprint intervals': 'Alternate between high-intensity sprints and recovery periods. Focus on maximum effort during work periods and active recovery between sets.',
+      'change of direction': 'Practice quick direction changes using various patterns. Focus on body position, foot placement, and minimizing deceleration time.',
+      'reaction drills': 'Respond to visual or auditory cues with quick movements. Improves reaction time and decision-making speed.'
     };
 
     // Normalize the exercise name for matching
@@ -123,7 +100,67 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
     const normalizedName = exerciseName.toLowerCase().trim();
     
     const exerciseMap: { [key: string]: string } = {
-      // Standard exercises
+      // Athlete-specific exercises
+      'medicine ball slams': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Medicine-Ball-Slam.gif',
+      'box jumps': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Box-Jump.gif',
+      'explosive push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/explosive-push-ups.gif',
+      'power cleans': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/08/barbell-power-clean.gif',
+      'broad jumps': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/09/broad-jump.gif',
+      'plyometric push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/explosive-push-ups.gif',
+      'single-leg box jumps': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Single-Leg-Box-Jump.gif',
+      'battle rope slams': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Battle-Ropes.gif',
+      'olympic lifts complex': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/08/barbell-power-clean.gif',
+      'depth jumps': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/09/depth-jump.gif',
+      'explosive burpees': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Burpee.gif',
+      'medicine ball throws': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Medicine-Ball-Slam.gif',
+      'sprint starts': 'https://i.pinimg.com/originals/55/50/03/555003596e97967eb5f2568403bbc742.gif',
+      
+      // Agility exercises
+      'ladder drills': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/agility-ladder-drills.gif',
+      'cone weaving': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/cone-drills.gif',
+      'lateral shuffles': 'https://fitnessprogramer.com/wp-content/uploads/2021/10/Lateral-Shuffle.gif',
+      't-drill': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/t-drill.gif',
+      '5-10-5 shuttle': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/shuttle-run.gif',
+      'reactive cuts': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/reactive-agility.gif',
+      'sprint intervals': 'https://i.pinimg.com/originals/55/50/03/555003596e97967eb5f2568403bbc742.gif',
+      'direction changes': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/direction-change.gif',
+      
+      // Functional strength
+      'functional squats': 'https://www.inspireusafoundation.org/wp-content/uploads/2021/06/bodyweight-squat.gif',
+      "farmer's walk": 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/farmers-walk.gif',
+      'turkish get-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Turkish-Get-Up-Squat-style.gif',
+      'bear crawl': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/07/bear-crawl.gif',
+      'unilateral deadlifts': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/barbell-single-leg-deadlift.gif',
+      'overhead carries': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/overhead-carry.gif',
+      'rotational throws': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Medicine-Ball-Rotational-Throw.gif',
+      'suitcase carries': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/suitcase-carry.gif',
+      'crawling patterns': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/07/bear-crawl.gif',
+      
+      // Core stability
+      'plank progressions': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
+      'dead bug': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dead-Bug.gif',
+      'bird dog': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/07/bird-dog.gif',
+      'pallof press': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/08/pallof-press.gif',
+      'stability ball exercises': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/stability-ball-plank.gif',
+      'anti-rotation training': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/08/pallof-press.gif',
+      
+      // Movement & Mobility
+      'dynamic warm-up': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/dynamic-warmup.gif',
+      'hip circles': 'https://i.pinimg.com/originals/12/31/e2/1231e24fc3d7944e38b180c51067689d.gif',
+      'leg swings': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/leg-swings.gif',
+      'spinal waves': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/spinal-mobility.gif',
+      'flow sequences': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/movement-flow.gif',
+      
+      // Plyometric training
+      'basic jump training': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Squat.gif',
+      'skipping variations': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/skipping.gif',
+      'bounding': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/bounding.gif',
+      'hop progressions': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/single-leg-hop.gif',
+      'landing mechanics': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/landing-mechanics.gif',
+      'multi-directional jumps': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/multi-directional-jumps.gif',
+      'reactive plyometrics': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/reactive-jumps.gif',
+      
+      // Standard exercises from existing pool
       'push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
       'squats': 'https://www.inspireusafoundation.org/wp-content/uploads/2021/06/bodyweight-squat.gif',
       'pull-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-up.gif',
@@ -132,31 +169,22 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'mountain climbers': 'https://i.pinimg.com/originals/fb/fa/09/fbfa0902f381a5735972c21255935aff.gif',
       'plank': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
       'high knees': 'https://i.pinimg.com/originals/55/50/03/555003596e97967eb5f2568403bbc742.gif',
-      'jump squats': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Squat.gif',
+      'butt kickers': 'https://fitnessprogramer.com/wp-content/uploads/2021/10/Butt-Kicks.gif',
       'kettlebell swings': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SWING.gif',
-      'box jumps': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Box-Jump.gif',
-      'medicine ball slams': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Medicine-Ball-Slam.gif',
-      'battle ropes': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Battle-Ropes.gif',
-      'russian twists': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Russian-Twist.gif',
-      'bicycle crunches': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
-      'leg raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-Leg-Raise.gif',
-      'jump jacks': 'https://www.inspireusafoundation.org/wp-content/uploads/2021/08/jumping-jacks.gif',
-      'deadlifts': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/09/barbell-deadlift.gif',
-      'bench press': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/barbell-bench-press.gif',
+      'jump squats': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Jump-Squat.gif',
       'overhead press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
       'rows': 'https://burnfit.io/wp-content/uploads/2023/11/DB_LOW.gif',
-      'bicep curls': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
+      'single-arm rows': 'https://burnfit.io/wp-content/uploads/2023/11/OA_DB_ROW.gif',
+      'lateral raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Seated-Dumbbell-Lateral-Raise.gif',
       'tricep dips': 'https://miro.medium.com/v2/resize:fit:840/0*xpvWu3s9ZmFHPhLb.gif',
+      'bicep curls': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Curl.gif',
       'calf raises': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/standing-calf-raise.gif',
       'glute bridges': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/12/glute-bridge.gif',
-      'broad jumps': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/09/broad-jump.gif',
-      'depth jumps': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/09/depth-jump.gif',
-      'lateral bounds': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/lateral-bounds.gif',
-      'shuttle runs': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/shuttle-run.gif',
-      'ladder drills': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/agility-ladder-drills.gif',
-      'cone sprints': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/cone-drills.gif',
-      'dead bugs': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dead-Bug.gif',
-      'plank variations': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif'
+      'bicycle crunches': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
+      'russian twists': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Russian-Twist.gif',
+      'leg raises': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Lying-Leg-Raise.gif',
+      'jump jacks': 'https://www.inspireusafoundation.org/wp-content/uploads/2021/08/jumping-jacks.gif',
+      'arm circles': 'https://spotebi.com/wp-content/uploads/2014/10/big-arm-circles-exercise-illustration.gif'
     };
 
     // Try exact match first
@@ -212,7 +240,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                   <div>
                     <h3 className="font-semibold">Day {day.day}</h3>
                     <p className="text-sm text-gray-600">
-                      {day.isRestDay ? 'Rest Day' : getFocusDisplayName(day.workout?.focus || day.focus || plan.goal)}
+                      {day.isRestDay ? 'Rest Day' : `${day.workout?.focus?.replace('_', ' ')} Training`}
                     </p>
                   </div>
                 </div>
@@ -234,7 +262,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
               </div>
             </CardHeader>
 
-            {!day.isRestDay && day.workout?.exercises && day.workout.exercises.length > 0 && (
+            {!day.isRestDay && day.workout?.exercises && (
               <CardContent className="pt-0">
                 <div className="space-y-3">
                   {day.workout.exercises.map((exercise: any, index: number) => (
@@ -317,14 +345,6 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                     <Calendar className="h-4 w-4 text-blue-600 mr-2" />
                     <p className="text-blue-700">{day.restType || 'Rest and recovery day. Stay hydrated and get good sleep!'}</p>
                   </div>
-                </div>
-              </CardContent>
-            )}
-
-            {!day.isRestDay && (!day.workout?.exercises || day.workout.exercises.length === 0) && (
-              <CardContent className="pt-0">
-                <div className="p-3 bg-gray-50 rounded-lg text-center">
-                  <p className="text-gray-600">No exercises available for this day</p>
                 </div>
               </CardContent>
             )}

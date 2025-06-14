@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
@@ -142,7 +143,6 @@ const Home = () => {
                 workoutPlans={workoutPlans}
                 onSelectPlan={handleSelectPlan}
                 onDeletePlan={handleDeletePlan}
-                onPlanGenerated={handlePlanGenerated}
               />
             </div>
 

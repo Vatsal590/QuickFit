@@ -18,8 +18,6 @@ export const useWorkoutPlans = () => {
 
     try {
       setLoading(true);
-      console.log('Loading workout plans for user:', user.id);
-      
       const { data, error } = await supabase
         .from('workout_plans')
         .select('*')
@@ -30,7 +28,6 @@ export const useWorkoutPlans = () => {
         console.error('Error loading workout plans:', error);
         setWorkoutPlans([]);
       } else {
-        console.log('Loaded workout plans:', data);
         const plans: WorkoutPlan[] = (data || []).map(plan => ({
           id: plan.id,
           title: plan.plan_name,
@@ -54,62 +51,13 @@ export const useWorkoutPlans = () => {
 
   // Add a function to manually add a workout plan (for immediate UI updates)
   const addWorkoutPlan = (plan: WorkoutPlan) => {
-    console.log('Adding workout plan to local state:', plan);
     setWorkoutPlans(prev => [plan, ...prev]);
-  };
-
-  // Add a function to save a workout plan to the database
-  const saveWorkoutPlan = async (planData: {
-    plan_name: string;
-    fitness_goal: string;
-    profile_id: string;
-    daily_workouts: any[];
-    total_days?: number;
-  }) => {
-    if (!user) {
-      throw new Error('User not authenticated');
-    }
-
-    console.log('Saving workout plan:', planData);
-
-    try {
-      const { data, error } = await supabase
-        .from('workout_plans')
-        .insert({
-          user_id: user.id,
-          profile_id: planData.profile_id,
-          plan_name: planData.plan_name,
-          fitness_goal: planData.fitness_goal,
-          daily_workouts: planData.daily_workouts,
-          total_days: planData.total_days || 30,
-          is_active: true
-        })
-        .select()
-        .maybeSingle();
-
-      if (error) {
-        console.error('Error saving workout plan:', error);
-        throw error;
-      }
-
-      console.log('Workout plan saved successfully:', data);
-      
-      // Reload plans to get the latest data
-      await loadWorkoutPlans();
-      
-      return data;
-    } catch (error) {
-      console.error('Failed to save workout plan:', error);
-      throw error;
-    }
   };
 
   const deleteWorkoutPlan = async (planId: string) => {
     if (!user) return;
 
     try {
-      console.log('Deleting workout plan:', planId);
-      
       const { error } = await supabase
         .from('workout_plans')
         .delete()
@@ -118,14 +66,11 @@ export const useWorkoutPlans = () => {
 
       if (error) {
         console.error('Error deleting workout plan:', error);
-        throw error;
       } else {
-        console.log('Workout plan deleted successfully');
         setWorkoutPlans(prev => prev.filter(plan => plan.id !== planId));
       }
     } catch (error) {
       console.error('Error deleting workout plan:', error);
-      throw error;
     }
   };
 
@@ -133,8 +78,6 @@ export const useWorkoutPlans = () => {
     if (!user) return;
 
     try {
-      console.log('Marking day complete:', { planId, dayNumber });
-      
       // Get the current plan
       const currentPlan = workoutPlans.find(p => p.id === planId);
       if (!currentPlan?.dailyWorkouts) return;
@@ -158,9 +101,7 @@ export const useWorkoutPlans = () => {
 
       if (error) {
         console.error('Error updating workout plan:', error);
-        throw error;
       } else {
-        console.log('Day marked as complete successfully');
         // Update local state
         setWorkoutPlans(prev => prev.map(plan => 
           plan.id === planId 
@@ -174,7 +115,6 @@ export const useWorkoutPlans = () => {
       }
     } catch (error) {
       console.error('Error marking day complete:', error);
-      throw error;
     }
   };
 
@@ -187,7 +127,6 @@ export const useWorkoutPlans = () => {
     loading,
     loadWorkoutPlans,
     addWorkoutPlan,
-    saveWorkoutPlan,
     deleteWorkoutPlan,
     markDayComplete
   };

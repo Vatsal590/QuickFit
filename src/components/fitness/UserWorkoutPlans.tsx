@@ -1,155 +1,128 @@
 
-import React, { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Calendar, Dumbbell, Target, Plus, Eye, Trash2 } from 'lucide-react';
 import { WorkoutPlan } from '@/types';
-import FitnessProfileForm from './FitnessProfileForm';
+import { Calendar, Clock, Target, Dumbbell, Play, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
 
 interface UserWorkoutPlansProps {
-  workoutPlans: WorkoutPlan[];
-  onDeletePlan: (planId: string) => Promise<void>;
-  onPlanGenerated?: (plan: any) => void;
+  workoutPlans?: WorkoutPlan[];
   onSelectPlan?: (plan: WorkoutPlan) => void;
+  onDeletePlan?: (planId: string) => void;
 }
 
-const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated, onSelectPlan }: UserWorkoutPlansProps) => {
-  const [showProfileForm, setShowProfileForm] = useState(false);
-
-  const getGoalColor = (goal: string) => {
-    switch (goal) {
-      case 'muscle_gain':
-        return 'bg-blue-100 text-blue-800';
-      case 'fat_loss':
-        return 'bg-red-100 text-red-800';
-      case 'athlete_training':
-        return 'bg-purple-100 text-purple-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const formatGoal = (goal: string) => {
-    return goal.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  };
+const UserWorkoutPlans = ({ 
+  workoutPlans = [], 
+  onSelectPlan = () => {}, 
+  onDeletePlan = () => {} 
+}: UserWorkoutPlansProps) => {
+  if (!workoutPlans || workoutPlans.length === 0) {
+    return (
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle>Your Workout Plans</CardTitle>
+          <CardDescription>No workout plans created yet</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center py-8 text-center">
+          <div className="bg-gray-100 rounded-full p-4 mb-4">
+            <Target className="h-8 w-8 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
+          <p className="text-gray-500 max-w-md">
+            Create your first personalized workout plan to get started with your fitness journey
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <>
-      <div className="space-y-6">
-        {/* Header Section */}
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Your Workout Plans</h2>
-            <p className="text-gray-600">
-              Personalized 30-day workout plans based on your fitness profile
-            </p>
-          </div>
-          <Button 
-            onClick={() => setShowProfileForm(true)}
-            className="bg-fitness-primary hover:bg-fitness-primary/90"
+    <Card>
+      <CardHeader>
+        <CardTitle>Your Workout Plans</CardTitle>
+        <CardDescription>Manage and track your personalized workout plans</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {workoutPlans.map((plan) => (
+          <div 
+            key={plan.id}
+            className="border rounded-lg p-4 hover:shadow-md transition-shadow"
           >
-            <Plus className="mr-2 h-4 w-4" />
-            Create New Plan
-          </Button>
-        </div>
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-lg capitalize">
+                    {plan.title}
+                  </h3>
+                  <Badge variant="secondary" className="capitalize">
+                    {plan.goal}
+                  </Badge>
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-600 mb-3">
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 text-fitness-primary mr-1" />
+                    <span>Created {format(new Date(plan.createdAt), 'MMM d, yyyy')}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Clock className="h-4 w-4 text-fitness-primary mr-1" />
+                    <span>{plan.duration} days</span>
+                  </div>
+                  <div className="flex items-center">
+                    <Target className="h-4 w-4 text-fitness-primary mr-1" />
+                    <span>{plan.daysLeft} days left</span>
+                  </div>
+                </div>
 
-        {/* Workout Plans Grid */}
-        {workoutPlans.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {workoutPlans.map((plan) => {
-              const progress = plan.duration > 0 ? ((plan.duration - plan.daysLeft) / plan.duration) * 100 : 0;
+                <div className="flex items-center gap-2 text-sm">
+                  <Dumbbell className="h-4 w-4 text-fitness-primary" />
+                  <span className="text-gray-600">
+                    Equipment: {plan.equipment && plan.equipment.includes("none") && plan.equipment.length === 1
+                      ? "No equipment needed"
+                      : plan.equipment && plan.equipment.length > 2
+                        ? "Multiple equipment"
+                        : (plan.equipment || [])
+                            .filter(eq => eq !== "none")
+                            .map(eq => eq.charAt(0).toUpperCase() + eq.slice(1))
+                            .join(", ")}
+                  </span>
+                </div>
+              </div>
               
-              return (
-                <Card key={plan.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex justify-between items-start">
-                      <div className="space-y-1">
-                        <CardTitle className="text-lg">{plan.title}</CardTitle>
-                        <Badge className={getGoalColor(plan.goal)} variant="secondary">
-                          {formatGoal(plan.goal)}
-                        </Badge>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onSelectPlan?.(plan)}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDeletePlan(plan.id)}
-                          className="text-red-500 hover:text-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-                  </CardHeader>
-                  
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
-                        <span>{plan.duration} days</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Dumbbell className="h-4 w-4" />
-                        <span>{plan.daysLeft} left</span>
-                      </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span>Progress</span>
-                        <span>{Math.round(progress)}%</span>
-                      </div>
-                      <Progress value={progress} className="w-full" />
-                    </div>
-                    
-                    <Button 
-                      className="w-full"
-                      onClick={() => onSelectPlan?.(plan)}
-                    >
-                      <Target className="mr-2 h-4 w-4" />
-                      View Plan
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <Card className="text-center py-12">
-            <CardContent>
-              <Dumbbell className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <CardTitle className="mb-2">No Workout Plans Yet</CardTitle>
-              <CardDescription className="mb-4">
-                Create your first personalized 30-day workout plan based on your fitness goals
-              </CardDescription>
-              <Button 
-                onClick={() => setShowProfileForm(true)}
-                className="bg-fitness-primary hover:bg-fitness-primary/90"
+              <div className="flex items-center gap-2 ml-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => onDeletePlan(plan.id)}
+                  className="text-red-600 border-red-200 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            
+            <div className="pt-3 border-t">
+              <Button
+                onClick={() => onSelectPlan({
+                  ...plan,
+                  type: plan.type || 'custom',
+                  duration: plan.duration || 30,
+                  daysLeft: plan.daysLeft || plan.duration || 30,
+                  schedule: plan.schedule || plan.exercises || [],
+                  createdAt: plan.createdAt || new Date().toISOString()
+                })}
+                className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
               >
-                <Plus className="mr-2 h-4 w-4" />
-                Create Your First Plan
+                <Play className="h-4 w-4 mr-2" />
+                Start Plan
               </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {/* Fitness Profile Form Modal */}
-      <FitnessProfileForm
-        isOpen={showProfileForm}
-        onClose={() => setShowProfileForm(false)}
-        onPlanGenerated={onPlanGenerated}
-      />
-    </>
+            </div>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   );
 };
 
