@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Clock, Target, Calendar, CheckCircle, Play } from 'lucide-react';
+import { Clock, Target, Calendar, CheckCircle, Play, Info } from 'lucide-react';
 import { WorkoutPlan } from '@/types';
 
 interface WorkoutPlanViewerProps {
@@ -20,6 +20,79 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
     .join(' ');
 
   const dailyWorkouts = plan.dailyWorkouts || [];
+
+  // Get detailed exercise descriptions
+  const getExerciseDescription = (exerciseName: string): string => {
+    const descriptions: { [key: string]: string } = {
+      // Strength Training
+      'deadlifts': 'Stand with feet hip-width apart, bar over mid-foot. Hinge at hips, grab bar with hands just outside legs. Drive through heels, extend hips and knees simultaneously. Keep chest up, shoulders back. Lower with control.',
+      'squats': 'Stand with feet shoulder-width apart, toes slightly turned out. Lower by pushing hips back and bending knees. Keep chest up, knees track over toes. Descend until thighs parallel to floor, then drive through heels to stand.',
+      'bench press': 'Lie on bench, feet flat on floor. Grip bar slightly wider than shoulders. Lower bar to chest with control, pause briefly. Press bar up explosively, keeping shoulder blades retracted throughout movement.',
+      'pull-ups': 'Hang from bar with arms fully extended, hands shoulder-width apart. Pull body up until chin clears bar. Lower with control to full arm extension. Engage core throughout movement.',
+      'overhead press': 'Stand with feet hip-width apart, core engaged. Press weight from shoulder height straight up overhead. Keep head neutral, don\'t arch back excessively. Lower with control to starting position.',
+      'rows': 'Hinge at hips with slight knee bend. Pull weight to lower chest/upper abdomen. Squeeze shoulder blades together. Keep core tight, don\'t round back. Lower with control.',
+      'lunges': 'Step forward into lunge position. Lower back knee toward ground while keeping front knee over ankle. Push through front heel to return to starting position. Alternate legs or complete all reps on one side.',
+
+      // Power & Explosive Training
+      'box jumps': 'Stand facing box. Jump explosively onto box, landing softly with both feet. Step down carefully or jump down if height allows. Focus on soft landings and full hip extension.',
+      'medicine ball slams': 'Hold medicine ball overhead. Explosively slam ball down while engaging core and extending through entire body. Pick up ball and repeat. Focus on speed and power.',
+      'burpees': 'Start standing. Drop to squat, place hands on ground. Jump feet back to plank. Perform push-up. Jump feet back to squat. Explode up with arms overhead.',
+      'jump squats': 'Perform regular squat. At bottom, explode up jumping as high as possible. Land softly, immediately descending into next squat. Focus on soft landings and continuous movement.',
+      'kettlebell swings': 'Stand with feet wider than shoulders, kettlebell between legs. Hinge at hips, grab kettlebell. Drive hips forward explosively, swinging kettlebell to shoulder height. Control descent.',
+
+      // Agility & Speed Training
+      'ladder drills': 'Use agility ladder on ground. Perform various footwork patterns - in-in-out-out, lateral shuffles, high knees. Focus on quick, precise foot placement and maintaining rhythm.',
+      'cone sprints': 'Set up cones in various patterns. Sprint between cones using different movement patterns - straight line, zigzag, T-drill. Focus on acceleration, deceleration, and change of direction.',
+      'shuttle runs': 'Sprint to designated point, touch ground, return to start. Repeat for specified distance/time. Focus on quick acceleration and efficient turning technique.',
+      'lateral bounds': 'Stand on one foot. Bound laterally to opposite foot, sticking landing. Continue bounding side to side. Focus on single-leg stability and controlled landings.',
+
+      // Plyometric Training
+      'depth jumps': 'Step off box, land softly, immediately jump vertically as high as possible. Focus on minimal ground contact time and maximum vertical jump height.',
+      'broad jumps': 'Stand with feet shoulder-width apart. Jump forward as far as possible, landing on both feet. Swing arms for momentum. Focus on distance and soft landing.',
+      'single-leg hops': 'Hop forward, backward, or laterally on one leg. Focus on quick ground contact and maintaining balance. Complete all reps on one leg before switching.',
+
+      // Olympic Lifts (Simplified)
+      'hang cleans': 'Start with bar at mid-thigh. Explosively extend hips and shrug shoulders. Pull bar up and catch in front rack position. Focus on speed and timing.',
+      'push press': 'Start with bar in front rack position. Dip slightly at knees, then drive up explosively while pressing bar overhead. Use leg drive to assist press.',
+
+      // Core & Stability
+      'plank variations': 'Hold plank position with proper alignment - straight line from head to heels. Variations include side planks, plank up-downs, or adding arm/leg movements.',
+      'russian twists': 'Sit with knees bent, lean back slightly. Rotate torso side to side, touching ground beside hips. Keep chest up and core engaged throughout movement.',
+      'dead bugs': 'Lie on back, arms up, knees at 90 degrees. Lower opposite arm and leg while maintaining core stability. Return to start and repeat on other side.',
+
+      // Cardio & Conditioning
+      'high knees': 'Run in place bringing knees up toward chest. Pump arms naturally. Focus on quick turnover and maintaining posture.',
+      'mountain climbers': 'Start in plank position. Alternately bring knees toward chest in running motion. Keep hips level and core engaged.',
+      'battle ropes': 'Hold rope ends with feet shoulder-width apart. Create waves by alternately raising and lowering arms explosively. Maintain athletic stance.',
+
+      // Flexibility & Mobility
+      'dynamic stretching': 'Perform controlled movements through full range of motion. Examples include leg swings, arm circles, walking lunges with reach. Prepare muscles for activity.',
+      'foam rolling': 'Use foam roller to apply pressure to tight muscles. Roll slowly, pausing on tender spots. Focus on major muscle groups used in training.',
+
+      // Sport-Specific Drills
+      'sprint intervals': 'Alternate between high-intensity sprints and recovery periods. Focus on maximum effort during work periods and active recovery between sets.',
+      'change of direction': 'Practice quick direction changes using various patterns. Focus on body position, foot placement, and minimizing deceleration time.',
+      'reaction drills': 'Respond to visual or auditory cues with quick movements. Improves reaction time and decision-making speed.'
+    };
+
+    // Normalize the exercise name for matching
+    const normalizedName = exerciseName.toLowerCase().trim();
+    
+    // Try exact match first
+    if (descriptions[normalizedName]) {
+      return descriptions[normalizedName];
+    }
+
+    // Try partial matches for more flexible matching
+    for (const [key, description] of Object.entries(descriptions)) {
+      if (normalizedName.includes(key) || key.includes(normalizedName)) {
+        return description;
+      }
+    }
+
+    // Default description
+    return 'Perform this exercise with proper form and control. Focus on quality movement patterns and maintain good posture throughout. If unsure about technique, consult a qualified trainer.';
+  };
 
   // Get exercise animation URL based on exercise name
   const getExerciseAnimationUrl = (exerciseName: string): string => {
@@ -300,7 +373,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                           <div>
                             <h4 className="font-medium flex items-center gap-2">
                               {exercise.name}
-                              <Play className="h-3 w-3 text-fitness-primary" />
+                              <Info className="h-3 w-3 text-fitness-primary" />
                             </h4>
                             <p className="text-sm text-gray-600">
                               {exercise.sets} sets × {exercise.reps}
@@ -314,23 +387,35 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                           </div>
                         </div>
                       </DialogTrigger>
-                      <DialogContent className="max-w-md">
+                      <DialogContent className="max-w-lg">
                         <DialogHeader>
-                          <DialogTitle>{exercise.name}</DialogTitle>
+                          <DialogTitle className="flex items-center gap-2">
+                            {exercise.name}
+                            <Badge variant="secondary" className="text-xs">
+                              {exercise.sets} × {exercise.reps}
+                            </Badge>
+                          </DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
-                          <div className="flex justify-center">
-                            <img 
-                              src={getExerciseAnimationUrl(exercise.name)}
-                              alt={`${exercise.name} animation`}
-                              className="w-full max-w-sm rounded-lg"
-                              style={{ maxHeight: '300px', objectFit: 'contain' }}
-                            />
+                          <div className="p-4 bg-blue-50 rounded-lg">
+                            <h4 className="font-medium text-blue-900 mb-2">How to Perform:</h4>
+                            <p className="text-sm text-blue-800 leading-relaxed">
+                              {getExerciseDescription(exercise.name)}
+                            </p>
                           </div>
-                          <div className="space-y-2 text-sm">
-                            <p><strong>Sets:</strong> {exercise.sets}</p>
-                            <p><strong>Reps:</strong> {exercise.reps}</p>
-                            <p><strong>Rest:</strong> {exercise.rest}</p>
+                          <div className="grid grid-cols-3 gap-3 text-sm">
+                            <div className="text-center p-2 bg-gray-50 rounded">
+                              <p className="font-medium">Sets</p>
+                              <p className="text-fitness-primary">{exercise.sets}</p>
+                            </div>
+                            <div className="text-center p-2 bg-gray-50 rounded">
+                              <p className="font-medium">Reps</p>
+                              <p className="text-fitness-primary">{exercise.reps}</p>
+                            </div>
+                            <div className="text-center p-2 bg-gray-50 rounded">
+                              <p className="font-medium">Rest</p>
+                              <p className="text-fitness-primary">{exercise.rest}</p>
+                            </div>
                           </div>
                         </div>
                       </DialogContent>
