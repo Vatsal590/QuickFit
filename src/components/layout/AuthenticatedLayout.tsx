@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, Crown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
+import PremiumPlansModal from '@/components/subscription/PremiumPlansModal';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const [showPremiumPlans, setShowPremiumPlans] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -93,6 +95,17 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
             </div>
             
             <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+              {/* Premium Button */}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowPremiumPlans(true)}
+                className="flex-shrink-0 border-fitness-primary text-fitness-primary hover:bg-fitness-primary hover:text-white"
+              >
+                <Crown className="h-4 w-4 mr-1 md:mr-2" />
+                <span className="hidden sm:inline">Premium</span>
+              </Button>
+              
               {/* Sign Out Button */}
               <Button 
                 variant="outline" 
@@ -115,6 +128,12 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       <FitnessProfileForm 
         isOpen={showProfileForm}
         onClose={() => setShowProfileForm(false)}
+      />
+
+      {/* Premium Plans Modal */}
+      <PremiumPlansModal 
+        isOpen={showPremiumPlans}
+        onClose={() => setShowPremiumPlans(false)}
       />
     </div>
   );
