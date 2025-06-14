@@ -107,11 +107,18 @@ const PremiumPlansModal = ({ isOpen, onClose }: PremiumPlansModalProps) => {
               
               {/* Coach Photos */}
               <div className="grid grid-cols-2 gap-4 max-w-md">
-                <img 
-                  src="/lovable-uploads/992a0b84-121f-4419-8ed2-784d9e5e1d9f.png" 
-                  alt="Coach Vatsal - Front view"
-                  className="rounded-lg shadow-md w-full h-48 object-cover"
-                />
+                <div className="relative">
+                  <img 
+                    src="/lovable-uploads/992a0b84-121f-4419-8ed2-784d9e5e1d9f.png" 
+                    alt="Coach Vatsal - Front view"
+                    className="rounded-lg shadow-md w-full h-48 object-cover"
+                  />
+                  {/* Blur overlay for face area */}
+                  <div 
+                    className="absolute top-4 left-1/2 transform -translate-x-1/2 w-16 h-20 backdrop-blur-md rounded-full"
+                    style={{ backdropFilter: 'blur(8px)' }}
+                  ></div>
+                </div>
                 <img 
                   src="/lovable-uploads/939c210a-89b8-489d-85cc-b900f92474f0.png" 
                   alt="Coach Vatsal - Back view"
