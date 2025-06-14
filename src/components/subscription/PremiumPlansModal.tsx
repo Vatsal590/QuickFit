@@ -89,8 +89,40 @@ const PremiumPlansModal = ({ isOpen, onClose }: PremiumPlansModalProps) => {
             Choose Your Plan
           </DialogTitle>
         </DialogHeader>
+
+        {/* Meet Your Coach Section */}
+        <div className="bg-gray-50 p-6 rounded-lg mb-8">
+          <div className="flex items-start gap-4">
+            <div className="text-2xl">👋</div>
+            <div>
+              <h4 className="font-bold text-lg mb-2">Meet Your Personal Coach: Vatsal</h4>
+              <p className="text-gray-700 mb-4">
+                I'm not just your personal coach, but also a mentor. I've spent so much time in the gym that it can be called my second home. 
+                I've had back and shoulder pains too. And I have gotten over that. This isn't about quick fixes — it's about building something real that actually lasts. 
+                I'm here to make sure you don't do this alone.
+              </p>
+              <p className="font-semibold text-fitness-primary mb-4">
+                Ready to start? Choose your plan and let's go. 💙
+              </p>
+              
+              {/* Coach Photos */}
+              <div className="grid grid-cols-2 gap-4 max-w-md">
+                <img 
+                  src="/lovable-uploads/992a0b84-121f-4419-8ed2-784d9e5e1d9f.png" 
+                  alt="Coach Vatsal - Front view"
+                  className="rounded-lg shadow-md w-full h-48 object-cover"
+                />
+                <img 
+                  src="/lovable-uploads/939c210a-89b8-489d-85cc-b900f92474f0.png" 
+                  alt="Coach Vatsal - Back view"
+                  className="rounded-lg shadow-md w-full h-48 object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
         
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6">
           {plans.map((plan, index) => (
             <div 
               key={plan.name}
@@ -122,23 +154,6 @@ const PremiumPlansModal = ({ isOpen, onClose }: PremiumPlansModalProps) => {
               </Button>
             </div>
           ))}
-        </div>
-
-        <div className="bg-gray-50 p-6 rounded-lg">
-          <div className="flex items-start gap-4">
-            <div className="text-2xl">👋</div>
-            <div>
-              <h4 className="font-bold text-lg mb-2">Meet Your Personal Coach:</h4>
-              <p className="text-gray-700 mb-4">
-                I'm not just your personal coach, but also a mentor. I've spent so much time in the gym that it can be called my second home. 
-                I've had back and shoulder pains too. And I have gotten over that. This isn't about quick fixes — it's about building something real that actually lasts. 
-                I'm here to make sure you don't do this alone.
-              </p>
-              <p className="font-semibold text-fitness-primary">
-                Ready to start? Choose your plan and let's go. 💙
-              </p>
-            </div>
-          </div>
         </div>
       </DialogContent>
     </Dialog>
