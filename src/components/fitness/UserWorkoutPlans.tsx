@@ -7,17 +7,16 @@ import { Progress } from '@/components/ui/progress';
 import { Calendar, Dumbbell, Target, Plus, Eye, Trash2 } from 'lucide-react';
 import { WorkoutPlan } from '@/types';
 import FitnessProfileForm from './FitnessProfileForm';
-import WorkoutPlanViewer from './WorkoutPlanViewer';
 
 interface UserWorkoutPlansProps {
   workoutPlans: WorkoutPlan[];
   onDeletePlan: (planId: string) => Promise<void>;
   onPlanGenerated?: (plan: any) => void;
+  onSelectPlan?: (plan: WorkoutPlan) => void;
 }
 
-const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated }: UserWorkoutPlansProps) => {
+const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated, onSelectPlan }: UserWorkoutPlansProps) => {
   const [showProfileForm, setShowProfileForm] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
 
   const getGoalColor = (goal: string) => {
     switch (goal) {
@@ -76,7 +75,7 @@ const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated }: UserW
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => setSelectedPlan(plan)}
+                          onClick={() => onSelectPlan?.(plan)}
                         >
                           <Eye className="h-4 w-4" />
                         </Button>
@@ -114,7 +113,7 @@ const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated }: UserW
                     
                     <Button 
                       className="w-full"
-                      onClick={() => setSelectedPlan(plan)}
+                      onClick={() => onSelectPlan?.(plan)}
                     >
                       <Target className="mr-2 h-4 w-4" />
                       View Plan
@@ -150,15 +149,6 @@ const UserWorkoutPlans = ({ workoutPlans, onDeletePlan, onPlanGenerated }: UserW
         onClose={() => setShowProfileForm(false)}
         onPlanGenerated={onPlanGenerated}
       />
-
-      {/* Workout Plan Viewer Modal */}
-      {selectedPlan && (
-        <WorkoutPlanViewer
-          plan={selectedPlan}
-          isOpen={!!selectedPlan}
-          onClose={() => setSelectedPlan(null)}
-        />
-      )}
     </>
   );
 };

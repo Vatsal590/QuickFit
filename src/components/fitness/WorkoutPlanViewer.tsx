@@ -21,6 +21,30 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
 
   const dailyWorkouts = plan.dailyWorkouts || [];
 
+  // Get proper focus display name
+  const getFocusDisplayName = (focus: string) => {
+    if (!focus) return 'Training';
+    
+    const focusMap: { [key: string]: string } = {
+      'strength': 'Strength Training',
+      'power': 'Power Training',
+      'agility': 'Agility Training',
+      'endurance': 'Endurance Training',
+      'conditioning': 'Conditioning',
+      'recovery': 'Recovery',
+      'plyometric': 'Plyometric Training',
+      'functional': 'Functional Training',
+      'core': 'Core Training',
+      'movement': 'Movement Training',
+      'cardio': 'Cardio Training',
+      'muscle_gain': 'Muscle Building',
+      'fat_loss': 'Fat Loss Training',
+      'athlete_training': 'Athletic Training'
+    };
+    
+    return focusMap[focus] || focus.charAt(0).toUpperCase() + focus.slice(1).replace(/_/g, ' ');
+  };
+
   // Get detailed exercise descriptions
   const getExerciseDescription = (exerciseName: string): string => {
     const descriptions: { [key: string]: string } = {
@@ -240,7 +264,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                   <div>
                     <h3 className="font-semibold">Day {day.day}</h3>
                     <p className="text-sm text-gray-600">
-                      {day.isRestDay ? 'Rest Day' : `${day.workout?.focus?.replace('_', ' ')} Training`}
+                      {day.isRestDay ? 'Rest Day' : getFocusDisplayName(day.workout?.focus || plan.goal)}
                     </p>
                   </div>
                 </div>
