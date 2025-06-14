@@ -19,7 +19,7 @@ const Index = () => {
   const [successPlan, setSuccessPlan] = useState('');
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
-  const { workoutPlans, deleteWorkoutPlan } = useWorkoutPlans();
+  const { workoutPlans, deleteWorkoutPlan, loadWorkoutPlans } = useWorkoutPlans();
 
   useEffect(() => {
     const success = searchParams.get('success');
@@ -71,12 +71,23 @@ const Index = () => {
         description: "Your workout plan has been deleted successfully.",
       });
     } catch (error) {
+      console.error('Error deleting plan:', error);
       toast({
         title: "Error",
         description: "Failed to delete workout plan. Please try again.",
         variant: "destructive"
       });
     }
+  };
+
+  const handlePlanGenerated = (plan: any) => {
+    console.log('Plan generated and saved:', plan);
+    // Reload workout plans to show the new plan
+    loadWorkoutPlans();
+    toast({
+      title: "Success!",
+      description: "Your 30-day workout plan has been created and saved.",
+    });
   };
 
   if (showSuccess) {
@@ -102,6 +113,7 @@ const Index = () => {
         <UserWorkoutPlans 
           workoutPlans={workoutPlans}
           onDeletePlan={handleDeletePlan}
+          onPlanGenerated={handlePlanGenerated}
         />
 
         {/* Custom Workout Generator Section */}
