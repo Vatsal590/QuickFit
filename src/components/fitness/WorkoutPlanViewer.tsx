@@ -286,7 +286,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                           </div>
                         </div>
                       </DialogTrigger>
-                      <DialogContent className="max-w-lg">
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2">
                             {exercise.name}
@@ -297,11 +297,12 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                         </DialogHeader>
                         <div className="space-y-4">
                           {/* Exercise Animation */}
-                          <div className="w-full bg-gray-100 rounded-lg overflow-hidden">
+                          <div className="w-full bg-gray-100 rounded-lg overflow-hidden flex justify-center items-center" style={{ minHeight: '300px' }}>
                             <img
                               src={getExerciseAnimationUrl(exercise.name)}
                               alt={`${exercise.name} demonstration`}
-                              className="w-full h-48 object-cover"
+                              className="max-w-full max-h-80 object-contain rounded-lg"
+                              style={{ width: 'auto', height: 'auto' }}
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
                                 target.src = 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bodyweight-Squat.gif';
