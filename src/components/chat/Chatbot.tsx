@@ -38,14 +38,8 @@ function loadFromLocal(): Message[] {
   }
 }
 
-// Demo canned replies (remains, for fallback)
-const DEMO_REPLIES = [
-  "Great question! Right now, I'm in demo mode – but you can ask me anything about QuickFit or fitness.",
-  "This is a simulated bot response. The real AI will be back soon!",
-  "Thanks for reaching out. Your question was: ",
-  "QuickFit bot is on demo – your message was received.",
-  "I'm just a demo chatbot right now, but I'm happy to chat!"
-];
+const OPENROUTER_API_KEY =
+  "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";
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -67,7 +61,7 @@ export default function Chatbot() {
     }, 50);
   }
 
-  // Main send routine with OpenRouter AI test endpoint
+  // AI Message sending routine using OpenRouter with provided key
   async function sendMessage() {
     if (!input.trim()) return;
     const prompt = input.trim();
@@ -79,45 +73,40 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      // Call OpenRouter's test endpoint (no api key required)
       const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "HTTP-Referer": "https://lovable.app", // For demo/public endpoints, optional
-          "X-Title": "QuickFit Chatbot (Lovable Demo)" // For demo tracking, optional
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "HTTP-Referer": "https://lovable.app",
+          "X-Title": "QuickFit Chatbot"
         },
         body: JSON.stringify({
-          "model": "openai/gpt-3.5-turbo", // OpenRouter allows this for test/demo
+          "model": "openai/gpt-3.5-turbo",
           "messages": [
-            { "role": "system", "content": "You are a concise, motivational, and helpful fitness coach and workout assistant. Respond in an actionable and friendly tone." },
+            { "role": "system", "content": "You are a concise, motivational, and helpful fitness coach and workout assistant. Respond in an actionable and friendly tone. If user asks for a workout, provide a clear, time-based workout plan." },
             { "role": "user", "content": prompt }
           ],
-          "max_tokens": 220,
-          "temperature": 0.75
+          "max_tokens": 350,
+          "temperature": 0.7
         })
       });
 
       if (!response.ok) throw new Error("AI API error");
 
       const data = await response.json();
-      // OpenRouter or OpenAI compatible
       const answer =
         data.choices?.[0]?.message?.content ??
-        "Sorry, I couldn't process that at the moment. Try rephrasing?";
+        "Sorry for the inconvenience but I am facing a tech hiccup.";
       const botMsg: Message = { from: "bot", text: answer };
       const nextMsgs: Message[] = [...newMessages, botMsg];
       setMessages(nextMsgs);
       saveToLocal(nextMsgs);
     } catch {
-      // Show friendly error, fallback to demo mode (but do not show technical error)
-      const fallback =
-        DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)];
+      // Show the REQUIRED friendly error
       const botMsg: Message = {
         from: "bot",
-        text:
-          "I'm having a tech hiccup right now, so here's a quick thought until I'm back online! 🏋️\n\n" +
-          fallback
+        text: "Sorry for the inconvenience but I am facing a tech hiccup."
       };
       const errMsgs: Message[] = [...newMessages, botMsg];
       setMessages(errMsgs);
@@ -252,3 +241,4 @@ export default function Chatbot() {
 }
 
 // NOTE: This file is now >200 lines. Please consider splitting into smaller files after you're satisfied with its functionality.
+
