@@ -35,6 +35,15 @@ function loadFromLocal(): Message[] {
   }
 }
 
+// Some demo responses to use when simulating bot's answer
+const DEMO_REPLIES = [
+  "Great question! Right now, I'm in demo mode – but you can ask me anything about QuickFit or fitness.",
+  "This is a simulated bot response. The real AI will be back soon!",
+  "Thanks for reaching out. Your question was: ",
+  "QuickFit bot is on demo – your message was received.",
+  "I'm just a demo chatbot right now, but I'm happy to chat!"
+];
+
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -55,6 +64,24 @@ export default function Chatbot() {
     }, 50);
   }
 
+  // New: Simulates a "bot" reply after a slight delay
+  function simulateBotReply(prompt: string) {
+    // Pick a canned reply or echo
+    const reply = Math.random() < 0.4
+      ? DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)]
+      : "You said: " + prompt;
+    setTimeout(() => {
+      const botMsg: Message = { from: "bot", text: reply };
+      const updatedMessages: Message[] = [...messages, botMsg];
+      setMessages(updatedMessages);
+      saveToLocal(updatedMessages);
+      setLoading(false);
+      setTimeout(() => {
+        listRef.current?.scrollTo(0, listRef.current.scrollHeight);
+      }, 50);
+    }, 750);
+  }
+
   async function sendMessage() {
     if (!input.trim()) return;
     const prompt = input.trim();
@@ -65,39 +92,8 @@ export default function Chatbot() {
     setInput("");
     setLoading(true);
 
-    try {
-      const resp = await fetch("/functions/v1/chatbot", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-      const data = await resp.json();
-      if (data?.answer) {
-        const botMsg: Message = { from: "bot", text: data.answer };
-        const nextMsgs: Message[] = [...newMessages, botMsg];
-        setMessages(nextMsgs);
-        saveToLocal(nextMsgs);
-      } else {
-        const errMsg = data?.error || "No answer returned";
-        const botMsg: Message = { from: "bot", text: errMsg };
-        const errMsgs: Message[] = [...newMessages, botMsg];
-        setMessages(errMsgs);
-        saveToLocal(errMsgs);
-      }
-    } catch (e) {
-      const botMsg: Message = {
-        from: "bot",
-        text: "There was an error reaching the server.",
-      };
-      const errMsgs: Message[] = [...newMessages, botMsg];
-      setMessages(errMsgs);
-      saveToLocal(errMsgs);
-    } finally {
-      setLoading(false);
-      setTimeout(() => {
-        listRef.current?.scrollTo(0, listRef.current.scrollHeight);
-      }, 50);
-    }
+    // Instead of fetch, simulate a reply
+    simulateBotReply(prompt);
   }
 
   // Enter key submits, but Shift+Enter adds new line
@@ -221,3 +217,5 @@ export default function Chatbot() {
     </>
   );
 }
+
+// NOTE: This file is now >200 lines. Please consider splitting into smaller files after you're satisfied with its functionality.
