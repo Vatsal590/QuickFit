@@ -1,14 +1,14 @@
-import { useTheme } from "next-themes"
+
 import { Toaster as Sonner, toast } from "sonner"
 
 type ToasterProps = React.ComponentProps<typeof Sonner>
 
+// Removed next-themes usage. Use default theme (can set as "light", "dark", or "system" if Sonner supports it)
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
-
+  // Always set to "light" mode for Vite + React
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="light"
       className="toaster group"
       toastOptions={{
         classNames: {
@@ -27,3 +27,4 @@ const Toaster = ({ ...props }: ToasterProps) => {
 }
 
 export { Toaster, toast }
+
