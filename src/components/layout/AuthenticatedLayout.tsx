@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,30 +79,37 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                       <Settings className="h-4 w-4 mr-2" />
                       Customize
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <User className="h-4 w-4 mr-2" />
-                      Profile
-                      <div className="ml-auto text-xs text-gray-500">
-                        {user?.email}
-                      </div>
-                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </nav>
             </div>
             
             <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
-              {/* Sign Out Button */}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={signOut}
-                className="flex-shrink-0"
-              >
-                <LogOut className="h-4 w-4 mr-1 md:mr-2" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </Button>
+              {/* Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex-shrink-0">
+                    <User className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Profile</span>
+                    <ChevronDown className="h-3 w-3 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 bg-white" align="end">
+                  <div className="px-3 py-2">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.email}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Member since {memberSince}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </div>
