@@ -36,6 +36,14 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       {/* Navigation Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* QuickFit Title */}
+          <div className="text-center py-3 border-b border-gray-100">
+            <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary">
+              QuickFit
+            </h1>
+            <p className="text-sm text-gray-600 mt-1">Your Personal Fitness Companion</p>
+          </div>
+          
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
               <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
@@ -44,7 +52,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   alt="QuickFit Logo" 
                   className="w-8 h-8"
                 />
-                <span className="text-xl font-bold text-fitness-primary hidden sm:block">QuickFit</span>
               </Link>
               
               {/* Navigation - scrollable on mobile */}
@@ -60,27 +67,26 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   </Button>
                 </Link>
                 
-                {/* Menu Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0">
-                      <Menu className="h-4 w-4 mr-1 md:mr-2" />
-                      <span className="hidden sm:inline">Menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-48 bg-white" align="start">
-                    <DropdownMenuItem asChild>
-                      <Link to="/history" className="flex items-center w-full">
-                        <History className="h-4 w-4 mr-2" />
-                        History
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setShowProfileForm(true)}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Customize
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <Link to="/history" className="flex-shrink-0">
+                  <Button 
+                    variant={isActive('/history') ? 'default' : 'ghost'} 
+                    size="sm"
+                    className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                  >
+                    <History className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">History</span>
+                  </Button>
+                </Link>
+
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="flex-shrink-0"
+                  onClick={() => setShowProfileForm(true)}
+                >
+                  <Settings className="h-4 w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Customize</span>
+                </Button>
               </nav>
             </div>
             
