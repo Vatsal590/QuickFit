@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Home, History, Menu, Settings } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
@@ -19,10 +21,18 @@ interface AuthenticatedLayoutProps {
 }
 
 const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const [showProfileForm, setShowProfileForm] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Format the member since date
+  const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  }) : 'Unknown';
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,6 +92,34 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                 </DropdownMenu>
               </nav>
             </div>
+            
+            <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
+              {/* Profile Dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex-shrink-0">
+                    <User className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">Profile</span>
+                    <ChevronDown className="h-3 w-3 ml-1" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-64 bg-white" align="end">
+                  <div className="px-3 py-2">
+                    <p className="text-sm font-medium text-gray-900">
+                      {user?.email}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Member since {memberSince}
+                    </p>
+                  </div>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut}>
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>
@@ -104,3 +142,4 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
 };
 
 export default AuthenticatedLayout;
+
