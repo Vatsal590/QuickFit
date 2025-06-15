@@ -2,22 +2,34 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+
+// Define the valid message type for stronger type safety
+type Message = { from: "user" | "bot"; text: string };
 
 const CHATBOT_STORAGE_KEY = "quickfit_chatbot_history";
 
-type Message = { from: "user" | "bot"; text: string };
-
 function saveToLocal(messages: Message[]) {
   localStorage.setItem(CHATBOT_STORAGE_KEY, JSON.stringify(messages));
+}
+
+function isMessage(obj: any): obj is Message {
+  return (
+    obj &&
+    (obj.from === "user" || obj.from === "bot") &&
+    typeof obj.text === "string"
+  );
 }
 
 function loadFromLocal(): Message[] {
   const stored = localStorage.getItem(CHATBOT_STORAGE_KEY);
   if (!stored) return [];
   try {
-    return JSON.parse(stored);
+    const parsed = JSON.parse(stored);
+    if (Array.isArray(parsed)) {
+      return parsed.filter(isMessage);
+    }
+    return [];
   } catch {
     return [];
   }
@@ -46,7 +58,8 @@ export default function Chatbot() {
   async function sendMessage() {
     if (!input.trim()) return;
     const prompt = input.trim();
-    const newMessages = [...messages, { from: "user", text: prompt }];
+    const userMsg: Message = { from: "user", text: prompt };
+    const newMessages: Message[] = [...messages, userMsg];
     setMessages(newMessages);
     saveToLocal(newMessages);
     setInput("");
@@ -60,20 +73,23 @@ export default function Chatbot() {
       });
       const data = await resp.json();
       if (data?.answer) {
-        const nextMsgs = [...newMessages, { from: "bot", text: data.answer }];
+        const botMsg: Message = { from: "bot", text: data.answer };
+        const nextMsgs: Message[] = [...newMessages, botMsg];
         setMessages(nextMsgs);
         saveToLocal(nextMsgs);
       } else {
         const errMsg = data?.error || "No answer returned";
-        const errMsgs = [...newMessages, { from: "bot", text: errMsg }];
+        const botMsg: Message = { from: "bot", text: errMsg };
+        const errMsgs: Message[] = [...newMessages, botMsg];
         setMessages(errMsgs);
         saveToLocal(errMsgs);
       }
     } catch (e) {
-      const errMsgs = [
-        ...newMessages,
-        { from: "bot", text: "There was an error reaching the server." },
-      ];
+      const botMsg: Message = {
+        from: "bot",
+        text: "There was an error reaching the server.",
+      };
+      const errMsgs: Message[] = [...newMessages, botMsg];
       setMessages(errMsgs);
       saveToLocal(errMsgs);
     } finally {
