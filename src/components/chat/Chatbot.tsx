@@ -38,8 +38,116 @@ function loadFromLocal(): Message[] {
   }
 }
 
-const OPENROUTER_API_KEY =
-  "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";
+// === FITNESS BOT LOCAL RESPONSE ENGINE ===
+function generateFitnessResponse(prompt: string): string {
+  const lowerPrompt = prompt.toLowerCase();
+
+  // For beginners
+  if (
+    /beginner|just start|how to start|new to fitness|first time/.test(lowerPrompt)
+  ) {
+    return (
+      "As a beginner, it's essential to ease into fitness gradually to build a strong foundation. " +
+      "Start with 3 sessions per week, focusing on bodyweight exercises like squats, push-ups, and planks. " +
+      "Aim for 10-15 repetitions per set, resting between sets. Always warm up before and cool down after each session. " +
+      "Stay consistent, listen to your body, and celebrate your progress—you've got this!"
+    );
+  }
+
+  // 30 minute calisthenics
+  if (
+    /30.?minute.*calisthenic/.test(lowerPrompt) ||
+    (/workout/.test(lowerPrompt) && /calisthenic/.test(lowerPrompt))
+  ) {
+    return (
+      "Here's a 30-minute calisthenics workout to get you moving:\n" +
+      "1. Warm-up: 5 minutes jogging in place or jumping jacks.\n" +
+      "2. Circuit 1 (10 mins):\n" +
+      "   • Push-ups: 3 sets of 10 reps\n" +
+      "   • Squats: 3 sets of 15 reps\n" +
+      "   • Plank: 3 sets of 30 seconds\n" +
+      "3. Circuit 2 (10 mins):\n" +
+      "   • Lunges: 3 sets of 12 reps per leg\n" +
+      "   • Burpees: 3 sets of 8 reps\n" +
+      "   • Mountain Climbers: 3 sets of 30 seconds\n" +
+      "4. Cool down: 5 minutes stretching major muscle groups.\n" +
+      "Focus on good form, take short breaks, and enjoy your workout!"
+    );
+  }
+
+  // Ask for plan/routine
+  if (
+    /workout plan|routine|can you make.*workout|suggest.*plan|program/.test(lowerPrompt)
+  ) {
+    return (
+      "Absolutely! Here's a supportive, well-rounded routine:\n" +
+      "1. Warm-up: 5 minutes brisk walking or dynamic stretching.\n" +
+      "2. Main set:\n" +
+      "   - Bodyweight squats: 3 sets of 12 reps\n" +
+      "   - Push-ups (on knees if needed): 3 sets of 10 reps\n" +
+      "   - Glute bridges: 3 sets of 15 reps\n" +
+      "   - Plank: 3 sets of 20-30 seconds\n" +
+      "   - Rest 60 seconds between sets.\n" +
+      "3. Cool down: Gentle stretching, 5 minutes.\n" +
+      "Adjust exercises for your level—if you find it too easy or hard, increase/decrease reps, or rest a bit more. " +
+      "Stay positive and make steady progress!"
+    );
+  }
+
+  // Weight loss advice
+  if (/lose weight|fat loss|burn fat/.test(lowerPrompt) || /weight loss/.test(lowerPrompt)) {
+    return (
+      "To lose weight safely, combine regular exercise with balanced nutrition. " +
+      "Aim for at least 150 minutes of moderate activity per week (like brisk walking or cycling)." +
+      "\n• Pair cardio with resistance training (bodyweight, bands, or weights) to maintain muscle." +
+      "\n• Prioritize whole foods (lots of veggies, lean proteins) and stay hydrated." +
+      "\n• Progress may be gradual—patience and consistency are key. Celebrate every step and take rest as needed!"
+    );
+  }
+
+  // Muscle gain advice
+  if (/build muscle|gain muscle|get stronger|increase muscle/.test(lowerPrompt)) {
+    return (
+      "Building muscle takes time, consistent effort, and proper nutrition." +
+      "\n• Focus on compound exercises like squats, push-ups, lunges, and rows." +
+      "\n• Aim for 3-4 sessions per week, 8-12 reps per set, with enough resistance to feel challenged." +
+      "\n• Ensure adequate protein intake, sleep, and progressive overload (increasing weights/reps gradually)." +
+      "\nStay motivated—you'll see results as you stick with your program!"
+    );
+  }
+
+  // Injury/soreness/recovery
+  if (/injur|hurt|pain|sore|recovery|rest/.test(lowerPrompt)) {
+    return (
+      "Proper rest and recovery are vital for progress and preventing injuries." +
+      "\n• Listen to your body's signals; if you're in pain, pause your workout and rest the affected area." +
+      "\n• Prioritize sleep, hydration, and gentle stretching. Consider low-intensity movement like walking or yoga for active recovery." +
+      "\n• Consult a healthcare professional for persistent pain or injury." +
+      "\nTake care—progress is built on a strong, healthy foundation!"
+    );
+  }
+
+  // Motivation/support
+  if (/motivat|struggle|can't do|get started|give up|discouraged/.test(lowerPrompt)) {
+    return (
+      "Remember, every step you take toward your fitness goal is progress. It's normal to have ups and downs—what matters is consistency and self-compassion." +
+      "\n• Celebrate small wins and focus on what you CAN do today." +
+      "\n• Set realistic, achievable goals and track your journey over time." +
+      "\nYou're stronger than you think—keep going, and be proud of your effort!"
+    );
+  }
+
+  // Custom fallback for other questions
+  return (
+    "Great question! Here's some general fitness guidance:\n" +
+    "• Focus on balanced routines combining strength, cardio, flexibility, and rest.\n" +
+    "• Consistency is key. Even small steps matter—celebrate your achievements!\n" +
+    "• Remember to warm up, cool down, and listen to your body.\n" +
+    "If you have a specific goal or want workout ideas, let me know! I'm here to help you succeed."
+  );
+}
+
+// === END FITNESS BOT LOGIC ===
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
@@ -61,7 +169,6 @@ export default function Chatbot() {
     }, 50);
   }
 
-  // AI Message sending routine using OpenRouter with provided key
   async function sendMessage() {
     if (!input.trim()) return;
     const prompt = input.trim();
@@ -73,37 +180,14 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "https://lovable.app",
-          "X-Title": "QuickFit Chatbot"
-        },
-        body: JSON.stringify({
-          "model": "openai/gpt-3.5-turbo",
-          "messages": [
-            { "role": "system", "content": "You are a concise, motivational, and helpful fitness coach and workout assistant. Respond in an actionable and friendly tone. If user asks for a workout, provide a clear, time-based workout plan." },
-            { "role": "user", "content": prompt }
-          ],
-          "max_tokens": 350,
-          "temperature": 0.7
-        })
-      });
-
-      if (!response.ok) throw new Error("AI API error");
-
-      const data = await response.json();
-      const answer =
-        data.choices?.[0]?.message?.content ??
-        "Sorry for the inconvenience but I am facing a tech hiccup.";
+      // Generate local response using fitness logic
+      const answer = generateFitnessResponse(prompt);
       const botMsg: Message = { from: "bot", text: answer };
       const nextMsgs: Message[] = [...newMessages, botMsg];
       setMessages(nextMsgs);
       saveToLocal(nextMsgs);
     } catch {
-      // Show the REQUIRED friendly error
+      // In case of logic error, show friendly fallback message
       const botMsg: Message = {
         from: "bot",
         text: "Sorry for the inconvenience but I am facing a tech hiccup."
@@ -241,4 +325,3 @@ export default function Chatbot() {
 }
 
 // NOTE: This file is now >200 lines. Please consider splitting into smaller files after you're satisfied with its functionality.
-
