@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -41,7 +40,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
             <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary">
               QuickFit
             </h1>
-            <p className="text-sm text-gray-600 mt-1">Your Personal Fitness Companion</p>
           </div>
           
           <div className="flex justify-between items-center h-16">
