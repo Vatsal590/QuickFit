@@ -67,26 +67,27 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   </Button>
                 </Link>
                 
-                <Link to="/history" className="flex-shrink-0">
-                  <Button 
-                    variant={isActive('/history') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
-                  >
-                    <History className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">History</span>
-                  </Button>
-                </Link>
-
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="flex-shrink-0"
-                  onClick={() => setShowProfileForm(true)}
-                >
-                  <Settings className="h-4 w-4 mr-1 md:mr-2" />
-                  <span className="hidden sm:inline">Customize</span>
-                </Button>
+                {/* Menu Dropdown */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex-shrink-0">
+                      <Menu className="h-4 w-4 mr-1 md:mr-2" />
+                      <span className="hidden sm:inline">Menu</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-48 bg-white" align="start">
+                    <DropdownMenuItem asChild>
+                      <Link to="/history" className="flex items-center w-full">
+                        <History className="h-4 w-4 mr-2" />
+                        History
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setShowProfileForm(true)}>
+                      <Settings className="h-4 w-4 mr-2" />
+                      Customize
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </nav>
             </div>
             
