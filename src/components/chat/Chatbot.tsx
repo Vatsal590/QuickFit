@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 
 // Message type
 type Message = { from: "user" | "bot"; text: string };
@@ -37,22 +38,27 @@ function loadFromLocal(): Message[] {
 // Replace the Falcon HuggingFace fetch with call to Supabase Edge Function
 async function fetchGpt4oResponse(prompt: string): Promise<string> {
   try {
-    // Call the Supabase Edge Function (private, secure, uses your OpenAI key)
+    // Get the user's access token
+    const { data } = await supabase.auth.getSession();
+    const session = data.session;
+    const token = session?.access_token || "";
+
     const response = await fetch(
       "https://tlliijookodviezygwqk.functions.supabase.co/chatbot",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
         body: JSON.stringify({ prompt }),
       }
     );
-    const data = await response.json();
-    if (data.answer) {
-      return data.answer.trim();
+    const dataRes = await response.json();
+    if (dataRes.answer) {
+      return dataRes.answer.trim();
     }
-    throw new Error(data.error || "No usable response.");
+    throw new Error(dataRes.error || "No usable response.");
   } catch (err: any) {
     console.error("Error calling Supabase Edge chatbot function:", err);
     return (
