@@ -4,15 +4,18 @@ import { Send, Bot, X } from "lucide-react";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 
-// Define the valid message type for stronger type safety
+// Message type
 type Message = { from: "user" | "bot"; text: string };
 
 const CHATBOT_STORAGE_KEY = "quickfit_chatbot_history";
+const PPLX_API_KEY_KEY = "perplexity_api_key";
 
+// Save messages to localStorage
 function saveToLocal(messages: Message[]) {
   localStorage.setItem(CHATBOT_STORAGE_KEY, JSON.stringify(messages));
 }
 
+// Type guard
 function isMessage(obj: any): obj is Message {
   return (
     obj &&
@@ -21,6 +24,7 @@ function isMessage(obj: any): obj is Message {
   );
 }
 
+// Load messages from localStorage
 function loadFromLocal(): Message[] {
   const stored = localStorage.getItem(CHATBOT_STORAGE_KEY);
   if (!stored) return [];
@@ -35,7 +39,7 @@ function loadFromLocal(): Message[] {
   }
 }
 
-// Some demo responses to use when simulating bot's answer
+// Demo canned replies (remains, for fallback)
 const DEMO_REPLIES = [
   "Great question! Right now, I'm in demo mode – but you can ask me anything about QuickFit or fitness.",
   "This is a simulated bot response. The real AI will be back soon!",
@@ -44,12 +48,25 @@ const DEMO_REPLIES = [
   "I'm just a demo chatbot right now, but I'm happy to chat!"
 ];
 
+// Ask user for their Perplexity API key if absent
+function getLocalPPLXKey(): string | null {
+  return localStorage.getItem(PPLX_API_KEY_KEY);
+}
+function setLocalPPLXKey(key: string) {
+  localStorage.setItem(PPLX_API_KEY_KEY, key);
+}
+
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<Message[]>(loadFromLocal());
   const listRef = useRef<HTMLDivElement | null>(null);
+
+  // Key management for Perplexity
+  const [apiKey, setApiKey] = useState<string | null>(getLocalPPLXKey());
+  const [showKeyPrompt, setShowKeyPrompt] = useState<boolean>(false);
+  const [enteredKey, setEnteredKey] = useState("");
 
   useEffect(() => {
     if (open && listRef.current) {
@@ -64,24 +81,18 @@ export default function Chatbot() {
     }, 50);
   }
 
-  // New: Simulates a "bot" reply after a slight delay
-  function simulateBotReply(prompt: string) {
-    // Pick a canned reply or echo
-    const reply = Math.random() < 0.4
-      ? DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)]
-      : "You said: " + prompt;
-    setTimeout(() => {
-      const botMsg: Message = { from: "bot", text: reply };
-      const updatedMessages: Message[] = [...messages, botMsg];
-      setMessages(updatedMessages);
-      saveToLocal(updatedMessages);
-      setLoading(false);
-      setTimeout(() => {
-        listRef.current?.scrollTo(0, listRef.current.scrollHeight);
-      }, 50);
-    }, 750);
+  // Handle setting the Perplexity API key
+  function handleSaveKey(e: React.FormEvent) {
+    e.preventDefault();
+    if (enteredKey.trim()) {
+      setApiKey(enteredKey.trim());
+      setLocalPPLXKey(enteredKey.trim());
+      setShowKeyPrompt(false);
+      setEnteredKey("");
+    }
   }
 
+  // Main send routine with Perplexity API
   async function sendMessage() {
     if (!input.trim()) return;
     const prompt = input.trim();
@@ -92,11 +103,63 @@ export default function Chatbot() {
     setInput("");
     setLoading(true);
 
-    // Instead of fetch, simulate a reply
-    simulateBotReply(prompt);
+    // If no API key, ask user to enter it
+    if (!apiKey) {
+      setShowKeyPrompt(true);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Perplexity AI API
+      const response = await fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-sonar-small-128k-online",
+          messages: [
+            { role: "system", content: "You are a concise, motivational, and helpful fitness coach and workout assistant. Respond in an actionable and friendly tone." },
+            { role: "user", content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 280,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error("API error");
+      }
+      const data = await response.json();
+      const answer =
+        data?.choices?.[0]?.message?.content ??
+        "Sorry, I couldn't process that at the moment. Try rephrasing?";
+      const botMsg: Message = { from: "bot", text: answer };
+      const nextMsgs: Message[] = [...newMessages, botMsg];
+      setMessages(nextMsgs);
+      saveToLocal(nextMsgs);
+    } catch (e) {
+      // Show friendly error, fallback to demo mode
+      const fallback =
+        DEMO_REPLIES[Math.floor(Math.random() * DEMO_REPLIES.length)];
+      const botMsg: Message = {
+        from: "bot",
+        text:
+          "Oops! My live AI brain is having trouble reaching Perplexity. Here's a quick response while I reconnect:\n\n" +
+          fallback,
+      };
+      const errMsgs: Message[] = [...newMessages, botMsg];
+      setMessages(errMsgs);
+      saveToLocal(errMsgs);
+    } finally {
+      setLoading(false);
+      setTimeout(() => {
+        listRef.current?.scrollTo(0, listRef.current.scrollHeight);
+      }, 50);
+    }
   }
 
-  // Enter key submits, but Shift+Enter adds new line
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -111,6 +174,13 @@ export default function Chatbot() {
   function handleClear() {
     setMessages([]);
     saveToLocal([]);
+  }
+
+  // Clear API key for troubleshooting
+  function handleClearKey() {
+    setApiKey(null);
+    setLocalPPLXKey("");
+    setShowKeyPrompt(true);
   }
 
   return (
@@ -212,6 +282,40 @@ export default function Chatbot() {
               <X className="w-4 h-4" />
             </Button>
           </div>
+          {/* Perplexity API Key Modal */}
+          {showKeyPrompt && (
+            <div className="absolute inset-0 z-50 bg-black/40 flex items-center justify-center">
+              <form className="bg-white p-5 rounded-lg shadow-xl max-w-xs w-full" onSubmit={handleSaveKey}>
+                <div className="mb-2 font-semibold text-lg text-center">Enter Your Perplexity API Key</div>
+                <div className="mb-2 text-xs text-gray-600">
+                  To enable real AI responses, please provide your <a href="https://platform.perplexity.ai/api-keys" target="_blank" rel="noopener noreferrer" className="underline text-blue-500">Perplexity API key</a>.
+                  <br />
+                  <span className="font-semibold">Your key is only stored locally in your browser.</span>
+                </div>
+                <input
+                  className="border rounded px-2 py-1 w-full text-sm mb-2"
+                  type="text"
+                  value={enteredKey}
+                  onChange={e => setEnteredKey(e.target.value)}
+                  required
+                  placeholder="pk-..."
+                />
+                <Button type="submit" className="w-full mb-1 bg-fitness-primary">Save API Key</Button>
+                <Button type="button" variant="ghost" className="w-full text-sm" onClick={() => setShowKeyPrompt(false)}>Cancel</Button>
+              </form>
+            </div>
+          )}
+          {/* Optionally: Show API key manage button */}
+          {apiKey && (
+            <button
+              onClick={handleClearKey}
+              className="absolute top-2 right-2 text-xs text-blue-100 hover:text-white bg-fitness-primary/40 rounded px-2 py-1"
+              style={{ fontSize: 11 }}
+              title="Reset API key"
+            >
+              Reset API Key
+            </button>
+          )}
         </div>
       )}
     </>
@@ -219,3 +323,4 @@ export default function Chatbot() {
 }
 
 // NOTE: This file is now >200 lines. Please consider splitting into smaller files after you're satisfied with its functionality.
+
