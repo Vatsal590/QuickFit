@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Send, Bot, X } from "lucide-react";
 import { Button } from "../ui/button";
@@ -38,112 +37,157 @@ function loadFromLocal(): Message[] {
   }
 }
 
-// === FITNESS BOT LOCAL RESPONSE ENGINE ===
-function generateFitnessResponse(prompt: string): string {
-  const lowerPrompt = prompt.toLowerCase();
+// Replace the fixed response engine with a more dynamic response generator
+function customFitnessResponse(prompt: string): string {
+  const text = prompt.trim().toLowerCase();
 
-  // For beginners
+  // 1. Detect request for workout or routine (with or without duration)
   if (
-    /beginner|just start|how to start|new to fitness|first time/.test(lowerPrompt)
+    /(routine|plan|workout)( for | to | with |$)/.test(text) ||
+    /(give|create|suggest|make|recommend).*(routine|plan|workout)/.test(text)
+  ) {
+    // Extract workout details or time if present
+    let duration = "";
+    const timeMatch = text.match(/(\d+)\s*(minute|min|hour|hr)/);
+    if (timeMatch) {
+      duration = `${timeMatch[1]}-minute `;
+    }
+
+    // Detect calisthenics, strength, or general
+    const isCalisthenics = text.includes("calisthenic");
+    const isStrength = text.includes("strength");
+    const isCardio = text.includes("cardio");
+    // Adjust for level
+    let level = "all levels";
+    if (text.includes("beginner")) level = "beginner";
+    else if (text.includes("intermediate")) level = "intermediate";
+    else if (text.includes("advanced")) level = "advanced";
+
+    // Make the routine
+    let mainRoutine = "";
+    if (isCalisthenics) {
+      mainRoutine = `
+1. Warm-up (5 minutes): Light cardio (jumping jacks, brisk walking)
+2. Main Circuit (${duration || "20-minute"}):
+   - Push-ups: 3 sets of 10–15 reps
+   - Bodyweight squats: 3 sets of 15 reps
+   - Plank: 3 sets of 30–45 sec
+   - Mountain climbers: 3 x 30 sec
+   - Rest 45-60 sec between movements
+3. Cool Down (5 minutes): Stretching major muscle groups.
+Tips: Focus on form and control. If new, reduce reps; if more advanced, add a round or vary tempo for extra challenge.`;
+    } else if (isStrength) {
+      mainRoutine = `
+1. Warm-up (5 minutes): Arm circles, hip rotations, air squats
+2. Strength Block:
+   - Squats: 4 x 8–12 reps
+   - Push-ups: 4 x 8–12 reps
+   - Lunges: 3 x 10 per leg
+   - Glute bridges: 3 x 15 reps
+   - Rest 1–2 mins between sets
+3. Cool Down: Full body stretching
+Tips: Add resistance (weights, backpack) as strength improves. Always keep good form.`;
+    } else if (isCardio) {
+      mainRoutine = `
+1. Warm-up (3 minutes): March/jog in place
+2. Cardio Circuit (${duration || "15-minute"}):
+   - High knees: 30 sec
+   - Jumping jacks: 40 sec
+   - Air squats: 30 sec
+   - Rest: 30 sec
+   - Repeat 4–6 rounds
+3. Cool Down: Gentle stretching
+Tips: Pace yourself and stay hydrated.`;
+    } else {
+      // General full-body routine
+      mainRoutine = `
+1. Warm-up (5 minutes): Dynamic stretches, brisk walk
+2. Main Set:
+   - Bodyweight squats: 3 x 12 reps
+   - Push-ups (on knees if needed): 3 x 10 reps
+   - Reverse lunges: 3 x 12 reps per leg
+   - Plank: 3 x 30 sec
+   - Rest 60 sec between sets
+3. Cool Down: Gentle stretching, 3–5 minutes
+Tips: Adjust reps for your ability. Track progress weekly to stay motivated!
+      `;
+    }
+
+    // Compose final message with motivation
+    return (
+      `Here's a ${duration}${isCalisthenics ? "calisthenics" : isStrength ? "strength" : isCardio ? "cardio" : ""} workout routine tailored for ${level}:\n` +
+      mainRoutine +
+      "\nRemember to listen to your body and take breaks as needed. Consistency matters most—your progress is unique, and every session moves you forward. Stay strong and have fun!"
+    );
+  }
+
+  // 2. Beginner: user unsure or wants to start
+  if (
+    /(how to start|beginner|never exercised|first timer|getting started|new to (fitness|working out)|not sure where|need a start)/.test(
+      text
+    )
   ) {
     return (
-      "As a beginner, it's essential to ease into fitness gradually to build a strong foundation. " +
-      "Start with 3 sessions per week, focusing on bodyweight exercises like squats, push-ups, and planks. " +
-      "Aim for 10-15 repetitions per set, resting between sets. Always warm up before and cool down after each session. " +
-      "Stay consistent, listen to your body, and celebrate your progress—you've got this!"
+      "Starting your fitness journey is a fantastic step! As a beginner, try 3 sessions per week focusing on basic bodyweight exercises—like squats, knee push-ups, and gentle planks. Do 2 to 3 sets of 8–12 reps for each, pausing to rest as needed. Always warm up first (march in place, circle arms) and end with gentle stretching. Progress gradually, celebrate every milestone, and remember: self-care and patience lead to long-term results! You've got this!"
     );
   }
 
-  // 30 minute calisthenics
+  // 3. Weight loss/fat loss
   if (
-    /30.?minute.*calisthenic/.test(lowerPrompt) ||
-    (/workout/.test(lowerPrompt) && /calisthenic/.test(lowerPrompt))
+    /(weight loss|lose weight|burn fat|fat loss|shed fat)/.test(text)
   ) {
     return (
-      "Here's a 30-minute calisthenics workout to get you moving:\n" +
-      "1. Warm-up: 5 minutes jogging in place or jumping jacks.\n" +
-      "2. Circuit 1 (10 mins):\n" +
-      "   • Push-ups: 3 sets of 10 reps\n" +
-      "   • Squats: 3 sets of 15 reps\n" +
-      "   • Plank: 3 sets of 30 seconds\n" +
-      "3. Circuit 2 (10 mins):\n" +
-      "   • Lunges: 3 sets of 12 reps per leg\n" +
-      "   • Burpees: 3 sets of 8 reps\n" +
-      "   • Mountain Climbers: 3 sets of 30 seconds\n" +
-      "4. Cool down: 5 minutes stretching major muscle groups.\n" +
-      "Focus on good form, take short breaks, and enjoy your workout!"
+      "To achieve healthy weight loss, aim for a balanced approach: combine regular exercise (cardio + strength) with nourishing whole foods and steady hydration. Target 150–180 minutes of activity per week—such as brisk walks, cycling, or home circuits. Remember, sustainable progress comes from consistency, not harsh restriction. Celebrate every step! Give your body time to adapt and focus on building a positive, healthy routine."
     );
   }
 
-  // Ask for plan/routine
+  // 4. Muscle gain/building
   if (
-    /workout plan|routine|can you make.*workout|suggest.*plan|program/.test(lowerPrompt)
+    /(muscle gain|build muscle|get stronger|gain muscle|tone up|hypertrophy)/.test(
+      text
+    )
   ) {
     return (
-      "Absolutely! Here's a supportive, well-rounded routine:\n" +
-      "1. Warm-up: 5 minutes brisk walking or dynamic stretching.\n" +
-      "2. Main set:\n" +
-      "   - Bodyweight squats: 3 sets of 12 reps\n" +
-      "   - Push-ups (on knees if needed): 3 sets of 10 reps\n" +
-      "   - Glute bridges: 3 sets of 15 reps\n" +
-      "   - Plank: 3 sets of 20-30 seconds\n" +
-      "   - Rest 60 seconds between sets.\n" +
-      "3. Cool down: Gentle stretching, 5 minutes.\n" +
-      "Adjust exercises for your level—if you find it too easy or hard, increase/decrease reps, or rest a bit more. " +
-      "Stay positive and make steady progress!"
+      "To build muscle, pair regular resistance workouts with enough protein and rest. Focus on compound exercises—squats, lunges, push-ups, rows—2–4 sets of 8–12 reps per move, 3–4 times a week. Challenge yourself but never sacrifice form! Sleep and recovery are essential for muscle growth. Track your progress, stay consistent, and believe in your ability to grow stronger with each effort!"
     );
   }
 
-  // Weight loss advice
-  if (/lose weight|fat loss|burn fat/.test(lowerPrompt) || /weight loss/.test(lowerPrompt)) {
+  // 5. Injury, pain, or recovery
+  if (
+    /(injur|hurt|pain|sore|recover|recovery|rest|rehab|strain|sprain|shoulder pain|back pain|knee pain)/.test(
+      text
+    )
+  ) {
     return (
-      "To lose weight safely, combine regular exercise with balanced nutrition. " +
-      "Aim for at least 150 minutes of moderate activity per week (like brisk walking or cycling)." +
-      "\n• Pair cardio with resistance training (bodyweight, bands, or weights) to maintain muscle." +
-      "\n• Prioritize whole foods (lots of veggies, lean proteins) and stay hydrated." +
-      "\n• Progress may be gradual—patience and consistency are key. Celebrate every step and take rest as needed!"
+      "I'm sorry to hear you're experiencing discomfort. Your well-being comes first—pause intense exercise, use ice or gentle movement as needed, and consult a healthcare professional for ongoing pain. Focus on recovery, quality sleep, hydration, and gentle stretching if appropriate. Remember, honoring your body's needs now will set the stage for stronger gains in the future. Wishing you a speedy recovery!"
     );
   }
 
-  // Muscle gain advice
-  if (/build muscle|gain muscle|get stronger|increase muscle/.test(lowerPrompt)) {
+  // 6. Motivation, feeling stuck, or need encouragement
+  if (
+    /(motivat|struggle|get started|can't do|lost|give up|discouraged|stuck|plateau|why bother|keep going|feel lazy|no progress|not improving)/.test(
+      text
+    )
+  ) {
     return (
-      "Building muscle takes time, consistent effort, and proper nutrition." +
-      "\n• Focus on compound exercises like squats, push-ups, lunges, and rows." +
-      "\n• Aim for 3-4 sessions per week, 8-12 reps per set, with enough resistance to feel challenged." +
-      "\n• Ensure adequate protein intake, sleep, and progressive overload (increasing weights/reps gradually)." +
-      "\nStay motivated—you'll see results as you stick with your program!"
+      "It's completely normal to have ups and downs in your fitness journey. Focus on small, achievable goals and celebrate every victory—no matter how minor it feels! Progress is built over time. Remember, each day you show up, you're moving closer to your goals. Stay patient, practice self-kindness, and reach out for support whenever you need it. You're strong, and you're not alone!"
     );
   }
 
-  // Injury/soreness/recovery
-  if (/injur|hurt|pain|sore|recovery|rest/.test(lowerPrompt)) {
+  // 7. Nutrition, diet, or healthy eating
+  if (
+    /(nutrition|diet|healthy eating|meal plan|eat better|what to eat|food advice)/.test(
+      text
+    )
+  ) {
     return (
-      "Proper rest and recovery are vital for progress and preventing injuries." +
-      "\n• Listen to your body's signals; if you're in pain, pause your workout and rest the affected area." +
-      "\n• Prioritize sleep, hydration, and gentle stretching. Consider low-intensity movement like walking or yoga for active recovery." +
-      "\n• Consult a healthcare professional for persistent pain or injury." +
-      "\nTake care—progress is built on a strong, healthy foundation!"
+      "For best fitness results, fill your meals with a variety of whole foods: plenty of vegetables, some fruit, lean proteins (chicken, fish, tofu, beans), healthy fats (nuts, olive oil), and complex carbs (brown rice, oats, sweet potato). Stay hydrated and eat mindfully. Remember, no single food makes or breaks your progress—balanced, consistent choices work best for long-term health!"
     );
   }
 
-  // Motivation/support
-  if (/motivat|struggle|can't do|get started|give up|discouraged/.test(lowerPrompt)) {
-    return (
-      "Remember, every step you take toward your fitness goal is progress. It's normal to have ups and downs—what matters is consistency and self-compassion." +
-      "\n• Celebrate small wins and focus on what you CAN do today." +
-      "\n• Set realistic, achievable goals and track your journey over time." +
-      "\nYou're stronger than you think—keep going, and be proud of your effort!"
-    );
-  }
-
-  // Custom fallback for other questions
+  // 8. General fallback/support
   return (
-    "Great question! Here's some general fitness guidance:\n" +
-    "• Focus on balanced routines combining strength, cardio, flexibility, and rest.\n" +
-    "• Consistency is key. Even small steps matter—celebrate your achievements!\n" +
-    "• Remember to warm up, cool down, and listen to your body.\n" +
-    "If you have a specific goal or want workout ideas, let me know! I'm here to help you succeed."
+    "Great question! For any fitness goal, start by defining what you want to achieve—whether it's getting stronger, feeling healthier, or finding more energy. Focus on a blend of regular movement, balanced nutrition, and good sleep. Listen to your body, and adjust your routine as you progress. If you want a workout plan or specific advice for your situation, let me know your level and goals—I'm here to help you succeed!"
   );
 }
 
@@ -180,14 +224,14 @@ export default function Chatbot() {
     setLoading(true);
 
     try {
-      // Generate local response using fitness logic
-      const answer = generateFitnessResponse(prompt);
+      // Generate local response using improved fitness response logic
+      const answer = customFitnessResponse(prompt);
       const botMsg: Message = { from: "bot", text: answer };
       const nextMsgs: Message[] = [...newMessages, botMsg];
       setMessages(nextMsgs);
       saveToLocal(nextMsgs);
     } catch {
-      // In case of logic error, show friendly fallback message
+      // Fallback for unexpected error
       const botMsg: Message = {
         from: "bot",
         text: "Sorry for the inconvenience but I am facing a tech hiccup."
