@@ -128,6 +128,17 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         isOpen={showProfileForm}
         onClose={() => setShowProfileForm(false)}
       />
+
+      {/* Floating Chatbot Button */}
+      <React.Suspense fallback={null}>
+        {/* Dynamically import to avoid SSR issues if needed */}
+        {typeof window !== "undefined" ? (
+          <div>
+            {/* Keep Chatbot client-side only */}
+            {React.createElement(require("../chat/Chatbot").default)}
+          </div>
+        ) : null}
+      </React.Suspense>
     </div>
   );
 };
