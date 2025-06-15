@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
+
+// ----- LAZY LOAD CHATBOT -----
+const Chatbot = React.lazy(() => import("../chat/Chatbot"));
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -129,18 +133,13 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         onClose={() => setShowProfileForm(false)}
       />
 
-      {/* Floating Chatbot Button */}
+      {/* Floating Chatbot Button - dynamically loaded */}
       <React.Suspense fallback={null}>
-        {/* Dynamically import to avoid SSR issues if needed */}
-        {typeof window !== "undefined" ? (
-          <div>
-            {/* Keep Chatbot client-side only */}
-            {React.createElement(require("../chat/Chatbot").default)}
-          </div>
-        ) : null}
+        <Chatbot />
       </React.Suspense>
     </div>
   );
 };
 
 export default AuthenticatedLayout;
+
