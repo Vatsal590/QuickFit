@@ -13,7 +13,7 @@ const PageContainer = ({ children }: PageContainerProps) => {
       </main>
       <footer className="bg-fitness-dark text-white py-4">
         <div className="container mx-auto px-4 text-center text-sm">
-          <p>© {new Date().getFullYear()} QuickFit. Get fit, even with limited time.</p>
+          <p>© 2025 QuickFit. Sculpted by Vatsal Agarwala.</p>
         </div>
       </footer>
     </div>
