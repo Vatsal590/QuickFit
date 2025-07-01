@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
+import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
+import TermsOfConditions from '@/components/legal/TermsOfConditions';
 
 // ----- LAZY LOAD CHATBOT -----
 const Chatbot = React.lazy(() => import("../chat/Chatbot"));
@@ -23,6 +26,8 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -112,6 +117,15 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
+                    <Shield className="h-4 w-4 mr-2" />
+                    Privacy Policy
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowTermsOfConditions(true)}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    Terms of Conditions
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={signOut}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
@@ -130,6 +144,18 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       <FitnessProfileForm 
         isOpen={showProfileForm}
         onClose={() => setShowProfileForm(false)}
+      />
+
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicy 
+        isOpen={showPrivacyPolicy}
+        onClose={() => setShowPrivacyPolicy(false)}
+      />
+
+      {/* Terms of Conditions Modal */}
+      <TermsOfConditions 
+        isOpen={showTermsOfConditions}
+        onClose={() => setShowTermsOfConditions(false)}
       />
 
       {/* Floating Chatbot Button - dynamically loaded */}

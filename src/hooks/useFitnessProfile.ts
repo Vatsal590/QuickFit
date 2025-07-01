@@ -10,7 +10,7 @@ export interface FitnessProfile {
   height: number;
   weight: number;
   fitness_goal: 'muscle_gain' | 'fat_loss' | 'athlete_training';
-  body_type: 'ectomorph' | 'mesomorph' | 'endomorph';
+  body_type: string[] | string;
   workout_days_per_week: number;
   available_equipment: string[];
   created_at: string;
@@ -21,7 +21,7 @@ export interface CreateFitnessProfileData {
   height: number;
   weight: number;
   fitness_goal: string;
-  body_type: string;
+  body_type: string[] | string;
   workout_days_per_week: number;
   available_equipment: string[];
 }

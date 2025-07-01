@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -27,7 +28,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
     height: '',
     weight: '',
     fitness_goal: '',
-    body_type: '',
+    body_type: [] as string[],
     workout_days_per_week: '',
     available_equipment: [] as string[]
   });
@@ -38,7 +39,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
         height: profile.height.toString(),
         weight: profile.weight.toString(),
         fitness_goal: profile.fitness_goal,
-        body_type: profile.body_type,
+        body_type: Array.isArray(profile.body_type) ? profile.body_type : [profile.body_type],
         workout_days_per_week: profile.workout_days_per_week.toString(),
         available_equipment: profile.available_equipment || []
       });
@@ -72,11 +73,20 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
     }
   };
 
+  const handleBodyTypeChange = (bodyType: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      body_type: checked 
+        ? [...prev.body_type.filter(t => t !== bodyType), bodyType].slice(0, 2) // Max 2 selections
+        : prev.body_type.filter(t => t !== bodyType)
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.height || !formData.weight || !formData.fitness_goal || 
-        !formData.body_type || !formData.workout_days_per_week) {
+        formData.body_type.length === 0 || !formData.workout_days_per_week) {
       toast({
         title: "Missing information",
         description: "Please fill in all required fields",
@@ -216,7 +226,9 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Body Type</CardTitle>
-                <CardDescription>Choose the body type that best describes you</CardDescription>
+                <CardDescription>
+                  Most people fall into 2 categories, not just one. Select up to 2 body types that best describe you.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -240,20 +252,29 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                       image: '🧍‍♀️'
                     }
                   ].map((type) => (
-                    <button
-                      key={type.value}
-                      type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, body_type: type.value }))}
-                      className={`p-4 rounded-lg border-2 text-left transition-all ${
-                        formData.body_type === type.value 
-                          ? 'border-fitness-primary bg-fitness-primary/5' 
-                          : 'border-gray-200 hover:border-fitness-primary/50'
-                      }`}
-                    >
-                      <div className="text-2xl mb-2">{type.image}</div>
-                      <h4 className="font-medium">{type.title}</h4>
-                      <p className="text-sm text-gray-500">{type.description}</p>
-                    </button>
+                    <div key={type.value} className="relative">
+                      <button
+                        type="button"
+                        onClick={() => handleBodyTypeChange(type.value, !formData.body_type.includes(type.value))}
+                        disabled={!formData.body_type.includes(type.value) && formData.body_type.length >= 2}
+                        className={`p-4 rounded-lg border-2 text-left transition-all w-full ${
+                          formData.body_type.includes(type.value)
+                            ? 'border-fitness-primary bg-fitness-primary/5' 
+                            : formData.body_type.length >= 2
+                            ? 'border-gray-200 opacity-50 cursor-not-allowed'
+                            : 'border-gray-200 hover:border-fitness-primary/50'
+                        }`}
+                      >
+                        <div className="text-2xl mb-2">{type.image}</div>
+                        <h4 className="font-medium">{type.title}</h4>
+                        <p className="text-sm text-gray-500">{type.description}</p>
+                      </button>
+                      {formData.body_type.includes(type.value) && (
+                        <div className="absolute top-2 right-2 w-6 h-6 bg-fitness-primary rounded-full flex items-center justify-center">
+                          <span className="text-white text-sm">✓</span>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </CardContent>
