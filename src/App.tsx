@@ -27,7 +27,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    return <Navigate to="/landing" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
@@ -55,9 +55,8 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/landing" replace />} />
       <Route 
-        path="/landing" 
+        path="/" 
         element={
           <PublicRoute>
             <Landing />
