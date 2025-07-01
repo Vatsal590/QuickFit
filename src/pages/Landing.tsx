@@ -116,7 +116,7 @@ const Landing = () => {
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90">
-                Get Started Free
+                Get started for free
               </Button>
             </Link>
           </div>
