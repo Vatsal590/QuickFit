@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -48,7 +47,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
           
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
-              <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
+              <Link to="/home" className="flex items-center space-x-2 flex-shrink-0">
                 <img 
                   src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
                   alt="QuickFit Logo" 
@@ -58,11 +57,11 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
               
               {/* Navigation - scrollable on mobile */}
               <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
-                <Link to="/" className="flex-shrink-0">
+                <Link to="/home" className="flex-shrink-0">
                   <Button 
-                    variant={isActive('/') ? 'default' : 'ghost'} 
+                    variant={isActive('/home') ? 'default' : 'ghost'} 
                     size="sm"
-                    className={isActive('/') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                    className={isActive('/home') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
                     <Home className="h-4 w-4 mr-1 md:mr-2" />
                     <span className="hidden sm:inline">Home</span>
@@ -142,4 +141,3 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
 };
 
 export default AuthenticatedLayout;
-

@@ -8,6 +8,7 @@ import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import Auth from "./pages/Auth";
+import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
@@ -26,7 +27,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/landing" replace />;
   }
 
   return <AuthenticatedLayout>{children}</AuthenticatedLayout>;
@@ -45,7 +46,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   }
 
   if (user) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return <>{children}</>;
@@ -54,6 +55,15 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/landing" replace />} />
+      <Route 
+        path="/landing" 
+        element={
+          <PublicRoute>
+            <Landing />
+          </PublicRoute>
+        } 
+      />
       <Route 
         path="/auth" 
         element={
@@ -63,7 +73,7 @@ const AppRoutes = () => {
         } 
       />
       <Route 
-        path="/" 
+        path="/home" 
         element={
           <ProtectedRoute>
             <Index />

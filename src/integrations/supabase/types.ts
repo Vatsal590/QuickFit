@@ -63,12 +63,28 @@ export type Database = {
         }
         Relationships: []
       }
+      lastused: {
+        Row: {
+          id: number
+          lastused_at: string
+        }
+        Insert: {
+          id?: number
+          lastused_at?: string
+        }
+        Update: {
+          id?: number
+          lastused_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
           email: string | null
           full_name: string | null
           id: string
+          last_active: string | null
           updated_at: string
         }
         Insert: {
@@ -76,6 +92,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id: string
+          last_active?: string | null
           updated_at?: string
         }
         Update: {
@@ -83,6 +100,7 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+          last_active?: string | null
           updated_at?: string
         }
         Relationships: []
