@@ -1,3 +1,4 @@
+
 import { v4 as uuidv4 } from 'uuid';
 import { Exercise, Equipment, MuscleGroup, IntensityLevel, TimeFrame, Workout, WorkoutFormData } from "../types";
 import { exercises, getFilteredExercises } from "./exercises";
@@ -209,6 +210,64 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+  
+  // Special handling for barbell full body workouts
+  if (muscleGroups.includes("full body") && equipment.includes("barbell")) {
+    const barbellExercises = exercises.filter(ex => 
+      ex.equipment.includes("barbell") && 
+      (ex.muscleGroup === "chest" || ex.muscleGroup === "back" || ex.muscleGroup === "legs" || ex.muscleGroup === "shoulders" || ex.muscleGroup === "biceps" || ex.muscleGroup === "triceps")
+    );
+    
+    const bodyweightExercises = exercises.filter(ex => 
+      ex.equipment.includes("none") && 
+      (ex.muscleGroup === "core" || ex.muscleGroup === "full body")
+    );
+    
+    // Prioritize barbell exercises (80%) with some bodyweight for variety (20%)
+    const totalExercises = Math.min(10, barbellExercises.length + bodyweightExercises.length);
+    const barbellCount = Math.ceil(totalExercises * 0.8);
+    const bodyweightCount = totalExercises - barbellCount;
+    
+    selectedExercises = [
+      ...barbellExercises.slice(0, barbellCount),
+      ...bodyweightExercises.slice(0, bodyweightCount)
+    ].sort(() => 0.5 - Math.random());
+  }
+  
+  // Special handling for dumbbell workouts - vary based on time
+  if (equipment.includes("dumbbells") && !equipment.includes("none")) {
+    const dumbbellExercises = exercises.filter(ex => 
+      ex.equipment.includes("dumbbells") && 
+      (muscleGroups.includes("full body") ? true : muscleGroups.includes(ex.muscleGroup))
+    );
+    
+    // Create different exercise pools based on time
+    let exercisePool: Exercise[] = [];
+    
+    if (time <= 20) {
+      // Short workout - focus on compound movements
+      exercisePool = dumbbellExercises.filter(ex => 
+        ex.muscleGroup === "full body" || 
+        ex.name.includes("Thruster") || 
+        ex.name.includes("Clean") || 
+        ex.name.includes("Squat") ||
+        ex.name.includes("Row")
+      );
+    } else if (time <= 30) {
+      // Medium workout - mix of compound and isolation
+      exercisePool = dumbbellExercises.filter(ex => 
+        ex.muscleGroup === "full body" || 
+        ex.muscleGroup === "chest" || 
+        ex.muscleGroup === "back" || 
+        ex.muscleGroup === "legs"
+      );
+    } else {
+      // Longer workout - full variety
+      exercisePool = dumbbellExercises;
+    }
+    
+    selectedExercises = exercisePool.sort(() => 0.5 - Math.random());
+  }
   
   // If we don't have enough exercises, add some cardio or core exercises
   if (selectedExercises.length < 3) {
