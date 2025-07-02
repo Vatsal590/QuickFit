@@ -45,7 +45,13 @@ export const useFitnessProfile = () => {
       
       // Handle both string and array formats for body_type
       if (data && typeof data.body_type === 'string') {
-        data.body_type = [data.body_type];
+        try {
+          // Try to parse as JSON array first
+          data.body_type = JSON.parse(data.body_type);
+        } catch {
+          // If parsing fails, treat as single string and convert to array
+          data.body_type = [data.body_type];
+        }
       }
       
       return data as FitnessProfile | null;
