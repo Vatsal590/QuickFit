@@ -43,18 +43,26 @@ export const useFitnessProfile = () => {
       
       if (error) throw error;
       
+      if (!data) return null;
+      
       // Handle both string and array formats for body_type
-      if (data && typeof data.body_type === 'string') {
+      let bodyType: string[] = [];
+      if (typeof data.body_type === 'string') {
         try {
           // Try to parse as JSON array first
-          data.body_type = JSON.parse(data.body_type);
+          bodyType = JSON.parse(data.body_type);
         } catch {
           // If parsing fails, treat as single string and convert to array
-          data.body_type = [data.body_type];
+          bodyType = [data.body_type];
         }
+      } else if (Array.isArray(data.body_type)) {
+        bodyType = data.body_type;
       }
       
-      return data as FitnessProfile | null;
+      return {
+        ...data,
+        body_type: bodyType
+      } as FitnessProfile;
     },
     enabled: !!user
   });
@@ -85,14 +93,14 @@ export const useFitnessProfile = () => {
     mutationFn: async (profileData: Partial<CreateFitnessProfileData>) => {
       if (!user || !profile) throw new Error('User not authenticated or profile not found');
       
-      const updateData = {
+      const updateData: any = {
         ...profileData,
         updated_at: new Date().toISOString()
       };
       
       // Convert body_type array to JSON string for database storage
       if (updateData.body_type) {
-        (updateData as any).body_type = JSON.stringify(updateData.body_type);
+        updateData.body_type = JSON.stringify(updateData.body_type);
       }
       
       const { data, error } = await supabase

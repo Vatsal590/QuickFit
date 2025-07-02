@@ -29,6 +29,46 @@ const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
+// Calculate realistic workout duration based on exercises
+const calculateRealisticDuration = (
+  exercises: Exercise[], 
+  warmupExercises: Exercise[], 
+  cooldownExercises: Exercise[], 
+  baseTime: TimeFrame
+): number => {
+  // Calculate warmup time (more realistic)
+  const warmupTime = warmupExercises.length * 1.5; // 1.5 minutes per warmup exercise
+  
+  // Calculate main workout time
+  let mainWorkoutTime = 0;
+  exercises.forEach(exercise => {
+    const setsTime = exercise.sets * 0.5; // 30 seconds per set (execution time)
+    const repsTime = exercise.sets * (exercise.reps / 60) * 2; // Realistic rep execution time
+    const restTime = exercise.sets * (exercise.restTime / 60); // Rest time in minutes
+    const transitionTime = 1; // 1 minute transition between exercises
+    
+    mainWorkoutTime += setsTime + repsTime + restTime + transitionTime;
+  });
+  
+  // Calculate cooldown time (more realistic)
+  const cooldownTime = cooldownExercises.length * 1.2; // 1.2 minutes per cooldown exercise
+  
+  // Total realistic time
+  const calculatedTime = warmupTime + mainWorkoutTime + cooldownTime;
+  
+  // Ensure it's close to but slightly higher than the requested time
+  const adjustedTime = Math.max(baseTime, Math.ceil(calculatedTime));
+  
+  // Add buffer for realistic timing
+  if (baseTime <= 30) {
+    return Math.min(adjustedTime + 3, baseTime + 8); // Add 3-8 minutes buffer for short workouts
+  } else if (baseTime <= 45) {
+    return Math.min(adjustedTime + 5, baseTime + 12); // Add 5-12 minutes buffer for medium workouts
+  } else {
+    return Math.min(adjustedTime + 8, baseTime + 15); // Add 8-15 minutes buffer for long workouts
+  }
+};
+
 // Adjust sets, reps and rest time based on intensity
 const adjustExerciseForIntensity = (
   exercise: Exercise, 
@@ -326,6 +366,9 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   const warmupExercises = generateWarmupExercises(equipment).slice(0, 3); // Reduced from 4
   const cooldownExercises = generateCooldownExercises(muscleGroups).slice(0, 3); // Reduced from 4
   
+  // Calculate realistic duration based on actual exercises
+  const realisticDuration = calculateRealisticDuration(adjustedExercises, warmupExercises, cooldownExercises, time);
+  
   // Generate a workout title
   const title = generateWorkoutTitle(muscleGroups, intensity);
   
@@ -333,7 +376,7 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
   const workout: Workout = {
     id: uuidv4(),
     title,
-    duration: time,
+    duration: realisticDuration, // Use calculated realistic duration
     intensity,
     targetMuscleGroups: muscleGroups,
     equipment,

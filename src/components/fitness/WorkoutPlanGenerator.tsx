@@ -156,7 +156,7 @@ const customizeExerciseForUser = (exercise: any, profile: FitnessProfile) => {
   let modifiedExercise = { ...exercise };
   
   // Adjust based on BMI and body type
-  if (bmi > 30 || body_type === 'endomorph') {
+  if (bmi > 30 || body_type.includes('endomorph')) {
     // Lower impact modifications for higher BMI
     if (exercise.name.includes('Jump') || exercise.name.includes('Plyometric')) {
       modifiedExercise.sets = Math.max(2, exercise.sets - 1);
