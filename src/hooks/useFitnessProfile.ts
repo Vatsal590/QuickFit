@@ -10,7 +10,7 @@ export interface FitnessProfile {
   height: number;
   weight: number;
   fitness_goal: 'muscle_gain' | 'fat_loss' | 'athlete_training';
-  body_type: string[] | string;
+  body_type: string[];
   workout_days_per_week: number;
   available_equipment: string[];
   created_at: string;
@@ -21,7 +21,7 @@ export interface CreateFitnessProfileData {
   height: number;
   weight: number;
   fitness_goal: string;
-  body_type: string[] | string;
+  body_type: string[];
   workout_days_per_week: number;
   available_equipment: string[];
 }
@@ -42,6 +42,12 @@ export const useFitnessProfile = () => {
         .maybeSingle();
       
       if (error) throw error;
+      
+      // Handle both string and array formats for body_type
+      if (data && typeof data.body_type === 'string') {
+        data.body_type = [data.body_type];
+      }
+      
       return data as FitnessProfile | null;
     },
     enabled: !!user
@@ -55,7 +61,8 @@ export const useFitnessProfile = () => {
         .from('fitness_profiles')
         .insert({
           user_id: user.id,
-          ...profileData
+          ...profileData,
+          body_type: JSON.stringify(profileData.body_type)
         })
         .select()
         .single();
@@ -72,12 +79,19 @@ export const useFitnessProfile = () => {
     mutationFn: async (profileData: Partial<CreateFitnessProfileData>) => {
       if (!user || !profile) throw new Error('User not authenticated or profile not found');
       
+      const updateData = {
+        ...profileData,
+        updated_at: new Date().toISOString()
+      };
+      
+      // Convert body_type array to JSON string for database storage
+      if (updateData.body_type) {
+        updateData.body_type = JSON.stringify(updateData.body_type) as any;
+      }
+      
       const { data, error } = await supabase
         .from('fitness_profiles')
-        .update({
-          ...profileData,
-          updated_at: new Date().toISOString()
-        })
+        .update(updateData)
         .eq('id', profile.id)
         .select()
         .single();

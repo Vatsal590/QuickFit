@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle } from 'lucide-react';
 
 const Landing = () => {
   return (
@@ -34,11 +34,11 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-              Smart Workouts,
-              <span className="text-fitness-primary"> Tailored for You</span>
+              Your Complete
+              <span className="text-fitness-primary"> Fitness Solution</span>
             </h2>
             <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Generate personalized workouts based on your available time, equipment, and fitness goals. No more guessing—just effective training.
+              Create personalized 30-day workout plans, generate instant workouts, and get expert fitness advice with our AI chatbot—all tailored to your goals and equipment.
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90 text-lg px-8 py-3">
@@ -47,7 +47,52 @@ const Landing = () => {
             </Link>
           </div>
 
-          {/* Features Grid */}
+          {/* Main Features */}
+          <div className="grid md:grid-cols-3 gap-8 mb-16">
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-primary/20">
+              <CardHeader>
+                <div className="mx-auto bg-fitness-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <Calendar className="h-8 w-8 text-fitness-primary" />
+                </div>
+                <CardTitle className="text-xl">30-Day Workout Plans</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Get a complete month-long personalized workout program designed around your fitness goals and available equipment.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-secondary/20">
+              <CardHeader>
+                <div className="mx-auto bg-fitness-secondary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <Zap className="h-8 w-8 text-fitness-secondary" />
+                </div>
+                <CardTitle className="text-xl">Instant Workouts</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Need a quick workout? Generate personalized routines in seconds based on your time, equipment, and target muscles.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-accent/20">
+              <CardHeader>
+                <div className="mx-auto bg-fitness-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <MessageCircle className="h-8 w-8 text-fitness-accent" />
+                </div>
+                <CardTitle className="text-xl">AI Fitness Coach</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Ask our AI chatbot any fitness question—from form tips to nutrition advice. Get expert guidance 24/7.
+                </CardDescription>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Additional Features Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
             <Card className="text-center hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -58,7 +103,7 @@ const Landing = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Workouts that fit your schedule, from 15 minutes to full hour sessions.
+                  From 10-minute quickies to full hour sessions—workouts that fit your schedule.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -72,7 +117,7 @@ const Landing = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Adapts to whatever equipment you have available, from bodyweight to full gym.
+                  Works with any equipment setup—from bodyweight to full gym access.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -112,7 +157,7 @@ const Landing = () => {
               Ready to Transform Your Fitness?
             </h3>
             <p className="text-gray-600 mb-6">
-              Join thousands who've made fitness simple with QuickFit.
+              Join thousands who've made fitness simple with personalized plans and instant workouts.
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90">
