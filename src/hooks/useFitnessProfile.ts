@@ -92,7 +92,7 @@ export const useFitnessProfile = () => {
       
       // Convert body_type array to JSON string for database storage
       if (updateData.body_type) {
-        updateData.body_type = JSON.stringify(updateData.body_type) as any;
+        (updateData as any).body_type = JSON.stringify(updateData.body_type);
       }
       
       const { data, error } = await supabase

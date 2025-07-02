@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -104,7 +103,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
-            <div><strong>Body Type:</strong> {profile.body_type}</div>
+            <div><strong>Body Type:</strong> {Array.isArray(profile.body_type) ? profile.body_type.join(', ') : profile.body_type}</div>
             <div><strong>Height:</strong> {profile.height}cm</div>
             <div><strong>Weight:</strong> {profile.weight}kg</div>
             <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
@@ -182,7 +181,6 @@ const customizeExerciseForUser = (exercise: any, profile: FitnessProfile) => {
   return modifiedExercise;
 };
 
-// Helper function to generate personalized workout plan
 const generatePersonalizedPlan = (profile: FitnessProfile) => {
   const { fitness_goal, body_type, workout_days_per_week, available_equipment } = profile;
   
@@ -216,7 +214,7 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
   return dailyWorkouts;
 };
 
-const generateDayWorkout = (day: number, goal: string, bodyType: string, equipment: string[], profile: FitnessProfile) => {
+const generateDayWorkout = (day: number, goal: string, bodyType: string[], equipment: string[], profile: FitnessProfile) => {
   const week = Math.ceil(day / 7);
   const dayInWeek = ((day - 1) % 7) + 1;
   
@@ -254,10 +252,10 @@ const generateDayWorkout = (day: number, goal: string, bodyType: string, equipme
   };
 };
 
-const getDuration = (goal: string, bodyType: string) => {
+const getDuration = (goal: string, bodyType: string[]) => {
   if (goal === 'fat_loss') return 45;
   if (goal === 'athlete_training') return 60;
-  return bodyType === 'ectomorph' ? 45 : 50;
+  return bodyType.includes('ectomorph') ? 45 : 50;
 };
 
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile) => {
@@ -426,7 +424,7 @@ const getRestDayActivity = (goal: string) => {
   return 'Complete rest or gentle stretching';
 };
 
-const getWorkoutNotes = (goal: string, bodyType: string, week: number) => {
+const getWorkoutNotes = (goal: string, bodyType: string[], week: number) => {
   const baseNotes = {
     muscle_gain: 'Focus on progressive overload. Increase weight when you can complete all reps easily.',
     fat_loss: 'Maintain high intensity. Focus on form over speed.',

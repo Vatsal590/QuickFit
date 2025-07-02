@@ -282,35 +282,49 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
     ];
   }
   
-  // Limit the number of exercises based on time available
-  // Reduce main workout time to account for warmup and cooldown
-  const mainWorkoutTime = time - 10; // 5 min warmup + 5 min cooldown
+  // Updated workout time calculation to stay within target duration
+  const warmupTime = 4; // Reduced from 5 minutes
+  const cooldownTime = 4; // Reduced from 5 minutes
+  const mainWorkoutTime = time - warmupTime - cooldownTime;
+  
   let maxExercises: number;
   
   if (mainWorkoutTime <= 0) {
     maxExercises = 2; // Very short workout
-  } else if (mainWorkoutTime <= 10) {
+  } else if (mainWorkoutTime <= 12) {
     maxExercises = 3;
-  } else if (mainWorkoutTime <= 20) {
+  } else if (mainWorkoutTime <= 22) {
     maxExercises = 4;
-  } else if (mainWorkoutTime <= 30) {
-    maxExercises = 6;
-  } else if (mainWorkoutTime <= 45) {
-    maxExercises = 8;
+  } else if (mainWorkoutTime <= 32) {
+    maxExercises = 5; // Reduced from 6
+  } else if (mainWorkoutTime <= 42) {
+    maxExercises = 6; // Reduced from 8
   } else {
-    maxExercises = 10;
+    maxExercises = 7; // Reduced from 10
   }
   
   const limitedExercises = selectedExercises.slice(0, maxExercises);
   
-  // Adjust exercises for the given intensity and time
-  const adjustedExercises = limitedExercises.map(ex => 
-    adjustExerciseForIntensity(ex, intensity, time)
-  );
+  // Adjust exercises for the given intensity and time - with stricter time limits
+  const adjustedExercises = limitedExercises.map(ex => {
+    const adjusted = adjustExerciseForIntensity(ex, intensity, time);
+    
+    // Further reduce sets and rest time for longer workouts to fit in time
+    if (time >= 45) {
+      adjusted.sets = Math.min(adjusted.sets, 3);
+      adjusted.restTime = Math.min(adjusted.restTime, 60); // Max 60 seconds rest
+    }
+    if (time >= 60) {
+      adjusted.sets = Math.min(adjusted.sets, 4);
+      adjusted.restTime = Math.min(adjusted.restTime, 75); // Max 75 seconds rest
+    }
+    
+    return adjusted;
+  });
   
-  // Generate warmup and cooldown exercises
-  const warmupExercises = generateWarmupExercises(equipment);
-  const cooldownExercises = generateCooldownExercises(muscleGroups);
+  // Generate shorter warmup and cooldown exercises
+  const warmupExercises = generateWarmupExercises(equipment).slice(0, 3); // Reduced from 4
+  const cooldownExercises = generateCooldownExercises(muscleGroups).slice(0, 3); // Reduced from 4
   
   // Generate a workout title
   const title = generateWorkoutTitle(muscleGroups, intensity);
