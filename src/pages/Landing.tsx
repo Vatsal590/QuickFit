@@ -72,7 +72,7 @@ const Landing = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Need a quick workout? Generate personalized routines in seconds based on your time, equipment, and target muscles.
+                  Need a quick workout? Generate personalized routines in seconds based on your time, equipment, target muscles and intensity.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -86,7 +86,7 @@ const Landing = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Ask our AI chatbot any fitness question—from form tips to nutrition advice. Get expert guidance 24/7.
+                  Ask our AI chatbot any fitness question—from form tips to nutrition advice. Get guidance 24/7.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -131,7 +131,7 @@ const Landing = () => {
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Focused workouts for strength, cardio, flexibility, or weight loss goals.
+                  Focused workouts for strength, athlete-style, or weight loss goals.
                 </CardDescription>
               </CardContent>
             </Card>
@@ -141,7 +141,7 @@ const Landing = () => {
                 <div className="mx-auto bg-fitness-dark/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-fitness-dark" />
                 </div>
-                <CardTitle className="text-lg">Instant Results</CardTitle>
+                <CardTitle className="text-lg">Start Instantly</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
@@ -157,7 +157,7 @@ const Landing = () => {
               Ready to Transform Your Fitness?
             </h3>
             <p className="text-gray-600 mb-6">
-              Join thousands who've made fitness simple with personalized plans and instant workouts.
+              Join others who've made fitness simple with personalized plans and instant workouts.
             </p>
             <Link to="/auth">
               <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90">
