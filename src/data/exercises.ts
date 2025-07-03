@@ -14,6 +14,16 @@ export const exercises: Exercise[] = [
     description: "Start in a plank position with hands slightly wider than shoulder-width. Lower your body until chest nearly touches the floor, then push back up."
   },
   {
+    id: "decline push-up",
+    name: "Decline Push-up",
+    muscleGroup: "chest",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Start with legs on an elevated sueface and hands slightly wider than shoulder-width. Lower your body until chest nearly touches the floor, then push back up."
+  },
+  {
     id: "dumbbell-chest-press",
     name: "Dumbbell Chest Press",
     muscleGroup: "chest",
@@ -116,6 +126,16 @@ export const exercises: Exercise[] = [
     description: "Sit at a lat pulldown station and grip the bar wider than shoulder-width. Pull the bar down to your chest, then slowly return to starting position."
   },
   {
+    id: "cable face pull",
+    name: "Cable Face-Pull",
+    muscleGroup: "back",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Set a rope attachment on a high pulley, grasp it with both hands, palms facing in. Pull the rope toward your face, keeping elbows high, then return slowly to the start."
+  },
+  {
     id: "single-arm-dumbbell-row",
     name: "Single-Arm Dumbbell Row",
     muscleGroup: "back",
@@ -125,7 +145,16 @@ export const exercises: Exercise[] = [
     restTime: 45,
     description: "Place one knee and hand on a bench, other foot on the floor. Hold dumbbell in free hand, row it up to your side while keeping your back flat."
   },
-
+  {
+    id: "lower back extension",
+    name: "Lower-Back Extension",
+    muscleGroup: "back",
+    equipment: ["bench"],
+    sets: 3,
+    reps: 8,
+    restTime: 45,
+    description: "Lie face down on a hyperextension bench with your hips supported and feet secured. Lower your upper body as much as you can while keeping it straight, then come back up."
+  },
   // Shoulder exercises
   {
     id: "barbell-overhead-press",
@@ -572,9 +601,9 @@ export const getFilteredExercises = (
         (ex.muscleGroup === "full body" || ex.muscleGroup === "core")
       );
       
-      // Return 70% barbell exercises, 30% bodyweight for variety
-      const barbellCount = Math.ceil(barbellExercises.length * 0.7);
-      const bodyweightCount = Math.floor(bodyweightExercises.length * 0.3);
+      // Return 80% barbell exercises, 20% bodyweight for variety
+      const barbellCount = Math.ceil(barbellExercises.length * 0.8);
+      const bodyweightCount = Math.floor(bodyweightExercises.length * 0.2);
       
       return [
         ...barbellExercises.slice(0, barbellCount),
