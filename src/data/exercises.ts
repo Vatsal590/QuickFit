@@ -331,6 +331,16 @@ export const exercises: Exercise[] = [
     description: "Hold barbell with underhand grip, arms extended. Curl the bar up toward your chest while keeping elbows stationary, then lower back down."
   },
   {
+    id: "barbell-reverse curl",
+    name: "Barbell Reverse Curl",
+    muscleGroup: "biceps",
+    equipment: ["barbell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Hold barbell with overhand grip, arms extended. Curl the bar up toward your chest while keeping elbows stationary, then lower back down."
+  },
+  {
     id: "dumbbell-bicep-curl",
     name: "Dumbbell Bicep Curl",
     muscleGroup: "biceps",
