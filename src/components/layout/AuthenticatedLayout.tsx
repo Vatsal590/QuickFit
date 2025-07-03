@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2 } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,6 +45,15 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
+
+  // Track user activity whenever they interact with buttons
+  const trackUserActivity = async () => {
+    try {
+      await supabase.rpc('update_user_last_used');
+    } catch (error) {
+      console.error('Failed to track user activity:', error);
+    }
+  };
 
   // Format the member since date
   const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', {
@@ -112,7 +121,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
           
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
-              <Link to="/home" className="flex items-center space-x-2 flex-shrink-0">
+              <Link to="/home" className="flex items-center space-x-2 flex-shrink-0" onClick={trackUserActivity}>
                 <img 
                   src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
                   alt="QuickFit Logo" 
@@ -122,7 +131,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
               
               {/* Navigation - scrollable on mobile */}
               <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
-                <Link to="/home" className="flex-shrink-0">
+                <Link to="/home" className="flex-shrink-0" onClick={trackUserActivity}>
                   <Button 
                     variant={isActive('/home') ? 'default' : 'ghost'} 
                     size="sm"
@@ -132,23 +141,34 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     <span className="hidden sm:inline">Home</span>
                   </Button>
                 </Link>
+
+                <Link to="/about" className="flex-shrink-0" onClick={trackUserActivity}>
+                  <Button 
+                    variant={isActive('/about') ? 'default' : 'ghost'} 
+                    size="sm"
+                    className={isActive('/about') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                  >
+                    <Info className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">About</span>
+                  </Button>
+                </Link>
                 
                 {/* Menu Dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0">
+                    <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
                       <Menu className="h-4 w-4 mr-1 md:mr-2" />
                       <span className="hidden sm:inline">Menu</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="w-48 bg-white" align="start">
                     <DropdownMenuItem asChild>
-                      <Link to="/history" className="flex items-center w-full">
+                      <Link to="/history" className="flex items-center w-full" onClick={trackUserActivity}>
                         <History className="h-4 w-4 mr-2" />
                         History
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setShowProfileForm(true)}>
+                    <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
                       <Settings className="h-4 w-4 mr-2" />
                       Customize
                     </DropdownMenuItem>
@@ -161,7 +181,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
               {/* Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex-shrink-0">
+                  <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
                     <User className="h-4 w-4 mr-1 md:mr-2" />
                     <span className="hidden sm:inline">Profile</span>
                     <ChevronDown className="h-3 w-3 ml-1" />
@@ -177,21 +197,21 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
+                  <DropdownMenuItem onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}>
                     <Shield className="h-4 w-4 mr-2" />
                     Privacy Policy
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowTermsOfConditions(true)}>
+                  <DropdownMenuItem onClick={() => { setShowTermsOfConditions(true); trackUserActivity(); }}>
                     <FileText className="h-4 w-4 mr-2" />
                     Terms of Conditions
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut}>
+                  <DropdownMenuItem onClick={() => { signOut(); trackUserActivity(); }}>
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => setShowDeleteDialog(true)}
+                    onClick={() => { setShowDeleteDialog(true); trackUserActivity(); }}
                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />

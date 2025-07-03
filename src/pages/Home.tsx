@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
@@ -11,6 +12,7 @@ import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
+import { supabase } from '@/integrations/supabase/client';
 
 const Home = () => {
   const { toast } = useToast();
@@ -21,7 +23,17 @@ const Home = () => {
   const { profile, isLoading: profileLoading } = useFitnessProfile();
   const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans, addWorkoutPlan } = useWorkoutPlans();
 
+  // Track user activity
+  const trackUserActivity = async () => {
+    try {
+      await supabase.rpc('update_user_last_used');
+    } catch (error) {
+      console.error('Failed to track user activity:', error);
+    }
+  };
+
   const handleCreateWorkout = (formData: WorkoutFormData) => {
+    trackUserActivity();
     try {
       const newWorkout = generateWorkout(
         formData.time,
@@ -48,15 +60,18 @@ const Home = () => {
   };
   
   const handleCompleteWorkout = (workout: Workout) => {
+    trackUserActivity();
     markWorkoutCompleted(workout.id);
   };
 
   const handleSelectPlan = (plan: WorkoutPlan) => {
+    trackUserActivity();
     console.log("Selected plan:", plan);
     setSelectedPlan(plan);
   };
 
   const handleDeletePlan = async (planId: string) => {
+    trackUserActivity();
     try {
       await deleteWorkoutPlan(planId);
       toast({
@@ -73,6 +88,7 @@ const Home = () => {
   };
 
   const handleMarkDayComplete = async (planId: string, dayNumber: number) => {
+    trackUserActivity();
     try {
       await markDayComplete(planId, dayNumber);
       toast({
@@ -89,6 +105,7 @@ const Home = () => {
   };
 
   const handlePlanGenerated = (newPlan: WorkoutPlan) => {
+    trackUserActivity();
     addWorkoutPlan(newPlan);
   };
 
@@ -129,7 +146,7 @@ const Home = () => {
         {selectedPlan ? (
           <div className="mb-8">
             <button
-              onClick={() => setSelectedPlan(null)}
+              onClick={() => { setSelectedPlan(null); trackUserActivity(); }}
               className="mb-4 text-fitness-primary hover:text-fitness-primary/80 flex items-center gap-2"
             >
               ← Back to Plans
@@ -155,7 +172,7 @@ const Home = () => {
               {currentWorkout ? (
                 <WorkoutDisplay
                   workout={currentWorkout}
-                  onBack={() => setCurrentWorkout(null)}
+                  onBack={() => { setCurrentWorkout(null); trackUserActivity(); }}
                   onComplete={handleCompleteWorkout}
                 />
               ) : (
