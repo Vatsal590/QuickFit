@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
@@ -24,7 +23,12 @@ const Home = () => {
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
     try {
-      const newWorkout = generateWorkout(formData);
+      const newWorkout = generateWorkout(
+        formData.time,
+        formData.intensity,
+        formData.muscleGroups,
+        formData.equipment
+      );
       setCurrentWorkout(newWorkout);
       
       toast({
