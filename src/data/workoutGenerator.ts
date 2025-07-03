@@ -1,4 +1,3 @@
-
 import { v4 as uuidv4 } from 'uuid';
 import { Exercise, Equipment, MuscleGroup, IntensityLevel, TimeFrame, Workout, WorkoutFormData } from "../types";
 import { exercises, getFilteredExercises } from "./exercises";
@@ -35,7 +34,7 @@ const calculateRealisticDuration = (
   warmupExercises: Exercise[], 
   cooldownExercises: Exercise[], 
   baseTime: TimeFrame
-): number => {
+): TimeFrame => {
   // Calculate warmup time (more realistic)
   const warmupTime = warmupExercises.length * 1.5; // 1.5 minutes per warmup exercise
   
@@ -59,13 +58,13 @@ const calculateRealisticDuration = (
   // Ensure it's close to but slightly higher than the requested time
   const adjustedTime = Math.max(baseTime, Math.ceil(calculatedTime));
   
-  // Add buffer for realistic timing
+  // Add buffer for realistic timing and return as TimeFrame
   if (baseTime <= 30) {
-    return Math.min(adjustedTime + 3, baseTime + 8); // Add 3-8 minutes buffer for short workouts
+    return Math.min(adjustedTime + 3, baseTime + 8) as TimeFrame; // Add 3-8 minutes buffer for short workouts
   } else if (baseTime <= 45) {
-    return Math.min(adjustedTime + 5, baseTime + 12); // Add 5-12 minutes buffer for medium workouts
+    return Math.min(adjustedTime + 5, baseTime + 12) as TimeFrame; // Add 5-12 minutes buffer for medium workouts
   } else {
-    return Math.min(adjustedTime + 8, baseTime + 15); // Add 8-15 minutes buffer for long workouts
+    return Math.min(adjustedTime + 8, baseTime + 15) as TimeFrame; // Add 8-15 minutes buffer for long workouts
   }
 };
 
@@ -245,8 +244,13 @@ const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[
   return targetSpecificCooldowns.slice(0, 4);
 };
 
-export const generateWorkout = (formData: WorkoutFormData): Workout => {
-  const { time, equipment, muscleGroups, intensity } = formData;
+export const generateWorkout = (
+  time: TimeFrame,
+  intensity: IntensityLevel,
+  muscleGroups: MuscleGroup[],
+  equipment: Equipment[]
+): Workout => {
+  console.log('Generating workout with:', { time, intensity, muscleGroups, equipment });
   
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
@@ -385,5 +389,6 @@ export const generateWorkout = (formData: WorkoutFormData): Workout => {
     cooldownExercises
   };
   
+  console.log('Generated workout:', workout);
   return workout;
 };

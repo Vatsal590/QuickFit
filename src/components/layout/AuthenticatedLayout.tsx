@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2 } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +11,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
@@ -25,9 +37,12 @@ interface AuthenticatedLayoutProps {
 const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
   const location = useLocation();
+  const { toast } = useToast();
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -37,6 +52,51 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
     month: 'long',
     day: 'numeric'
   }) : 'Unknown';
+
+  const handleDeleteAccount = async () => {
+    if (!user) return;
+
+    setIsDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('No valid session found');
+      }
+
+      const response = await fetch('/functions/v1/delete-user-account', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete account');
+      }
+
+      toast({
+        title: "Account Deleted",
+        description: "Your account and all data have been permanently deleted.",
+      });
+
+      // Sign out and redirect
+      await signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to delete account. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setShowDeleteDialog(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -130,6 +190,13 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Remove Account
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -157,6 +224,34 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         isOpen={showTermsOfConditions}
         onClose={() => setShowTermsOfConditions(false)}
       />
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to permanently delete your account? This action cannot be undone and will:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Delete all your workout plans and history</li>
+                <li>Remove your fitness profile</li>
+                <li>Permanently delete your account</li>
+                <li>Prevent you from signing in with this email again</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDeleteAccount}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              {isDeleting ? "Deleting..." : "Delete Account"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Floating Chatbot Button - dynamically loaded */}
       <React.Suspense fallback={null}>
