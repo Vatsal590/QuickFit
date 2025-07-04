@@ -1,3 +1,4 @@
+
 import { v4 as uuidv4 } from 'uuid';
 import { Exercise, Equipment, MuscleGroup, IntensityLevel, TimeFrame, Workout, WorkoutFormData } from "../types";
 import { exercises, getFilteredExercises } from "./exercises";
@@ -286,14 +287,14 @@ export const generateWorkout = (
     ];
   }
   
-  // Set specific exercise count based on time frame
+  // Set specific exercise count based on time frame - EXACTLY as requested
   let maxExercises: number;
   if (time === 30) {
     maxExercises = Math.random() < 0.5 ? 3 : 4; // Randomly choose 3 or 4 for 30min
   } else if (time === 45) {
-    maxExercises = 4;
+    maxExercises = 4; // Exactly 4 for 45 minutes
   } else if (time === 60) {
-    maxExercises = 6;
+    maxExercises = 6; // Exactly 6 for 60 minutes
   } else {
     // For 10min and 20min workouts
     maxExercises = time <= 20 ? 2 : 3;
@@ -313,11 +314,11 @@ export const generateWorkout = (
   // Generate a workout title
   const title = generateWorkoutTitle(muscleGroups, intensity);
   
-  // Create the workout object - duration exactly matches selected time
+  // Create the workout object - duration EXACTLY matches selected time
   const workout: Workout = {
     id: uuidv4(),
     title,
-    duration: time, // Exactly match the selected time
+    duration: time, // This MUST exactly match the time parameter
     intensity,
     targetMuscleGroups: muscleGroups,
     equipment,
@@ -327,5 +328,6 @@ export const generateWorkout = (
   };
   
   console.log('Generated workout:', workout);
+  console.log(`Workout duration set to: ${workout.duration} minutes (matches selected time: ${time})`);
   return workout;
 };

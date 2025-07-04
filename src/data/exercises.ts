@@ -1,4 +1,3 @@
-
 import { Exercise, Equipment, MuscleGroup } from "../types";
 
 export const exercises: Exercise[] = [
@@ -6,7 +5,7 @@ export const exercises: Exercise[] = [
   {
     id: "push-up",
     name: "Push-up",
-    muscleGroup: "chest",
+    muscleGroup: "chest", 
     equipment: ["none"],
     sets: 3,
     reps: 12,
@@ -21,7 +20,7 @@ export const exercises: Exercise[] = [
     sets: 3,
     reps: 12,
     restTime: 60,
-    description: "Start with legs on an elevated sueface and hands slightly wider than shoulder-width. Lower your body until chest nearly touches the floor, then push back up."
+    description: "Start with legs on an elevated surface and hands slightly wider than shoulder-width. Lower your body until chest nearly touches the floor, then push back up."
   },
   {
     id: "dumbbell-chest-press",
@@ -72,6 +71,26 @@ export const exercises: Exercise[] = [
     reps: 12,
     restTime: 60,
     description: "Stand between cable machines with cables at chest height. With a slight bend in the elbows, bring hands together in front of your chest."
+  },
+  {
+    id: "resistance-band-chest-press",
+    name: "Resistance Band Chest Press",
+    muscleGroup: "chest",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 60,
+    description: "Anchor band behind you at chest height. Hold handles and press forward, squeezing chest muscles."
+  },
+  {
+    id: "resistance-band-chest-fly",
+    name: "Resistance Band Chest Fly",
+    muscleGroup: "chest",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Anchor band behind you at chest height. With slight bend in elbows, bring handles together in front of chest."
   },
 
   // Back exercises
@@ -155,6 +174,37 @@ export const exercises: Exercise[] = [
     restTime: 45,
     description: "Lie face down on a hyperextension bench with your hips supported and feet secured. Lower your upper body as much as you can while keeping it straight, then come back up."
   },
+  {
+    id: "resistance-band-row",
+    name: "Resistance Band Row",
+    muscleGroup: "back",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 60,
+    description: "Anchor band in front of you at chest height. Pull handles back while squeezing shoulder blades together."
+  },
+  {
+    id: "resistance-band-lat-pulldown",
+    name: "Resistance Band Lat Pulldown",
+    muscleGroup: "back",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Anchor band overhead. Pull handles down and back, focusing on engaging your lats."
+  },
+  {
+    id: "resistance-band-reverse-fly",
+    name: "Resistance Band Reverse Fly",
+    muscleGroup: "back",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Hold band at chest height with arms extended. Pull handles apart while squeezing shoulder blades."
+  },
+
   // Shoulder exercises
   {
     id: "barbell-overhead-press",
@@ -215,6 +265,56 @@ export const exercises: Exercise[] = [
     reps: 15,
     restTime: 30,
     description: "Attach band at head height. Hold ends with arms extended, pull band toward face while pulling elbows back and squeezing shoulder blades."
+  },
+  {
+    id: "resistance-band-shoulder-press",
+    name: "Resistance Band Shoulder Press",
+    muscleGroup: "shoulders",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Stand on band with feet shoulder-width apart. Hold handles at shoulder height and press overhead."
+  },
+  {
+    id: "resistance-band-lateral-raise",
+    name: "Resistance Band Lateral Raise",
+    muscleGroup: "shoulders",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Stand on band with feet together. Hold handles and raise arms out to sides until shoulder height."
+  },
+  {
+    id: "resistance-band-front-raise",
+    name: "Resistance Band Front Raise",
+    muscleGroup: "shoulders",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Stand on band with feet shoulder-width apart. Hold one handle and raise arm straight in front to shoulder height."
+  },
+  {
+    id: "kettlebell-press",
+    name: "Kettlebell Press",
+    muscleGroup: "shoulders",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 8,
+    restTime: 90,
+    description: "Hold kettlebell at shoulder height in rack position. Press overhead until arm is fully extended, then lower back down."
+  },
+  {
+    id: "kettlebell-windmill",
+    name: "Kettlebell Windmill",
+    muscleGroup: "shoulders",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 6,
+    restTime: 90,
+    description: "Hold kettlebell overhead with one arm. Slowly bend at waist toward the opposite side while keeping the kettlebell stable overhead."
   },
 
   // Legs exercises
@@ -318,6 +418,76 @@ export const exercises: Exercise[] = [
     restTime: 90,
     description: "Hold weight in front of thighs, feet hip-width apart. Hinge at hips sending butt backward, lowering weight while keeping back flat. Return to standing."
   },
+  {
+    id: "kettlebell-goblet-squat",
+    name: "Kettlebell Goblet Squat",
+    muscleGroup: "legs",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Hold kettlebell by the horns at chest level. Squat down keeping chest up and knees out, then drive up through heels."
+  },
+  {
+    id: "kettlebell-sumo-deadlift",
+    name: "Kettlebell Sumo Deadlift",
+    muscleGroup: "legs",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 10,
+    restTime: 90,
+    description: "Stand with wide stance, kettlebell between legs. Hinge at hips to grab kettlebell, then drive up through heels and glutes."
+  },
+  {
+    id: "kettlebell-lunge",
+    name: "Kettlebell Lunge",
+    muscleGroup: "legs",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 8,
+    restTime: 60,
+    description: "Hold kettlebell in rack position. Step forward into lunge, lowering until both knees are bent 90 degrees, then return to start."
+  },
+  {
+    id: "kettlebell-cossack-squat",
+    name: "Kettlebell Cossack Squat",
+    muscleGroup: "legs",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 6,
+    restTime: 90,
+    description: "Hold kettlebell at chest. Step wide to one side, sitting back into one leg while keeping other leg straight. Return to center."
+  },
+  {
+    id: "resistance-band-squat",
+    name: "Resistance Band Squat",
+    muscleGroup: "legs",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 60,
+    description: "Stand on band with feet shoulder-width apart, holding handles at shoulders. Squat down then drive up against band resistance."
+  },
+  {
+    id: "resistance-band-lateral-walk",
+    name: "Resistance Band Lateral Walk",
+    muscleGroup: "legs",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Place band around ankles or above knees. Take wide steps to the side while maintaining squat position."
+  },
+  {
+    id: "resistance-band-glute-bridge",
+    name: "Resistance Band Glute Bridge",
+    muscleGroup: "legs",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Lie on back with band around knees. Lift hips up while pushing knees out against band resistance."
+  },
 
   // Biceps exercises
   {
@@ -369,6 +539,36 @@ export const exercises: Exercise[] = [
     reps: 15,
     restTime: 30,
     description: "Stand on band with feet shoulder-width apart. Hold handles with palms facing forward, curl hands toward shoulders, then lower."
+  },
+  {
+    id: "resistance-band-hammer-curl",
+    name: "Resistance Band Hammer Curl",
+    muscleGroup: "biceps",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 30,
+    description: "Stand on band with feet shoulder-width apart. Hold handles with palms facing each other, curl up without rotating wrists."
+  },
+  {
+    id: "kettlebell-curl",
+    name: "Kettlebell Curl",
+    muscleGroup: "biceps",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Hold kettlebell by the handle with underhand grip. Curl up toward shoulder while keeping elbow stationary."
+  },
+  {
+    id: "kettlebell-bottoms-up-press",
+    name: "Kettlebell Bottoms-Up Press",
+    muscleGroup: "biceps",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 6,
+    restTime: 90,
+    description: "Hold kettlebell upside down by the handle at shoulder height. Press overhead while gripping tightly to stabilize the bell."
   },
 
   // Triceps exercises
@@ -422,6 +622,36 @@ export const exercises: Exercise[] = [
     restTime: 60,
     description: "Perform a push-up with hands close together, forming a diamond shape with your fingers. This targets the triceps more than regular push-ups."
   },
+  {
+    id: "resistance-band-tricep-extension",
+    name: "Resistance Band Tricep Extension",
+    muscleGroup: "triceps",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Anchor band overhead. Hold handle behind head with elbow pointing up, extend arm down against resistance."
+  },
+  {
+    id: "resistance-band-tricep-pushdown",
+    name: "Resistance Band Tricep Pushdown",
+    muscleGroup: "triceps",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 15,
+    restTime: 45,
+    description: "Anchor band overhead. Hold handles and push down while keeping elbows at sides until arms are fully extended."
+  },
+  {
+    id: "kettlebell-floor-press",
+    name: "Kettlebell Floor Press",
+    muscleGroup: "triceps",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 8,
+    restTime: 90,
+    description: "Lie on floor holding kettlebell. Press kettlebell up from chest level until arm is extended, focusing on tricep engagement."
+  },
 
   // Core exercises
   {
@@ -463,6 +693,46 @@ export const exercises: Exercise[] = [
     reps: 20,
     restTime: 30,
     description: "Start in push-up position. Quickly bring one knee toward chest, then return to start position as you bring the other knee in. Continue alternating."
+  },
+  {
+    id: "kettlebell-russian-twist",
+    name: "Kettlebell Russian Twist",
+    muscleGroup: "core",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 20,
+    restTime: 45,
+    description: "Sit with knees bent, holding kettlebell at chest. Lean back and rotate kettlebell from side to side while keeping core engaged."
+  },
+  {
+    id: "kettlebell-plank-pull-through",
+    name: "Kettlebell Plank Pull-Through",
+    muscleGroup: "core",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Start in plank position with kettlebell to one side. Reach under with opposite arm to pull kettlebell to other side while maintaining plank."
+  },
+  {
+    id: "resistance-band-wood-chop",
+    name: "Resistance Band Wood Chop",
+    muscleGroup: "core",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Anchor band at shoulder height. Pull handle diagonally down and across body while rotating torso."
+  },
+  {
+    id: "resistance-band-pallof-press",
+    name: "Resistance Band Pallof Press",
+    muscleGroup: "core",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 10,
+    restTime: 45,
+    description: "Anchor band at chest height. Hold handle at chest and press straight out, resisting rotation while maintaining core stability."
   },
 
   // Full body exercises
@@ -536,6 +806,66 @@ export const exercises: Exercise[] = [
     restTime: 60,
     description: "Lie on back holding weight in one hand extended up. Roll to elbow, then hand, then sit up, then stand up, all while keeping weight overhead."
   },
+  {
+    id: "kettlebell-snatch",
+    name: "Kettlebell Snatch",
+    muscleGroup: "full body",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 6,
+    restTime: 90,
+    description: "Start with kettlebell between legs. Explosively pull it up and overhead in one fluid motion, catching it at the top."
+  },
+  {
+    id: "kettlebell-clean-press",
+    name: "Kettlebell Clean and Press",
+    muscleGroup: "full body",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 6,
+    restTime: 90,
+    description: "Explosively pull kettlebell from between legs to shoulder in rack position, then press overhead."
+  },
+  {
+    id: "kettlebell-thruster",
+    name: "Kettlebell Thruster",
+    muscleGroup: "full body",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Hold kettlebell in rack position. Squat down, then as you stand, press kettlebell overhead in one fluid motion."
+  },
+  {
+    id: "kettlebell-figure-8",
+    name: "Kettlebell Figure-8",
+    muscleGroup: "full body",
+    equipment: ["kettlebell"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Stand with wide stance. Pass kettlebell between legs in a figure-8 pattern, switching hands as it goes around each leg."
+  },
+  {
+    id: "resistance-band-squat-to-press",
+    name: "Resistance Band Squat to Press",
+    muscleGroup: "full body",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Stand on band holding handles at shoulders. Squat down, then as you stand, press handles overhead."
+  },
+  {
+    id: "resistance-band-burpee",
+    name: "Resistance Band Burpee",
+    muscleGroup: "full body",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 8,
+    restTime: 90,
+    description: "Perform a burpee while wearing a resistance band around your ankles to add extra resistance to the movement."
+  },
 
   // Cardio exercises
   {
@@ -577,6 +907,26 @@ export const exercises: Exercise[] = [
     reps: 15,
     restTime: 45,
     description: "Perform a bodyweight squat, then explode up into a jump. Land softly with bent knees, immediately lowering back into the next squat."
+  },
+  {
+    id: "kettlebell-swing-cardio",
+    name: "Kettlebell Swing (Cardio)",
+    muscleGroup: "cardio",
+    equipment: ["kettlebell"],
+    sets: 4,
+    reps: 20,
+    restTime: 30,
+    description: "Perform kettlebell swings at a faster pace for cardiovascular benefits. Focus on explosive hip drive and breathing rhythm."
+  },
+  {
+    id: "resistance-band-jumping-jacks",
+    name: "Resistance Band Jumping Jacks",
+    muscleGroup: "cardio",
+    equipment: ["resistance bands"],
+    sets: 3,
+    reps: 20,
+    restTime: 45,
+    description: "Perform jumping jacks while holding resistance band handles to add upper body resistance to the cardio movement."
   }
 ];
 
