@@ -179,9 +179,6 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'barbell front squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell front-squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell split squat': 'https://fitnessprogramer.com/wp-content/uploads/2022/04/Barbell-Split-Squat.gif',
-
-
-      // Abs/Core exercises
       'plank': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
       'planks': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
       'bicycle crunches': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
@@ -438,13 +435,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
             Your customized {workout.duration} minute workout
           </CardDescription>
           
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-            <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-md">
-              <Clock className="h-5 w-5 text-fitness-primary mb-1" />
-              <span className="text-sm text-gray-500">Duration</span>
-              <span className="font-medium">{calculateTotalTime()} min</span>
-            </div>
-            
+          <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-md">
               <Dumbbell className="h-5 w-5 text-fitness-primary mb-1" />
               <span className="text-sm text-gray-500">Equipment</span>
