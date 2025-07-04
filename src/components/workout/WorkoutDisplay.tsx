@@ -289,9 +289,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
 
       //kettleball exercises
       'dumbbell squat': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Dumbbell-Squat.gif',
-      'cat cow stretch': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/05/400x400_The_Best_Postpartum_Exercises_to_do_Right_Now_Cat_Cow_in_Tabletop.gif',
       'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
-      'kettleball deadlift': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SM_DL.gif',
       'kettleball press': 'https://i.pinimg.com/originals/56/54/ca/5654ca13e5e33cf34e685a8030e2d398.gif',
       'kettleball windmill': 'https://i.pinimg.com/originals/10/b3/78/10b378afe3e7f411013f571f7b59e5c4.gif',
       'kettleball goblet squat':'https://i.pinimg.com/originals/64/60/eb/6460ebf7e602d9e640f0d758e4cee332.gif',
