@@ -24,9 +24,14 @@ const AuthForm = () => {
   useEffect(() => {
     const tempPassword = localStorage.getItem('temp_new_password');
     if (tempPassword) {
-      const { email: resetEmail, password: newPassword } = JSON.parse(tempPassword);
-      console.log('Temporary password found for:', resetEmail);
-      // You could pre-fill the email field here if desired
+      try {
+        const { email: resetEmail } = JSON.parse(tempPassword);
+        console.log('Temporary password found for:', resetEmail);
+        // Pre-fill the email field
+        setEmail(resetEmail);
+      } catch (e) {
+        console.error('Error parsing temp password:', e);
+      }
     }
   }, []);
 
@@ -37,21 +42,8 @@ const AuthForm = () => {
     try {
       let result;
       
-      // Check if there's a temporary password for this email (for demo purposes)
-      const tempPassword = localStorage.getItem('temp_new_password');
-      let actualPassword = password;
-      
-      if (tempPassword && isLogin) {
-        const { email: resetEmail, password: newPassword } = JSON.parse(tempPassword);
-        if (email === resetEmail) {
-          actualPassword = newPassword;
-          // Clear the temporary password after using it
-          localStorage.removeItem('temp_new_password');
-        }
-      }
-      
       if (isLogin) {
-        result = await signIn(email, actualPassword);
+        result = await signIn(email, password);
         if (result.error) {
           toast({
             title: "Error",

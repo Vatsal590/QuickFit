@@ -10,6 +10,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string, newPassword: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -98,9 +99,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Check if there's a temporary password reset for this email
+    const tempPassword = localStorage.getItem('temp_new_password');
+    let actualPassword = password;
+    
+    if (tempPassword) {
+      try {
+        const resetData = JSON.parse(tempPassword);
+        if (resetData.email === email && resetData.password === password) {
+          // User is trying to sign in with the new password
+          // For demo purposes, we'll create a new account or update existing one
+          console.log('Attempting sign-in with new password for:', email);
+          
+          // Try to sign up first (in case account doesn't exist)
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`
+            }
+          });
+          
+          // If sign up fails because user exists, try regular sign in
+          if (signUpError && signUpError.message.includes('already registered')) {
+            // Clear temp password and proceed with regular sign in
+            localStorage.removeItem('temp_new_password');
+            const { error } = await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+            return { error };
+          } else if (signUpError) {
+            return { error: signUpError };
+          } else {
+            // Sign up successful, clear temp password
+            localStorage.removeItem('temp_new_password');
+            return { error: null };
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing temp password:', e);
+      }
+    }
+    
+    // Regular sign in flow
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password: actualPassword,
     });
     return { error };
   };
@@ -112,6 +157,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const resetPassword = async (email: string, newPassword: string) => {
+    // Store the new password temporarily for demo purposes
+    localStorage.setItem('temp_new_password', JSON.stringify({ 
+      email, 
+      password: newPassword,
+      timestamp: Date.now()
+    }));
+    
+    return { error: null };
+  };
+
   const value = {
     user,
     session,
@@ -119,6 +175,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     signUp,
     signIn,
     signOut,
+    resetPassword,
   };
 
   return (

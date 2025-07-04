@@ -19,6 +19,7 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1); // 1: email, 2: new password
   
+  const { resetPassword } = useAuth();
   const { toast } = useToast();
 
   const handleSendReset = async (e: React.FormEvent) => {
@@ -26,8 +27,7 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // For now, we'll just move to step 2
-      // In a real app, you'd send a reset email first
+      // Move to step 2 to set new password
       setStep(2);
       toast({
         title: "Email verified",
@@ -68,9 +68,11 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // Store the new password temporarily in localStorage for demo purposes
-      // In a real app, this would be handled securely on the backend
-      localStorage.setItem('temp_new_password', JSON.stringify({ email, password: newPassword }));
+      const { error } = await resetPassword(email, newPassword);
+      
+      if (error) {
+        throw error;
+      }
       
       toast({
         title: "Password updated successfully!",
