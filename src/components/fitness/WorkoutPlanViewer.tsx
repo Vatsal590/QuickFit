@@ -290,7 +290,30 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'lateral bound':'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/skaterhop-1456956292.gif?crop=1xw:0.75xh;center,top&resize=1200:*',
       'medicine ball throws': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Medicine-Ball-Overhead-Throw.gif',
       'resistance band core rotation':'https://cdn.shopify.com/s/files/1/1633/7705/files/rotational_exercises_480x480.png?v=1616171474',
-      ' box jumps':'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
+      'box jumps':'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
+
+      //kettleball exercises
+      'dumbbell squat': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Dumbbell-Squat.gif',
+      'cat cow stretch': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/05/400x400_The_Best_Postpartum_Exercises_to_do_Right_Now_Cat_Cow_in_Tabletop.gif',
+      'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'kettleball deadlift' :'https://burnfit.io/wp-content/uploads/2023/11/KB_SM_DL.gif',
+      'kettleball press': 'https://i.pinimg.com/originals/56/54/ca/5654ca13e5e33cf34e685a8030e2d398.gif',
+      'kettleball windmill': 'https://i.pinimg.com/originals/10/b3/78/10b378afe3e7f411013f571f7b59e5c4.gif',
+      'kettleball goblet squat':'https://i.pinimg.com/originals/64/60/eb/6460ebf7e602d9e640f0d758e4cee332.gif',
+      'kettleball sumo deadlift': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SM_DL.gif',
+      'kettleball lunge': 'https://gymvisual.com/img/p/2/2/9/9/5/22995.gif',
+      'kettleball cossack squat': 'https://gymvisual.com/img/p/3/8/2/3/2/38232.gif',
+      'kettlebarl curl': 'https://gymvisual.com/img/p/2/6/2/2/1/26221.gif',
+      'kettleball bottoms-up press': 'https://gymvisual.com/img/p/1/6/9/4/9/16949.gif',
+      'kettleball floor press': 'https://cdn.shopify.com/s/files/1/0645/8762/8770/files/Kettlebell-Chest-Press-on-the-Floor_480x480.gif?v=1732870373',
+      'kettleball russian twist': 'https://burnfit.io/wp-content/uploads/2023/11/RUS_TWIST.gif',
+      'kettleball plank puull-through': 'https://149874912.v2.pressablecdn.com/wp-content/uploads/2025/03/kettlebell-plank-pull-through.gif',
+      'kettleball snatch': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SNATCH.gif',
+      'kettleball clean and press': 'https://i.pinimg.com/originals/ff/2a/fc/ff2afcbcb6cea55b0fb737a7169764ab.gif',
+      'kettleball thruster' :'https://i.pinimg.com/originals/60/51/3f/60513f6478926895606a2354dd7efd83.gif',
+      'kettleball figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
+      'kettleball swing': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
+      
     };
 
     // Try exact match first

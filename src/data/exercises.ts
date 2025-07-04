@@ -376,7 +376,7 @@ export const exercises: Exercise[] = [
     sets: 3,
     reps: 10,
     restTime: 60,
-    description: "Hold dumbbells at sides. Step forward with one leg, lowering until both knees are bent 90 degrees. Push back to start. Repeat on other side."
+    description: "Hold dumbbells at sides. Step forward with one leg, lowering until both knees are bent 90 degrees. Repeat while walking."
   },
   {
     id: "dumbbell-squat",
