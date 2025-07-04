@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -34,6 +33,25 @@ interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
+// Update user activity in profiles table
+const updateUserActivity = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ 
+          last_used: new Date().toISOString(),
+          last_active: new Date().toISOString() 
+        })
+        .eq('id', user.id);
+      console.log('User activity tracked');
+    }
+  } catch (error) {
+    console.error('Failed to track user activity:', error);
+  }
+};
+
 const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
   const location = useLocation();
@@ -48,11 +66,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
 
   // Track user activity whenever they interact with buttons
   const trackUserActivity = async () => {
-    try {
-      await supabase.rpc('update_user_last_used');
-    } catch (error) {
-      console.error('Failed to track user activity:', error);
-    }
+    await updateUserActivity();
   };
 
   // Format the member since date

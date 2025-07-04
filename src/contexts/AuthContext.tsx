@@ -22,6 +22,25 @@ export const useAuth = () => {
   return context;
 };
 
+// Update user activity in profiles table
+const updateUserActivity = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ 
+          last_used: new Date().toISOString(),
+          last_active: new Date().toISOString() 
+        })
+        .eq('id', user.id);
+      console.log('User activity updated successfully');
+    }
+  } catch (error) {
+    console.error('Failed to update user activity:', error);
+  }
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -30,11 +49,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log('Auth state changed:', event, session?.user?.email);
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
+        
+        // Update user activity when user signs in
+        if (event === 'SIGNED_IN' && session?.user) {
+          setTimeout(() => {
+            updateUserActivity();
+          }, 100);
+        }
       }
     );
 
@@ -43,6 +69,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      
+      // Update activity for existing session
+      if (session?.user) {
+        setTimeout(() => {
+          updateUserActivity();
+        }, 100);
+      }
     });
 
     return () => subscription.unsubscribe();

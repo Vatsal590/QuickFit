@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Dumbbell } from 'lucide-react';
+import ForgotPassword from './ForgotPassword';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,9 +15,20 @@ const AuthForm = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
   
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
+
+  // Check for temporary password reset on component mount
+  useEffect(() => {
+    const tempPassword = localStorage.getItem('temp_new_password');
+    if (tempPassword) {
+      const { email: resetEmail, password: newPassword } = JSON.parse(tempPassword);
+      console.log('Temporary password found for:', resetEmail);
+      // You could pre-fill the email field here if desired
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,8 +37,21 @@ const AuthForm = () => {
     try {
       let result;
       
+      // Check if there's a temporary password for this email (for demo purposes)
+      const tempPassword = localStorage.getItem('temp_new_password');
+      let actualPassword = password;
+      
+      if (tempPassword && isLogin) {
+        const { email: resetEmail, password: newPassword } = JSON.parse(tempPassword);
+        if (email === resetEmail) {
+          actualPassword = newPassword;
+          // Clear the temporary password after using it
+          localStorage.removeItem('temp_new_password');
+        }
+      }
+      
       if (isLogin) {
-        result = await signIn(email, password);
+        result = await signIn(email, actualPassword);
         if (result.error) {
           toast({
             title: "Error",
@@ -65,6 +90,14 @@ const AuthForm = () => {
       setLoading(false);
     }
   };
+
+  if (showForgotPassword) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4">
+        <ForgotPassword onBack={() => setShowForgotPassword(false)} />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4">
@@ -122,6 +155,18 @@ const AuthForm = () => {
                 minLength={6}
               />
             </div>
+
+            {isLogin && (
+              <div className="text-right">
+                <button
+                  type="button"
+                  onClick={() => setShowForgotPassword(true)}
+                  className="text-sm text-fitness-primary hover:underline"
+                >
+                  Forgot password?
+                </button>
+              </div>
+            )}
             
             <Button 
               type="submit" 

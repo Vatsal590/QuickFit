@@ -14,6 +14,25 @@ import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
 import { supabase } from '@/integrations/supabase/client';
 
+// Update user activity in profiles table
+const updateUserActivity = async () => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await supabase
+        .from('profiles')
+        .update({ 
+          last_used: new Date().toISOString(),
+          last_active: new Date().toISOString() 
+        })
+        .eq('id', user.id);
+      console.log('User activity tracked');
+    }
+  } catch (error) {
+    console.error('Failed to track user activity:', error);
+  }
+};
+
 const Home = () => {
   const { toast } = useToast();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
@@ -25,11 +44,7 @@ const Home = () => {
 
   // Track user activity
   const trackUserActivity = async () => {
-    try {
-      await supabase.rpc('update_user_last_used');
-    } catch (error) {
-      console.error('Failed to track user activity:', error);
-    }
+    await updateUserActivity();
   };
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
