@@ -99,53 +99,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Check if there's a temporary password reset for this email
-    const tempPassword = localStorage.getItem('temp_new_password');
-    let actualPassword = password;
+    // Check for demo password reset
+    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
     
-    if (tempPassword) {
-      try {
-        const resetData = JSON.parse(tempPassword);
-        if (resetData.email === email && resetData.password === password) {
-          // User is trying to sign in with the new password
-          // For demo purposes, we'll create a new account or update existing one
-          console.log('Attempting sign-in with new password for:', email);
-          
-          // Try to sign up first (in case account doesn't exist)
-          const { error: signUpError } = await supabase.auth.signUp({
+    if (resetPasswords[email]) {
+      const storedPassword = resetPasswords[email];
+      
+      if (password === storedPassword) {
+        // Try to sign up with the new password (for demo purposes)
+        console.log('Attempting sign-in with reset password for:', email);
+        
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/`
+          }
+        });
+        
+        if (signUpError && signUpError.message.includes('already registered')) {
+          // User exists, try regular sign in
+          const { error } = await supabase.auth.signInWithPassword({
             email,
             password,
-            options: {
-              emailRedirectTo: `${window.location.origin}/`
-            }
           });
           
-          // If sign up fails because user exists, try regular sign in
-          if (signUpError && signUpError.message.includes('already registered')) {
-            // Clear temp password and proceed with regular sign in
-            localStorage.removeItem('temp_new_password');
-            const { error } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            });
-            return { error };
-          } else if (signUpError) {
-            return { error: signUpError };
-          } else {
-            // Sign up successful, clear temp password
-            localStorage.removeItem('temp_new_password');
-            return { error: null };
+          if (!error) {
+            // Clear the reset password since login was successful
+            delete resetPasswords[email];
+            localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
           }
+          
+          return { error };
+        } else if (signUpError) {
+          return { error: signUpError };
+        } else {
+          // Sign up successful, clear the reset password
+          delete resetPasswords[email];
+          localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
+          return { error: null };
         }
-      } catch (e) {
-        console.error('Error parsing temp password:', e);
       }
     }
     
     // Regular sign in flow
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password: actualPassword,
+      password,
     });
     return { error };
   };
@@ -158,13 +158,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string, newPassword: string) => {
-    // Store the new password temporarily for demo purposes
-    localStorage.setItem('temp_new_password', JSON.stringify({ 
-      email, 
-      password: newPassword,
-      timestamp: Date.now()
-    }));
+    // Store the new password for demo purposes
+    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
+    resetPasswords[email] = newPassword;
+    localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
     
+    console.log('Password reset stored for:', email);
     return { error: null };
   };
 

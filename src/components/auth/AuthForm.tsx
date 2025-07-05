@@ -20,18 +20,15 @@ const AuthForm = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
 
-  // Check for temporary password reset on component mount
+  // Check for demo password reset on component mount
   useEffect(() => {
-    const tempPassword = localStorage.getItem('temp_new_password');
-    if (tempPassword) {
-      try {
-        const { email: resetEmail } = JSON.parse(tempPassword);
-        console.log('Temporary password found for:', resetEmail);
-        // Pre-fill the email field
-        setEmail(resetEmail);
-      } catch (e) {
-        console.error('Error parsing temp password:', e);
-      }
+    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
+    const emailsWithResetPasswords = Object.keys(resetPasswords);
+    
+    if (emailsWithResetPasswords.length > 0) {
+      // Pre-fill with the first email that has a reset password
+      setEmail(emailsWithResetPasswords[0]);
+      console.log('Found reset password for:', emailsWithResetPasswords[0]);
     }
   }, []);
 
@@ -47,7 +44,7 @@ const AuthForm = () => {
         if (result.error) {
           toast({
             title: "Error",
-            description: result.error.message,
+            description: result.error.message || "Invalid login credentials",
             variant: "destructive"
           });
         } else {
