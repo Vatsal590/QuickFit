@@ -64,7 +64,9 @@ const AuthForm = () => {
             description: "You've been signed in successfully.",
           });
           // Force navigation to home page
-          window.location.href = '/home';
+          setTimeout(() => {
+            window.location.href = '/home';
+          }, 100);
         }
       } else {
         result = await signUp(email, password, fullName);
