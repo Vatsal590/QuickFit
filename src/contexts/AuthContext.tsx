@@ -143,12 +143,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(mockUser);
       setLoading(false);
       
-      console.log('Mock session created successfully, redirecting to home');
-      
-      // Force redirect to home page
-      setTimeout(() => {
-        window.location.href = '/home';
-      }, 100);
+      console.log('Mock session created successfully');
       
       return { error: null };
     }
