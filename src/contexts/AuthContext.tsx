@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -111,9 +110,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (hasResetPassword && password === hasResetPassword) {
       console.log('Using reset password for demo auth - creating mock session');
       
-      // Clear the reset password since we're using it
-      delete resetPasswords[email];
-      localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
+      // DON'T clear the reset password - keep it for future logins
+      // This allows the user to continue logging in with the new password
       
       // Create a mock user and session for demo purposes
       const mockUser = {
@@ -130,13 +128,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } as User;
       
       const mockSession = {
-        access_token: 'demo-access-token',
-        refresh_token: 'demo-refresh-token',
+        access_token: 'demo-access-token-' + Date.now(),
+        refresh_token: 'demo-refresh-token-' + Date.now(),
         expires_in: 3600,
         expires_at: Math.floor(Date.now() / 1000) + 3600,
         token_type: 'bearer',
         user: mockUser
       } as Session;
+      
+      // Store the demo session in localStorage for persistence
+      localStorage.setItem('demo_session', JSON.stringify({
+        session: mockSession,
+        timestamp: Date.now()
+      }));
       
       // Set the session and user state directly
       setSession(mockSession);
@@ -161,6 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     // Clear any demo sessions
+    localStorage.removeItem('demo_session');
     setSession(null);
     setUser(null);
     
