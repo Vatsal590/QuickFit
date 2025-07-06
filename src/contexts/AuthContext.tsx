@@ -105,80 +105,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
     const hasResetPassword = resetPasswords[email];
     
+    console.log('Reset password found:', !!hasResetPassword);
+    console.log('Password matches reset:', hasResetPassword === password);
+    
     if (hasResetPassword && password === hasResetPassword) {
-      console.log('Using reset password for demo auth');
+      console.log('Using reset password for demo auth - creating mock session');
       
-      // For demo purposes, create a mock session when using reset password
-      try {
-        // First try to sign up the user with the new password (in case they don't exist)
-        const { error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`
-          }
-        });
-        
-        // If user already exists, try to sign in with the new password
-        if (signUpError && signUpError.message.includes('already registered')) {
-          console.log('User exists, attempting sign-in with new password');
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          if (signInError) {
-            console.log('Sign-in failed, but user has reset password - allowing demo access');
-            // Clear the reset password since we used it
-            delete resetPasswords[email];
-            localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
-            
-            // Create a mock session for demo purposes
-            const mockUser = {
-              id: 'demo-user-' + email.replace('@', '-').replace('.', '-'),
-              email,
-              aud: 'authenticated',
-              role: 'authenticated',
-              email_confirmed_at: new Date().toISOString(),
-              last_sign_in_at: new Date().toISOString(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              user_metadata: { full_name: 'Demo User' },
-              app_metadata: {}
-            } as User;
-            
-            const mockSession = {
-              access_token: 'demo-access-token',
-              refresh_token: 'demo-refresh-token',
-              expires_in: 3600,
-              expires_at: Math.floor(Date.now() / 1000) + 3600,
-              token_type: 'bearer',
-              user: mockUser
-            } as Session;
-            
-            // Set the mock session
-            setSession(mockSession);
-            setUser(mockUser);
-            
-            return { error: null };
-          } else {
-            // Regular sign-in succeeded
-            delete resetPasswords[email];
-            localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
-            return { error: null };
-          }
-        } else if (!signUpError) {
-          // New user signed up successfully
-          delete resetPasswords[email];
-          localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
-          return { error: null };
-        } else {
-          return { error: signUpError };
-        }
-      } catch (error) {
-        console.error('Error in reset password flow:', error);
-        return { error };
-      }
+      // Clear the reset password since we're using it
+      delete resetPasswords[email];
+      localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
+      
+      // Create a mock session for demo purposes (bypassing Supabase entirely)
+      const mockUser = {
+        id: 'demo-user-' + email.replace('@', '-').replace('.', '-'),
+        email,
+        aud: 'authenticated',
+        role: 'authenticated',
+        email_confirmed_at: new Date().toISOString(),
+        last_sign_in_at: new Date().toISOString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        user_metadata: { full_name: 'Demo User' },
+        app_metadata: {}
+      } as User;
+      
+      const mockSession = {
+        access_token: 'demo-access-token',
+        refresh_token: 'demo-refresh-token',
+        expires_in: 3600,
+        expires_at: Math.floor(Date.now() / 1000) + 3600,
+        token_type: 'bearer',
+        user: mockUser
+      } as Session;
+      
+      // Set the mock session directly
+      setSession(mockSession);
+      setUser(mockUser);
+      
+      console.log('Mock session created successfully');
+      return { error: null };
     }
     
     // Regular sign-in flow (no reset password or using old password)
