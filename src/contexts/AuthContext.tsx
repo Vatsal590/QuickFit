@@ -115,7 +115,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       delete resetPasswords[email];
       localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
       
-      // Create a mock session for demo purposes (bypassing Supabase entirely)
+      // Create a mock user and session for demo purposes
       const mockUser = {
         id: 'demo-user-' + email.replace('@', '-').replace('.', '-'),
         email,
@@ -138,11 +138,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         user: mockUser
       } as Session;
       
-      // Set the mock session directly
+      // Set the session and user state directly
       setSession(mockSession);
       setUser(mockUser);
+      setLoading(false);
       
-      console.log('Mock session created successfully');
+      console.log('Mock session created successfully, redirecting to home');
+      
+      // Force redirect to home page
+      setTimeout(() => {
+        window.location.href = '/home';
+      }, 100);
+      
       return { error: null };
     }
     

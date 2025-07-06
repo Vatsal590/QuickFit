@@ -63,10 +63,8 @@ const AuthForm = () => {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          // Force navigation to home page
-          setTimeout(() => {
-            window.location.href = '/home';
-          }, 100);
+          // The redirect is handled in the signIn function for reset password cases
+          // For regular auth, the auth state change will handle the redirect
         }
       } else {
         result = await signUp(email, password, fullName);
