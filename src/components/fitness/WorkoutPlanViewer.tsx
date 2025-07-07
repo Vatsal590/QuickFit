@@ -20,14 +20,12 @@ const getCompletedDaysCount = (plan: WorkoutPlan): number => {
 
 const WorkoutPlanViewer = ({ plan, onMarkComplete }: WorkoutPlanViewerProps) => {
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0);
   
   const completedDays = getCompletedDaysCount(plan);
   const progressPercentage = (completedDays / plan.duration) * 100;
   
   const handleDayClick = (dayNumber: number) => {
     setSelectedDay(selectedDay === dayNumber ? null : dayNumber);
-    setCurrentExerciseIndex(0);
   };
 
   const handleMarkComplete = (dayNumber: number) => {
@@ -51,7 +49,7 @@ const WorkoutPlanViewer = ({ plan, onMarkComplete }: WorkoutPlanViewerProps) => 
     'Pull-ups': 'https://media.giphy.com/media/26FPqQiKnqBJyOUow/giphy.gif',
     'Dips': 'https://media.giphy.com/media/3oKIPfLNVTOJR6K6Gk/giphy.gif',
     'Shoulder Press': 'https://media.giphy.com/media/26gR0YFZxWbnUPtMA/giphy.gif',
-    'Bicep Curls': 'https://media.giphy.com/media/3oKIPgQNzIKxz3r5aU/giphy.gif',
+    'Bicep Curls': 'https://media.giphy.com/media/3oKIP7CaDfNTeVVjCU/giphy.gif',
     'Tricep Extensions': 'https://media.giphy.com/media/3oKIPbKgJi6YJy9y6c/giphy.gif',
     'Leg Press': 'https://media.giphy.com/media/3oKIPdLCAYdaKGmN4k/giphy.gif',
     'Calf Raises': 'https://media.giphy.com/media/3oKIP8kNuTJJL3zTXi/giphy.gif',
@@ -81,24 +79,6 @@ const WorkoutPlanViewer = ({ plan, onMarkComplete }: WorkoutPlanViewerProps) => 
     'Split Squats': 'https://media.giphy.com/media/3oKIPaTyJ8J6YXdF9C/giphy.gif',
     'Reverse Crunches': 'https://media.giphy.com/media/3oKIPeTjZzKQJ2RIvm/giphy.gif',
     'Inchworms': 'https://media.giphy.com/media/3oKIPgGrQJBtBlEEHm/giphy.gif',
-    'Side Lunges': 'https://media.giphy.com/media/3oKIPbrJ4FdXFRZwrC/giphy.gif',
-    'Hollow Body Hold': 'https://media.giphy.com/media/3oKIPcK8VqNzXiM6qA/giphy.gif',
-    'Curtsy Lunges': 'https://media.giphy.com/media/3oKIPcrD6LKMq9wOD6/giphy.gif',
-    'Frog Jumps': 'https://media.giphy.com/media/3oKIPb8TrGqJKQHhTG/giphy.gif',
-    'Dead Bug': 'https://media.giphy.com/media/3oKIPe5jKQqJ9D8Qi4/giphy.gif',
-    'Archer Push-ups': 'https://media.giphy.com/media/3oKIPaTJI3xBpYJHhC/giphy.gif',
-    'Single Leg Glute Bridges': 'https://media.giphy.com/media/3oKIPdyB7sjHrZdyLm/giphy.gif',
-    'Lateral Lunges': 'https://media.giphy.com/media/3oKIPaKDkQLBhHhq1G/giphy.gif',
-    'Bird Dog': 'https://media.giphy.com/media/3oKIPeqeEhfOQ2LGBG/giphy.gif',
-    'Reverse Plank': 'https://media.giphy.com/media/3oKIPbhAb2kqTpKNe8/giphy.gif',
-    'Handstand Push-ups': 'https://media.giphy.com/media/3oKIPcJTJGqUL9GkGQ/giphy.gif',
-    'Pistol Squats': 'https://media.giphy.com/media/3oKIPbh5aKDd9M5hfO/giphy.gif',
-    'L-Sit': 'https://media.giphy.com/media/3oKIPbrDnJ8QaR0X6M/giphy.gif',
-    'One Arm Push-ups': 'https://media.giphy.com/media/3oKIPb7QdQhk5VQNwI/giphy.gif',
-    'Muscle-ups': 'https://media.giphy.com/media/3oKIPd7D5KqMuYK2Dq/giphy.gif',
-    'Planche Push-ups': 'https://media.giphy.com/media/3oKIPgGlQnxF9dJ1Qi/giphy.gif',
-    'Human Flag': 'https://media.giphy.com/media/3oKIPa9yLc8BElHnAk/giphy.gif',
-    'Front Lever': 'https://media.giphy.com/media/3oKIPcrP8xKVGtYN2M/giphy.gif'
   };
 
   if (!plan.dailyWorkouts || !Array.isArray(plan.dailyWorkouts)) {
@@ -237,24 +217,30 @@ const WorkoutPlanViewer = ({ plan, onMarkComplete }: WorkoutPlanViewerProps) => 
                     )}
                     <div className="flex-1">
                       <h4 className="font-semibold text-lg mb-2">{exercise.name}</h4>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm">
                         {exercise.sets && (
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline">{exercise.sets} sets</Badge>
+                            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                              {exercise.sets} sets
+                            </Badge>
                           </div>
                         )}
                         {exercise.reps && (
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline">{exercise.reps} reps</Badge>
+                            <Badge variant="outline" className="bg-green-50 text-green-700">
+                              {exercise.reps} reps
+                            </Badge>
                           </div>
                         )}
                         {exercise.duration && (
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline">{exercise.duration}</Badge>
+                            <Badge variant="outline" className="bg-orange-50 text-orange-700">
+                              {exercise.duration}
+                            </Badge>
                           </div>
                         )}
                         {exercise.rest && (
-                          <div className="text-xs text-gray-500">
+                          <div className="text-xs text-gray-500 mt-1">
                             Rest: {exercise.rest}
                           </div>
                         )}
