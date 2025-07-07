@@ -85,55 +85,17 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log('Form data before validation:', formData);
-    
-    // More detailed validation with specific error messages
-    if (!formData.height || formData.height.trim() === '') {
+    if (!formData.height || !formData.weight || !formData.fitness_goal || 
+        formData.body_type.length === 0 || !formData.workout_days_per_week) {
       toast({
-        title: "Height required",
-        description: "Please enter your height",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!formData.weight || formData.weight.trim() === '') {
-      toast({
-        title: "Weight required", 
-        description: "Please enter your weight",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!formData.fitness_goal || formData.fitness_goal.trim() === '') {
-      toast({
-        title: "Fitness goal required",
-        description: "Please select your fitness goal",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!formData.body_type || formData.body_type.length === 0) {
-      toast({
-        title: "Body type required",
-        description: "Please select at least one body type",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    if (!formData.workout_days_per_week || formData.workout_days_per_week.trim() === '') {
-      toast({
-        title: "Workout frequency required",
-        description: "Please select how many days per week you can work out",
+        title: "Missing information",
+        description: "Please fill in all required fields",
         variant: "destructive"
       });
       return;
     }
 
-    if (!formData.available_equipment || formData.available_equipment.length === 0) {
+    if (formData.available_equipment.length === 0) {
       toast({
         title: "Equipment required",
         description: "Please select at least one equipment option",
@@ -215,25 +177,23 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="height">Height (cm) *</Label>
+                    <Label htmlFor="height">Height (cm)</Label>
                     <Input
                       id="height"
                       type="number"
                       placeholder="170"
                       value={formData.height}
                       onChange={(e) => setFormData(prev => ({ ...prev, height: e.target.value }))}
-                      required
                     />
                   </div>
                   <div>
-                    <Label htmlFor="weight">Weight (kg) *</Label>
+                    <Label htmlFor="weight">Weight (kg)</Label>
                     <Input
                       id="weight"
                       type="number"
                       placeholder="70"
                       value={formData.weight}
                       onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
-                      required
                     />
                   </div>
                 </div>
@@ -245,15 +205,11 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  Fitness Goal *
+                  Fitness Goal
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Select 
-                  value={formData.fitness_goal} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, fitness_goal: value }))}
-                  required
-                >
+                <Select value={formData.fitness_goal} onValueChange={(value) => setFormData(prev => ({ ...prev, fitness_goal: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your primary goal" />
                   </SelectTrigger>
@@ -269,7 +225,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
             {/* Body Type */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Body Type *</CardTitle>
+                <CardTitle className="text-lg">Body Type</CardTitle>
                 <CardDescription>
                   Most people fall into 2 categories, not just one. Select up to 2 body types that best describe you.
                 </CardDescription>
@@ -329,16 +285,12 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Workout Schedule *
+                  Workout Schedule
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Label htmlFor="workout-days">Days per week you can work out</Label>
-                <Select 
-                  value={formData.workout_days_per_week} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, workout_days_per_week: value }))}
-                  required
-                >
+                <Select value={formData.workout_days_per_week} onValueChange={(value) => setFormData(prev => ({ ...prev, workout_days_per_week: value }))}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select workout frequency" />
                   </SelectTrigger>
@@ -358,7 +310,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Dumbbell className="h-5 w-5" />
-                  Available Equipment *
+                  Available Equipment
                 </CardTitle>
               </CardHeader>
               <CardContent>
