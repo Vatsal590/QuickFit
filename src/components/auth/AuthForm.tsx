@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -62,7 +63,8 @@ const AuthForm = () => {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          // The routing will be handled by the App component based on auth state
+          // The redirect is handled in the signIn function for reset password cases
+          // For regular auth, the auth state change will handle the redirect
         }
       } else {
         result = await signUp(email, password, fullName);
