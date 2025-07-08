@@ -22,22 +22,12 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
   const { resetPassword } = useAuth();
   const { toast } = useToast();
 
-  const handleEmailSubmit = async (e: React.FormEvent) => {
+  const handleSendReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email.trim()) {
-      toast({
-        title: "Email required",
-        description: "Please enter your email address.",
-        variant: "destructive"
-      });
-      return;
-    }
-
     setLoading(true);
 
     try {
-      // For demo purposes, we'll just move to the next step
+      // Move to step 2 to set new password
       setStep(2);
       toast({
         title: "Email verified",
@@ -85,17 +75,15 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
       }
       
       toast({
-        title: "Password reset successful!",
+        title: "Password updated successfully!",
         description: "You can now sign in with your new password.",
       });
       
-      // Go back to login page
       onBack();
     } catch (error) {
-      console.error('Password reset error:', error);
       toast({
         title: "Error",
-        description: "Failed to reset password. Please try again.",
+        description: "Failed to update password. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -125,7 +113,7 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
       </CardHeader>
       <CardContent>
         {step === 1 ? (
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
+          <form onSubmit={handleSendReset} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="reset-email">Email</Label>
               <Input
@@ -181,7 +169,7 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Reset Password
+              Update Password
             </Button>
           </form>
         )}

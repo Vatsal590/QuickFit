@@ -20,24 +20,20 @@ const AuthForm = () => {
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
 
-  // Check for demo password reset and pre-fill email
+  // Check for temporary password reset on component mount
   useEffect(() => {
-    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
-    const emailsWithResetPasswords = Object.keys(resetPasswords);
-    
-    if (emailsWithResetPasswords.length > 0) {
-      const resetEmail = emailsWithResetPasswords[0];
-      setEmail(resetEmail);
-      console.log('Pre-filled email with reset password:', resetEmail);
-      
-      // Show a helpful message
-      toast({
-        title: "Password Reset Available",
-        description: `You can now sign in with your new password for ${resetEmail}`,
-        duration: 5000,
-      });
+    const tempPassword = localStorage.getItem('temp_new_password');
+    if (tempPassword) {
+      try {
+        const { email: resetEmail } = JSON.parse(tempPassword);
+        console.log('Temporary password found for:', resetEmail);
+        // Pre-fill the email field
+        setEmail(resetEmail);
+      } catch (e) {
+        console.error('Error parsing temp password:', e);
+      }
     }
-  }, [toast]);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,30 +43,25 @@ const AuthForm = () => {
       let result;
       
       if (isLogin) {
-        console.log('Attempting login for:', email);
         result = await signIn(email, password);
-        
         if (result.error) {
-          console.error('Login error:', result.error);
           toast({
-            title: "Login Failed",
-            description: result.error.message || "Invalid login credentials. Please check your email and password.",
+            title: "Error",
+            description: result.error.message,
             variant: "destructive"
           });
         } else {
-          console.log('Login successful');
           toast({
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          // The redirect is handled in the signIn function for reset password cases
-          // For regular auth, the auth state change will handle the redirect
+          window.location.href = '/';
         }
       } else {
         result = await signUp(email, password, fullName);
         if (result.error) {
           toast({
-            title: "Sign Up Failed",
+            title: "Error",
             description: result.error.message,
             variant: "destructive"
           });
@@ -82,10 +73,9 @@ const AuthForm = () => {
         }
       }
     } catch (error) {
-      console.error('Auth error:', error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred. Please try again.",
+        description: "An unexpected error occurred.",
         variant: "destructive"
       });
     } finally {

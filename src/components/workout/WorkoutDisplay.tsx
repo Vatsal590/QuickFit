@@ -57,6 +57,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'incline barbell bench press': 'https://newlife.com.cy/wp-content/uploads/2019/11/00471301-Barbell-Incline-Bench-Press_Chest_360.gif',
       'incline barbell bench-press': 'https://newlife.com.cy/wp-content/uploads/2019/11/00471301-Barbell-Incline-Bench-Press_Chest_360.gif',
       
+
+      
       // Back exercises
       'pull-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-up.gif',
       'pull ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pull-up.gif',
@@ -126,6 +128,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'resistance band curls': 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Band-Biceps-Curl.gif',
       'barbell reverse curl' : 'https://burnfit.io/wp-content/uploads/2023/11/REV_BB_CURL.gif',
 
+      
       // Tricep exercises
       'tricep dips': 'https://miro.medium.com/v2/resize:fit:840/0*xpvWu3s9ZmFHPhLb.gif',
       'triceps dips': 'https://miro.medium.com/v2/resize:fit:840/0*xpvWu3s9ZmFHPhLb.gif',
@@ -139,6 +142,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'close grip bench press': 'https://burnfit.io/wp-content/uploads/2023/11/CG_BB_BP.gif',
       'barbell close-grip press': 'https://burnfit.io/wp-content/uploads/2023/11/CG_BB_BP.gif',
       'barbell close grip press': 'https://burnfit.io/wp-content/uploads/2023/11/CG_BB_BP.gif',
+
+      
       
       // Leg exercises
       'squats': 'https://www.inspireusafoundation.org/wp-content/uploads/2021/06/bodyweight-squat.gif',
@@ -174,8 +179,6 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'barbell front squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell front-squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell split squat': 'https://fitnessprogramer.com/wp-content/uploads/2022/04/Barbell-Split-Squat.gif',
-
-      // Abs/Core exercises
       'plank': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
       'planks': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
       'bicycle crunches': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Bicycle-Crunch.gif',
@@ -238,6 +241,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'shoulder stretches': 'https://www.vissco.com/wp-content/uploads/animation/sub/shoulder-posterior-capsule-stretch.gif',
       'shoulder stretch': 'https://www.vissco.com/wp-content/uploads/animation/sub/shoulder-posterior-capsule-stretch.gif',
       'jump rope': 'https://burnfit.io/wp-content/uploads/2023/11/JUMP_ROPE.gif',
+      
+      
+      
       'deep breathing': 'https://dailyburn.com/life/wp-content/uploads/2016/04/circle-gif-2.gif',
       'quad stretch': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/07/quadriceps-stretch.gif',
       'quad stretches': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/07/quadriceps-stretch.gif',
@@ -279,9 +285,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'lateral bound':'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/skaterhop-1456956292.gif?crop=1xw:0.75xh;center,top&resize=1200:*',
       'medicine ball throws': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Medicine-Ball-Overhead-Throw.gif',
       'resistance band core rotation':'https://cdn.shopify.com/s/files/1/1633/7705/files/rotational_exercises_480x480.png?v=1616171474',
-      'box jumps':'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
+      ' box jumps':'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
 
-      //kettlebell exercises
+      //kettleball exercises
       'dumbbell squat': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Dumbbell-Squat.gif',
       'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
       'kettlebell press': 'https://i.pinimg.com/originals/56/54/ca/5654ca13e5e33cf34e685a8030e2d398.gif',
@@ -298,7 +304,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'kettlebell snatch': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SNATCH.gif',
       'kettlebell clean and press': 'https://i.pinimg.com/originals/ff/2a/fc/ff2afcbcb6cea55b0fb737a7169764ab.gif',
       'kettlebell thruster' :'https://i.pinimg.com/originals/60/51/3f/60513f6478926895606a2354dd7efd83.gif',
-      'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif'
+      'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
+      'kettlebell swing': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
+      
     };
 
     // Try exact match first

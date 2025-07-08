@@ -99,77 +99,58 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    console.log('Attempting sign-in for:', email);
+    // Check if there's a temporary password reset for this email
+    const tempPassword = localStorage.getItem('temp_new_password');
+    let actualPassword = password;
     
-    // Check for demo password reset first
-    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
-    const hasResetPassword = resetPasswords[email];
-    
-    console.log('Reset password found:', !!hasResetPassword);
-    console.log('Password matches reset:', hasResetPassword === password);
-    
-    if (hasResetPassword && password === hasResetPassword) {
-      console.log('Using reset password for demo auth - creating mock session');
-      
-      // Clear the reset password since we're using it
-      delete resetPasswords[email];
-      localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
-      
-      // Create a mock user and session for demo purposes
-      const mockUser = {
-        id: 'demo-user-' + email.replace('@', '-').replace('.', '-'),
-        email,
-        aud: 'authenticated',
-        role: 'authenticated',
-        email_confirmed_at: new Date().toISOString(),
-        last_sign_in_at: new Date().toISOString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-        user_metadata: { full_name: 'Demo User' },
-        app_metadata: {}
-      } as User;
-      
-      const mockSession = {
-        access_token: 'demo-access-token',
-        refresh_token: 'demo-refresh-token',
-        expires_in: 3600,
-        expires_at: Math.floor(Date.now() / 1000) + 3600,
-        token_type: 'bearer',
-        user: mockUser
-      } as Session;
-      
-      // Set the session and user state directly
-      setSession(mockSession);
-      setUser(mockUser);
-      setLoading(false);
-      
-      console.log('Mock session created successfully, redirecting to home');
-      
-      // Force redirect to home page
-      setTimeout(() => {
-        window.location.href = '/home';
-      }, 100);
-      
-      return { error: null };
+    if (tempPassword) {
+      try {
+        const resetData = JSON.parse(tempPassword);
+        if (resetData.email === email && resetData.password === password) {
+          // User is trying to sign in with the new password
+          // For demo purposes, we'll create a new account or update existing one
+          console.log('Attempting sign-in with new password for:', email);
+          
+          // Try to sign up first (in case account doesn't exist)
+          const { error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              emailRedirectTo: `${window.location.origin}/`
+            }
+          });
+          
+          // If sign up fails because user exists, try regular sign in
+          if (signUpError && signUpError.message.includes('already registered')) {
+            // Clear temp password and proceed with regular sign in
+            localStorage.removeItem('temp_new_password');
+            const { error } = await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+            return { error };
+          } else if (signUpError) {
+            return { error: signUpError };
+          } else {
+            // Sign up successful, clear temp password
+            localStorage.removeItem('temp_new_password');
+            return { error: null };
+          }
+        }
+      } catch (e) {
+        console.error('Error parsing temp password:', e);
+      }
     }
     
-    // Regular sign-in flow (no reset password or using old password)
-    console.log('Regular sign-in attempt');
+    // Regular sign in flow
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password: actualPassword,
     });
-    
-    console.log('Sign-in result:', error ? 'failed' : 'success');
     return { error };
   };
 
   const signOut = async () => {
-    // Clear any demo sessions
-    setSession(null);
-    setUser(null);
-    
-    // Also attempt Supabase signout
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error signing out:', error);
@@ -177,14 +158,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string, newPassword: string) => {
-    console.log('Storing reset password for:', email);
+    // Store the new password temporarily for demo purposes
+    localStorage.setItem('temp_new_password', JSON.stringify({ 
+      email, 
+      password: newPassword,
+      timestamp: Date.now()
+    }));
     
-    // Store the new password for demo purposes
-    const resetPasswords = JSON.parse(localStorage.getItem('demo_reset_passwords') || '{}');
-    resetPasswords[email] = newPassword;
-    localStorage.setItem('demo_reset_passwords', JSON.stringify(resetPasswords));
-    
-    console.log('Password reset stored successfully');
     return { error: null };
   };
 
