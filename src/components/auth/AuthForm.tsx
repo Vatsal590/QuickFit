@@ -148,17 +148,7 @@ const AuthForm = () => {
               />
             </div>
 
-            {isLogin && (
-              <div className="text-right">
-                <button
-                  type="button"
-                  onClick={() => setShowForgotPassword(true)}
-                  className="text-sm text-fitness-primary hover:underline"
-                >
-                  Forgot password?
-                </button>
-              </div>
-            )}
+            
             
             <Button 
               type="submit" 
