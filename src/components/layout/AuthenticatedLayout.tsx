@@ -68,6 +68,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const trackUserActivity = async () => {
     await updateUserActivity();
   };
+  //.
 
   // Format the member since date
   const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', {
