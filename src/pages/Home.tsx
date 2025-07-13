@@ -167,11 +167,11 @@ const Home = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-3">
-            {t('Custom Workout Generator')}
+            Custom Workout Generator
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            {t('Generate instant custom workouts based on your available time, equipment, and target muscle groups.')}
-            {' '}{t('Perfect for quick sessions when you need a workout right now.')}
+            Generate instant custom workouts based on your available time, equipment, and target muscle groups.
+            {' '}Perfect for quick sessions when you need a workout right now.
           </p>
         </div>
 
