@@ -13,12 +13,7 @@ interface LanguageSelectorProps {
   onLanguageSelect: (language: string) => void;
 }
 
-const languages = [
-  'English',
-  'Spanish',
-  'French',
-  'German'
-];
+const languages = ['English', 'Spanish', 'French', 'German'];
 
 const LanguageSelector = ({ isOpen, onClose, selectedLanguage, onLanguageSelect }: LanguageSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
