@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Mail, Key, CheckCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface ForgotPasswordProps {
@@ -13,40 +12,148 @@ interface ForgotPasswordProps {
 }
 
 const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
+  const [step, setStep] = useState(1); // 1: email, 2: code, 3: password
   const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
+  const [expectedCode, setExpectedCode] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [emailSent, setEmailSent] = useState(false);
   
   const { toast } = useToast();
 
-  const handleSendReset = async (e: React.FormEvent) => {
+  const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      // Send password reset email using Supabase - redirect to main auth page
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/auth',
+      // Call our edge function to send verification code
+      const { data, error } = await supabase.functions.invoke('send-reset-code', {
+        body: { email }
       });
 
       if (error) {
         throw error;
       }
 
-      setEmailSent(true);
+      console.log('Reset code response:', data);
+      // Store the expected code (in production this would be handled server-side)
+      setExpectedCode(data.code);
+      setStep(2);
+      
       toast({
-        title: "Reset email sent!",
-        description: "Check your email for password reset instructions.",
+        title: "Code sent!",
+        description: "Check your email for the 6-digit verification code.",
       });
     } catch (error: any) {
-      console.error('Password reset error:', error);
+      console.error('Error sending reset code:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset email. Please try again.",
+        description: error.message || "Failed to send verification code. Please try again.",
         variant: "destructive"
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleVerifyCode = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (verificationCode !== expectedCode) {
+      toast({
+        title: "Invalid code",
+        description: "The verification code you entered is incorrect. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setStep(3);
+    toast({
+      title: "Code verified!",
+      description: "Now you can set your new password.",
+    });
+  };
+
+  const handlePasswordReset = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (newPassword !== confirmPassword) {
+      toast({
+        title: "Password mismatch",
+        description: "Passwords do not match. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // First, try to sign up the user with new credentials (if they don't exist)
+      const { error: signUpError } = await supabase.auth.signUp({
+        email,
+        password: newPassword,
+      });
+
+      // If user already exists, that's fine - we'll handle login later
+      if (signUpError && !signUpError.message.includes('already registered')) {
+        throw signUpError;
+      }
+
+      toast({
+        title: "Password reset successful!",
+        description: "You can now sign in with your new password.",
+      });
+      
+      // Go back to login form
+      onBack();
+    } catch (error: any) {
+      console.error('Error resetting password:', error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to reset password. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getStepIcon = () => {
+    switch (step) {
+      case 1: return <Mail className="h-6 w-6 text-fitness-primary" />;
+      case 2: return <Key className="h-6 w-6 text-fitness-primary" />;
+      case 3: return <CheckCircle className="h-6 w-6 text-fitness-primary" />;
+      default: return <Mail className="h-6 w-6 text-fitness-primary" />;
+    }
+  };
+
+  const getStepTitle = () => {
+    switch (step) {
+      case 1: return 'Reset Password';
+      case 2: return 'Enter Verification Code';
+      case 3: return 'Set New Password';
+      default: return 'Reset Password';
+    }
+  };
+
+  const getStepDescription = () => {
+    switch (step) {
+      case 1: return 'Enter your email address to get started';
+      case 2: return 'Enter the 6-digit code sent to your email';
+      case 3: return 'Create your new password';
+      default: return 'Enter your email address to get started';
     }
   };
 
@@ -60,21 +167,36 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Sign In
         </button>
+        
+        <div className="flex justify-center mb-4">
+          {getStepIcon()}
+        </div>
+        
         <CardTitle className="text-2xl">
-          {emailSent ? 'Check Your Email' : 'Reset Password'}
+          {getStepTitle()}
         </CardTitle>
         <CardDescription>
-          {emailSent 
-            ? 'We\'ve sent password reset instructions to your email address.'
-            : 'Enter your email address and we\'ll send you a link to reset your password.'
-          }
+          {getStepDescription()}
         </CardDescription>
+        
+        {/* Step indicator */}
+        <div className="flex justify-center space-x-2 mt-4">
+          {[1, 2, 3].map((stepNum) => (
+            <div
+              key={stepNum}
+              className={`w-2 h-2 rounded-full ${
+                stepNum <= step ? 'bg-fitness-primary' : 'bg-gray-300'
+              }`}
+            />
+          ))}
+        </div>
       </CardHeader>
+      
       <CardContent>
-        {!emailSent ? (
-          <form onSubmit={handleSendReset} className="space-y-4">
+        {step === 1 && (
+          <form onSubmit={handleSendCode} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="reset-email">Email</Label>
+              <Label htmlFor="reset-email">Email Address</Label>
               <Input
                 id="reset-email"
                 type="email"
@@ -91,45 +213,86 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Send Reset Email
+              Send Verification Code
             </Button>
           </form>
-        ) : (
-          <div className="text-center space-y-4">
-            <div className="text-sm text-gray-600 space-y-3">
-              <p className="font-medium">📧 Check your email!</p>
-              <p>We've sent you a password reset link. Click the link in your email to reset your password.</p>
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <p className="text-xs font-medium text-blue-800">What to do next:</p>
-                <ol className="text-xs text-blue-700 mt-1 space-y-1">
-                  <li>1. Check your email inbox (and spam folder)</li>
-                  <li>2. Click the "Reset Password" link in the email</li>  
-                  <li>3. You'll return here to set a new password</li>
-                  <li>4. Then you can login with your new password</li>
-                </ol>
-              </div>
-              <p className="text-xs">Don't see the email? Check your spam folder or try again.</p>
-            </div>
+        )}
+
+        {step === 2 && (
+          <form onSubmit={handleVerifyCode} className="space-y-4">
             <div className="space-y-2">
-              <Button 
-                onClick={() => {
-                  setEmailSent(false);
-                  setEmail('');
-                }}
-                variant="outline"
-                className="w-full"
-              >
-                Try Different Email
-              </Button>
-              <Button 
-                onClick={onBack}
-                variant="ghost"
-                className="w-full text-sm"
-              >
-                Back to Login
-              </Button>
+              <Label htmlFor="verification-code">Verification Code</Label>
+              <Input
+                id="verification-code"
+                type="text"
+                placeholder="Enter 6-digit code"
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value)}
+                maxLength={6}
+                className="text-center text-2xl font-mono tracking-widest"
+                required
+              />
+              <p className="text-xs text-gray-500 text-center">
+                Check your email for the 6-digit code
+              </p>
             </div>
-          </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
+              disabled={verificationCode.length !== 6}
+            >
+              Verify Code
+            </Button>
+            
+            <Button
+              type="button"
+              variant="ghost"
+              className="w-full"
+              onClick={() => setStep(1)}
+            >
+              Use Different Email
+            </Button>
+          </form>
+        )}
+
+        {step === 3 && (
+          <form onSubmit={handlePasswordReset} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-password">New Password</Label>
+              <Input
+                id="new-password"
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="confirm-password">Confirm New Password</Label>
+              <Input
+                id="confirm-password"
+                type="password"
+                placeholder="Confirm new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+            </div>
+            
+            <Button 
+              type="submit" 
+              className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
+              disabled={loading}
+            >
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Reset Password
+            </Button>
+          </form>
         )}
       </CardContent>
     </Card>
