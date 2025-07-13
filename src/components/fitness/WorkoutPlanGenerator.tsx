@@ -11,7 +11,7 @@ import { Loader2, Sparkles } from 'lucide-react';
 interface WorkoutPlanGeneratorProps {
   isOpen: boolean;
   onClose: () => void;
-  profile: FitnessProfile;
+  profile: FitnessProfile | null;
   onPlanGenerated?: (plan: any) => void;
 }
 
@@ -97,39 +97,65 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
           </DialogDescription>
         </DialogHeader>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">Your Profile Summary</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-sm">
-            <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
-            <div><strong>Body Type:</strong> {Array.isArray(profile.body_type) ? profile.body_type.join(', ') : profile.body_type}</div>
-            <div><strong>Height:</strong> {profile.height}cm</div>
-            <div><strong>Weight:</strong> {profile.weight}kg</div>
-            <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
-            <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
-          </CardContent>
-        </Card>
+        {!profile ? (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <div className="bg-gray-100 rounded-full p-4 mb-4 mx-auto w-fit">
+                <Sparkles className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">Complete Your Profile First</h3>
+              <p className="text-gray-500 mb-4">
+                You need to complete your fitness profile before generating a workout plan.
+              </p>
+              <Button 
+                onClick={() => {
+                  onClose();
+                  // Navigate to profile page - you might need to implement this
+                  window.location.href = '/profile';
+                }}
+                className="bg-fitness-primary hover:bg-fitness-primary/90"
+              >
+                Complete Profile
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Your Profile Summary</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
+                <div><strong>Body Type:</strong> {Array.isArray(profile.body_type) ? profile.body_type.join(', ') : profile.body_type}</div>
+                <div><strong>Height:</strong> {profile.height}cm</div>
+                <div><strong>Weight:</strong> {profile.weight}kg</div>
+                <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
+                <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
+              </CardContent>
+            </Card>
 
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={onClose} className="flex-1">
-            Cancel
-          </Button>
-          <Button 
-            onClick={generateWorkoutPlan}
-            disabled={isGenerating}
-            className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              'Generate Plan'
-            )}
-          </Button>
-        </div>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={onClose} className="flex-1">
+                Cancel
+              </Button>
+              <Button 
+                onClick={generateWorkoutPlan}
+                disabled={isGenerating}
+                className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Generating...
+                  </>
+                ) : (
+                  'Generate Plan'
+                )}
+              </Button>
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );

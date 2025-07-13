@@ -131,6 +131,7 @@ const Home = () => {
     };
 
     const handleOpenCustomize = () => {
+      console.log('Opening customization dialog');
       setShowPlanGenerator(true);
     };
 
@@ -208,14 +209,12 @@ const Home = () => {
         )}
 
         {/* Workout Plan Generator Dialog */}
-        {profile && (
-          <WorkoutPlanGenerator
-            isOpen={showPlanGenerator}
-            onClose={() => setShowPlanGenerator(false)}
-            profile={profile}
-            onPlanGenerated={handlePlanGenerated}
-          />
-        )}
+        <WorkoutPlanGenerator
+          isOpen={showPlanGenerator}
+          onClose={() => setShowPlanGenerator(false)}
+          profile={profile}
+          onPlanGenerated={handlePlanGenerated}
+        />
       </div>
     </PageContainer>
   );
