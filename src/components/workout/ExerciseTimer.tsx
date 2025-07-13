@@ -95,11 +95,6 @@ const ExerciseTimer = ({ duration, onComplete, autoStart = false, className = ""
           </div>
         </div>
         
-        {isCompleted && (
-          <Badge variant="default" className="mt-1 bg-green-600">
-            Complete
-          </Badge>
-        )}
       </div>
 
       {/* Controls */}
