@@ -135,101 +135,142 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* QuickFit Title */}
-          <div className="text-center py-3 border-b border-gray-100">
-            <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary flex items-center justify-center gap-2">
-              QuickFit
-              <img 
-                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
-                alt="QuickFit Logo" 
-                className="w-8 h-8"
-              />
-            </h1>
+    <div className="min-h-screen bg-gradient-to-br from-background via-accent/20 to-background">
+      {/* Professional Navigation Header */}
+      <header className="glass-effect border-b border-border/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          {/* Brand Section */}
+          <div className="text-center py-6 border-b border-border/30">
+            <div className="flex items-center justify-center gap-3 animate-fade-in-up">
+              <div className="relative">
+                <img 
+                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                  alt="QuickFit Logo" 
+                  className="w-10 h-10 animate-pulse-glow"
+                />
+                <div className="absolute inset-0 rounded-full bg-gradient-primary opacity-20 blur-xl"></div>
+              </div>
+              <h1 className="text-3xl md:text-4xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                QuickFit
+              </h1>
+            </div>
+            <p className="text-muted-foreground mt-2 text-sm animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+              Professional Fitness Solutions
+            </p>
           </div>
           
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center space-x-6 flex-1">
               
-              {/* Navigation - scrollable on mobile */}
-              <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
+              {/* Modern Navigation */}
+              <nav className="flex space-x-2 overflow-x-auto scrollbar-hide">
                 <Link to="/home" className="flex-shrink-0" onClick={trackUserActivity}>
                   <Button 
-                    variant={isActive('/home') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className={isActive('/home') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                    variant={isActive('/home') ? 'default' : 'glass'} 
+                    size="lg"
+                    className="animate-slide-in-right"
                   >
-                    <Home className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">Home</span>
+                    <Home className="h-5 w-5 mr-3" />
+                    <span>Dashboard</span>
                   </Button>
                 </Link>
 
                 <Link to="/history" className="flex-shrink-0" onClick={trackUserActivity}>
                   <Button 
-                    variant={isActive('/history') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                    variant={isActive('/history') ? 'default' : 'glass'} 
+                    size="lg"
+                    className="animate-slide-in-right" 
+                    style={{animationDelay: '0.1s'}}
                   >
-                    <History className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">History</span>
+                    <History className="h-5 w-5 mr-3" />
+                    <span>Analytics</span>
                   </Button>
                 </Link>
               </nav>
             </div>
             
-            <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
-              {/* Profile Dropdown */}
+            <div className="flex items-center space-x-4">
+              {/* Professional Profile Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
-                    <User className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">Profile</span>
-                    <ChevronDown className="h-3 w-3 ml-1" />
+                  <Button 
+                    variant="glass" 
+                    size="lg" 
+                    className="animate-scale-in hover:shadow-glow"
+                    onClick={trackUserActivity}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
+                        <User className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="hidden md:inline font-medium">Account</span>
+                      <ChevronDown className="h-4 w-4" />
+                    </div>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 bg-white" align="end">
-                  <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-gray-900">
-                      {user?.email}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      Member since {memberSince}
-                    </p>
+                <DropdownMenuContent className="w-80 glass-effect border border-border/50 shadow-xl" align="end">
+                  <div className="p-6 bg-gradient-secondary rounded-t-xl">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow">
+                        <User className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-foreground">
+                          {user?.email}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Member since {memberSince}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/about" className="flex items-center w-full" onClick={trackUserActivity}>
-                      <Info className="h-4 w-4 mr-2" />
-                      About
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Customize
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Privacy Policy
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowTermsOfConditions(true); trackUserActivity(); }}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    Terms of Conditions
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => { signOut(); trackUserActivity(); }}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => { setShowDeleteDialog(true); trackUserActivity(); }}
-                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Remove Account
-                  </DropdownMenuItem>
+                  
+                  <div className="p-2">
+                    <DropdownMenuItem asChild className="rounded-lg p-3 hover:bg-accent/50">
+                      <Link to="/about" className="flex items-center w-full" onClick={trackUserActivity}>
+                        <Info className="h-5 w-5 mr-3 text-primary" />
+                        <span className="font-medium">About QuickFit</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => { setShowProfileForm(true); trackUserActivity(); }}
+                      className="rounded-lg p-3 hover:bg-accent/50"
+                    >
+                      <Settings className="h-5 w-5 mr-3 text-primary" />
+                      <span className="font-medium">Customize Profile</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}
+                      className="rounded-lg p-3 hover:bg-accent/50"
+                    >
+                      <Shield className="h-5 w-5 mr-3 text-primary" />
+                      <span className="font-medium">Privacy Policy</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => { setShowTermsOfConditions(true); trackUserActivity(); }}
+                      className="rounded-lg p-3 hover:bg-accent/50"
+                    >
+                      <FileText className="h-5 w-5 mr-3 text-primary" />
+                      <span className="font-medium">Terms & Conditions</span>
+                    </DropdownMenuItem>
+                    
+                    <div className="h-px bg-border my-2"></div>
+                    
+                    <DropdownMenuItem 
+                      onClick={() => { signOut(); trackUserActivity(); }}
+                      className="rounded-lg p-3 hover:bg-accent/50"
+                    >
+                      <LogOut className="h-5 w-5 mr-3 text-primary" />
+                      <span className="font-medium">Sign Out</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => { setShowDeleteDialog(true); trackUserActivity(); }}
+                      className="rounded-lg p-3 hover:bg-destructive/10 text-destructive"
+                    >
+                      <Trash2 className="h-5 w-5 mr-3" />
+                      <span className="font-medium">Delete Account</span>
+                    </DropdownMenuItem>
+                  </div>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
@@ -237,8 +278,13 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main>{children}</main>
+      {/* Main Content with Professional Layout */}
+      <main className="relative">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/10 pointer-events-none"></div>
+        <div className="relative z-10">
+          {children}
+        </div>
+      </main>
 
       {/* Customize Form Modal */}
       <FitnessProfileForm 

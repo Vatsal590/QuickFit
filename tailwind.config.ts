@@ -62,14 +62,20 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				},
-				fitness: {
-					primary: '#3B82F6',
-					secondary: '#10B981',
-					accent: '#6366F1',
-					dark: '#1F2937',
-					light: '#F3F4F6'
 				}
+			},
+			backgroundImage: {
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-secondary': 'var(--gradient-secondary)',
+				'gradient-accent': 'var(--gradient-accent)',
+				'gradient-hero': 'var(--gradient-hero)',
+			},
+			boxShadow: {
+				'professional': 'var(--shadow-lg)',
+				'glow': 'var(--shadow-glow)',
+			},
+			backdropBlur: {
+				xs: '2px',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
