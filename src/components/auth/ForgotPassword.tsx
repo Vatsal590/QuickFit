@@ -24,10 +24,9 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // Send password reset email using Supabase with the correct redirect URL
-      const currentUrl = window.location.origin;
+      // Send password reset email using Supabase - redirect to main auth page
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${currentUrl}/auth?reset=true`,
+        redirectTo: window.location.origin + '/auth',
       });
 
       if (error) {
@@ -97,20 +96,39 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
           </form>
         ) : (
           <div className="text-center space-y-4">
-            <div className="text-sm text-gray-600">
-              <p>If an account with that email exists, you'll receive a password reset link shortly.</p>
-              <p className="mt-2">Don't see the email? Check your spam folder.</p>
+            <div className="text-sm text-gray-600 space-y-3">
+              <p className="font-medium">📧 Check your email!</p>
+              <p>We've sent you a password reset link. Click the link in your email to reset your password.</p>
+              <div className="bg-blue-50 p-3 rounded-lg">
+                <p className="text-xs font-medium text-blue-800">What to do next:</p>
+                <ol className="text-xs text-blue-700 mt-1 space-y-1">
+                  <li>1. Check your email inbox (and spam folder)</li>
+                  <li>2. Click the "Reset Password" link in the email</li>  
+                  <li>3. You'll return here to set a new password</li>
+                  <li>4. Then you can login with your new password</li>
+                </ol>
+              </div>
+              <p className="text-xs">Don't see the email? Check your spam folder or try again.</p>
             </div>
-            <Button 
-              onClick={() => {
-                setEmailSent(false);
-                setEmail('');
-              }}
-              variant="outline"
-              className="w-full"
-            >
-              Try Different Email
-            </Button>
+            <div className="space-y-2">
+              <Button 
+                onClick={() => {
+                  setEmailSent(false);
+                  setEmail('');
+                }}
+                variant="outline"
+                className="w-full"
+              >
+                Try Different Email
+              </Button>
+              <Button 
+                onClick={onBack}
+                variant="ghost"
+                className="w-full text-sm"
+              >
+                Back to Login
+              </Button>
+            </div>
           </div>
         )}
       </CardContent>

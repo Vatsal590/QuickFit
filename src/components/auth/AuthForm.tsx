@@ -31,13 +31,23 @@ const AuthForm = () => {
 
   // Check if this is a password reset flow
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isReset = urlParams.get('reset') === 'true';
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Check URL parameters for reset mode
+      const urlParams = new URLSearchParams(window.location.search);
+      const hasResetParams = urlParams.get('type') === 'recovery' || 
+                            urlParams.get('access_token') || 
+                            urlParams.get('refresh_token');
+      
+      if (hasResetParams || (session && window.location.search.includes('recovery'))) {
+        setIsPasswordReset(true);
+        setIsLogin(false); // Switch to password update mode
+        console.log('Password reset mode detected');
+      }
+    };
     
-    if (isReset) {
-      setIsPasswordReset(true);
-      setIsLogin(false); // Switch to password update mode
-    }
+    checkSession();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
