@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { WorkoutPlan } from '@/types';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Calendar, Clock, Target, Play, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import {
@@ -30,6 +31,7 @@ const UserWorkoutPlans = ({
 }: UserWorkoutPlansProps) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [planToDelete, setPlanToDelete] = React.useState<string | null>(null);
+  const { t } = useTranslation();
 
   const handleDeleteClick = (planId: string) => {
     setPlanToDelete(planId);
@@ -47,22 +49,22 @@ const UserWorkoutPlans = ({
   const getButtonText = (plan: WorkoutPlan) => {
     // Check if plan has any progress by looking at days left vs total duration
     const hasProgress = plan.daysLeft < plan.duration;
-    return hasProgress ? 'Continue Plan' : 'Start Plan';
+    return hasProgress ? t('Continue Plan') : t('Start Plan');
   };
   if (!workoutPlans || workoutPlans.length === 0) {
     return (
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Your Workout Plans</CardTitle>
-          <CardDescription>No workout plans created yet</CardDescription>
+          <CardTitle>{t('My 30-Day Workout Plans')}</CardTitle>
+          <CardDescription>{t('No workout plans yet')}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center py-8 text-center">
           <div className="bg-gray-100 rounded-full p-4 mb-4">
             <Target className="h-8 w-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
+          <h3 className="text-lg font-medium mb-2">{t('No workout plans yet')}</h3>
           <p className="text-gray-500 max-w-md mb-4">
-            Create your first personalized workout plan to get started with your fitness journey
+            {t('Create your first 30-day workout plan to get started on your fitness journey!')}
           </p>
           <Button
             onClick={() => {
@@ -71,7 +73,7 @@ const UserWorkoutPlans = ({
             className="bg-fitness-primary hover:bg-fitness-primary/90"
           >
             <Target className="h-4 w-4 mr-2" />
-            Customise
+            {t('Customize')}
           </Button>
         </CardContent>
       </Card>
@@ -81,8 +83,8 @@ const UserWorkoutPlans = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Workout Plans</CardTitle>
-        <CardDescription>Manage and track your personalized workout plans</CardDescription>
+        <CardTitle>{t('My 30-Day Workout Plans')}</CardTitle>
+        <CardDescription>{t('Generate Workout Plan')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {workoutPlans.map((plan) => (
@@ -108,11 +110,11 @@ const UserWorkoutPlans = ({
                   </div>
                   <div className="flex items-center">
                     <Clock className="h-4 w-4 text-fitness-primary mr-1" />
-                    <span>{plan.duration} days</span>
+                    <span>{plan.duration} {t('days')}</span>
                   </div>
                   <div className="flex items-center">
                     <Target className="h-4 w-4 text-fitness-primary mr-1" />
-                    <span>{plan.daysLeft} days left</span>
+                    <span>{plan.daysLeft} {t('days')} left</span>
                   </div>
                 </div>
               </div>
@@ -153,23 +155,18 @@ const UserWorkoutPlans = ({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Workout Plan</AlertDialogTitle>
+            <AlertDialogTitle>{t('Delete Plan')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this workout plan? This action cannot be undone and will permanently remove:
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Your workout plan and all its exercises</li>
-                <li>Your progress and completed days</li>
-                <li>All associated data</li>
-              </ul>
+              {t('Are you sure you want to delete this workout plan?')} {t('This action cannot be undone.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleConfirmDelete}
               className="bg-red-600 hover:bg-red-700"
             >
-              Delete Plan
+              {t('Delete Plan')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

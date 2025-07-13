@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Search } from 'lucide-react';
 
 interface LanguageSelectorProps {
@@ -30,6 +31,7 @@ const languages = [
 
 const LanguageSelector = ({ isOpen, onClose, selectedLanguage, onLanguageSelect }: LanguageSelectorProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { t } = useTranslation();
 
   const filteredLanguages = languages.filter(language =>
     language.toLowerCase().includes(searchTerm.toLowerCase())
@@ -38,24 +40,20 @@ const LanguageSelector = ({ isOpen, onClose, selectedLanguage, onLanguageSelect 
   const handleLanguageSelect = (language: string) => {
     onLanguageSelect(language);
     onClose();
-    // Trigger a page reload to apply translations
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Select Language</DialogTitle>
+          <DialogTitle>{t('Select Language')}</DialogTitle>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder="Search languages..."
+              placeholder={t('Search languages...')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
