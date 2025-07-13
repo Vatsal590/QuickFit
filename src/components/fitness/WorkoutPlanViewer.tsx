@@ -373,7 +373,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                     </p>
                   </div>
                 </div>
-                {!day.isRestDay && !day.completed && (
+                {!day.completed && (
                   <Button
                     onClick={() => onMarkComplete(plan.id, day.day)}
                     variant="outline"

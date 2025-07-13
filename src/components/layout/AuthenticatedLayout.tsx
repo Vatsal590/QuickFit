@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info, Languages } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
+import LanguageSelector from '@/components/language/LanguageSelector';
 
 // ----- LAZY LOAD CHATBOT -----
 const Chatbot = React.lazy(() => import("../chat/Chatbot"));
@@ -61,6 +62,8 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -135,19 +138,19 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--gradient-bg)' }}>
       {/* Navigation Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* QuickFit Title */}
           <div className="text-center py-3 border-b border-gray-100">
             <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary flex items-center justify-center gap-2">
-              QuickFit
               <img 
                 src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
                 alt="QuickFit Logo" 
                 className="w-8 h-8"
               />
+              QuickFit
             </h1>
           </div>
           
@@ -206,6 +209,10 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                       About
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowLanguageMenu(true); trackUserActivity(); }}>
+                    <Languages className="h-4 w-4 mr-2" />
+                    Language ({selectedLanguage})
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
                     <Settings className="h-4 w-4 mr-2" />
                     Customize
@@ -256,6 +263,14 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       <TermsOfConditions 
         isOpen={showTermsOfConditions}
         onClose={() => setShowTermsOfConditions(false)}
+      />
+
+      {/* Language Selector Modal */}
+      <LanguageSelector
+        isOpen={showLanguageMenu}
+        onClose={() => setShowLanguageMenu(false)}
+        selectedLanguage={selectedLanguage}
+        onLanguageSelect={setSelectedLanguage}
       />
 
       {/* Delete Account Confirmation Dialog */}

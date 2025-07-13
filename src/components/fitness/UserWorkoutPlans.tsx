@@ -6,6 +6,16 @@ import { Badge } from '@/components/ui/badge';
 import { WorkoutPlan } from '@/types';
 import { Calendar, Clock, Target, Play, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface UserWorkoutPlansProps {
   workoutPlans?: WorkoutPlan[];
@@ -18,6 +28,27 @@ const UserWorkoutPlans = ({
   onSelectPlan = () => {}, 
   onDeletePlan = () => {} 
 }: UserWorkoutPlansProps) => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [planToDelete, setPlanToDelete] = React.useState<string | null>(null);
+
+  const handleDeleteClick = (planId: string) => {
+    setPlanToDelete(planId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (planToDelete) {
+      onDeletePlan(planToDelete);
+      setPlanToDelete(null);
+    }
+    setDeleteDialogOpen(false);
+  };
+
+  const getButtonText = (plan: WorkoutPlan) => {
+    // Check if plan has any progress by looking at days left vs total duration
+    const hasProgress = plan.daysLeft < plan.duration;
+    return hasProgress ? 'Continue Plan' : 'Start Plan';
+  };
   if (!workoutPlans || workoutPlans.length === 0) {
     return (
       <Card className="shadow-sm">
@@ -90,7 +121,7 @@ const UserWorkoutPlans = ({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onDeletePlan(plan.id)}
+                  onClick={() => handleDeleteClick(plan.id)}
                   className="text-red-600 border-red-200 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4" />
@@ -99,24 +130,50 @@ const UserWorkoutPlans = ({
             </div>
             
             <div className="pt-3 border-t">
-              <Button
-                onClick={() => onSelectPlan({
-                  ...plan,
-                  type: plan.type || 'custom',
-                  duration: plan.duration || 30,
-                  daysLeft: plan.daysLeft || plan.duration || 30,
-                  schedule: plan.schedule || plan.exercises || [],
-                  createdAt: plan.createdAt || new Date().toISOString()
-                })}
-                className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
-              >
-                <Play className="h-4 w-4 mr-2" />
-                Start Plan
-              </Button>
+                <Button
+                  onClick={() => onSelectPlan({
+                    ...plan,
+                    type: plan.type || 'custom',
+                    duration: plan.duration || 30,
+                    daysLeft: plan.daysLeft || plan.duration || 30,
+                    schedule: plan.schedule || plan.exercises || [],
+                    createdAt: plan.createdAt || new Date().toISOString()
+                  })}
+                  className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
+                >
+                  <Play className="h-4 w-4 mr-2" />
+                  {getButtonText(plan)}
+                </Button>
             </div>
           </div>
         ))}
       </CardContent>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Workout Plan</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this workout plan? This action cannot be undone and will permanently remove:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Your workout plan and all its exercises</li>
+                <li>Your progress and completed days</li>
+                <li>All associated data</li>
+              </ul>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleConfirmDelete}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete Plan
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 };

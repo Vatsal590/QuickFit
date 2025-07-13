@@ -8,6 +8,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Dumbbell } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
+import PrivacyPolicy from '../legal/PrivacyPolicy';
+import TermsOfConditions from '../legal/TermsOfConditions';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,6 +18,8 @@ const AuthForm = () => {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
+  const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
   
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
@@ -156,9 +160,30 @@ const AuthForm = () => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? 'Sign In' : 'Sign Up'}
+              {isLogin ? 'Sign In' : 'Create Account'}
             </Button>
           </form>
+
+          {!isLogin && (
+            <div className="mt-3 text-xs text-gray-500 text-center">
+              By creating an account, you accept our{' '}
+              <button
+                type="button"
+                onClick={() => setShowPrivacyPolicy(true)}
+                className="text-fitness-primary hover:underline"
+              >
+                Privacy Policy
+              </button>
+              {' '}and{' '}
+              <button
+                type="button"
+                onClick={() => setShowTermsOfConditions(true)}
+                className="text-fitness-primary hover:underline"
+              >
+                Terms of Conditions
+              </button>
+            </div>
+          )}
           
           <div className="mt-4 text-center">
             <button
@@ -174,6 +199,18 @@ const AuthForm = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Privacy Policy Modal */}
+      <PrivacyPolicy 
+        isOpen={showPrivacyPolicy}
+        onClose={() => setShowPrivacyPolicy(false)}
+      />
+
+      {/* Terms of Conditions Modal */}
+      <TermsOfConditions 
+        isOpen={showTermsOfConditions}
+        onClose={() => setShowTermsOfConditions(false)}
+      />
     </div>
   );
 };
