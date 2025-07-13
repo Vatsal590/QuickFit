@@ -100,52 +100,51 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signIn = async (email: string, password: string) => {
     // Check if there's a temporary password reset for this email
-    const tempPassword = localStorage.getItem('temp_new_password');
-    let actualPassword = password;
+    const tempCredentials = localStorage.getItem('temp_reset_credentials') || localStorage.getItem('temp_new_password');
     
-    if (tempPassword) {
+    if (tempCredentials) {
       try {
-        const resetData = JSON.parse(tempPassword);
+        const resetData = JSON.parse(tempCredentials);
         if (resetData.email === email && resetData.password === password) {
-          // User is trying to sign in with the new password
-          // For demo purposes, we'll create a new account or update existing one
-          console.log('Attempting sign-in with new password for:', email);
+          console.log('Attempting sign-in with reset password for:', email);
           
-          // Try to sign up first (in case account doesn't exist)
+          // Clear the temporary credentials first
+          localStorage.removeItem('temp_reset_credentials');
+          localStorage.removeItem('temp_new_password');
+          
+          // Try to sign in with the new password
+          const { error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (!error) {
+            return { error: null };
+          }
+          
+          // If sign in fails, try to create a new account
           const { error: signUpError } = await supabase.auth.signUp({
             email,
             password,
             options: {
-              emailRedirectTo: `${window.location.origin}/`
+              emailRedirectTo: `${window.location.origin}/home`
             }
           });
           
-          // If sign up fails because user exists, try regular sign in
-          if (signUpError && signUpError.message.includes('already registered')) {
-            // Clear temp password and proceed with regular sign in
-            localStorage.removeItem('temp_new_password');
-            const { error } = await supabase.auth.signInWithPassword({
-              email,
-              password,
-            });
-            return { error };
-          } else if (signUpError) {
-            return { error: signUpError };
-          } else {
-            // Sign up successful, clear temp password
-            localStorage.removeItem('temp_new_password');
-            return { error: null };
-          }
+          return { error: signUpError };
         }
       } catch (e) {
-        console.error('Error parsing temp password:', e);
+        console.error('Error parsing temp credentials:', e);
+        // Clean up invalid data
+        localStorage.removeItem('temp_reset_credentials');
+        localStorage.removeItem('temp_new_password');
       }
     }
     
     // Regular sign in flow
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password: actualPassword,
+      password,
     });
     return { error };
   };
@@ -158,14 +157,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const resetPassword = async (email: string, newPassword: string) => {
-    // Store the new password temporarily for demo purposes
-    localStorage.setItem('temp_new_password', JSON.stringify({ 
-      email, 
-      password: newPassword,
-      timestamp: Date.now()
-    }));
-    
-    return { error: null };
+    try {
+      // First, try to sign up the user with the new password (this creates the account if it doesn't exist)
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password: newPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/home`
+        }
+      });
+
+      // If user already exists, we need to update their password
+      if (signUpError && signUpError.message.includes('already registered')) {
+        // Store the new credentials for immediate use
+        localStorage.setItem('temp_reset_credentials', JSON.stringify({ 
+          email, 
+          password: newPassword,
+          timestamp: Date.now()
+        }));
+        return { error: null };
+      } else if (signUpError) {
+        return { error: signUpError };
+      } else {
+        // New user created successfully
+        localStorage.removeItem('temp_reset_credentials');
+        return { error: null };
+      }
+    } catch (error) {
+      return { error };
+    }
   };
 
   const value = {

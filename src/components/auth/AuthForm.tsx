@@ -28,15 +28,18 @@ const AuthForm = () => {
 
   // Check for temporary password reset on component mount
   useEffect(() => {
-    const tempPassword = localStorage.getItem('temp_new_password');
-    if (tempPassword) {
+    const tempCredentials = localStorage.getItem('temp_reset_credentials') || localStorage.getItem('temp_new_password');
+    if (tempCredentials) {
       try {
-        const { email: resetEmail } = JSON.parse(tempPassword);
-        console.log('Temporary password found for:', resetEmail);
+        const { email: resetEmail } = JSON.parse(tempCredentials);
+        console.log('Temporary credentials found for:', resetEmail);
         // Pre-fill the email field
         setEmail(resetEmail);
       } catch (e) {
-        console.error('Error parsing temp password:', e);
+        console.error('Error parsing temp credentials:', e);
+        // Clean up invalid data
+        localStorage.removeItem('temp_reset_credentials');
+        localStorage.removeItem('temp_new_password');
       }
     }
   }, []);
@@ -61,7 +64,10 @@ const AuthForm = () => {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          window.location.href = '/home';
+          // Force redirect to home page
+          setTimeout(() => {
+            window.location.href = '/home';
+          }, 100);
         }
       } else {
         result = await signUp(email, password, fullName);

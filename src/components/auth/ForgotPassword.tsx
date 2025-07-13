@@ -76,10 +76,13 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
       
       toast({
         title: "Password updated successfully!",
-        description: "You can now sign in with your new password.",
+        description: "You can now sign in with your new password. Redirecting to login...",
       });
       
-      onBack();
+      // Small delay before redirecting to show the success message
+      setTimeout(() => {
+        onBack();
+      }, 1500);
     } catch (error) {
       toast({
         title: "Error",
