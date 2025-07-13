@@ -68,10 +68,8 @@ const AuthForm = () => {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          // Force redirect to home page
-          setTimeout(() => {
-            window.location.href = '/home';
-          }, 100);
+          // Force immediate redirect to home page - no delays, no conditions
+          window.location.replace('/home');
         }
       } else {
         result = await signUp(email, password, fullName);

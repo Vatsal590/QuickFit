@@ -76,13 +76,11 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
       
       toast({
         title: "Password updated successfully!",
-        description: "You can now sign in with your new password. Redirecting to login...",
+        description: "Redirecting to workout creation...",
       });
       
-      // Small delay before redirecting to show the success message
-      setTimeout(() => {
-        onBack();
-      }, 1500);
+      // Force immediate redirect to home page where they can create workouts
+      window.location.replace('/home');
     } catch (error) {
       toast({
         title: "Error",
