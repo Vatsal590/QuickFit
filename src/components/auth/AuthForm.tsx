@@ -142,7 +142,18 @@ const AuthForm = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">{t('Password')}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">{t('Password')}</Label>
+                {isLogin && (
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-xs text-fitness-primary hover:underline"
+                  >
+                    {t('Forgot Password?')}
+                  </button>
+                )}
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -153,10 +164,8 @@ const AuthForm = () => {
                 minLength={6}
               />
             </div>
-
             
-            
-            <Button 
+            <Button
               type="submit" 
               className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
               disabled={loading}
