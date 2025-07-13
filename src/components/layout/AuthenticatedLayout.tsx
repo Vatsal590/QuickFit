@@ -68,6 +68,18 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const trackUserActivity = async () => {
     await updateUserActivity();
   };
+
+  // Listen for external events to open fitness profile form
+  React.useEffect(() => {
+    const handleOpenFitnessProfileForm = () => {
+      setShowProfileForm(true);
+    };
+
+    window.addEventListener('openFitnessProfileForm', handleOpenFitnessProfileForm);
+    return () => {
+      window.removeEventListener('openFitnessProfileForm', handleOpenFitnessProfileForm);
+    };
+  }, []);
   //.
 
   // Format the member since date

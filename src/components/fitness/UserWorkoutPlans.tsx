@@ -35,7 +35,7 @@ const UserWorkoutPlans = ({
           </p>
           <Button
             onClick={() => {
-              window.dispatchEvent(new Event('openCustomize'));
+              window.dispatchEvent(new Event('openFitnessProfile'));
             }}
             className="bg-fitness-primary hover:bg-fitness-primary/90"
           >

@@ -135,11 +135,20 @@ const Home = () => {
       setShowPlanGenerator(true);
     };
 
+    const handleOpenFitnessProfile = () => {
+      console.log('Opening fitness profile form');
+      // We need to trigger the fitness profile form instead
+      const event = new CustomEvent('openFitnessProfileForm');
+      window.dispatchEvent(event);
+    };
+
     window.addEventListener('planGenerated', handlePlanGeneratedEvent);
     window.addEventListener('openCustomize', handleOpenCustomize);
+    window.addEventListener('openFitnessProfile', handleOpenFitnessProfile);
     return () => {
       window.removeEventListener('planGenerated', handlePlanGeneratedEvent);
       window.removeEventListener('openCustomize', handleOpenCustomize);
+      window.removeEventListener('openFitnessProfile', handleOpenFitnessProfile);
     };
   }, [loadWorkoutPlans]);
 
