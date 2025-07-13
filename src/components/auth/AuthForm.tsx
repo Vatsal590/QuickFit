@@ -26,20 +26,18 @@ const AuthForm = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  // Check for temporary password reset on component mount
+  // Check for stored credentials on component mount
   useEffect(() => {
-    const tempCredentials = localStorage.getItem('temp_reset_credentials') || localStorage.getItem('temp_new_password');
-    if (tempCredentials) {
+    const storedCredentials = localStorage.getItem('user_credentials');
+    if (storedCredentials) {
       try {
-        const { email: resetEmail } = JSON.parse(tempCredentials);
-        console.log('Temporary credentials found for:', resetEmail);
+        const { email: resetEmail } = JSON.parse(storedCredentials);
+        console.log('Stored credentials found for:', resetEmail);
         // Pre-fill the email field
         setEmail(resetEmail);
       } catch (e) {
-        console.error('Error parsing temp credentials:', e);
-        // Clean up invalid data
-        localStorage.removeItem('temp_reset_credentials');
-        localStorage.removeItem('temp_new_password');
+        console.error('Error parsing stored credentials:', e);
+        localStorage.removeItem('user_credentials');
       }
     }
   }, []);

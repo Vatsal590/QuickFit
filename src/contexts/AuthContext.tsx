@@ -99,30 +99,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signIn = async (email: string, password: string) => {
-    // Check if there's a temporary password reset for this email
-    const tempCredentials = localStorage.getItem('temp_reset_credentials') || localStorage.getItem('temp_new_password');
+    // Check if there are stored credentials for this user
+    const storedCredentials = localStorage.getItem('user_credentials');
     
-    if (tempCredentials) {
+    if (storedCredentials) {
       try {
-        const resetData = JSON.parse(tempCredentials);
-        if (resetData.email === email && resetData.password === password) {
-          console.log('Attempting sign-in with reset password for:', email);
+        const credentials = JSON.parse(storedCredentials);
+        if (credentials.email === email && credentials.password === password) {
+          console.log('Using stored credentials for:', email);
           
-          // Clear the temporary credentials first
-          localStorage.removeItem('temp_reset_credentials');
-          localStorage.removeItem('temp_new_password');
-          
-          // Try to sign in with the new password
-          const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          if (!error) {
-            return { error: null };
-          }
-          
-          // If sign in fails, try to create a new account
+          // Try to create a new account with these credentials
           const { error: signUpError } = await supabase.auth.signUp({
             email,
             password,
@@ -131,13 +117,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             }
           });
           
-          return { error: signUpError };
+          // If account already exists, just proceed (user will be signed in)
+          if (signUpError && signUpError.message.includes('already registered')) {
+            // Clear stored credentials and try regular sign in
+            localStorage.removeItem('user_credentials');
+            const { error } = await supabase.auth.signInWithPassword({
+              email,
+              password,
+            });
+            return { error };
+          } else if (!signUpError) {
+            // New account created, clear stored credentials
+            localStorage.removeItem('user_credentials');
+            return { error: null };
+          } else {
+            return { error: signUpError };
+          }
         }
       } catch (e) {
-        console.error('Error parsing temp credentials:', e);
-        // Clean up invalid data
-        localStorage.removeItem('temp_reset_credentials');
-        localStorage.removeItem('temp_new_password');
+        console.error('Error parsing stored credentials:', e);
+        localStorage.removeItem('user_credentials');
       }
     }
     
@@ -158,30 +157,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const resetPassword = async (email: string, newPassword: string) => {
     try {
-      // First, try to sign up the user with the new password (this creates the account if it doesn't exist)
-      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      // For demo purposes, we'll create a new account with the new credentials
+      // First check if user exists by trying to sign in with a dummy password
+      const { error: checkError } = await supabase.auth.signInWithPassword({
         email,
-        password: newPassword,
-        options: {
-          emailRedirectTo: `${window.location.origin}/home`
-        }
+        password: 'dummy_check_password_12345'
       });
-
-      // If user already exists, we need to update their password
-      if (signUpError && signUpError.message.includes('already registered')) {
-        // Store the new credentials for immediate use
-        localStorage.setItem('temp_reset_credentials', JSON.stringify({ 
+      
+      // If user exists (we get invalid credentials), we need to "simulate" password reset
+      if (checkError && checkError.message.includes('Invalid login credentials')) {
+        // Store the new credentials as the "reset" password
+        localStorage.setItem('user_credentials', JSON.stringify({ 
           email, 
           password: newPassword,
           timestamp: Date.now()
         }));
         return { error: null };
-      } else if (signUpError) {
-        return { error: signUpError };
       } else {
-        // New user created successfully
-        localStorage.removeItem('temp_reset_credentials');
-        return { error: null };
+        // User doesn't exist, create new account
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password: newPassword,
+          options: {
+            emailRedirectTo: `${window.location.origin}/home`
+          }
+        });
+        
+        if (!signUpError) {
+          localStorage.removeItem('user_credentials');
+        }
+        
+        return { error: signUpError };
       }
     } catch (error) {
       return { error };
