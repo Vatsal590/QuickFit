@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info, Languages } from 'lucide-react';
+import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,7 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
-import LanguageSelector from '@/components/language/LanguageSelector';
+
 
 // ----- LAZY LOAD CHATBOT -----
 const Chatbot = React.lazy(() => import("../chat/Chatbot"));
@@ -64,7 +64,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -210,10 +210,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                       {t('About')}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowLanguageMenu(true); trackUserActivity(); }}>
-                    <Languages className="h-4 w-4 mr-2" />
-                    {t('Language')} ({language})
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
                     <Settings className="h-4 w-4 mr-2" />
                     {t('Customize')}
@@ -266,13 +262,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         onClose={() => setShowTermsOfConditions(false)}
       />
 
-      {/* Language Selector Modal */}
-      <LanguageSelector
-        isOpen={showLanguageMenu}
-        onClose={() => setShowLanguageMenu(false)}
-        selectedLanguage={language}
-        onLanguageSelect={setLanguage}
-      />
 
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
