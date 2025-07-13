@@ -24,9 +24,10 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // Send password reset email using Supabase
+      // Send password reset email using Supabase with the correct redirect URL
+      const currentUrl = window.location.origin;
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth?reset=true`,
+        redirectTo: `${currentUrl}/auth?reset=true`,
       });
 
       if (error) {
