@@ -30,9 +30,19 @@ const UserWorkoutPlans = ({
             <Target className="h-8 w-8 text-gray-400" />
           </div>
           <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
-          <p className="text-gray-500 max-w-md">
+          <p className="text-gray-500 max-w-md mb-4">
             Create your first personalized workout plan to get started with your fitness journey
           </p>
+          <Button
+            onClick={() => {
+              const event = new Event('openCustomize');
+              window.dispatchEvent(event);
+            }}
+            className="bg-fitness-primary hover:bg-fitness-primary/90"
+          >
+            <Target className="h-4 w-4 mr-2" />
+            Customise
+          </Button>
         </CardContent>
       </Card>
     );

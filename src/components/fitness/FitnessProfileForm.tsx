@@ -11,6 +11,9 @@ import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../../hooks/useFitnessProfile';
 import WorkoutPlanGenerator from './WorkoutPlanGenerator';
 import { Target, Dumbbell, Calendar } from 'lucide-react';
+import ectomorphImage from '@/assets/ectomorph-body-type.jpg';
+import mesomorphImage from '@/assets/mesomorph-body-type.jpg';
+import endomorphImage from '@/assets/endomorph-body-type.jpg';
 
 interface FitnessProfileFormProps {
   isOpen: boolean;
@@ -237,19 +240,19 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                       value: 'ectomorph',
                       title: 'Ectomorph',
                       description: 'Naturally thin, fast metabolism, difficulty gaining weight',
-                      image: '🧍‍♂️'
+                      image: ectomorphImage
                     },
                     {
                       value: 'mesomorph',
                       title: 'Mesomorph',
                       description: 'Athletic build, gains muscle easily, balanced metabolism',
-                      image: '💪'
+                      image: mesomorphImage
                     },
                     {
                       value: 'endomorph',
                       title: 'Endomorph',
                       description: 'Rounder physique, slower metabolism, gains weight easily',
-                      image: '🧍‍♀️'
+                      image: endomorphImage
                     }
                   ].map((type) => (
                     <div key={type.value} className="relative">
@@ -265,7 +268,13 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                             : 'border-gray-200 hover:border-fitness-primary/50'
                         }`}
                       >
-                        <div className="text-2xl mb-2">{type.image}</div>
+                        <div className="w-16 h-20 mx-auto mb-2 overflow-hidden rounded">
+                          <img 
+                            src={type.image} 
+                            alt={type.title} 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                         <h4 className="font-medium">{type.title}</h4>
                         <p className="text-sm text-gray-500">{type.description}</p>
                       </button>

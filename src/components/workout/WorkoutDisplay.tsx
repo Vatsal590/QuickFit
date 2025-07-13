@@ -7,6 +7,7 @@ import { Workout } from '@/types';
 import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer, Play } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
+import ExerciseTimer from './ExerciseTimer';
 
 interface WorkoutDisplayProps {
   workout: Workout;
@@ -14,10 +15,17 @@ interface WorkoutDisplayProps {
   onComplete: (workout: Workout) => void;
 }
 
+interface CompletedExercise {
+  exerciseId: string;
+  setsCompleted: number;
+  restTimersCompleted: number;
+}
+
 const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) => {
   const { toast } = useToast();
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState<'main' | 'warmup' | 'cooldown'>('main');
+  const [completedExercises, setCompletedExercises] = useState<CompletedExercise[]>([]);
   
   // Get exercise animation URL based on exercise name
   const getExerciseAnimationUrl = (exerciseName: string): string => {
@@ -305,7 +313,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'kettlebell clean and press': 'https://i.pinimg.com/originals/ff/2a/fc/ff2afcbcb6cea55b0fb737a7169764ab.gif',
       'kettlebell thruster' :'https://i.pinimg.com/originals/60/51/3f/60513f6478926895606a2354dd7efd83.gif',
       'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
-      'kettlebell swing': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
+      'kettlebell swings 2': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
       
     };
 
@@ -395,9 +403,11 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                       </h4>
                       <p className="text-xs text-gray-500">
                         {isWarmupOrCooldown 
-                          ? `${exercise.sets} set × ${typeof exercise.reps === 'number' && exercise.reps > 30 
-                              ? `${exercise.reps} seconds` 
-                              : `${exercise.reps} reps`}`
+                          ? (typeof exercise.reps === 'number' && exercise.reps > 30)
+                              ? `${exercise.reps} secs`
+                              : (typeof exercise.reps === 'string' && exercise.reps.includes('seconds'))
+                                ? exercise.reps
+                                : `${exercise.reps} reps`
                           : `${exercise.sets} sets × ${exercise.reps} reps • ${exercise.restTime}s rest`
                         }
                       </p>
@@ -414,22 +424,41 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                 <DialogHeader>
                   <DialogTitle>{exercise.name}</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div className="flex justify-center">
-                    <img 
-                      src={getExerciseAnimationUrl(exercise.name)}
-                      alt={`${exercise.name} animation`}
-                      className="w-full max-w-sm rounded-lg"
-                      style={{ maxHeight: '300px', objectFit: 'contain' }}
-                    />
-                  </div>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Sets:</strong> {exercise.sets}</p>
-                    <p><strong>Reps:</strong> {exercise.reps}</p>
-                    {exercise.restTime && <p><strong>Rest:</strong> {exercise.restTime}s</p>}
-                    <p><strong>Description:</strong> {exercise.description}</p>
-                  </div>
-                </div>
+                 <div className="space-y-4">
+                   <div className="flex justify-center">
+                     <img 
+                       src={getExerciseAnimationUrl(exercise.name)}
+                       alt={`${exercise.name} animation`}
+                       className="w-full max-w-sm rounded-lg"
+                       style={{ maxHeight: '300px', objectFit: 'contain' }}
+                     />
+                   </div>
+                   <div className="space-y-2 text-sm">
+                     <p><strong>{isWarmupOrCooldown ? 'Time:' : 'Sets:'}</strong> {isWarmupOrCooldown ? 'As shown' : exercise.sets}</p>
+                     <p><strong>{isWarmupOrCooldown && (typeof exercise.reps === 'number' && exercise.reps > 30) ? 'Duration:' : 'Reps:'}</strong> {exercise.reps}</p>
+                     {exercise.restTime && !isWarmupOrCooldown && <p><strong>Rest:</strong> {exercise.restTime}s</p>}
+                     {exercise.description && <p><strong>Description:</strong> {exercise.description}</p>}
+                   </div>
+                   
+                   {/* Timer for time-based exercises */}
+                   {isWarmupOrCooldown && typeof exercise.reps === 'number' && exercise.reps > 10 && (
+                     <ExerciseTimer 
+                       duration={exercise.reps} 
+                       className="mt-4"
+                     />
+                   )}
+                   
+                   {/* Rest timer for main exercises */}
+                   {!isWarmupOrCooldown && exercise.restTime && (
+                     <div className="mt-4">
+                       <h4 className="font-medium mb-2">Rest Timer</h4>
+                       <ExerciseTimer 
+                         duration={exercise.restTime} 
+                         className="mt-2"
+                       />
+                     </div>
+                   )}
+                 </div>
               </DialogContent>
             </Dialog>
           </div>

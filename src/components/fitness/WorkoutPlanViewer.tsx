@@ -226,7 +226,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'plank jacks': 'https://media.post.rvohealth.io/wp-content/uploads/2023/08/GrimInferiorAustraliansilkyterrier-size_restricted.gif',
       'plank jack': 'https://media.post.rvohealth.io/wp-content/uploads/2023/08/GrimInferiorAustraliansilkyterrier-size_restricted.gif',
       'kettlebell swings': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SWING.gif',
-      'kettlebell swing': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SWING.gif',
+      'kettlebell swings primary': 'https://burnfit.io/wp-content/uploads/2023/11/KB_SWING.gif',
       'dumbbell thrusters': 'https://burnfit.io/wp-content/uploads/2023/11/DB_THRUSTER.gif',
       'dumbbell thruster': 'https://burnfit.io/wp-content/uploads/2023/11/DB_THRUSTER.gif',
       'turkish get-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/04/Turkish-Get-Up-Squat-style.gif',
@@ -294,7 +294,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
 
       //kettleball exercises
       'dumbbell squat': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Dumbbell-Squat.gif',
-      'cat cow stretch': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/05/400x400_The_Best_Postpartum_Exercises_to_do_Right_Now_Cat_Cow_in_Tabletop.gif',
+      'cat cow stretch v2': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/05/400x400_The_Best_Postpartum_Exercises_to_do_Right_Now_Cat_Cow_in_Tabletop.gif',
       'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
       'kettlebell deadlift' :'https://burnfit.io/wp-content/uploads/2023/11/KB_SM_DL.gif',
       'kettlebell press': 'https://i.pinimg.com/originals/56/54/ca/5654ca13e5e33cf34e685a8030e2d398.gif',
@@ -312,7 +312,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'kettlebell clean and press': 'https://i.pinimg.com/originals/ff/2a/fc/ff2afcbcb6cea55b0fb737a7169764ab.gif',
       'kettlebell thruster' :'https://i.pinimg.com/originals/60/51/3f/60513f6478926895606a2354dd7efd83.gif',
       'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
-      'kettlebell swing': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
+      'kettlebell swings alt': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
       
     };
 

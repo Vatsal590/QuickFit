@@ -130,8 +130,16 @@ const Home = () => {
       loadWorkoutPlans();
     };
 
+    const handleOpenCustomize = () => {
+      setShowPlanGenerator(true);
+    };
+
     window.addEventListener('planGenerated', handlePlanGeneratedEvent);
-    return () => window.removeEventListener('planGenerated', handlePlanGeneratedEvent);
+    window.addEventListener('openCustomize', handleOpenCustomize);
+    return () => {
+      window.removeEventListener('planGenerated', handlePlanGeneratedEvent);
+      window.removeEventListener('openCustomize', handleOpenCustomize);
+    };
   }, [loadWorkoutPlans]);
 
   if (profileLoading) {
@@ -148,7 +156,7 @@ const Home = () => {
     <PageContainer>
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
+          <h1 className="text-4xl md:text-6xl font-bold mb-3">
             Custom <span className="text-fitness-primary">Workout Generator</span>
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">

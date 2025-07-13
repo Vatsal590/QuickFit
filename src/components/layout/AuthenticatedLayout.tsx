@@ -129,20 +129,18 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* QuickFit Title */}
           <div className="text-center py-3 border-b border-gray-100">
-            <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary">
+            <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary flex items-center justify-center gap-2">
               QuickFit
+              <img 
+                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                alt="QuickFit Logo" 
+                className="w-8 h-8"
+              />
             </h1>
           </div>
           
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
-              <Link to="/home" className="flex items-center space-x-2 flex-shrink-0" onClick={trackUserActivity}>
-                <img 
-                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
-                  alt="QuickFit Logo" 
-                  className="w-8 h-8"
-                />
-              </Link>
               
               {/* Navigation - scrollable on mobile */}
               <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
@@ -157,38 +155,16 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   </Button>
                 </Link>
 
-                <Link to="/about" className="flex-shrink-0" onClick={trackUserActivity}>
+                <Link to="/history" className="flex-shrink-0" onClick={trackUserActivity}>
                   <Button 
-                    variant={isActive('/about') ? 'default' : 'ghost'} 
+                    variant={isActive('/history') ? 'default' : 'ghost'} 
                     size="sm"
-                    className={isActive('/about') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
+                    className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
-                    <Info className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">About</span>
+                    <History className="h-4 w-4 mr-1 md:mr-2" />
+                    <span className="hidden sm:inline">History</span>
                   </Button>
                 </Link>
-                
-                {/* Menu Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
-                      <Menu className="h-4 w-4 mr-1 md:mr-2" />
-                      <span className="hidden sm:inline">Menu</span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-48 bg-white" align="start">
-                    <DropdownMenuItem asChild>
-                      <Link to="/history" className="flex items-center w-full" onClick={trackUserActivity}>
-                        <History className="h-4 w-4 mr-2" />
-                        History
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
-                      <Settings className="h-4 w-4 mr-2" />
-                      Customize
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </nav>
             </div>
             
@@ -212,6 +188,16 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/about" className="flex items-center w-full" onClick={trackUserActivity}>
+                      <Info className="h-4 w-4 mr-2" />
+                      About
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
+                    <Settings className="h-4 w-4 mr-2" />
+                    Customize
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}>
                     <Shield className="h-4 w-4 mr-2" />
                     Privacy Policy
