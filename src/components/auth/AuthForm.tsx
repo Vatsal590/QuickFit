@@ -26,18 +26,24 @@ const AuthForm = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  // Check for stored credentials on component mount
+  // Check for reset passwords on component mount
   useEffect(() => {
-    const storedCredentials = localStorage.getItem('user_credentials');
-    if (storedCredentials) {
+    // Check if there are any reset passwords stored
+    const keys = Object.keys(localStorage);
+    const resetPasswordKey = keys.find(key => key.startsWith('user_password_'));
+    
+    if (resetPasswordKey) {
       try {
-        const { email: resetEmail } = JSON.parse(storedCredentials);
-        console.log('Stored credentials found for:', resetEmail);
-        // Pre-fill the email field
-        setEmail(resetEmail);
+        const email = resetPasswordKey.replace('user_password_', '');
+        const passwordData = JSON.parse(localStorage.getItem(resetPasswordKey) || '{}');
+        
+        if (passwordData.isReset) {
+          console.log('Reset password found for:', email);
+          // Pre-fill the email field
+          setEmail(email);
+        }
       } catch (e) {
-        console.error('Error parsing stored credentials:', e);
-        localStorage.removeItem('user_credentials');
+        console.error('Error parsing reset password data:', e);
       }
     }
   }, []);
