@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTranslation } from '@/contexts/TranslationContext';
+import { useToast } from '@/hooks/use-toast';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Dumbbell } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';

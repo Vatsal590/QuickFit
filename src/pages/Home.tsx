@@ -12,7 +12,6 @@ import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
-import { useTranslation } from '@/contexts/TranslationContext';
 import { supabase } from '@/integrations/supabase/client';
 
 // Update user activity in profiles table
@@ -36,7 +35,6 @@ const updateUserActivity = async () => {
 
 const Home = () => {
   const { toast } = useToast();
-  const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
   const [showPlanGenerator, setShowPlanGenerator] = useState(false);

@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { TranslationProvider } from "./contexts/TranslationContext";
 import Index from "./pages/Index";
 import History from "./pages/History";
 import About from "./pages/About";
@@ -53,68 +52,50 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const AppRoutes = () => {
+function App() {
   return (
-    <Routes>
-      <Route 
-        path="/" 
-        element={
-          <PublicRoute>
-            <Landing />
-          </PublicRoute>
-        } 
-      />
-      <Route 
-        path="/auth" 
-        element={
-          <PublicRoute>
-            <Auth />
-          </PublicRoute>
-        } 
-      />
-      <Route 
-        path="/home" 
-        element={
-          <ProtectedRoute>
-            <Index />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/history" 
-        element={
-          <ProtectedRoute>
-            <History />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/about" 
-        element={
-          <ProtectedRoute>
-            <About />
-          </ProtectedRoute>
-        } 
-      />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AuthProvider>
+            <Routes>
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="/404" element={<NotFound />} />
+              <Route
+                path="/home"
+                element={
+                  <ProtectedRoute>
+                    <Index />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/history"
+                element={
+                  <ProtectedRoute>
+                    <History />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/about"
+                element={
+                  <ProtectedRoute>
+                    <About />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/" element={<Navigate to="/home" replace />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <TranslationProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </AuthProvider>
-      </TranslationProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+}
 
 export default App;
