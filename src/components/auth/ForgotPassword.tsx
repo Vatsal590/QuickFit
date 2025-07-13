@@ -100,17 +100,21 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // First, try to sign up the user with new credentials (if they don't exist)
-      const { error: signUpError } = await supabase.auth.signUp({
-        email,
-        password: newPassword,
+      // Call our edge function to reset the password
+      const { data, error } = await supabase.functions.invoke('reset-password', {
+        body: { 
+          email, 
+          newPassword, 
+          verificationCode 
+        }
       });
 
-      // If user already exists, that's fine - we'll handle login later
-      if (signUpError && !signUpError.message.includes('already registered')) {
-        throw signUpError;
+      if (error) {
+        throw error;
       }
 
+      console.log('Password reset response:', data);
+      
       toast({
         title: "Password reset successful!",
         description: "You can now sign in with your new password.",
