@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Dumbbell } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
@@ -23,6 +24,7 @@ const AuthForm = () => {
   
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   // Check for temporary password reset on component mount
   useEffect(() => {
@@ -105,21 +107,21 @@ const AuthForm = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">
-            {isLogin ? 'Welcome Back' : 'Get Started'}
+            {isLogin ? t('Welcome Back') : t('Get Started')}
           </CardTitle>
           <CardDescription>
-            {isLogin ? 'Sign in to your QuickFit account' : 'Create your QuickFit account'}
+            {isLogin ? t('Sign in to your QuickFit account') : t('Create your QuickFit account')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName">{t('Full Name')}</Label>
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder={t('Enter your full name')}
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}
@@ -128,11 +130,11 @@ const AuthForm = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('Email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('Enter your email')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -140,11 +142,11 @@ const AuthForm = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('Password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t('Enter your password')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -160,27 +162,27 @@ const AuthForm = () => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? 'Sign In' : 'Create Account'}
+              {isLogin ? t('Sign In') : t('Create Account')}
             </Button>
           </form>
 
           {!isLogin && (
             <div className="mt-3 text-xs text-gray-500 text-center">
-              By creating an account, you accept our{' '}
+              {t('By creating an account, you accept our')}{' '}
               <button
                 type="button"
                 onClick={() => setShowPrivacyPolicy(true)}
                 className="text-fitness-primary hover:underline"
               >
-                Privacy Policy
+                {t('Privacy Policy')}
               </button>
-              {' '}and{' '}
+              {' '}{t('and')}{' '}
               <button
                 type="button"
                 onClick={() => setShowTermsOfConditions(true)}
                 className="text-fitness-primary hover:underline"
               >
-                Terms of Conditions
+                {t('Terms of Conditions')}
               </button>
             </div>
           )}
@@ -192,8 +194,8 @@ const AuthForm = () => {
               className="text-sm text-fitness-primary hover:underline"
             >
               {isLogin 
-                ? "Don't have an account? Sign up" 
-                : "Already have an account? Sign in"
+                ? t("Don't have an account? Sign up")
+                : t("Already have an account? Sign in")
               }
             </button>
           </div>

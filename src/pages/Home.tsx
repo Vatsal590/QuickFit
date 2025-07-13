@@ -12,6 +12,7 @@ import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { supabase } from '@/integrations/supabase/client';
 
 // Update user activity in profiles table
@@ -35,6 +36,7 @@ const updateUserActivity = async () => {
 
 const Home = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
   const [showPlanGenerator, setShowPlanGenerator] = useState(false);
@@ -167,11 +169,11 @@ const Home = () => {
       <div className="max-w-4xl mx-auto">
         <div className="mb-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-3">
-            Custom <span className="text-fitness-primary">Workout Generator</span>
+            {t('Custom Workout Generator')}
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Generate instant custom workouts based on your available time, equipment, and target muscle groups.
-            Perfect for quick sessions when you need a workout right now.
+            {t('Generate instant custom workouts based on your available time, equipment, and target muscle groups.')}
+            {' '}{t('Perfect for quick sessions when you need a workout right now.')}
           </p>
         </div>
 

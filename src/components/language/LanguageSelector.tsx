@@ -38,6 +38,10 @@ const LanguageSelector = ({ isOpen, onClose, selectedLanguage, onLanguageSelect 
   const handleLanguageSelect = (language: string) => {
     onLanguageSelect(language);
     onClose();
+    // Trigger a page reload to apply translations
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   return (

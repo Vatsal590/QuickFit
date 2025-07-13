@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info, Languages } from 'lucide-react';
 import {
   DropdownMenu,
@@ -57,13 +58,13 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
   const location = useLocation();
   const { toast } = useToast();
+  const { language, setLanguage, t } = useTranslation();
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('English');
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -90,7 +91,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
-  }) : 'Unknown';
+  }) : t('Unknown') || 'Unknown';
 
   const handleDeleteAccount = async () => {
     if (!user) return;
@@ -166,7 +167,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     className={isActive('/home') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
                     <Home className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">Home</span>
+                    <span className="hidden sm:inline">{t('Home')}</span>
                   </Button>
                 </Link>
 
@@ -177,7 +178,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
                   >
                     <History className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">History</span>
+                    <span className="hidden sm:inline">{t('History')}</span>
                   </Button>
                 </Link>
               </nav>
@@ -189,7 +190,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
                     <User className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">Profile</span>
+                    <span className="hidden sm:inline">{t('Profile')}</span>
                     <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -199,43 +200,43 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                       {user?.email}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      Member since {memberSince}
+                      {t('Member since')} {memberSince}
                     </p>
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
                     <Link to="/about" className="flex items-center w-full" onClick={trackUserActivity}>
                       <Info className="h-4 w-4 mr-2" />
-                      About
+                      {t('About')}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowLanguageMenu(true); trackUserActivity(); }}>
                     <Languages className="h-4 w-4 mr-2" />
-                    Language ({selectedLanguage})
+                    {t('Language')} ({language})
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
                     <Settings className="h-4 w-4 mr-2" />
-                    Customize
+                    {t('Customize')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}>
                     <Shield className="h-4 w-4 mr-2" />
-                    Privacy Policy
+                    {t('Privacy Policy')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => { setShowTermsOfConditions(true); trackUserActivity(); }}>
                     <FileText className="h-4 w-4 mr-2" />
-                    Terms of Conditions
+                    {t('Terms of Conditions')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => { signOut(); trackUserActivity(); }}>
                     <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
+                    {t('Sign Out')}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => { setShowDeleteDialog(true); trackUserActivity(); }}
                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Remove Account
+                    {t('Remove Account')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -269,33 +270,33 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
       <LanguageSelector
         isOpen={showLanguageMenu}
         onClose={() => setShowLanguageMenu(false)}
-        selectedLanguage={selectedLanguage}
-        onLanguageSelect={setSelectedLanguage}
+        selectedLanguage={language}
+        onLanguageSelect={setLanguage}
       />
 
       {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+            <AlertDialogTitle>{t('Delete Account')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to permanently delete your account? This action cannot be undone and will:
+              {t('Are you sure you want to permanently delete your account? This action cannot be undone and will:')}
               <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>Delete all your workout plans and history</li>
-                <li>Remove your fitness profile</li>
-                <li>Permanently delete your account</li>
-                <li>Prevent you from signing in with this email again</li>
+                <li>{t('Delete all your workout plans and history')}</li>
+                <li>{t('Remove your fitness profile')}</li>
+                <li>{t('Permanently delete your account')}</li>
+                <li>{t('Prevent you from signing in with this email again')}</li>
               </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeleteAccount}
               disabled={isDeleting}
               className="bg-red-600 hover:bg-red-700"
             >
-              {isDeleting ? "Deleting..." : "Delete Account"}
+              {isDeleting ? t('Deleting...') : t('Delete Account')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
