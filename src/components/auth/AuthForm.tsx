@@ -11,40 +11,32 @@ import { Loader2, Dumbbell } from 'lucide-react';
 import ForgotPassword from './ForgotPassword';
 import PrivacyPolicy from '../legal/PrivacyPolicy';
 import TermsOfConditions from '../legal/TermsOfConditions';
+import { supabase } from '@/integrations/supabase/client';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
+  const [isPasswordReset, setIsPasswordReset] = useState(false);
   
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  // Check for reset passwords on component mount
+  // Check if this is a password reset flow
   useEffect(() => {
-    // Check if there are any reset passwords stored
-    const keys = Object.keys(localStorage);
-    const resetPasswordKey = keys.find(key => key.startsWith('user_password_'));
+    const urlParams = new URLSearchParams(window.location.search);
+    const isReset = urlParams.get('reset') === 'true';
     
-    if (resetPasswordKey) {
-      try {
-        const email = resetPasswordKey.replace('user_password_', '');
-        const passwordData = JSON.parse(localStorage.getItem(resetPasswordKey) || '{}');
-        
-        if (passwordData.isReset) {
-          console.log('Reset password found for:', email);
-          // Pre-fill the email field
-          setEmail(email);
-        }
-      } catch (e) {
-        console.error('Error parsing reset password data:', e);
-      }
+    if (isReset) {
+      setIsPasswordReset(true);
+      setIsLogin(false); // Switch to password update mode
     }
   }, []);
 
@@ -55,7 +47,52 @@ const AuthForm = () => {
     try {
       let result;
       
-      if (isLogin) {
+      if (isPasswordReset) {
+        // Handle password update for reset flow
+        if (password !== confirmPassword) {
+          toast({
+            title: "Password mismatch",
+            description: "Passwords do not match. Please try again.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (password.length < 6) {
+          toast({
+            title: "Password too short",
+            description: "Password must be at least 6 characters long.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        const { error } = await supabase.auth.updateUser({
+          password: password
+        });
+
+        if (error) {
+          toast({
+            title: "Error",
+            description: error.message,
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Password updated successfully!",
+            description: "You can now sign in with your new password.",
+          });
+          // Clear the reset flag and redirect to login
+          setIsPasswordReset(false);
+          setIsLogin(true);
+          setPassword('');
+          setConfirmPassword('');
+          // Remove the reset parameter from URL
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      } else if (isLogin) {
         result = await signIn(email, password);
         if (result.error) {
           toast({
@@ -115,10 +152,10 @@ const AuthForm = () => {
             </div>
           </div>
           <CardTitle className="text-2xl">
-            {isLogin ? t('Welcome Back') : t('Get Started')}
+            {isPasswordReset ? 'Update Password' : isLogin ? t('Welcome Back') : t('Get Started')}
           </CardTitle>
           <CardDescription>
-            {isLogin ? t('Sign in to your QuickFit account') : t('Create your QuickFit account')}
+            {isPasswordReset ? 'Enter your new password below' : isLogin ? t('Sign in to your QuickFit account') : t('Create your QuickFit account')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -173,13 +210,28 @@ const AuthForm = () => {
               />
             </div>
             
+            {isPasswordReset && (
+              <div className="space-y-2">
+                <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+            )}
+            
             <Button
               type="submit" 
               className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isLogin ? t('Sign In') : t('Create Account')}
+              {isPasswordReset ? 'Update Password' : isLogin ? t('Sign In') : t('Create Account')}
             </Button>
           </form>
 
@@ -204,18 +256,20 @@ const AuthForm = () => {
             </div>
           )}
           
-          <div className="mt-4 text-center">
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="text-sm text-fitness-primary hover:underline"
-            >
-              {isLogin 
-                ? t("Don't have an account? Sign up")
-                : t("Already have an account? Sign in")
-              }
-            </button>
-          </div>
+          {!isPasswordReset && (
+            <div className="mt-4 text-center">
+              <button
+                type="button"
+                onClick={() => setIsLogin(!isLogin)}
+                className="text-sm text-fitness-primary hover:underline"
+              >
+                {isLogin 
+                  ? t("Don't have an account? Sign up")
+                  : t("Already have an account? Sign in")
+                }
+              </button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface ForgotPasswordProps {
   onBack: () => void;
@@ -14,12 +14,9 @@ interface ForgotPasswordProps {
 
 const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
   const [email, setEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState(1); // 1: email, 2: new password
+  const [emailSent, setEmailSent] = useState(false);
   
-  const { resetPassword } = useAuth();
   const { toast } = useToast();
 
   const handleSendReset = async (e: React.FormEvent) => {
@@ -27,64 +24,25 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
     setLoading(true);
 
     try {
-      // Move to step 2 to set new password
-      setStep(2);
-      toast({
-        title: "Email verified",
-        description: "Please enter your new password below.",
+      // Send password reset email using Supabase
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth?reset=true`,
       });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  const handlePasswordReset = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (newPassword !== confirmPassword) {
-      toast({
-        title: "Password mismatch",
-        description: "Passwords do not match. Please try again.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const { error } = await resetPassword(email, newPassword);
-      
       if (error) {
         throw error;
       }
-      
+
+      setEmailSent(true);
       toast({
-        title: "Password updated successfully!",
-        description: "Redirecting to workout creation...",
+        title: "Reset email sent!",
+        description: "Check your email for password reset instructions.",
       });
-      
-      // Force immediate redirect to home page where they can create workouts
-      window.location.replace('/home');
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Password reset error:', error);
       toast({
         title: "Error",
-        description: "Failed to update password. Please try again.",
+        description: error.message || "Failed to send reset email. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -103,17 +61,17 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
           Back to Sign In
         </button>
         <CardTitle className="text-2xl">
-          {step === 1 ? 'Reset Password' : 'Set New Password'}
+          {emailSent ? 'Check Your Email' : 'Reset Password'}
         </CardTitle>
         <CardDescription>
-          {step === 1 
-            ? 'Enter your email address to reset your password'
-            : 'Enter your new password below'
+          {emailSent 
+            ? 'We\'ve sent password reset instructions to your email address.'
+            : 'Enter your email address and we\'ll send you a link to reset your password.'
           }
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {step === 1 ? (
+        {!emailSent ? (
           <form onSubmit={handleSendReset} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="reset-email">Email</Label>
@@ -133,46 +91,26 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
               disabled={loading}
             >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Continue
+              Send Reset Email
             </Button>
           </form>
         ) : (
-          <form onSubmit={handlePasswordReset} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
-              <Input
-                id="new-password"
-                type="password"
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                minLength={6}
-              />
+          <div className="text-center space-y-4">
+            <div className="text-sm text-gray-600">
+              <p>If an account with that email exists, you'll receive a password reset link shortly.</p>
+              <p className="mt-2">Don't see the email? Check your spam folder.</p>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirm New Password</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                minLength={6}
-              />
-            </div>
-            
             <Button 
-              type="submit" 
-              className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
-              disabled={loading}
+              onClick={() => {
+                setEmailSent(false);
+                setEmail('');
+              }}
+              variant="outline"
+              className="w-full"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Update Password
+              Try Different Email
             </Button>
-          </form>
+          </div>
         )}
       </CardContent>
     </Card>
