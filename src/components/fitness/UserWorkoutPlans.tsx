@@ -53,8 +53,8 @@ const UserWorkoutPlans = ({
     return (
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>My 30-Day Workout Plans</CardTitle>
-          <CardDescription>No workout plans yet</CardDescription>
+          <CardTitle>Your Workout Plans</CardTitle>
+          <CardDescription>No workout plans created yet</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center py-8 text-center">
           <div className="bg-gray-100 rounded-full p-4 mb-4">
@@ -62,7 +62,7 @@ const UserWorkoutPlans = ({
           </div>
           <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
           <p className="text-gray-500 max-w-md mb-4">
-            Create your first 30-day workout plan to get started on your fitness journey!
+            Create your first personalized workout plan to get started with your fitness journey
           </p>
           <Button
             onClick={() => {
@@ -71,7 +71,7 @@ const UserWorkoutPlans = ({
             className="bg-fitness-primary hover:bg-fitness-primary/90"
           >
             <Target className="h-4 w-4 mr-2" />
-            Customize
+            Customise
           </Button>
         </CardContent>
       </Card>
@@ -81,8 +81,8 @@ const UserWorkoutPlans = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>My 30-Day Workout Plans</CardTitle>
-        <CardDescription>Generate Workout Plan</CardDescription>
+        <CardTitle>Your Workout Plans</CardTitle>
+        <CardDescription>Manage and track your personalized workout plans</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {workoutPlans.map((plan) => (
@@ -153,9 +153,14 @@ const UserWorkoutPlans = ({
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Plan</AlertDialogTitle>
+            <AlertDialogTitle>Delete Workout Plan</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this workout plan? This action cannot be undone.
+              Are you sure you want to delete this workout plan? This action cannot be undone and will permanently remove:
+              <ul className="list-disc list-inside mt-2 space-y-1">
+                <li>Your workout plan and all its exercises</li>
+                <li>Your progress and completed days</li>
+                <li>All associated data</li>
+              </ul>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
