@@ -61,7 +61,7 @@ const AuthForm = () => {
             title: "Welcome back!",
             description: "You've been signed in successfully.",
           });
-          window.location.href = '/';
+          window.location.href = '/home';
         }
       } else {
         result = await signUp(email, password, fullName);
