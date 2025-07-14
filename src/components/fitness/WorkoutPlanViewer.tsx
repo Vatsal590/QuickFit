@@ -387,7 +387,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
             <div className="text-center">
               <h3 className="text-lg font-semibold">Day {selectedDay}</h3>
               <p className="text-sm text-gray-600">
-                {selectedDayData?.isRestDay ? 'Rest Day' : `${selectedDayData?.workout?.focus?.replace('_', ' ')} Training`}
+                {selectedDayData?.isRestDay ? 'Rest Day' : `${selectedDayData?.workout?.focus?.replace('_', ' ')} training`}
               </p>
             </div>
             
@@ -493,7 +493,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                 <div>
                   <h3 className="font-semibold">Day {selectedDayData.day}</h3>
                   <p className="text-sm text-gray-600">
-                    {selectedDayData.isRestDay ? 'Rest Day' : `${selectedDayData.workout?.focus?.replace('_', ' ')} Training`}
+                    {selectedDayData.isRestDay ? 'Rest Day' : `${selectedDayData.workout?.focus?.replace('_', ' ')} training`}
                   </p>
                 </div>
               </div>
