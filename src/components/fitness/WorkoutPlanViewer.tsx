@@ -392,8 +392,8 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
             </div>
             
             <div className="relative">
-              {/* Slider track with day markers */}
-              <div className="relative">
+              {/* Slider track */}
+              <div className="relative mb-4">
                 <input
                   type="range"
                   min="1"
@@ -410,39 +410,65 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                     background: `linear-gradient(to right, #10b981 0%, #10b981 ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb 100%)`
                   }}
                 />
-                
-                {/* Day markers */}
-                <div className="flex justify-between mt-2 px-1">
+              </div>
+              
+              {/* Scrollable day markers */}
+              <div className="relative overflow-hidden">
+                <div 
+                  className="flex transition-transform duration-300 ease-out"
+                  style={{
+                    transform: `translateX(-${Math.max(0, (selectedDay - 3) * 60)}px)`,
+                    width: `${dailyWorkouts.length * 60}px`
+                  }}
+                >
                   {dailyWorkouts.map((day: any) => {
                     const isAccessible = isDayAccessible(day.day);
                     const isSelected = selectedDay === day.day;
                     
                     return (
-                      <div key={day.day} className="flex flex-col items-center">
+                      <div 
+                        key={day.day} 
+                        className="flex flex-col items-center cursor-pointer flex-shrink-0"
+                        style={{ width: '60px' }}
+                        onClick={() => {
+                          if (isAccessible) {
+                            setSelectedDay(day.day);
+                          }
+                        }}
+                      >
                         <div className={`
-                          w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
+                          w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
                           ${isSelected
                             ? 'bg-fitness-primary text-white shadow-lg scale-110' 
                             : day.completed
-                              ? 'bg-green-500 text-white' 
+                              ? 'bg-green-500 text-white hover:bg-green-600' 
                               : isAccessible
-                                ? 'bg-gray-300 text-gray-700'
-                                : 'bg-gray-100 text-gray-400'
+                                ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                           }
+                          ${isAccessible ? 'hover:scale-105' : ''}
                         `}>
                           {day.completed ? (
-                            <CheckCircle className="h-3 w-3" />
+                            <CheckCircle className="h-4 w-4" />
                           ) : !isAccessible ? (
-                            <Lock className="h-2 w-2" />
+                            <Lock className="h-3 w-3" />
                           ) : (
                             day.day
                           )}
                         </div>
-                        <span className="text-xs text-gray-500">{day.day}</span>
+                        <span className={`text-xs ${isSelected ? 'text-fitness-primary font-medium' : 'text-gray-500'}`}>
+                          Day {day.day}
+                        </span>
                       </div>
                     );
                   })}
                 </div>
+                
+                {/* Fade effect for scrolling indication */}
+                <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                {selectedDay > 3 && (
+                  <div className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                )}
               </div>
             </div>
           </div>
