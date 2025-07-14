@@ -380,41 +380,71 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
         </CardHeader>
       </Card>
 
-      {/* Day Selection Buttons */}
+      {/* Day Selection Slider */}
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-wrap gap-3 justify-center">
-            {dailyWorkouts.map((day: any) => {
-              const isAccessible = isDayAccessible(day.day);
-              const isSelected = selectedDay === day.day;
-              
-              return (
-                <button
-                  key={day.day}
-                  onClick={() => isAccessible && setSelectedDay(day.day)}
-                  disabled={!isAccessible}
-                  className={`
-                    w-12 h-12 rounded-full flex items-center justify-center text-sm font-medium transition-all
-                    ${isSelected && isAccessible
-                      ? 'bg-fitness-primary text-white shadow-lg scale-110' 
-                      : isAccessible && day.completed
-                        ? 'bg-green-500 text-white hover:bg-green-600' 
-                        : isAccessible
-                          ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                          : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="text-center">
+              <h3 className="text-lg font-semibold">Day {selectedDay}</h3>
+              <p className="text-sm text-gray-600">
+                {selectedDayData?.isRestDay ? 'Rest Day' : `${selectedDayData?.workout?.focus?.replace('_', ' ')} Training`}
+              </p>
+            </div>
+            
+            <div className="relative">
+              {/* Slider track with day markers */}
+              <div className="relative">
+                <input
+                  type="range"
+                  min="1"
+                  max={dailyWorkouts.length}
+                  value={selectedDay}
+                  onChange={(e) => {
+                    const newDay = parseInt(e.target.value);
+                    if (isDayAccessible(newDay)) {
+                      setSelectedDay(newDay);
                     }
-                  `}
-                >
-                  {day.completed ? (
-                    <CheckCircle className="h-4 w-4" />
-                  ) : !isAccessible ? (
-                    <Lock className="h-3 w-3" />
-                  ) : (
-                    day.day
-                  )}
-                </button>
-              );
-            })}
+                  }}
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                  style={{
+                    background: `linear-gradient(to right, #10b981 0%, #10b981 ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb 100%)`
+                  }}
+                />
+                
+                {/* Day markers */}
+                <div className="flex justify-between mt-2 px-1">
+                  {dailyWorkouts.map((day: any) => {
+                    const isAccessible = isDayAccessible(day.day);
+                    const isSelected = selectedDay === day.day;
+                    
+                    return (
+                      <div key={day.day} className="flex flex-col items-center">
+                        <div className={`
+                          w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
+                          ${isSelected
+                            ? 'bg-fitness-primary text-white shadow-lg scale-110' 
+                            : day.completed
+                              ? 'bg-green-500 text-white' 
+                              : isAccessible
+                                ? 'bg-gray-300 text-gray-700'
+                                : 'bg-gray-100 text-gray-400'
+                          }
+                        `}>
+                          {day.completed ? (
+                            <CheckCircle className="h-3 w-3" />
+                          ) : !isAccessible ? (
+                            <Lock className="h-2 w-2" />
+                          ) : (
+                            day.day
+                          )}
+                        </div>
+                        <span className="text-xs text-gray-500">{day.day}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
