@@ -519,28 +519,28 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
         </CardHeader>
         
         <CardContent>
-          <div className="flex mb-4 border-b">
+          <div className="flex flex-col sm:flex-row mb-4 border-b gap-1 sm:gap-0">
             <Button
               variant={activeSection === 'warmup' ? 'default' : 'ghost'}
               onClick={() => setActiveSection('warmup')}
-              className={activeSection === 'warmup' ? 'bg-fitness-primary text-white' : ''}
+              className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'warmup' ? 'bg-fitness-primary text-white' : ''}`}
             >
-              <Timer className="h-4 w-4 mr-2" />
+              <Timer className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               5-Min Warmup
             </Button>
             <Button
               variant={activeSection === 'main' ? 'default' : 'ghost'}
               onClick={() => setActiveSection('main')}
-              className={activeSection === 'main' ? 'bg-fitness-primary text-white' : ''}
+              className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'main' ? 'bg-fitness-primary text-white' : ''}`}
             >
               Main Workout
             </Button>
             <Button
               variant={activeSection === 'cooldown' ? 'default' : 'ghost'}
               onClick={() => setActiveSection('cooldown')}
-              className={activeSection === 'cooldown' ? 'bg-fitness-primary text-white' : ''}
+              className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'cooldown' ? 'bg-fitness-primary text-white' : ''}`}
             >
-              <Timer className="h-4 w-4 mr-2" />
+              <Timer className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
               5-Min Cooldown
             </Button>
           </div>
