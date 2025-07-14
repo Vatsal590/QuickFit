@@ -387,7 +387,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
             <div className="text-center">
               <h3 className="text-lg font-semibold">Day {selectedDay}</h3>
               <p className="text-sm text-gray-600">
-                {selectedDayData?.isRestDay ? 'Rest Day' : `${selectedDayData?.workout?.focus?.replace('_', ' ')} training`}
+                {selectedDayData?.isRestDay ? 'Rest Day' : (() => {
+                  const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
+                  return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
+                })()}
               </p>
             </div>
             
@@ -493,7 +496,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                 <div>
                   <h3 className="font-semibold">Day {selectedDayData.day}</h3>
                   <p className="text-sm text-gray-600">
-                    {selectedDayData.isRestDay ? 'Rest Day' : `${selectedDayData.workout?.focus?.replace('_', ' ')} training`}
+                    {selectedDayData.isRestDay ? 'Rest Day' : (() => {
+                      const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
+                      return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
+                    })()}
                   </p>
                 </div>
               </div>
