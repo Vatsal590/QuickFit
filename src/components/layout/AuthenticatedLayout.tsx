@@ -26,6 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
+import { activityTracker } from '@/utils/activityTracker';
 
 
 // ----- LAZY LOAD CHATBOT -----
@@ -34,25 +35,6 @@ const Chatbot = React.lazy(() => import("../chat/Chatbot"));
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
-
-// Update user activity in profiles table
-const updateUserActivity = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ 
-          last_used: new Date().toISOString(),
-          last_active: new Date().toISOString() 
-        })
-        .eq('id', user.id);
-      console.log('User activity tracked');
-    }
-  } catch (error) {
-    console.error('Failed to track user activity:', error);
-  }
-};
 
 const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const { user, signOut } = useAuth();
@@ -70,8 +52,13 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
 
   // Track user activity whenever they interact with buttons
   const trackUserActivity = async () => {
-    await updateUserActivity();
+    await activityTracker.trackActivity('user_interaction', location.pathname);
   };
+
+  // Track page views
+  React.useEffect(() => {
+    activityTracker.trackPageView(location.pathname);
+  }, [location.pathname]);
 
   // Listen for external events to open fitness profile form
   React.useEffect(() => {
@@ -160,7 +147,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
               
               {/* Navigation - scrollable on mobile */}
               <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
-                <Link to="/home" className="flex-shrink-0" onClick={trackUserActivity}>
+                <Link to="/home" className="flex-shrink-0" onClick={() => activityTracker.trackNavigation(location.pathname, '/home')}>
                   <Button 
                     variant={isActive('/home') ? 'default' : 'ghost'} 
                     size="sm"
@@ -171,7 +158,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                   </Button>
                 </Link>
 
-                <Link to="/history" className="flex-shrink-0" onClick={trackUserActivity}>
+                <Link to="/history" className="flex-shrink-0" onClick={() => activityTracker.trackNavigation(location.pathname, '/history')}>
                   <Button 
                     variant={isActive('/history') ? 'default' : 'ghost'} 
                     size="sm"
@@ -210,25 +197,40 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                       {t('About')}
                     </Link>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowProfileForm(true); trackUserActivity(); }}>
+                  <DropdownMenuItem onClick={() => { 
+                    setShowProfileForm(true); 
+                    activityTracker.trackButtonClick('customize_settings', location.pathname); 
+                  }}>
                     <Settings className="h-4 w-4 mr-2" />
                     {t('Customize')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowPrivacyPolicy(true); trackUserActivity(); }}>
+                  <DropdownMenuItem onClick={() => { 
+                    setShowPrivacyPolicy(true); 
+                    activityTracker.trackButtonClick('privacy_policy', location.pathname); 
+                  }}>
                     <Shield className="h-4 w-4 mr-2" />
                     {t('Privacy Policy')}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { setShowTermsOfConditions(true); trackUserActivity(); }}>
+                  <DropdownMenuItem onClick={() => { 
+                    setShowTermsOfConditions(true); 
+                    activityTracker.trackButtonClick('terms_conditions', location.pathname); 
+                  }}>
                     <FileText className="h-4 w-4 mr-2" />
                     {t('Terms of Conditions')}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => { signOut(); trackUserActivity(); }}>
+                  <DropdownMenuItem onClick={() => { 
+                    signOut(); 
+                    activityTracker.trackButtonClick('sign_out', location.pathname); 
+                  }}>
                     <LogOut className="h-4 w-4 mr-2" />
                     {t('Sign Out')}
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => { setShowDeleteDialog(true); trackUserActivity(); }}
+                    onClick={() => { 
+                      setShowDeleteDialog(true); 
+                      activityTracker.trackButtonClick('delete_account_dialog', location.pathname); 
+                    }}
                     className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />

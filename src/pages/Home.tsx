@@ -13,26 +13,7 @@ import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { supabase } from '@/integrations/supabase/client';
-
-// Update user activity in profiles table
-const updateUserActivity = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      await supabase
-        .from('profiles')
-        .update({ 
-          last_used: new Date().toISOString(),
-          last_active: new Date().toISOString() 
-        })
-        .eq('id', user.id);
-      console.log('User activity tracked');
-    }
-  } catch (error) {
-    console.error('Failed to track user activity:', error);
-  }
-};
+import { activityTracker } from '@/utils/activityTracker';
 
 const Home = () => {
   const { toast } = useToast();
@@ -46,11 +27,16 @@ const Home = () => {
 
   // Track user activity
   const trackUserActivity = async () => {
-    await updateUserActivity();
+    await activityTracker.trackActivity('user_interaction', 'home');
   };
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
-    trackUserActivity();
+    activityTracker.trackWorkoutAction('create', { 
+      time: formData.time, 
+      intensity: formData.intensity, 
+      muscleGroups: formData.muscleGroups,
+      equipment: formData.equipment 
+    });
     try {
       const newWorkout = generateWorkout(
         formData.time,
@@ -77,18 +63,18 @@ const Home = () => {
   };
   
   const handleCompleteWorkout = (workout: Workout) => {
-    trackUserActivity();
+    activityTracker.trackWorkoutAction('complete', { workoutId: workout.id, title: workout.title });
     markWorkoutCompleted(workout.id);
   };
 
   const handleSelectPlan = (plan: WorkoutPlan) => {
-    trackUserActivity();
+    activityTracker.trackButtonClick('select_plan', 'home', { planId: plan.id, planName: plan.title });
     console.log("Selected plan:", plan);
     setSelectedPlan(plan);
   };
 
   const handleDeletePlan = async (planId: string) => {
-    trackUserActivity();
+    activityTracker.trackButtonClick('delete_plan', 'home', { planId });
     try {
       await deleteWorkoutPlan(planId);
       toast({
@@ -105,7 +91,7 @@ const Home = () => {
   };
 
   const handleMarkDayComplete = async (planId: string, dayNumber: number) => {
-    trackUserActivity();
+    activityTracker.trackButtonClick('mark_day_complete', 'home', { planId, dayNumber });
     try {
       await markDayComplete(planId, dayNumber);
       toast({
@@ -122,7 +108,7 @@ const Home = () => {
   };
 
   const handlePlanGenerated = (newPlan: WorkoutPlan) => {
-    trackUserActivity();
+    activityTracker.trackWorkoutAction('plan_generated', { planId: newPlan.id, planName: newPlan.title });
     addWorkoutPlan(newPlan);
   };
 
@@ -181,7 +167,10 @@ const Home = () => {
         {selectedPlan ? (
           <div className="mb-8">
             <button
-              onClick={() => { setSelectedPlan(null); trackUserActivity(); }}
+              onClick={() => { 
+                setSelectedPlan(null); 
+                activityTracker.trackButtonClick('back_to_plans', 'home');
+              }}
               className="mb-4 text-fitness-primary hover:text-fitness-primary/80 flex items-center gap-2"
             >
               ← Back to Plans
@@ -207,7 +196,10 @@ const Home = () => {
               {currentWorkout ? (
                 <WorkoutDisplay
                   workout={currentWorkout}
-                  onBack={() => { setCurrentWorkout(null); trackUserActivity(); }}
+                  onBack={() => { 
+                    setCurrentWorkout(null); 
+                    activityTracker.trackButtonClick('back_from_workout', 'home');
+                  }}
                   onComplete={handleCompleteWorkout}
                 />
               ) : (
