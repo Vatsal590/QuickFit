@@ -90,7 +90,7 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         throw new Error('No valid session found');
       }
 
-      const response = await fetch('/functions/v1/delete-user-account', {
+      const response = await fetch('https://tlliijookodviezygwqk.supabase.co/functions/v1/delete-user-account', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
