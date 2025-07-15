@@ -68,21 +68,6 @@ export type Database = {
         }
         Relationships: []
       }
-      lastused: {
-        Row: {
-          id: number
-          lastused_at: string
-        }
-        Insert: {
-          id?: number
-          lastused_at?: string
-        }
-        Update: {
-          id?: number
-          lastused_at?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           created_at: string
