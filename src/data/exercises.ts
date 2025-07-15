@@ -73,6 +73,16 @@ export const exercises: Exercise[] = [
     description: "Stand between cable machines with cables at chest height. With a slight bend in the elbows, bring hands together in front of your chest."
   },
   {
+    id: "cable-crossover",
+    name: "Cable Crossover",
+    muscleGroup: "full body",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Stand between cable machines with cables set high. Cross cables in front of your body while engaging chest, shoulders, and core."
+  },
+  {
     id: "resistance-band-chest-press",
     name: "Resistance Band Chest Press",
     muscleGroup: "chest",
@@ -145,7 +155,7 @@ export const exercises: Exercise[] = [
     description: "Sit at a lat pulldown station and grip the bar wider than shoulder-width. Pull the bar down to your chest, then slowly return to starting position."
   },
   {
-    id: "cable face pull",
+    id: "cable-face-pull",
     name: "Cable Face-Pull",
     muscleGroup: "back",
     equipment: ["cable machine"],
@@ -613,6 +623,16 @@ export const exercises: Exercise[] = [
     description: "Stand at cable machine with rope or bar attachment. Keep elbows at sides and push weight down until arms are fully extended, then return to start."
   },
   {
+    id: "cable-wood-chop",
+    name: "Cable Wood Chop",
+    muscleGroup: "full body",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Set cable at high position. Pull handle diagonally down and across body while rotating torso, engaging core, shoulders, and back."
+  },
+  {
     id: "close-grip-push-up",
     name: "Close-Grip Push-up",
     muscleGroup: "triceps",
@@ -948,96 +968,48 @@ export const getFilteredExercises = (
     return matchesMuscleGroup && hasRequiredEquipment;
   });
   
-  // Special handling for full body workouts - prioritize equipment-specific exercises
-  if (targetMuscleGroups.includes("full body") && availableEquipment.length > 0) {
-    // If barbell is selected, prioritize barbell exercises
-    if (availableEquipment.includes("barbell")) {
-      const barbellExercises = exercises.filter(ex => 
-        ex.equipment.includes("barbell") && 
-        (ex.muscleGroup === "full body" || ex.muscleGroup === "chest" || ex.muscleGroup === "back" || ex.muscleGroup === "legs" || ex.muscleGroup === "shoulders")
-      );
-      const bodyweightExercises = exercises.filter(ex => 
-        ex.equipment.includes("none") && 
-        (ex.muscleGroup === "full body" || ex.muscleGroup === "core")
-      );
-      
-      // Return 80% barbell exercises, 20% bodyweight for variety
-      const barbellCount = Math.ceil(barbellExercises.length * 0.8);
-      const bodyweightCount = Math.floor(bodyweightExercises.length * 0.2);
-      
-      return [
-        ...barbellExercises.slice(0, barbellCount),
-        ...bodyweightExercises.slice(0, bodyweightCount)
-      ].sort(() => 0.5 - Math.random());
-    }
-    
-    // If dumbbells are selected, get varied dumbbell exercises
-    if (availableEquipment.includes("dumbbells")) {
-      const dumbbellExercises = exercises.filter(ex => 
-        ex.equipment.includes("dumbbells") && 
-        (ex.muscleGroup === "full body" || ex.muscleGroup === "chest" || ex.muscleGroup === "back" || ex.muscleGroup === "legs" || ex.muscleGroup === "shoulders" || ex.muscleGroup === "biceps" || ex.muscleGroup === "triceps")
-      );
-      
-      // Shuffle and return varied exercises
-      return dumbbellExercises.sort(() => 0.5 - Math.random());
-    }
-
-    // If kettlebell is selected, prioritize kettlebell exercises
-    if (availableEquipment.includes("kettlebell")) {
-      const kettlebellExercises = exercises.filter(ex => 
-        ex.equipment.includes("kettlebell") && 
-        (ex.muscleGroup === "full body" || ex.muscleGroup === "chest" || ex.muscleGroup === "back" || ex.muscleGroup === "legs" || ex.muscleGroup === "shoulders" || ex.muscleGroup === "core")
-      );
-      const bodyweightExercises = exercises.filter(ex => 
-        ex.equipment.includes("none") && 
-        (ex.muscleGroup === "full body" || ex.muscleGroup === "core")
-      );
-      
-      // Return 70% kettlebell exercises, 30% bodyweight for variety
-      const kettlebellCount = Math.ceil(kettlebellExercises.length * 0.7);
-      const bodyweightCount = Math.floor(bodyweightExercises.length * 0.3);
-      
-      return [
-        ...kettlebellExercises.slice(0, kettlebellCount),
-        ...bodyweightExercises.slice(0, bodyweightCount)
-      ].sort(() => 0.5 - Math.random());
-    }
-  }
-
-  // For specific muscle group combinations, ensure good distribution of equipment types
-  if (!targetMuscleGroups.includes("full body") && availableEquipment.length > 1) {
-    // Group exercises by equipment type
+  // For multiple equipment selections, ensure balanced distribution
+  if (availableEquipment.length > 1) {
     const exercisesByEquipment: { [key: string]: Exercise[] } = {};
     
+    // Group exercises by equipment type
     availableEquipment.forEach(equipment => {
       exercisesByEquipment[equipment] = filteredByMuscleAndEquipment.filter(ex => 
         ex.equipment.includes(equipment)
       );
     });
     
-    // Ensure each equipment type is represented if exercises exist
+    // Ensure each equipment type is represented proportionally
     const balancedExercises: Exercise[] = [];
-    const maxPerEquipment = Math.ceil(12 / availableEquipment.length); // Aim for balanced distribution
+    const totalSlots = 15; // Target number of exercises
+    const slotsPerEquipment = Math.floor(totalSlots / availableEquipment.length);
+    const remainingSlots = totalSlots % availableEquipment.length;
     
+    let slotIndex = 0;
     availableEquipment.forEach(equipment => {
       const equipmentExercises = exercisesByEquipment[equipment] || [];
       if (equipmentExercises.length > 0) {
+        // Give extra slot to first few equipment types for remainder
+        const slots = slotsPerEquipment + (slotIndex < remainingSlots ? 1 : 0);
         const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
-        balancedExercises.push(...shuffled.slice(0, maxPerEquipment));
+        balancedExercises.push(...shuffled.slice(0, Math.min(slots, shuffled.length)));
       }
+      slotIndex++;
     });
     
-    // Fill remaining slots with any matching exercises
-    const remaining = filteredByMuscleAndEquipment.filter(ex => 
-      !balancedExercises.some(included => included.id === ex.id)
-    );
+    // Fill any remaining slots with any matching exercises not already included
+    if (balancedExercises.length < totalSlots) {
+      const remaining = filteredByMuscleAndEquipment.filter(ex => 
+        !balancedExercises.some(included => included.id === ex.id)
+      );
+      const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
+      balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
+    }
     
-    return [...balancedExercises, ...remaining].sort(() => 0.5 - Math.random());
+    return [...balancedExercises].sort(() => 0.5 - Math.random());
   }
   
-  // Default: shuffle and return all matching exercises
+  // Single equipment or no equipment - return all matching exercises
   const shuffled = [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
-  
-  // Return all matching exercises (will be limited by workout generator based on time)
   return shuffled;
 };
