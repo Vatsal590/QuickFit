@@ -6,7 +6,7 @@ const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 // VAPID keys for Web Push - you need to generate these
-const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa40HI8_KJjMaF_8xIXXyOThjpFFDUMvOQe1RlOQ4nLLmL6m1Y5OdqrUtCOGGg';
+const VAPID_PUBLIC_KEY = 'BJthRQ5myDjc7NvUpIAtvbsZVSXGPIsWQdGquzqP-rqyKxTpJMU5nHmJdIJDzgJC_mMuuHXhJEhpGg5u0UqxJlw';
 const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY')!;
 
 // Configure web-push

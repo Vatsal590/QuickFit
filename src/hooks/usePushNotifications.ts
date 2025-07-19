@@ -10,7 +10,7 @@ export const usePushNotifications = () => {
   const { user } = useAuth();
 
   // VAPID public key - you'll need to generate this
-  const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa40HI8_KJjMaF_8xIXXyOThjpFFDUMvOQe1RlOQ4nLLmL6m1Y5OdqrUtCOGGg';
+  const VAPID_PUBLIC_KEY = 'BJthRQ5myDjc7NvUpIAtvbsZVSXGPIsWQdGquzqP-rqyKxTpJMU5nHmJdIJDzgJC_mMuuHXhJEhpGg5u0UqxJlw';
 
   useEffect(() => {
     // Check if push notifications are supported
