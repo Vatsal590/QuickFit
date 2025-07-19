@@ -1,8 +1,20 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.10';
+import webpush from 'npm:web-push@3.6.7';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// VAPID keys for Web Push - you need to generate these
+const VAPID_PUBLIC_KEY = 'BEl62iUYgUivxIkv69yViEuiBIa40HI8_KJjMaF_8xIXXyOThjpFFDUMvOQe1RlOQ4nLLmL6m1Y5OdqrUtCOGGg';
+const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY')!;
+
+// Configure web-push
+webpush.setVapidDetails(
+  'mailto:your-email@quickfit.com',
+  VAPID_PUBLIC_KEY,
+  VAPID_PRIVATE_KEY
+);
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -109,15 +121,58 @@ async function getUserContexts(): Promise<UserContext[]> {
 }
 
 async function sendPushNotification(user: UserContext, message: string): Promise<void> {
-  // This is a placeholder for actual push notification implementation
-  // You would typically use Web Push API, FCM, or another push service here
-  console.log(`Sending notification to user ${user.email}: ${message}`);
-  
-  // For now, we'll just log the notification
-  // In a real implementation, you would:
-  // 1. Get the user's push subscription from a database
-  // 2. Use Web Push API to send the notification
-  // 3. Handle any errors and retry logic
+  try {
+    // Get user's push subscriptions
+    const { data: subscriptions } = await supabase
+      .from('push_subscriptions')
+      .select('*')
+      .eq('user_id', user.id);
+
+    if (!subscriptions || subscriptions.length === 0) {
+      console.log(`No push subscriptions found for user ${user.email}`);
+      return;
+    }
+
+    const notificationPayload = JSON.stringify({
+      title: 'Hey there!',
+      body: message,
+      icon: '/favicon.ico',
+      badge: '/favicon.ico'
+    });
+
+    // Send notifications to all user's subscriptions
+    const promises = subscriptions.map(async (subscription) => {
+      try {
+        const pushSubscription = {
+          endpoint: subscription.endpoint,
+          keys: {
+            p256dh: subscription.p256dh_key,
+            auth: subscription.auth_key
+          }
+        };
+
+        await webpush.sendNotification(pushSubscription, notificationPayload);
+        console.log(`Notification sent successfully to ${user.email}`);
+      } catch (error) {
+        console.error(`Failed to send notification to subscription ${subscription.id}:`, error);
+        
+        // If subscription is invalid (410 error), remove it from database
+        if (error.statusCode === 410) {
+          await supabase
+            .from('push_subscriptions')
+            .delete()
+            .eq('id', subscription.id);
+          console.log(`Removed invalid subscription ${subscription.id}`);
+        }
+        throw error;
+      }
+    });
+
+    await Promise.allSettled(promises);
+  } catch (error) {
+    console.error(`Error sending push notification to ${user.email}:`, error);
+    throw error;
+  }
 }
 
 const handler = async (req: Request): Promise<Response> => {
