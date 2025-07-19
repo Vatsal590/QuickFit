@@ -26,7 +26,7 @@ import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
-import { PushNotificationToggle } from '@/components/notifications/PushNotificationToggle';
+import { useAutoPushNotifications } from '@/hooks/useAutoPushNotifications';
 import { activityTracker } from '@/utils/activityTracker';
 
 
@@ -47,6 +47,9 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
   const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  
+  // Auto-enable push notifications
+  useAutoPushNotifications();
   
 
   const isActive = (path: string) => location.pathname === path;
@@ -205,10 +208,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
                     <Settings className="h-4 w-4 mr-2" />
                     {t('Customize')}
                   </DropdownMenuItem>
-                  <div className="px-3 py-2">
-                    <div className="text-xs text-gray-500 mb-2">{t('Notifications')}</div>
-                    <PushNotificationToggle />
-                  </div>
                   <DropdownMenuItem onClick={() => { 
                     setShowPrivacyPolicy(true); 
                     activityTracker.trackButtonClick('privacy_policy', location.pathname); 
