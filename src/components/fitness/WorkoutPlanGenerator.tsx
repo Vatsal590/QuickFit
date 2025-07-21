@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { FitnessProfile } from '../../hooks/useFitnessProfile';
+import { exercises, getFilteredExercises } from '@/data/exercises';
 import { Loader2, Sparkles } from 'lucide-react';
 
 interface WorkoutPlanGeneratorProps {
@@ -298,9 +299,6 @@ const getDuration = (goal: string, bodyType: string[]) => {
 };
 
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile) => {
-  // Import exercises from the main database
-  const { exercises, getFilteredExercises } = require('../../data/exercises');
-  
   // Define muscle group mappings for each focus area
   const focusAreaMuscleGroups = {
     explosive_power: ['full body', 'legs', 'chest'],
@@ -321,13 +319,13 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   };
 
   // Get muscle groups for this focus area
-  const targetMuscleGroups = focusAreaMuscleGroups[focusArea as keyof typeof focusAreaMuscleGroups] || ['full body'];
+  const targetMuscleGroups = (focusAreaMuscleGroups[focusArea as keyof typeof focusAreaMuscleGroups] || ['full body']) as any[];
   
   // Handle empty or "none" equipment properly
   const normalizedEquipment = equipment.length === 0 || equipment.includes('none') ? ['none'] : equipment;
   
   // Get filtered exercises from the main database
-  let selectedExercises = getFilteredExercises(targetMuscleGroups, normalizedEquipment, intensity);
+  let selectedExercises = getFilteredExercises(targetMuscleGroups as any, normalizedEquipment as any, intensity);
   
   // Equipment-specific exercise selection to ensure equipment diversity
   if (normalizedEquipment.length > 0 && !normalizedEquipment.includes('none')) {
@@ -375,11 +373,11 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   // If we still don't have enough exercises, add bodyweight fallbacks
   if (convertedExercises.length < 3) {
     const bodyweightFallbacks = [
-      { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'] },
-      { name: 'Bodyweight Squats', sets: 3, reps: '15', rest: '60s', equipment: ['none'] },
-      { name: 'Plank', sets: 3, reps: '30s', rest: '45s', equipment: ['none'] },
-      { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'] },
-      { name: 'Mountain Climbers', sets: 3, reps: '20', rest: '45s', equipment: ['none'] }
+      { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'], description: 'Start in a plank position and lower your body to the ground, then push back up.' },
+      { name: 'Bodyweight Squats', sets: 3, reps: '15', rest: '60s', equipment: ['none'], description: 'Stand with feet shoulder-width apart and lower into a squat position.' },
+      { name: 'Plank', sets: 3, reps: '30s', rest: '45s', equipment: ['none'], description: 'Hold a plank position with your body in a straight line.' },
+      { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'], description: 'Step forward and lower your body until both knees are bent at 90 degrees.' },
+      { name: 'Mountain Climbers', sets: 3, reps: '20', rest: '45s', equipment: ['none'], description: 'Start in a plank position and alternate bringing knees to chest quickly.' }
     ];
     
     const needed = 3 - convertedExercises.length;
