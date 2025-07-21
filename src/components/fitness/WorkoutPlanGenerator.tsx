@@ -212,12 +212,25 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
   
   const dailyWorkouts = [];
   
-  // Create a pattern of 2 workout days, 1 rest day
-  const workoutPattern = [true, true, false];
+  // Define workout days based on workout_days_per_week
+  const getWorkoutDays = (daysPerWeek: number) => {
+    switch (daysPerWeek) {
+      case 1: return [3]; // Wednesday only
+      case 2: return [2, 5]; // Tuesday and Friday
+      case 3: return [1, 3, 5]; // Monday, Wednesday, Friday
+      case 4: return [1, 2, 4, 6]; // Monday, Tuesday, Thursday, Saturday
+      case 5: return [1, 2, 3, 4, 5]; // Monday to Friday
+      case 6: return [1, 2, 3, 4, 5, 6]; // Monday to Saturday
+      case 7: return [1, 2, 3, 4, 5, 6, 7]; // All days
+      default: return [1, 3, 5]; // Default to 3 days
+    }
+  };
+  
+  const workoutDaysInWeek = getWorkoutDays(workout_days_per_week);
   
   for (let day = 1; day <= 30; day++) {
-    const patternIndex = (day - 1) % 3;
-    const isWorkoutDay = workoutPattern[patternIndex];
+    const dayOfWeek = ((day - 1) % 7) + 1; // 1 = Monday, 7 = Sunday
+    const isWorkoutDay = workoutDaysInWeek.includes(dayOfWeek);
     
     if (isWorkoutDay) {
       const workout = generateDayWorkout(day, fitness_goal, body_type, available_equipment, profile);

@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Clock, Target, Calendar, CheckCircle, Play, Lock } from 'lucide-react';
+import { Clock, Target, Calendar, CheckCircle, Play, Lock, Timer } from 'lucide-react';
 import { WorkoutPlan } from '@/types';
+import ExerciseTimer from '@/components/workout/ExerciseTimer';
 
 interface WorkoutPlanViewerProps {
   plan: WorkoutPlan;
@@ -14,6 +15,7 @@ interface WorkoutPlanViewerProps {
 const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkComplete }) => {
   const [selectedExercise, setSelectedExercise] = useState<any>(null);
   const [selectedDay, setSelectedDay] = useState<number>(1);
+  const [showTimer, setShowTimer] = useState<{ exerciseIndex: number; show: boolean } | null>(null);
 
   const capitalizedPlanType = plan.goal
     .split('_')
@@ -562,6 +564,36 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                           <p><strong>Sets:</strong> {exercise.sets}</p>
                           <p><strong>Reps:</strong> {exercise.reps}</p>
                           <p><strong>Rest:</strong> {exercise.rest}</p>
+                        </div>
+                        
+                        {/* Rest Timer */}
+                        <div className="mt-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-sm font-medium">Rest Timer</span>
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setShowTimer(
+                                showTimer?.exerciseIndex === index && showTimer?.show 
+                                  ? null 
+                                  : { exerciseIndex: index, show: true }
+                              )}
+                            >
+                              <Timer className="h-4 w-4 mr-1" />
+                              {showTimer?.exerciseIndex === index && showTimer?.show ? 'Hide' : 'Start'} Timer
+                            </Button>
+                          </div>
+                          
+                          {showTimer?.exerciseIndex === index && showTimer?.show && (
+                            <ExerciseTimer
+                              duration={parseInt(exercise.rest) || 60}
+                              onComplete={() => {
+                                setShowTimer(null);
+                              }}
+                              autoStart={true}
+                              className="mt-2"
+                            />
+                          )}
                         </div>
                       </div>
                     </DialogContent>
