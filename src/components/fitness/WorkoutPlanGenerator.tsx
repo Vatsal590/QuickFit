@@ -298,163 +298,96 @@ const getDuration = (goal: string, bodyType: string[]) => {
 };
 
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile) => {
-  // Enhanced exercise pool with equipment requirements
-  const exercisePool = {
-    explosive_power: [
-      [
-        { name: 'Medicine Ball Slams', sets: 4, reps: '8-10', rest: '90s', equipment: ['medicine ball'] },
-        { name: 'Jump Squats', sets: 4, reps: '6-8', rest: '90s', equipment: ['none'] },
-        { name: 'Explosive Push-ups', sets: 3, reps: '5-8', rest: '60s', equipment: ['none'] },
-        { name: 'Box Jumps', sets: 3, reps: '5-8', rest: '120s', equipment: ['box', 'none'] },
-        { name: 'Kettlebell Swings', sets: 3, reps: '10-12', rest: '60s', equipment: ['kettlebell'] },
-        { name: 'Burpees', sets: 3, reps: '8-10', rest: '90s', equipment: ['none'] },
-        { name: 'Dumbbell Thrusters', sets: 3, reps: '6-8', rest: '90s', equipment: ['dumbbells'] }
-      ]
-    ],
-    agility_speed: [
-      [
-        { name: 'High Knees', sets: 4, reps: '30s each', rest: '45s', equipment: ['none'] },
-        { name: 'Lateral Shuffles', sets: 3, reps: '20 each way', rest: '45s', equipment: ['none'] },
-        { name: 'Mountain Climbers', sets: 3, reps: '30s', rest: '30s', equipment: ['none'] },
-        { name: 'Butt Kickers', sets: 3, reps: '30s', rest: '30s', equipment: ['none'] },
-        { name: 'Sprint in Place', sets: 4, reps: '20s', rest: '40s', equipment: ['none'] }
-      ]
-    ],
-    functional_strength: [
-      [
-        { name: 'Bodyweight Squats', sets: 4, reps: '12-15', rest: '90s', equipment: ['none'] },
-        { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'] },
-        { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'] },
-        { name: 'Plank', sets: 3, reps: '30-45s', rest: '60s', equipment: ['none'] },
-        { name: 'Dumbbell Rows', sets: 3, reps: '10-12', rest: '90s', equipment: ['dumbbells'] },
-        { name: 'Kettlebell Deadlifts', sets: 3, reps: '8-10', rest: '90s', equipment: ['kettlebell'] }
-      ]
-    ],
-    sport_specific_conditioning: [
-      [
-        { name: 'Jumping Jacks', sets: 3, reps: '30s', rest: '45s', equipment: ['none'] },
-        { name: 'Bear Crawl', sets: 3, reps: '20m', rest: '60s', equipment: ['none'] },
-        { name: 'Side Plank', sets: 2, reps: '30s each side', rest: '45s', equipment: ['none'] },
-        { name: 'Russian Twists', sets: 3, reps: '20', rest: '30s', equipment: ['none'] },
-        { name: 'Resistance Band Pulls', sets: 3, reps: '15', rest: '45s', equipment: ['resistance bands'] }
-      ]
-    ],
-    movement_mobility: [
-      [
-        { name: 'Hip Circles', sets: 2, reps: '10 each way', rest: '30s', equipment: ['none'] },
-        { name: 'Leg Swings', sets: 2, reps: '15 each', rest: '30s', equipment: ['none'] },
-        { name: 'Arm Circles', sets: 2, reps: '15 each way', rest: '30s', equipment: ['none'] },
-        { name: 'Cat Cow Stretch', sets: 2, reps: '10', rest: '30s', equipment: ['none'] },
-        { name: 'Deep Breathing', sets: 2, reps: '1 min', rest: '30s', equipment: ['none'] }
-      ]
-    ],
-    plyometric_training: [
-      [
-        { name: 'Jump Squats', sets: 3, reps: '8-10', rest: '90s', equipment: ['none'] },
-        { name: 'Burpees', sets: 3, reps: '6-8', rest: '90s', equipment: ['none'] },
-        { name: 'Tuck Jumps', sets: 3, reps: '5-8', rest: '120s', equipment: ['none'] },
-        { name: 'Lateral Bounds', sets: 3, reps: '10 each side', rest: '60s', equipment: ['none'] },
-        { name: 'Medicine Ball Throws', sets: 3, reps: '8-10', rest: '90s', equipment: ['medicine ball'] }
-      ]
-    ],
-    core_stability: [
-      [
-        { name: 'Plank', sets: 3, reps: '30-45s', rest: '60s', equipment: ['none'] },
-        { name: 'Side Plank', sets: 3, reps: '30s each side', rest: '45s', equipment: ['none'] },
-        { name: 'Dead Bug', sets: 3, reps: '10 each side', rest: '45s', equipment: ['none'] },
-        { name: 'Bird Dog', sets: 3, reps: '10 each side', rest: '45s', equipment: ['none'] },
-        { name: 'Russian Twists', sets: 3, reps: '20', rest: '30s', equipment: ['none'] },
-        { name: 'Resistance Band Core Rotation', sets: 3, reps: '12 each side', rest: '45s', equipment: ['resistance bands'] }
-      ]
-    ],
-    chest_triceps: [
-      [
-        { name: 'Push-ups', sets: 3, reps: '12-15', rest: '60s', equipment: ['none'] },
-        { name: 'Dumbbell Chest Press', sets: 3, reps: '10-12', rest: '90s', equipment: ['dumbbells'] },
-        { name: 'Tricep Dips', sets: 3, reps: '8-12', rest: '60s', equipment: ['none'] },
-        { name: 'Diamond Push-ups', sets: 2, reps: '8-10', rest: '60s', equipment: ['none'] },
-        { name: 'Resistance Band Chest Fly', sets: 3, reps: '12-15', rest: '60s', equipment: ['resistance bands'] }
-      ]
-    ],
-    back_biceps: [
-      [
-        { name: 'Superman', sets: 3, reps: '15-20', rest: '45s', equipment: ['none'] },
-        { name: 'Reverse Snow Angels', sets: 3, reps: '12-15', rest: '60s', equipment: ['none'] },
-        { name: 'Wall Handstand Hold', sets: 2, reps: '30s', rest: '60s', equipment: ['none'] },
-        { name: 'Dumbbell Rows', sets: 3, reps: '10-12', rest: '90s', equipment: ['dumbbells'] },
-        { name: 'Resistance Band Bicep Curls', sets: 3, reps: '12-15', rest: '45s', equipment: ['resistance bands'] }
-      ]
-    ],
-    legs: [
-      [
-        { name: 'Bodyweight Squats', sets: 4, reps: '12-15', rest: '90s', equipment: ['none'] },
-        { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'] },
-        { name: 'Calf Raises', sets: 3, reps: '15-20', rest: '45s', equipment: ['none'] },
-        { name: 'Wall Sit', sets: 2, reps: '30-45s', rest: '60s', equipment: ['none'] },
-        { name: 'Goblet Squats', sets: 3, reps: '12-15', rest: '90s', equipment: ['dumbbells', 'kettlebell'] }
-      ]
-    ],
-    hiit_cardio: [
-      [
-        { name: 'Burpees', sets: 4, reps: '30s on/30s off', rest: '60s', equipment: ['none'] },
-        { name: 'Mountain Climbers', sets: 4, reps: '30s on/30s off', rest: '60s', equipment: ['none'] },
-        { name: 'Jump Squats', sets: 4, reps: '30s on/30s off', rest: '60s', equipment: ['none'] },
-        { name: 'High Knees', sets: 3, reps: '30s on/30s off', rest: '60s', equipment: ['none'] },
-        { name: 'Kettlebell Swings', sets: 4, reps: '30s on/30s off', rest: '60s', equipment: ['kettlebell'] }
-      ]
-    ],
-    full_body_strength: [
-      [
-        { name: 'Squats', sets: 3, reps: '12-15', rest: '90s', equipment: ['none'] },
-        { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'] },
-        { name: 'Plank', sets: 3, reps: '30-45s', rest: '60s', equipment: ['none'] },
-        { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'] },
-        { name: 'Dumbbell Thrusters', sets: 3, reps: '8-10', rest: '90s', equipment: ['dumbbells'] }
-      ]
-    ],
-    cardio_core: [
-      [
-        { name: 'Jumping Jacks', sets: 4, reps: '30s', rest: '30s', equipment: ['none'] },
-        { name: 'Bicycle Crunches', sets: 3, reps: '20', rest: '30s', equipment: ['none'] },
-        { name: 'Russian Twists', sets: 3, reps: '20', rest: '30s', equipment: ['none'] },
-        { name: 'Plank Jacks', sets: 3, reps: '30s', rest: '45s', equipment: ['none'] },
-        { name: 'Medicine Ball Slams', sets: 3, reps: '10-12', rest: '60s', equipment: ['medicine ball'] }
-      ]
-    ],
-    circuit_training: [
-      [
-        { name: 'Burpees', sets: 3, reps: '8-10', rest: '45s', equipment: ['none'] },
-        { name: 'Push-ups', sets: 3, reps: '10-12', rest: '45s', equipment: ['none'] },
-        { name: 'Squats', sets: 3, reps: '15', rest: '45s', equipment: ['none'] },
-        { name: 'Mountain Climbers', sets: 3, reps: '20', rest: '45s', equipment: ['none'] },
-        { name: 'Resistance Band Pulls', sets: 3, reps: '12-15', rest: '45s', equipment: ['resistance bands'] }
-      ]
-    ]
+  // Import exercises from the main database
+  const { exercises, getFilteredExercises } = require('../../data/exercises');
+  
+  // Define muscle group mappings for each focus area
+  const focusAreaMuscleGroups = {
+    explosive_power: ['full body', 'legs', 'chest'],
+    agility_speed: ['cardio', 'legs'],
+    functional_strength: ['full body', 'chest', 'back', 'legs'],
+    sport_specific_conditioning: ['full body', 'cardio', 'core'],
+    movement_mobility: ['core', 'shoulders'],
+    plyometric_training: ['legs', 'full body'],
+    core_stability: ['core'],
+    chest_triceps: ['chest', 'triceps'],
+    back_biceps: ['back', 'biceps'],
+    legs: ['legs'],
+    shoulders: ['shoulders'],
+    hiit_cardio: ['cardio', 'full body'],
+    full_body_strength: ['full body', 'chest', 'back', 'legs'],
+    cardio_core: ['cardio', 'core'],
+    circuit_training: ['full body', 'cardio']
   };
+
+  // Get muscle groups for this focus area
+  const targetMuscleGroups = focusAreaMuscleGroups[focusArea as keyof typeof focusAreaMuscleGroups] || ['full body'];
   
-  // Get base exercises for the focus area
-  const baseExercises = exercisePool[focusArea as keyof typeof exercisePool] || exercisePool.functional_strength;
-  const exerciseVariation = baseExercises[0] || [];
+  // Handle empty or "none" equipment properly
+  const normalizedEquipment = equipment.length === 0 || equipment.includes('none') ? ['none'] : equipment;
   
-  // Filter exercises based on available equipment
-  const availableExercises = exerciseVariation.filter(exercise => 
-    canPerformExercise(exercise, equipment)
-  );
+  // Get filtered exercises from the main database
+  let selectedExercises = getFilteredExercises(targetMuscleGroups, normalizedEquipment, intensity);
   
-  // If no exercises match equipment, fall back to bodyweight exercises
-  if (availableExercises.length === 0) {
-    const bodyweightExercises = [
+  // Equipment-specific exercise selection to ensure equipment diversity
+  if (normalizedEquipment.length > 0 && !normalizedEquipment.includes('none')) {
+    const equipmentSpecificExercises: any[] = [];
+    
+    normalizedEquipment.forEach(equipmentType => {
+      // Get exercises that specifically use this equipment
+      const equipmentExercises = exercises.filter((ex: any) => 
+        ex.equipment.includes(equipmentType) && 
+        targetMuscleGroups.includes(ex.muscleGroup)
+      );
+      
+      // Add equipment-specific exercises with priority
+      if (equipmentExercises.length > 0) {
+        const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
+        equipmentSpecificExercises.push(...shuffled.slice(0, 2)); // 2 exercises per equipment type
+      }
+    });
+    
+    // Mix equipment-specific exercises with general filtered exercises
+    if (equipmentSpecificExercises.length > 0) {
+      const remainingSlots = Math.max(0, 5 - equipmentSpecificExercises.length);
+      const additionalExercises = selectedExercises
+        .filter(ex => !equipmentSpecificExercises.some(added => added.id === ex.id))
+        .slice(0, remainingSlots);
+      
+      selectedExercises = [...equipmentSpecificExercises, ...additionalExercises];
+    }
+  }
+  
+  // Ensure we have at least 3-5 exercises
+  const targetExerciseCount = Math.min(5, Math.max(3, selectedExercises.length));
+  const finalExercises = selectedExercises.slice(0, targetExerciseCount);
+  
+  // Convert to the expected format and customize
+  const convertedExercises = finalExercises.map((exercise: any) => ({
+    name: exercise.name,
+    sets: exercise.sets,
+    reps: typeof exercise.reps === 'string' ? exercise.reps : exercise.reps.toString(),
+    rest: `${exercise.restTime}s`,
+    equipment: exercise.equipment,
+    description: exercise.description
+  }));
+  
+  // If we still don't have enough exercises, add bodyweight fallbacks
+  if (convertedExercises.length < 3) {
+    const bodyweightFallbacks = [
       { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'] },
       { name: 'Bodyweight Squats', sets: 3, reps: '15', rest: '60s', equipment: ['none'] },
       { name: 'Plank', sets: 3, reps: '30s', rest: '45s', equipment: ['none'] },
       { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'] },
       { name: 'Mountain Climbers', sets: 3, reps: '20', rest: '45s', equipment: ['none'] }
     ];
-    return bodyweightExercises.map(ex => customizeExerciseForUser(ex, profile));
+    
+    const needed = 3 - convertedExercises.length;
+    convertedExercises.push(...bodyweightFallbacks.slice(0, needed));
   }
   
   // Customize exercises for the user's profile
-  return availableExercises.map(exercise => customizeExerciseForUser(exercise, profile));
+  return convertedExercises.map(exercise => customizeExerciseForUser(exercise, profile));
 };
 
 const getRestDayActivity = (goal: string) => {
