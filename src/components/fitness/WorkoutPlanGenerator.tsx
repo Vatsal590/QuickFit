@@ -321,11 +321,28 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   // Get muscle groups for this focus area
   const targetMuscleGroups = (focusAreaMuscleGroups[focusArea as keyof typeof focusAreaMuscleGroups] || ['full body']) as any[];
   
-  // Handle empty or "none" equipment properly
+  // Handle empty or "none" equipment properly - ensure we always have a valid equipment array
   const normalizedEquipment = equipment.length === 0 || equipment.includes('none') ? ['none'] : equipment;
   
-  // Get filtered exercises from the main database
-  let selectedExercises = getFilteredExercises(targetMuscleGroups as any, normalizedEquipment as any, intensity);
+  // Get exercises that match target muscle groups first
+  let availableExercises = exercises.filter((exercise: any) => 
+    targetMuscleGroups.includes(exercise.muscleGroup)
+  );
+  
+  // If no exercises found for specific muscle groups, get all exercises
+  if (availableExercises.length === 0) {
+    availableExercises = exercises;
+  }
+  
+  // Filter by equipment availability
+  let selectedExercises = availableExercises.filter((exercise: any) => {
+    // If no equipment specified, only show bodyweight exercises
+    if (normalizedEquipment.includes('none')) {
+      return exercise.equipment.includes('none');
+    }
+    // Otherwise, show exercises that can be performed with available equipment
+    return exercise.equipment.some((eq: string) => normalizedEquipment.includes(eq));
+  });
   
   // Equipment-specific exercise selection to ensure equipment diversity
   if (normalizedEquipment.length > 0 && !normalizedEquipment.includes('none')) {
