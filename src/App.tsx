@@ -78,6 +78,10 @@ const AppRoutes = () => {
         element={<PrivacyPolicy />} 
       />
       <Route 
+        path="/delete-account" 
+        element={<DeleteAccount />} 
+      />
+      <Route 
         path="/home" 
         element={
           <ProtectedRoute>
@@ -98,14 +102,6 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <About />
-          </ProtectedRoute>
-        } 
-      />
-      <Route 
-        path="/delete-account" 
-        element={
-          <ProtectedRoute>
-            <DeleteAccount />
           </ProtectedRoute>
         } 
       />

@@ -53,8 +53,28 @@ export default function DeleteAccount() {
   };
 
   if (!user) {
-    navigate('/auth');
-    return null;
+    return (
+      <PageContainer>
+        <div className="max-w-2xl mx-auto p-6">
+          <Card className="border-muted">
+            <CardHeader>
+              <CardTitle>Delete Account</CardTitle>
+              <CardDescription>
+                You need to be logged in to delete your account.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground">
+                Please log in first to access account deletion functionality.
+              </p>
+              <Button onClick={() => navigate('/auth')} className="w-full">
+                Log In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
+    );
   }
 
   return (
