@@ -14,6 +14,11 @@ const PageContainer = ({ children }: PageContainerProps) => {
       <footer className="bg-fitness-dark text-white py-4">
         <div className="container mx-auto px-4 text-center text-sm">
           <p>© 2025 QuickFit. Sculpted by Vatsal Agarwala.</p>
+          <div className="mt-2 space-x-4">
+            <a href="/privacy-policy" className="text-white/70 hover:text-white transition-colors">
+              Privacy Policy
+            </a>
+          </div>
         </div>
       </footer>
     </div>

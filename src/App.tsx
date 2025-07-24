@@ -10,6 +10,7 @@ import About from "./pages/About";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -70,6 +71,10 @@ const AppRoutes = () => {
             <Auth />
           </PublicRoute>
         } 
+      />
+      <Route 
+        path="/privacy-policy" 
+        element={<PrivacyPolicy />} 
       />
       <Route 
         path="/home" 
