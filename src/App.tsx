@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DeleteAccount from "./pages/DeleteAccount";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -97,6 +98,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <About />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/delete-account" 
+        element={
+          <ProtectedRoute>
+            <DeleteAccount />
           </ProtectedRoute>
         } 
       />
