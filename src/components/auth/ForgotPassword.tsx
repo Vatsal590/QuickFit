@@ -70,7 +70,7 @@ const ForgotPassword = ({ onBack }: ForgotPasswordProps) => {
         </CardTitle>
         <CardDescription>
           {emailSent 
-            ? 'We sent you a password reset link. Check your email and follow the instructions.'
+            ? 'We sent you a password reset link. Check your email and follow the instructions. It will redirect you to the login page. The password you enter there will be your new password.'
             : 'Enter your email address to receive a password reset link.'
           }
         </CardDescription>
