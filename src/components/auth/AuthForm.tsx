@@ -45,14 +45,8 @@ const AuthForm = () => {
         setIsPasswordReset(true);
         setIsLogin(false); // Switch to password update mode
         
-        // Clear any existing session to force password reset
-        if (urlParams.get('type') === 'recovery') {
-          try {
-            await supabase.auth.signOut();
-          } catch (error) {
-            console.log('No existing session to clear');
-          }
-        }
+        // Don't sign out - we need the session to update the password
+        // Just set the UI to password reset mode
       }
     };
     
