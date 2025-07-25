@@ -33,22 +33,50 @@ const AuthForm = () => {
   // Check if this is a password reset flow
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
       // Check URL parameters for reset mode
       const urlParams = new URLSearchParams(window.location.search);
       const hasResetParams = urlParams.get('type') === 'recovery' || 
                             urlParams.get('access_token') || 
-                            urlParams.get('refresh_token');
+                            urlParams.get('refresh_token') ||
+                            urlParams.get('reset') === 'true';
       
-      if (hasResetParams || (session && window.location.search.includes('recovery'))) {
+      if (hasResetParams) {
+        console.log('Password reset mode detected');
         setIsPasswordReset(true);
         setIsLogin(false); // Switch to password update mode
-        console.log('Password reset mode detected');
+        
+        // Clear any existing session to force password reset
+        if (urlParams.get('type') === 'recovery') {
+          try {
+            await supabase.auth.signOut();
+          } catch (error) {
+            console.log('No existing session to clear');
+          }
+        }
       }
     };
     
+    // Also listen for auth state changes to handle recovery flow
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+        
+        // If user gets signed in via recovery link, force them to reset password
+        if (event === 'SIGNED_IN' && session?.user && window.location.search.includes('recovery')) {
+          setIsPasswordReset(true);
+          setIsLogin(false);
+          
+          // Extract email from session
+          if (session.user.email) {
+            setEmail(session.user.email);
+          }
+        }
+      }
+    );
+    
     checkSession();
+    
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
