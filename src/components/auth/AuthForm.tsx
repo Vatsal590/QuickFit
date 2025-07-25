@@ -37,43 +37,50 @@ const AuthForm = () => {
       const urlParams = new URLSearchParams(window.location.search);
       console.log('Current URL params:', Object.fromEntries(urlParams.entries()));
       
-      const hasResetParams = urlParams.get('type') === 'recovery' || 
-                            urlParams.get('access_token') || 
-                            urlParams.get('refresh_token') ||
-                            urlParams.get('reset') === 'true';
+      // Check for recovery tokens in URL
+      const accessToken = urlParams.get('access_token');
+      const refreshToken = urlParams.get('refresh_token');
+      const type = urlParams.get('type');
       
-      if (hasResetParams) {
-        console.log('Password reset mode detected');
-        setIsPasswordReset(true);
-        setIsLogin(false); // Switch to password update mode
+      if (type === 'recovery' && accessToken && refreshToken) {
+        console.log('Password reset tokens detected, setting session');
         
-        // Don't sign out - we need the session to update the password
-        // Just set the UI to password reset mode
+        try {
+          // Set the session using the tokens from the URL
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          
+          if (error) {
+            console.error('Error setting session:', error);
+            toast({
+              title: "Error",
+              description: "Invalid reset link. Please request a new password reset.",
+              variant: "destructive"
+            });
+          } else if (data.session) {
+            console.log('Session set successfully for password reset');
+            setIsPasswordReset(true);
+            setIsLogin(false);
+            
+            if (data.session.user.email) {
+              setEmail(data.session.user.email);
+            }
+          }
+        } catch (error) {
+          console.error('Error setting session:', error);
+          toast({
+            title: "Error",
+            description: "Failed to process reset link. Please try again.",
+            variant: "destructive"
+          });
+        }
       }
     };
     
-    // Also listen for auth state changes to handle recovery flow
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('Auth state change:', event, session?.user?.email);
-        
-        // If user gets signed in via recovery link, force them to reset password
-        if (event === 'SIGNED_IN' && session?.user && window.location.search.includes('recovery')) {
-          setIsPasswordReset(true);
-          setIsLogin(false);
-          
-          // Extract email from session
-          if (session.user.email) {
-            setEmail(session.user.email);
-          }
-        }
-      }
-    );
-    
     checkSession();
-    
-    return () => subscription.unsubscribe();
-  }, []);
+  }, [toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,15 +142,16 @@ const AuthForm = () => {
         } else {
           toast({
             title: "Password updated successfully!",
-            description: "You can now sign in with your new password.",
+            description: "Redirecting you to the home page...",
           });
-          // Clear the reset flag and redirect to login
-          setIsPasswordReset(false);
-          setIsLogin(true);
-          setPassword('');
-          setConfirmPassword('');
-          // Remove the reset parameter from URL
+          
+          // Clear URL parameters and redirect to home page
           window.history.replaceState({}, document.title, window.location.pathname);
+          
+          // Redirect to home page after successful password reset
+          setTimeout(() => {
+            window.location.replace('/home');
+          }, 1000);
         }
       } else if (isLogin) {
         result = await signIn(email, password);
