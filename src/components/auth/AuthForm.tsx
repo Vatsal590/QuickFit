@@ -35,6 +35,8 @@ const AuthForm = () => {
     const checkSession = async () => {
       // Check URL parameters for reset mode
       const urlParams = new URLSearchParams(window.location.search);
+      console.log('Current URL params:', Object.fromEntries(urlParams.entries()));
+      
       const hasResetParams = urlParams.get('type') === 'recovery' || 
                             urlParams.get('access_token') || 
                             urlParams.get('refresh_token') ||
