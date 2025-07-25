@@ -33,22 +33,46 @@ const AuthForm = () => {
   // Check if this is a password reset flow
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
       // Check URL parameters for reset mode
       const urlParams = new URLSearchParams(window.location.search);
+      console.log('Current URL params:', Object.fromEntries(urlParams.entries()));
+      
       const hasResetParams = urlParams.get('type') === 'recovery' || 
                             urlParams.get('access_token') || 
-                            urlParams.get('refresh_token');
+                            urlParams.get('refresh_token') ||
+                            urlParams.get('reset') === 'true';
       
-      if (hasResetParams || (session && window.location.search.includes('recovery'))) {
+      if (hasResetParams) {
+        console.log('Password reset mode detected');
         setIsPasswordReset(true);
         setIsLogin(false); // Switch to password update mode
-        console.log('Password reset mode detected');
+        
+        // Don't sign out - we need the session to update the password
+        // Just set the UI to password reset mode
       }
     };
     
+    // Also listen for auth state changes to handle recovery flow
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log('Auth state change:', event, session?.user?.email);
+        
+        // If user gets signed in via recovery link, force them to reset password
+        if (event === 'SIGNED_IN' && session?.user && window.location.search.includes('recovery')) {
+          setIsPasswordReset(true);
+          setIsLogin(false);
+          
+          // Extract email from session
+          if (session.user.email) {
+            setEmail(session.user.email);
+          }
+        }
+      }
+    );
+    
     checkSession();
+    
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,11 +104,29 @@ const AuthForm = () => {
           return;
         }
 
+        // Check if we have an active session before updating password
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('Current session for password update:', session);
+        
+        if (!session) {
+          console.log('No session found, cannot update password');
+          toast({
+            title: "Session expired",
+            description: "Please click the reset link again to update your password.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        console.log('Attempting to update password for user:', session.user.email);
+
         const { error } = await supabase.auth.updateUser({
           password: password
         });
 
         if (error) {
+          console.error('Password update error:', error);
           toast({
             title: "Error",
             description: error.message,
