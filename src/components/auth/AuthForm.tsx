@@ -102,11 +102,29 @@ const AuthForm = () => {
           return;
         }
 
+        // Check if we have an active session before updating password
+        const { data: { session } } = await supabase.auth.getSession();
+        console.log('Current session for password update:', session);
+        
+        if (!session) {
+          console.log('No session found, cannot update password');
+          toast({
+            title: "Session expired",
+            description: "Please click the reset link again to update your password.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
+        console.log('Attempting to update password for user:', session.user.email);
+
         const { error } = await supabase.auth.updateUser({
           password: password
         });
 
         if (error) {
+          console.error('Password update error:', error);
           toast({
             title: "Error",
             description: error.message,
