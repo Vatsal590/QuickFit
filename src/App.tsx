@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsOfService from "./pages/TermsOfService";
 import DeleteAccount from "./pages/DeleteAccount";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
@@ -76,6 +77,10 @@ const AppRoutes = () => {
       <Route 
         path="/privacy-policy" 
         element={<PrivacyPolicy />} 
+      />
+      <Route 
+        path="/terms-of-service" 
+        element={<TermsOfService />} 
       />
       <Route 
         path="/delete-account" 
