@@ -349,6 +349,45 @@ const getDuration = (goal: string, bodyType: string[]) => {
   return bodyType.includes('ectomorph') ? 45 : 50;
 };
 
+// Get alternative exercises for pain conditions
+const getPainAlternatives = (pain: BodyPain, equipment: string[]): any[] => {
+  const { v4: uuidv4 } = require('uuid');
+  
+  const alternatives: Record<string, any[]> = {
+    "knee pain": [
+      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Lie on back, lift hips by squeezing glutes." },
+      { id: uuidv4(), name: "Clamshells", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 12, restTime: 45, description: "Side-lying hip abductor exercise." },
+      { id: uuidv4(), name: "Deadbugs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Core stability exercise lying on back." }
+    ],
+    "ankle pain": [
+      { id: uuidv4(), name: "Seated Upper Body Press", muscleGroup: "shoulders", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 60, description: "Seated shoulder exercise." },
+      { id: uuidv4(), name: "Lying Hamstring Curls", muscleGroup: "legs", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Hamstring exercise lying down." }
+    ],
+    "hip pain": [
+      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Hip-safe glute strengthening." },
+      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Core stability on hands and knees." }
+    ],
+    "shoulder pain": [
+      { id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Low anchor point rowing." },
+      { id: uuidv4(), name: "Supported Bicep Curls", muscleGroup: "biceps", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 45, description: "Bicep curls with support." }
+    ],
+    "lower back pain": [
+      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Safe core strengthening." },
+      { id: uuidv4(), name: "Modified Planks", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Plank with knees down." }
+    ],
+    "elbow pain": [
+      { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." },
+      { id: uuidv4(), name: "Straight Arm Band Pulls", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 45, description: "Straight arm resistance work." }
+    ],
+    "wrist pain": [
+      { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core work without wrist stress." },
+      { id: uuidv4(), name: "Neutral Grip Band Work", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Wrist-friendly resistance work." }
+    ]
+  };
+
+  return alternatives[pain] || [];
+};
+
 const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
   // Define muscle group mappings for each focus area
   const focusAreaMuscleGroups = {
@@ -380,27 +419,31 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
     targetMuscleGroups.includes(exercise.muscleGroup)
   );
 
-  // Filter out exercises that could aggravate body pains
+  // Filter out exercises that could aggravate body pains using detailed guidance
   if (bodyPains.length > 0) {
     availableExercises = availableExercises.filter((exercise: any) => {
       const exerciseName = exercise.name.toLowerCase();
       
-      // Define problematic exercises for each pain type
       const painExercises = {
-        "knee pain": ["squat", "lunge", "jump", "step-up", "burpee"],
-        "shoulder pain": ["push-up", "overhead", "pull-up", "lateral raise", "bench press"],
-        "hip pain": ["squat", "lunge", "hip thrust", "deadlift"],
-        "elbow pain": ["push-up", "tricep", "bicep curl", "pull-up"],
-        "lower back pain": ["deadlift", "row", "squat", "overhead"],
-        "wrist pain": ["push-up", "plank", "bear crawl"],
-        "ankle pain": ["jump", "calf raise", "step-up", "run"]
+        "knee pain": ["squat", "lunge", "jump", "step-up", "knee bend", "run", "box jump"],
+        "ankle pain": ["jump", "run", "lunge", "calf raise", "burpee", "step-up"],
+        "hip pain": ["lunge", "high knee", "leg raise", "jump", "deep squat", "hip thrust"],
+        "shoulder pain": ["overhead", "push-up", "plank", "dip", "lateral raise", "front raise", "press"],
+        "lower back pain": ["deadlift", "toe touch", "sit-up", "twist", "crunch", "bend"],
+        "elbow pain": ["pull-up", "chin-up", "push-up", "curl", "extension", "tricep"],
+        "wrist pain": ["plank", "push-up", "bear crawl", "curl", "press"]
       };
 
-      // Check if exercise contains any problematic keywords for user's pains
       return !bodyPains.some(pain => {
         const problematicWords = painExercises[pain] || [];
         return problematicWords.some(word => exerciseName.includes(word));
       });
+    });
+
+    // Add alternative exercises for each pain type
+    bodyPains.forEach(pain => {
+      const alternatives = getPainAlternatives(pain, normalizedEquipment);
+      availableExercises.push(...alternatives.slice(0, 2)); // Add 2 alternatives per pain
     });
   }
   

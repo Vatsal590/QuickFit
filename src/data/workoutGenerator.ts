@@ -205,6 +205,178 @@ const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[
   return targetSpecificCooldowns.slice(0, 4);
 };
 
+// Get alternative exercises for pain conditions
+const getAlternativeExercises = (pain: import('@/types').BodyPain, equipment: Equipment[]): Exercise[] => {
+  const alternatives: Record<string, Exercise[]> = {
+    "knee pain": [
+      {
+        id: uuidv4(),
+        name: "Glute Bridges",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 3,
+        reps: 15,
+        restTime: 60,
+        description: "Lie on back, lift hips by squeezing glutes."
+      },
+      {
+        id: uuidv4(),
+        name: "Clamshells",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 3,
+        reps: 12,
+        restTime: 45,
+        description: "Side-lying leg exercise targeting hip abductors."
+      },
+      {
+        id: uuidv4(),
+        name: "Deadbugs",
+        muscleGroup: "core",
+        equipment: ["none"],
+        sets: 3,
+        reps: 10,
+        restTime: 45,
+        description: "Core stability exercise lying on back."
+      }
+    ],
+    "ankle pain": [
+      {
+        id: uuidv4(),
+        name: "Seated Upper Body Press",
+        muscleGroup: "shoulders",
+        equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"],
+        sets: 3,
+        reps: 12,
+        restTime: 60,
+        description: "Seated shoulder press to avoid ankle stress."
+      },
+      {
+        id: uuidv4(),
+        name: "Lying Hamstring Curls",
+        muscleGroup: "legs",
+        equipment: ["resistance bands"],
+        sets: 3,
+        reps: 15,
+        restTime: 60,
+        description: "Hamstring exercise lying down."
+      }
+    ],
+    "hip pain": [
+      {
+        id: uuidv4(),
+        name: "Glute Bridges",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 3,
+        reps: 15,
+        restTime: 60,
+        description: "Hip-safe glute strengthening."
+      },
+      {
+        id: uuidv4(),
+        name: "Bird-Dogs",
+        muscleGroup: "core",
+        equipment: ["none"],
+        sets: 3,
+        reps: 8,
+        restTime: 45,
+        description: "Core stability on hands and knees."
+      }
+    ],
+    "shoulder pain": [
+      {
+        id: uuidv4(),
+        name: "Resistance Band Rows",
+        muscleGroup: "back",
+        equipment: ["resistance bands"],
+        sets: 3,
+        reps: 15,
+        restTime: 60,
+        description: "Low anchor point rowing motion."
+      },
+      {
+        id: uuidv4(),
+        name: "Supported Bicep Curls",
+        muscleGroup: "biceps",
+        equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"],
+        sets: 3,
+        reps: 12,
+        restTime: 45,
+        description: "Bicep curls with arm support."
+      }
+    ],
+    "lower back pain": [
+      {
+        id: uuidv4(),
+        name: "Bird-Dogs",
+        muscleGroup: "core",
+        equipment: ["none"],
+        sets: 3,
+        reps: 8,
+        restTime: 45,
+        description: "Safe core strengthening exercise."
+      },
+      {
+        id: uuidv4(),
+        name: "Modified Planks",
+        muscleGroup: "core",
+        equipment: ["none"],
+        sets: 3,
+        reps: 30,
+        restTime: 60,
+        description: "Plank with knees down for back safety."
+      }
+    ],
+    "elbow pain": [
+      {
+        id: uuidv4(),
+        name: "Wall Sits",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 3,
+        reps: 30,
+        restTime: 60,
+        description: "Isometric leg exercise against wall."
+      },
+      {
+        id: uuidv4(),
+        name: "Straight Arm Band Pulls",
+        muscleGroup: "back",
+        equipment: ["resistance bands"],
+        sets: 3,
+        reps: 15,
+        restTime: 45,
+        description: "Resistance band exercise with straight arms."
+      }
+    ],
+    "wrist pain": [
+      {
+        id: uuidv4(),
+        name: "Standing Core Twists",
+        muscleGroup: "core",
+        equipment: ["none"],
+        sets: 3,
+        reps: 20,
+        restTime: 45,
+        description: "Core exercise without wrist weight-bearing."
+      },
+      {
+        id: uuidv4(),
+        name: "Neutral Grip Band Exercises",
+        muscleGroup: "back",
+        equipment: ["resistance bands"],
+        sets: 3,
+        reps: 15,
+        restTime: 60,
+        description: "Resistance band work with neutral wrist."
+      }
+    ]
+  };
+
+  return alternatives[pain] || [];
+};
+
 export const generateWorkout = (
   time: TimeFrame,
   intensity: IntensityLevel,
@@ -222,15 +394,15 @@ export const generateWorkout = (
     selectedExercises = selectedExercises.filter((exercise: Exercise) => {
       const exerciseName = exercise.name.toLowerCase();
       
-      // Define problematic exercises for each pain type
+      // Define problematic exercises for each pain type based on detailed guidance
       const painExercises = {
-        "knee pain": ["squat", "lunge", "jump", "step-up", "burpee"],
-        "shoulder pain": ["push-up", "overhead", "pull-up", "lateral raise", "bench press"],
-        "hip pain": ["squat", "lunge", "hip thrust", "deadlift"],
-        "elbow pain": ["push-up", "tricep", "bicep curl", "pull-up"],
-        "lower back pain": ["deadlift", "row", "squat", "overhead"],
-        "wrist pain": ["push-up", "plank", "bear crawl"],
-        "ankle pain": ["jump", "calf raise", "step-up", "run"]
+        "knee pain": ["squat", "lunge", "jump", "step-up", "knee bend", "run", "box jump"],
+        "ankle pain": ["jump", "run", "lunge", "calf raise", "burpee", "step-up"],
+        "hip pain": ["lunge", "high knee", "leg raise", "jump", "deep squat", "hip thrust"],
+        "shoulder pain": ["overhead", "push-up", "plank", "dip", "lateral raise", "front raise", "press"],
+        "lower back pain": ["deadlift", "toe touch", "sit-up", "twist", "crunch", "bend"],
+        "elbow pain": ["pull-up", "chin-up", "push-up", "curl", "extension", "tricep"],
+        "wrist pain": ["plank", "push-up", "bear crawl", "curl", "press"]
       };
 
       // Check if exercise contains any problematic keywords for user's pains
@@ -239,6 +411,22 @@ export const generateWorkout = (
         return problematicWords.some(word => exerciseName.includes(word));
       });
     });
+
+    // Add recommended alternative exercises for each pain type
+    const alternativeExercises: Exercise[] = [];
+    
+    bodyPains.forEach(pain => {
+      const alternatives = getAlternativeExercises(pain, equipment);
+      alternativeExercises.push(...alternatives);
+    });
+
+    // Merge alternatives with filtered exercises, avoiding duplicates
+    const exerciseNames = selectedExercises.map(ex => ex.name.toLowerCase());
+    const uniqueAlternatives = alternativeExercises.filter(alt => 
+      !exerciseNames.includes(alt.name.toLowerCase())
+    );
+    
+    selectedExercises = [...selectedExercises, ...uniqueAlternatives];
   }
   
   // Special handling for barbell full body workouts
