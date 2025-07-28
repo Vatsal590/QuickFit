@@ -4,8 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Clock, Dumbbell, Activity, Heart } from 'lucide-react';
-import { MuscleGroup, Equipment, IntensityLevel, TimeFrame, WorkoutFormData } from '@/types';
+import { Clock, Dumbbell, Activity, Heart, AlertTriangle } from 'lucide-react';
+import { MuscleGroup, Equipment, IntensityLevel, TimeFrame, WorkoutFormData, BodyPain } from '@/types';
 
 interface WorkoutFormProps {
   onSubmit: (formData: WorkoutFormData) => void;
@@ -19,7 +19,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     time: 30,
     equipment: ["none"],
     muscleGroups: ["full body"],
-    intensity: "moderate"
+    intensity: "moderate",
+    bodyPains: []
   });
 
   const timeOptions: TimeFrame[] = [10, 20, 30, 45, 60];
@@ -63,6 +64,16 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
       label: "Intense", 
       description: "Challenging workout with higher intensity" 
     }
+  ];
+
+  const bodyPainOptions: { value: BodyPain; label: string }[] = [
+    { value: "knee pain", label: "Knee Pain" },
+    { value: "shoulder pain", label: "Shoulder Pain" },
+    { value: "hip pain", label: "Hip Pain" },
+    { value: "elbow pain", label: "Elbow Pain" },
+    { value: "lower back pain", label: "Lower Back Pain" },
+    { value: "wrist pain", label: "Wrist Pain" },
+    { value: "ankle pain", label: "Ankle Pain" }
   ];
 
   const handleTimeChange = (time: TimeFrame) => {
@@ -116,6 +127,23 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
 
   const setIntensity = (intensity: IntensityLevel) => {
     setFormData(prev => ({ ...prev, intensity }));
+  };
+
+  const toggleBodyPain = (pain: BodyPain) => {
+    setFormData(prev => {
+      const currentPains = prev.bodyPains || [];
+      if (currentPains.includes(pain)) {
+        return { 
+          ...prev, 
+          bodyPains: currentPains.filter(p => p !== pain) 
+        };
+      } else {
+        return { 
+          ...prev, 
+          bodyPains: [...currentPains, pain] 
+        };
+      }
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -214,6 +242,32 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
                   variant={formData.muscleGroups.includes(value) ? "default" : "outline"}
                   onClick={() => toggleMuscleGroup(value)}
                   className={formData.muscleGroups.includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <Separator />
+          
+          {/* Body Pains */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">Any Body Pains?</h3>
+            </div>
+            <p className="text-sm text-gray-600">
+              Select any areas where you experience pain. We'll customize your workout to avoid aggravating these areas.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {bodyPainOptions.map(({ value, label }) => (
+                <Button
+                  key={value}
+                  type="button"
+                  variant={(formData.bodyPains || []).includes(value) ? "default" : "outline"}
+                  onClick={() => toggleBodyPain(value)}
+                  className={(formData.bodyPains || []).includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
                 >
                   {label}
                 </Button>

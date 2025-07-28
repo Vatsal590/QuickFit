@@ -55,11 +55,21 @@ export type WorkoutHistoryItem = {
   completed: boolean;
 };
 
+export type BodyPain = 
+  | "knee pain"
+  | "shoulder pain"
+  | "hip pain"
+  | "elbow pain"
+  | "lower back pain"
+  | "wrist pain"
+  | "ankle pain";
+
 export type WorkoutFormData = {
   time: TimeFrame;
   equipment: Equipment[];
   muscleGroups: MuscleGroup[];
   intensity: IntensityLevel;
+  bodyPains?: BodyPain[];
 };
 
 export type WorkoutPlan = {

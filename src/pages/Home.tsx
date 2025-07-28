@@ -42,7 +42,8 @@ const Home = () => {
         formData.time,
         formData.intensity,
         formData.muscleGroups,
-        formData.equipment
+        formData.equipment,
+        formData.bodyPains
       );
       setCurrentWorkout(newWorkout);
       

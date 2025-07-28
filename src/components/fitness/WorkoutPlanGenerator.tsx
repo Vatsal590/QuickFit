@@ -7,7 +7,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { FitnessProfile } from '../../hooks/useFitnessProfile';
 import { exercises, getFilteredExercises } from '@/data/exercises';
-import { Loader2, Sparkles } from 'lucide-react';
+import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
+import { BodyPain } from '@/types';
 
 interface WorkoutPlanGeneratorProps {
   isOpen: boolean;
@@ -20,6 +21,27 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
   const { toast } = useToast();
   const { user } = useAuth();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedPains, setSelectedPains] = useState<BodyPain[]>([]);
+
+  const bodyPainOptions: { value: BodyPain; label: string }[] = [
+    { value: "knee pain", label: "Knee Pain" },
+    { value: "shoulder pain", label: "Shoulder Pain" },
+    { value: "hip pain", label: "Hip Pain" },
+    { value: "elbow pain", label: "Elbow Pain" },
+    { value: "lower back pain", label: "Lower Back Pain" },
+    { value: "wrist pain", label: "Wrist Pain" },
+    { value: "ankle pain", label: "Ankle Pain" }
+  ];
+
+  const toggleBodyPain = (pain: BodyPain) => {
+    setSelectedPains(prev => {
+      if (prev.includes(pain)) {
+        return prev.filter(p => p !== pain);
+      } else {
+        return [...prev, pain];
+      }
+    });
+  };
 
   const capitalizeWords = (str: string) => {
     return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -30,7 +52,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
     setIsGenerating(true);
     try {
-      const dailyWorkouts = generatePersonalizedPlan(profile);
+      const dailyWorkouts = generatePersonalizedPlan(profile, selectedPains);
       
       const planName = `${capitalizeWords(profile.fitness_goal)} Plan - ${new Date().toLocaleDateString()}`;
       
@@ -136,6 +158,35 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
               </CardContent>
             </Card>
 
+            {/* Body Pain Selection */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-fitness-primary" />
+                  Any Body Pains?
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-3">
+                  Select any areas where you experience pain. We'll customize your plan to avoid aggravating these areas.
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {bodyPainOptions.map(({ value, label }) => (
+                    <Button
+                      key={value}
+                      type="button"
+                      variant={selectedPains.includes(value) ? "default" : "outline"}
+                      onClick={() => toggleBodyPain(value)}
+                      className={selectedPains.includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
+                      size="sm"
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
             <div className="flex gap-3">
               <Button variant="outline" onClick={onClose} className="flex-1">
                 Cancel
@@ -208,7 +259,7 @@ const customizeExerciseForUser = (exercise: any, profile: FitnessProfile) => {
   return modifiedExercise;
 };
 
-const generatePersonalizedPlan = (profile: FitnessProfile) => {
+const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
   const { fitness_goal, body_type, workout_days_per_week, available_equipment } = profile;
   
   const dailyWorkouts = [];
@@ -234,7 +285,7 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
     const isWorkoutDay = workoutDaysInWeek.includes(dayOfWeek);
     
     if (isWorkoutDay) {
-      const workout = generateDayWorkout(day, fitness_goal, body_type, available_equipment, profile);
+      const workout = generateDayWorkout(day, fitness_goal, body_type, available_equipment, profile, bodyPains);
       dailyWorkouts.push({
         day,
         isRestDay: false,
@@ -254,7 +305,7 @@ const generatePersonalizedPlan = (profile: FitnessProfile) => {
   return dailyWorkouts;
 };
 
-const generateDayWorkout = (day: number, goal: string, bodyType: string[], equipment: string[], profile: FitnessProfile) => {
+const generateDayWorkout = (day: number, goal: string, bodyType: string[], equipment: string[], profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
   const week = Math.ceil(day / 7);
   const dayInWeek = ((day - 1) % 7) + 1;
   
@@ -287,7 +338,7 @@ const generateDayWorkout = (day: number, goal: string, bodyType: string[], equip
     focus: focusArea,
     intensity,
     duration: getDuration(goal, bodyType),
-    exercises: generateExercises(focusArea, equipment, intensity, day, profile),
+    exercises: generateExercises(focusArea, equipment, intensity, day, profile, bodyPains),
     notes: getWorkoutNotes(goal, bodyType, week)
   };
 };
@@ -298,7 +349,7 @@ const getDuration = (goal: string, bodyType: string[]) => {
   return bodyType.includes('ectomorph') ? 45 : 50;
 };
 
-const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile) => {
+const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
   // Define muscle group mappings for each focus area
   const focusAreaMuscleGroups = {
     explosive_power: ['full body', 'legs', 'chest'],
@@ -328,6 +379,30 @@ const generateExercises = (focusArea: string, equipment: string[], intensity: st
   let availableExercises = exercises.filter((exercise: any) => 
     targetMuscleGroups.includes(exercise.muscleGroup)
   );
+
+  // Filter out exercises that could aggravate body pains
+  if (bodyPains.length > 0) {
+    availableExercises = availableExercises.filter((exercise: any) => {
+      const exerciseName = exercise.name.toLowerCase();
+      
+      // Define problematic exercises for each pain type
+      const painExercises = {
+        "knee pain": ["squat", "lunge", "jump", "step-up", "burpee"],
+        "shoulder pain": ["push-up", "overhead", "pull-up", "lateral raise", "bench press"],
+        "hip pain": ["squat", "lunge", "hip thrust", "deadlift"],
+        "elbow pain": ["push-up", "tricep", "bicep curl", "pull-up"],
+        "lower back pain": ["deadlift", "row", "squat", "overhead"],
+        "wrist pain": ["push-up", "plank", "bear crawl"],
+        "ankle pain": ["jump", "calf raise", "step-up", "run"]
+      };
+
+      // Check if exercise contains any problematic keywords for user's pains
+      return !bodyPains.some(pain => {
+        const problematicWords = painExercises[pain] || [];
+        return problematicWords.some(word => exerciseName.includes(word));
+      });
+    });
+  }
   
   // If no exercises found for specific muscle groups, get all exercises
   if (availableExercises.length === 0) {

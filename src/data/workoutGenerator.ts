@@ -209,12 +209,37 @@ export const generateWorkout = (
   time: TimeFrame,
   intensity: IntensityLevel,
   muscleGroups: MuscleGroup[],
-  equipment: Equipment[]
+  equipment: Equipment[],
+  bodyPains?: import('@/types').BodyPain[]
 ): Workout => {
   console.log('Generating workout with:', { time, intensity, muscleGroups, equipment });
   
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+
+  // Filter out exercises that could aggravate body pains
+  if (bodyPains && bodyPains.length > 0) {
+    selectedExercises = selectedExercises.filter((exercise: Exercise) => {
+      const exerciseName = exercise.name.toLowerCase();
+      
+      // Define problematic exercises for each pain type
+      const painExercises = {
+        "knee pain": ["squat", "lunge", "jump", "step-up", "burpee"],
+        "shoulder pain": ["push-up", "overhead", "pull-up", "lateral raise", "bench press"],
+        "hip pain": ["squat", "lunge", "hip thrust", "deadlift"],
+        "elbow pain": ["push-up", "tricep", "bicep curl", "pull-up"],
+        "lower back pain": ["deadlift", "row", "squat", "overhead"],
+        "wrist pain": ["push-up", "plank", "bear crawl"],
+        "ankle pain": ["jump", "calf raise", "step-up", "run"]
+      };
+
+      // Check if exercise contains any problematic keywords for user's pains
+      return !bodyPains.some(pain => {
+        const problematicWords = painExercises[pain] || [];
+        return problematicWords.some(word => exerciseName.includes(word));
+      });
+    });
+  }
   
   // Special handling for barbell full body workouts
   if (muscleGroups.includes("full body") && equipment.includes("barbell")) {
