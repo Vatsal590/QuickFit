@@ -9,6 +9,7 @@ import { FitnessProfile } from '../../hooks/useFitnessProfile';
 import { exercises, getFilteredExercises } from '@/data/exercises';
 import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { BodyPain } from '@/types';
+import { v4 as uuidv4 } from 'uuid';
 
 interface WorkoutPlanGeneratorProps {
   isOpen: boolean;
@@ -351,7 +352,6 @@ const getDuration = (goal: string, bodyType: string[]) => {
 
 // Get alternative exercises for pain conditions
 const getPainAlternatives = (pain: BodyPain, equipment: string[]): any[] => {
-  const { v4: uuidv4 } = require('uuid');
   
   const alternatives: Record<string, any[]> = {
     "knee pain": [
