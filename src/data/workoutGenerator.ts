@@ -507,8 +507,12 @@ export const generateWorkout = (
   } else if (time === 45) {
     maxExercises = 4; // Exactly 4 for 45 minutes
   } else if (time === 60) {
-    // For chest exercises, user wants 5 exercises for 60 minutes
-    maxExercises = muscleGroups.includes("chest") && muscleGroups.length === 1 ? 5 : 6;
+    // For chest exercises, user wants AT LEAST 5 exercises for 60 minutes
+    if (muscleGroups.includes("chest")) {
+      maxExercises = Math.max(5, selectedExercises.length); // Ensure at least 5 for chest
+    } else {
+      maxExercises = 6;
+    }
   } else {
     // For 10min and 20min workouts
     maxExercises = time <= 20 ? 2 : 3;
