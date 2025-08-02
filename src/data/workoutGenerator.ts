@@ -507,10 +507,44 @@ export const generateWorkout = (
   } else if (time === 45) {
     maxExercises = 4; // Exactly 4 for 45 minutes
   } else if (time === 60) {
-    maxExercises = 6; // Exactly 6 for 60 minutes
+    // For chest exercises, user wants 5 exercises for 60 minutes
+    maxExercises = muscleGroups.includes("chest") && muscleGroups.length === 1 ? 5 : 6;
   } else {
     // For 10min and 20min workouts
     maxExercises = time <= 20 ? 2 : 3;
+  }
+
+  // Special ordering for back exercises when specific equipment is available
+  if (muscleGroups.includes("back") && 
+      equipment.includes("barbell") && 
+      equipment.includes("dumbbells") && 
+      equipment.includes("pull-up bar")) {
+    
+    // Define specific order: pullups, deadlifts, bent over rows, hammer curls, bicep curls
+    const orderedBackExercises: Exercise[] = [];
+    
+    // 1. Pull-ups
+    const pullUp = exercises.find(ex => ex.id === "pull-up");
+    if (pullUp) orderedBackExercises.push(pullUp);
+    
+    // 2. Deadlifts
+    const deadlift = exercises.find(ex => ex.id === "barbell-deadlift");
+    if (deadlift) orderedBackExercises.push(deadlift);
+    
+    // 3. Bent over rows
+    const bentOverRow = exercises.find(ex => ex.id === "bent-over-row");
+    if (bentOverRow) orderedBackExercises.push(bentOverRow);
+    
+    // 4. Hammer curls
+    const hammerCurl = exercises.find(ex => ex.id === "hammer-curl");
+    if (hammerCurl) orderedBackExercises.push(hammerCurl);
+    
+    // 5. Bicep curls
+    const bicepCurl = exercises.find(ex => ex.id === "dumbbell-bicep-curl");
+    if (bicepCurl) orderedBackExercises.push(bicepCurl);
+    
+    // Use the ordered exercises and limit to maxExercises
+    selectedExercises = orderedBackExercises.slice(0, maxExercises);
   }
   
   const limitedExercises = selectedExercises.slice(0, maxExercises);
