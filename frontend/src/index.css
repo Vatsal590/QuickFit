@@ -3,6 +3,32 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+/* Mobile-specific optimizations */
+@layer base {
+  /* Prevent text size adjustment on mobile */
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  
+  /* Touch-friendly scrolling */
+  * {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Remove tap highlight */
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Optimize for mobile viewports */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior: none;
+  }
+}
+
 @layer base {
   :root {
     --background: 220 23% 95%;
