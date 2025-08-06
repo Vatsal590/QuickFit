@@ -1,0 +1,31 @@
+{
+  "name": "QuickFit - Complete Fitness Solution",
+  "short_name": "QuickFit",
+  "description": "Create personalized workout plans, generate instant workouts, and get expert fitness advice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#16a34a",
+  "theme_color": "#16a34a",
+  "orientation": "portrait",
+  "categories": ["health", "fitness", "lifestyle"],
+  "icons": [
+    {
+      "src": "/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png",
+      "sizes": "any",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ]
+}
