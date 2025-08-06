@@ -4,7 +4,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.quickfit.app',
   appName: 'QuickFit',
-  webDir: 'dist',
+  webDir: 'build',
   server: {
     androidScheme: 'https'
   },
