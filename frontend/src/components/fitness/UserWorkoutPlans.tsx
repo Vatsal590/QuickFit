@@ -51,27 +51,26 @@ const UserWorkoutPlans = ({
   };
   if (!workoutPlans || workoutPlans.length === 0) {
     return (
-      <Card className="shadow-sm">
-        <CardHeader>
-          <CardTitle>Your Workout Plans</CardTitle>
-          <CardDescription>No workout plans created yet</CardDescription>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle>30-Day Plans</CardTitle>
+          <CardDescription>No plans yet</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center py-8 text-center">
           <div className="bg-gray-100 rounded-full p-4 mb-4">
             <Target className="h-8 w-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium mb-2">No workout plans yet</h3>
-          <p className="text-gray-500 max-w-md mb-4">
-            Create your first personalized workout plan to get started with your fitness journey
+          <h3 className="text-lg font-medium mb-2">Create Your First Plan</h3>
+          <p className="text-muted-foreground max-w-sm mb-4">
+            Get a personalized 30-day workout plan based on your goals
           </p>
           <Button
             onClick={() => {
               window.dispatchEvent(new Event('openFitnessProfile'));
             }}
-            className="bg-fitness-primary hover:bg-fitness-primary/90"
           >
             <Target className="h-4 w-4 mr-2" />
-            Customise
+            Create Plan
           </Button>
         </CardContent>
       </Card>
@@ -81,8 +80,8 @@ const UserWorkoutPlans = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Your Workout Plans</CardTitle>
-        <CardDescription>Manage and track your personalized workout plans</CardDescription>
+        <CardTitle>Your 30-Day Plans</CardTitle>
+        <CardDescription>Track your progress</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {workoutPlans.map((plan) => (
