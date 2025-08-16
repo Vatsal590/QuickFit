@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTranslation } from '@/contexts/TranslationContext';
-import { Home, History, User, Settings, LogOut, Menu, ChevronDown, Shield, FileText, Trash2, Info } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,73 +27,48 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./AppSidebar";
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
-import { useAutoPushNotifications } from '@/hooks/useAutoPushNotifications';
-import { activityTracker } from '@/utils/activityTracker';
-
-
-// ----- LAZY LOAD CHATBOT -----
-const Chatbot = React.lazy(() => import("../chat/Chatbot"));
+import LanguageSelector from '@/components/language/LanguageSelector';
+import { PushNotificationToggle } from '@/components/notifications/PushNotificationToggle';
+import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { Settings, LogOut, Trash2, User, Bell, Globe, Shield, FileText } from 'lucide-react';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
 }
 
-const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
+const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth();
-  const location = useLocation();
+  const { language, setLanguage } = useTranslation();
   const { toast } = useToast();
-  const { language, setLanguage, t } = useTranslation();
-  const [showProfileForm, setShowProfileForm] = useState(false);
+  const [showFitnessProfile, setShowFitnessProfile] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  const [showNotificationToggle, setShowNotificationToggle] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
+  const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  
-  // Auto-enable push notifications
-  useAutoPushNotifications();
-  
 
-  const isActive = (path: string) => location.pathname === path;
-
-  // Track user activity whenever they interact with buttons
-  const trackUserActivity = async () => {
-    await activityTracker.trackActivity('user_interaction', location.pathname);
+  const getDisplayName = () => {
+    if (user?.user_metadata?.full_name) {
+      return user.user_metadata.full_name;
+    }
+    return user?.email?.split('@')[0] || 'User';
   };
 
-  // Track page views
-  React.useEffect(() => {
-    activityTracker.trackPageView(location.pathname);
-  }, [location.pathname]);
-
-  // Listen for external events to open fitness profile form
-  React.useEffect(() => {
-    const handleOpenFitnessProfileForm = () => {
-      setShowProfileForm(true);
-    };
-
-    window.addEventListener('openFitnessProfileForm', handleOpenFitnessProfileForm);
-    return () => {
-      window.removeEventListener('openFitnessProfileForm', handleOpenFitnessProfileForm);
-    };
-  }, []);
-  //.
-
-  // Format the member since date
-  const memberSince = user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  }) : t('Unknown') || 'Unknown';
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   const handleDeleteAccount = async () => {
     if (!user) return;
 
-    setIsDeleting(true);
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
@@ -113,7 +94,6 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         description: "Your account and all data have been permanently deleted.",
       });
 
-      // Sign out and redirect
       await signOut();
       window.location.href = '/';
     } catch (error) {
@@ -124,184 +104,173 @@ const AuthenticatedLayout = ({ children }: AuthenticatedLayoutProps) => {
         variant: "destructive",
       });
     } finally {
-      setIsDeleting(false);
       setShowDeleteDialog(false);
     }
   };
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--gradient-bg)' }}>
-      {/* Navigation Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* QuickFit Title */}
-          <div className="text-center py-3 border-b border-gray-100">
-            <h1 className="text-2xl md:text-3xl font-bold text-fitness-primary flex items-center justify-center gap-2">
-              <img 
-                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
-                alt="QuickFit Logo" 
-                className="w-8 h-8"
-              />
-              QuickFit
-            </h1>
-          </div>
-          
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-4 md:space-x-8 flex-1 min-w-0">
-              
-              {/* Navigation - scrollable on mobile */}
-              <nav className="flex space-x-2 md:space-x-4 overflow-x-auto scrollbar-hide flex-1 min-w-0">
-                <Link to="/home" className="flex-shrink-0" onClick={() => activityTracker.trackNavigation(location.pathname, '/home')}>
-                  <Button 
-                    variant={isActive('/home') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className={isActive('/home') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
-                  >
-                    <Home className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">{t('Home')}</span>
-                  </Button>
-                </Link>
-
-                <Link to="/history" className="flex-shrink-0" onClick={() => activityTracker.trackNavigation(location.pathname, '/history')}>
-                  <Button 
-                    variant={isActive('/history') ? 'default' : 'ghost'} 
-                    size="sm"
-                    className={isActive('/history') ? 'bg-fitness-primary hover:bg-fitness-primary/90' : ''}
-                  >
-                    <History className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">{t('History')}</span>
-                  </Button>
-                </Link>
-              </nav>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
+        
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <SidebarTrigger />
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                  alt="QuickFit Logo" 
+                  className="w-8 h-8"
+                />
+                <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
+              </div>
             </div>
             
-            <div className="flex items-center space-x-2 md:space-x-4 flex-shrink-0">
-              {/* Profile Dropdown */}
+            <div className="flex items-center space-x-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex-shrink-0" onClick={trackUserActivity}>
-                    <User className="h-4 w-4 mr-1 md:mr-2" />
-                    <span className="hidden sm:inline">{t('Profile')}</span>
-                    <ChevronDown className="h-3 w-3 ml-1" />
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} alt="Profile" />
+                      <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64 bg-white" align="end">
-                  <div className="px-3 py-2">
-                    <p className="text-sm font-medium text-gray-900">
-                      {user?.email}
-                    </p>
-                    <p className="text-xs text-gray-500 mt-1">
-                      {t('Member since')} {memberSince}
-                    </p>
-                  </div>
+                <DropdownMenuContent className="w-56 bg-background border border-border z-50" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/about" className="flex items-center w-full" onClick={trackUserActivity}>
-                      <Info className="h-4 w-4 mr-2" />
-                      {t('About')}
-                    </Link>
+                  <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { 
-                    setShowProfileForm(true); 
-                    activityTracker.trackButtonClick('customize_settings', location.pathname); 
-                  }}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    {t('Customize')}
+                  <DropdownMenuItem onClick={() => setShowLanguageSelector(true)}>
+                    <Globe className="mr-2 h-4 w-4" />
+                    <span>Language</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { 
-                    setShowPrivacyPolicy(true); 
-                    activityTracker.trackButtonClick('privacy_policy', location.pathname); 
-                  }}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    {t('Privacy Policy')}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => { 
-                    setShowTermsOfConditions(true); 
-                    activityTracker.trackButtonClick('terms_conditions', location.pathname); 
-                  }}>
-                    <FileText className="h-4 w-4 mr-2" />
-                    {t('Terms of Conditions')}
+                  <DropdownMenuItem onClick={() => setShowNotificationToggle(true)}>
+                    <Bell className="mr-2 h-4 w-4" />
+                    <span>Notifications</span>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => { 
-                    signOut(); 
-                    activityTracker.trackButtonClick('sign_out', location.pathname); 
-                  }}>
-                    <LogOut className="h-4 w-4 mr-2" />
-                    {t('Sign Out')}
+                  <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Privacy Policy</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => { 
-                      setShowDeleteDialog(true); 
-                      activityTracker.trackButtonClick('delete_account_dialog', location.pathname); 
-                    }}
-                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                  >
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    {t('Remove Account')}
+                  <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Terms of Service</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    <span>Delete Account</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-          </div>
+          </header>
+
+          {/* Main Content */}
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
         </div>
-      </header>
+      </div>
 
-      {/* Main Content */}
-      <main>{children}</main>
+      {/* Dialogs */}
+      <Dialog open={showFitnessProfile} onOpenChange={setShowFitnessProfile}>
+        <DialogContent className="bg-background border border-border">
+          <DialogHeader>
+            <DialogTitle>Fitness Profile</DialogTitle>
+            <DialogDescription>
+              Update your fitness information to get better workout recommendations.
+            </DialogDescription>
+          </DialogHeader>
+          <FitnessProfileForm isOpen={showFitnessProfile} onClose={() => setShowFitnessProfile(false)} />
+        </DialogContent>
+      </Dialog>
 
-      {/* Customize Form Modal */}
-      <FitnessProfileForm 
-        isOpen={showProfileForm}
-        onClose={() => setShowProfileForm(false)}
-      />
+      <Dialog open={showLanguageSelector} onOpenChange={setShowLanguageSelector}>
+        <DialogContent className="bg-background border border-border">
+          <DialogHeader>
+            <DialogTitle>Language Settings</DialogTitle>
+            <DialogDescription>
+              Choose your preferred language for the app.
+            </DialogDescription>
+          </DialogHeader>
+          <LanguageSelector 
+            isOpen={showLanguageSelector} 
+            onClose={() => setShowLanguageSelector(false)}
+            selectedLanguage={language}
+            onLanguageSelect={setLanguage}
+          />
+        </DialogContent>
+      </Dialog>
 
-      {/* Privacy Policy Modal */}
-      <PrivacyPolicy 
-        isOpen={showPrivacyPolicy}
-        onClose={() => setShowPrivacyPolicy(false)}
-      />
+      <Dialog open={showNotificationToggle} onOpenChange={setShowNotificationToggle}>
+        <DialogContent className="bg-background border border-border">
+          <DialogHeader>
+            <DialogTitle>Notification Settings</DialogTitle>
+            <DialogDescription>
+              Manage your push notification preferences.
+            </DialogDescription>
+          </DialogHeader>
+          <PushNotificationToggle />
+        </DialogContent>
+      </Dialog>
 
-      {/* Terms of Conditions Modal */}
-      <TermsOfConditions 
-        isOpen={showTermsOfConditions}
-        onClose={() => setShowTermsOfConditions(false)}
-      />
+      <Dialog open={showPrivacyPolicy} onOpenChange={setShowPrivacyPolicy}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
+          <DialogHeader>
+            <DialogTitle>Privacy Policy</DialogTitle>
+          </DialogHeader>
+          <PrivacyPolicy isOpen={showPrivacyPolicy} onClose={() => setShowPrivacyPolicy(false)} />
+        </DialogContent>
+      </Dialog>
 
+      <Dialog open={showTermsConditions} onOpenChange={setShowTermsConditions}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
+          <DialogHeader>
+            <DialogTitle>Terms of Service</DialogTitle>
+          </DialogHeader>
+          <TermsOfConditions isOpen={showTermsConditions} onClose={() => setShowTermsConditions(false)} />
+        </DialogContent>
+      </Dialog>
 
-      {/* Delete Account Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-background border border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('Delete Account')}</AlertDialogTitle>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('Are you sure you want to permanently delete your account? This action cannot be undone and will:')}
-              <ul className="list-disc list-inside mt-2 space-y-1">
-                <li>{t('Delete all your workout plans and history')}</li>
-                <li>{t('Remove your fitness profile')}</li>
-                <li>{t('Permanently delete your account')}</li>
-                <li>{t('Prevent you from signing in with this email again')}</li>
-              </ul>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{t('Cancel')}</AlertDialogCancel>
-            <AlertDialogAction 
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
               onClick={handleDeleteAccount}
-              disabled={isDeleting}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? t('Deleting...') : t('Delete Account')}
+              Delete Account
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-
-      {/* Floating Chatbot Button - dynamically loaded */}
-      <React.Suspense fallback={null}>
-        <Chatbot />
-      </React.Suspense>
-    </div>
+    </SidebarProvider>
   );
 };
 

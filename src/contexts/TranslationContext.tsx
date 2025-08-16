@@ -17,11 +17,8 @@ export const useTranslation = () => {
 };
 
 export const TranslationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  console.log('TranslationProvider initializing...');
   const [language, setLanguage] = useState<string>(() => {
-    const stored = localStorage.getItem('selectedLanguage') || 'English';
-    console.log('Initial language:', stored);
-    return stored;
+    return localStorage.getItem('selectedLanguage') || 'English';
   });
   const [translations, setTranslations] = useState<Record<string, string>>({});
 

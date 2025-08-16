@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
@@ -151,45 +152,62 @@ const Home = () => {
     );
   }
 
+  // Get current section from URL
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const currentSection = searchParams.get('section') || 'generator';
+
   return (
     <PageContainer>
       <div className="max-w-4xl mx-auto">
-        <div className="mb-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-3">
-            {t('Custom Workout Generator')}
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            {t('Generate instant custom workouts based on your available time, equipment, and target muscle groups.')}
-            {' '}{t('Perfect for quick sessions when you need a workout right now.')}
-          </p>
-        </div>
-
-        {/* Show Plan Viewer if a plan is selected */}
-        {selectedPlan ? (
-          <div className="mb-8">
-            <button
-              onClick={() => { 
-                setSelectedPlan(null); 
-                activityTracker.trackButtonClick('back_to_plans', 'home');
-              }}
-              className="mb-4 text-fitness-primary hover:text-fitness-primary/80 flex items-center gap-2"
-            >
-              ← Back to Plans
-            </button>
-            <WorkoutPlanViewer
-              plan={selectedPlan}
-              onMarkComplete={handleMarkDayComplete}
-            />
-          </div>
-        ) : (
+        {currentSection === 'plans' && (
           <>
-            {/* 30-Day Plans Section */}
-            <div className="mb-8">
+            <div className="mb-8 text-center">
+              <h1 className="text-4xl md:text-6xl font-bold mb-3">
+                {t('Your Workout Plans')}
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                {t('Manage your 30-day workout plans and track your progress.')}
+              </p>
+            </div>
+
+            {/* Show Plan Viewer if a plan is selected */}
+            {selectedPlan ? (
+              <div className="mb-8">
+                <button
+                  onClick={() => { 
+                    setSelectedPlan(null); 
+                    activityTracker.trackButtonClick('back_to_plans', 'home');
+                  }}
+                  className="mb-4 text-fitness-primary hover:text-fitness-primary/80 flex items-center gap-2"
+                >
+                  ← Back to Plans
+                </button>
+                <WorkoutPlanViewer
+                  plan={selectedPlan}
+                  onMarkComplete={handleMarkDayComplete}
+                />
+              </div>
+            ) : (
               <UserWorkoutPlans 
                 workoutPlans={workoutPlans}
                 onSelectPlan={handleSelectPlan}
                 onDeletePlan={handleDeletePlan}
               />
+            )}
+          </>
+        )}
+
+        {currentSection === 'generator' && (
+          <>
+            <div className="mb-8 text-center">
+              <h1 className="text-4xl md:text-6xl font-bold mb-3">
+                {t('Custom Workout Generator')}
+              </h1>
+              <p className="text-gray-600 max-w-2xl mx-auto">
+                {t('Generate instant custom workouts based on your available time, equipment, and target muscle groups.')}
+                {' '}{t('Perfect for quick sessions when you need a workout right now.')}
+              </p>
             </div>
 
             {/* Custom Workout Generator Section */}
