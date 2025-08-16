@@ -172,11 +172,11 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader className="text-center">
-        <CardTitle className="text-xl">Quick Setup</CardTitle>
+    <Card className="w-full shadow-lg">
+      <CardHeader>
+        <CardTitle className="text-2xl">Create Your Workout</CardTitle>
         <CardDescription>
-          3 simple steps to your perfect workout
+          Tell us what you have available and we'll generate the perfect workout for you
         </CardDescription>
       </CardHeader>
       
@@ -185,10 +185,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           {/* Time Available */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Clock className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-medium">1. How long do you have?</h3>
+              <Clock className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">Time Available</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {timeOptions.map(time => (
@@ -210,10 +208,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           {/* Equipment */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Dumbbell className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-medium">2. What equipment do you have?</h3>
+              <Dumbbell className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">Available Equipment</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {equipmentOptions.map(({ value, label }) => (
@@ -235,10 +231,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           {/* Muscle Groups */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Activity className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-medium">3. What do you want to train?</h3>
+              <Activity className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">What to Train Today</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {muscleGroupOptions.map(({ value, label }) => (
@@ -257,13 +251,37 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           
           <Separator />
           
+          {/* Body Pains */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">Any Body Pains?</h3>
+            </div>
+            <p className="text-sm text-gray-600">
+              Select any areas where you experience pain. We'll customize your workout to avoid aggravating these areas.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {bodyPainOptions.map(({ value, label }) => (
+                <Button
+                  key={value}
+                  type="button"
+                  variant={(formData.bodyPains || []).includes(value) ? "default" : "outline"}
+                  onClick={() => toggleBodyPain(value)}
+                  className={(formData.bodyPains || []).includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
+                >
+                  {label}
+                </Button>
+              ))}
+            </div>
+          </div>
+          
+          <Separator />
+          
           {/* Intensity */}
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <div className="bg-primary/10 p-2 rounded-full">
-                <Heart className="h-4 w-4 text-primary" />
-              </div>
-              <h3 className="font-medium">How hard do you want to work?</h3>
+              <Heart className="h-5 w-5 text-fitness-primary" />
+              <h3 className="font-medium text-lg">Workout Intensity</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {intensityOptions.map(({ value, label, description }) => (
@@ -289,10 +307,9 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
         <CardFooter>
           <Button 
             type="submit" 
-            size="lg"
-            className="w-full"
+            className="w-full bg-fitness-primary hover:bg-fitness-primary/90 text-white"
           >
-            Get My Workout
+            Generate Workout
           </Button>
         </CardFooter>
       </form>
