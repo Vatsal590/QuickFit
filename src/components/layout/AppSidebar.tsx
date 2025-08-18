@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Calendar, History, Home, Target } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -11,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -26,12 +24,10 @@ const workoutItems = [
 ];
 
 export function AppSidebar() {
-  const { state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const currentSection = searchParams.get('section') || 'generator';
-  const collapsed = state === 'collapsed';
 
   const isActive = (path: string, section?: string) => {
     if (section) {
@@ -44,11 +40,7 @@ export function AppSidebar() {
     isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   return (
-    <Sidebar
-      className={collapsed ? "w-14" : "w-60"}
-      collapsible="icon"
-    >
-      <SidebarTrigger className="m-2 self-end" />
+    <Sidebar collapsible="icon">
 
       <SidebarContent>
         <SidebarGroup>
@@ -62,10 +54,10 @@ export function AppSidebar() {
                       to={item.url} 
                       end 
                       className={getNavCls(isActive(item.url))}
-                    >
-                      <item.icon className="mr-2 h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
-                    </NavLink>
+                      >
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -85,10 +77,10 @@ export function AppSidebar() {
                       <NavLink 
                         to={item.url} 
                         className={getNavCls(isActive('/home', section))}
-                      >
-                        <item.icon className="mr-2 h-4 w-4" />
-                        {!collapsed && <span>{item.title}</span>}
-                      </NavLink>
+                        >
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 );
