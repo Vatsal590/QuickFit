@@ -27,18 +27,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "./AppSidebar";
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
-import LanguageSelector from '@/components/language/LanguageSelector';
-import { PushNotificationToggle } from '@/components/notifications/PushNotificationToggle';
 import { useAuth } from '@/contexts/AuthContext';
-import { useTranslation } from '@/contexts/TranslationContext';
-import { Settings, LogOut, Trash2, User, Bell, Globe, Shield, FileText } from 'lucide-react';
+import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -46,11 +42,8 @@ interface AuthenticatedLayoutProps {
 
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   const { user, signOut } = useAuth();
-  const { language, setLanguage } = useTranslation();
   const { toast } = useToast();
   const [showFitnessProfile, setShowFitnessProfile] = useState(false);
-  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-  const [showNotificationToggle, setShowNotificationToggle] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -109,85 +102,74 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full">
-        <AppSidebar />
+    <div className="min-h-screen flex w-full">
+      <AppSidebar />
         
-        <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
-            <div className="flex items-center gap-4">
-              <SidebarTrigger />
-              <div className="flex items-center space-x-2">
-                <img 
-                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
-                  alt="QuickFit Logo" 
-                  className="w-8 h-8"
-                />
-                <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
-              </div>
+      <div className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center space-x-2">
+              <img 
+                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                alt="QuickFit Logo" 
+                className="w-8 h-8"
+              />
+              <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} alt="Profile" />
-                      <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-background border border-border z-50" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user?.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowLanguageSelector(true)}>
-                    <Globe className="mr-2 h-4 w-4" />
-                    <span>Language</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowNotificationToggle(true)}>
-                    <Bell className="mr-2 h-4 w-4" />
-                    <span>Notifications</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
-                    <Shield className="mr-2 h-4 w-4" />
-                    <span>Privacy Policy</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
-                    <FileText className="mr-2 h-4 w-4" />
-                    <span>Terms of Service</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut}>
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign Out</span>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
-                    <Trash2 className="mr-2 h-4 w-4" />
-                    <span>Delete Account</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </header>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} alt="Profile" />
+                    <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56 bg-background border border-border z-50" align="end" forceMount>
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
+                    <p className="text-xs leading-none text-muted-foreground">
+                      {user?.email}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
+                  <User className="mr-2 h-4 w-4" />
+                  <span>Profile</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
+                  <Shield className="mr-2 h-4 w-4" />
+                  <span>Privacy Policy</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  <span>Terms of Service</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sign Out</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  <span>Delete Account</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </header>
 
-          {/* Main Content */}
-          <main className="flex-1 overflow-auto">
-            {children}
-          </main>
-        </div>
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto">
+          {children}
+        </main>
       </div>
 
       {/* Dialogs */}
@@ -200,35 +182,6 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
             </DialogDescription>
           </DialogHeader>
           <FitnessProfileForm isOpen={showFitnessProfile} onClose={() => setShowFitnessProfile(false)} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showLanguageSelector} onOpenChange={setShowLanguageSelector}>
-        <DialogContent className="bg-background border border-border">
-          <DialogHeader>
-            <DialogTitle>Language Settings</DialogTitle>
-            <DialogDescription>
-              Choose your preferred language for the app.
-            </DialogDescription>
-          </DialogHeader>
-          <LanguageSelector 
-            isOpen={showLanguageSelector} 
-            onClose={() => setShowLanguageSelector(false)}
-            selectedLanguage={language}
-            onLanguageSelect={setLanguage}
-          />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showNotificationToggle} onOpenChange={setShowNotificationToggle}>
-        <DialogContent className="bg-background border border-border">
-          <DialogHeader>
-            <DialogTitle>Notification Settings</DialogTitle>
-            <DialogDescription>
-              Manage your push notification preferences.
-            </DialogDescription>
-          </DialogHeader>
-          <PushNotificationToggle />
         </DialogContent>
       </Dialog>
 
@@ -270,7 +223,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </SidebarProvider>
+    </div>
   );
 };
 

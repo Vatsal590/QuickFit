@@ -10,7 +10,8 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  SidebarProvider,
+  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 const mainItems = [
@@ -40,55 +41,58 @@ export function AppSidebar() {
     isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   return (
-    <Sidebar collapsible="icon">
+    <SidebarProvider>
+      <Sidebar collapsible="icon">
+        <SidebarTrigger className="m-2 self-end" />
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink 
-                      to={item.url} 
-                      end 
-                      className={getNavCls(isActive(item.url))}
-                      >
-                        <item.icon className="mr-2 h-4 w-4" />
-                        <span>{item.title}</span>
-                      </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Workouts</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {workoutItems.map((item) => {
-                const section = item.url.includes('section=plans') ? 'plans' : 'generator';
-                return (
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {mainItems.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
                       <NavLink 
                         to={item.url} 
-                        className={getNavCls(isActive('/home', section))}
+                        end 
+                        className={getNavCls(isActive(item.url))}
+                      >
+                        <item.icon className="mr-2 h-4 w-4" />
+                        <span>{item.title}</span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+
+          <SidebarGroup>
+            <SidebarGroupLabel>Workouts</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {workoutItems.map((item) => {
+                  const section = item.url.includes('section=plans') ? 'plans' : 'generator';
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild>
+                        <NavLink 
+                          to={item.url} 
+                          className={getNavCls(isActive('/home', section))}
                         >
                           <item.icon className="mr-2 h-4 w-4" />
                           <span>{item.title}</span>
                         </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </SidebarProvider>
   );
 }
