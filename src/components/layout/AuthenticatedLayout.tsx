@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -102,128 +102,130 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
   };
 
   return (
-    <div className="min-h-screen flex w-full">
-      <AppSidebar />
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full">
+        <AppSidebar />
         
-      <div className="flex-1 flex flex-col">
-        {/* Header */}
-        <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center space-x-2">
-              <img 
-                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
-                alt="QuickFit Logo" 
-                className="w-8 h-8"
-              />
-              <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
+        <div className="flex-1 flex flex-col">
+          {/* Header */}
+          <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center space-x-2">
+                <img 
+                  src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                  alt="QuickFit Logo" 
+                  className="w-8 h-8"
+                />
+                <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
+              </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} alt="Profile" />
-                    <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56 bg-background border border-border z-50" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user?.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
-                  <Shield className="mr-2 h-4 w-4" />
-                  <span>Privacy Policy</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
-                  <FileText className="mr-2 h-4 w-4" />
-                  <span>Terms of Service</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign Out</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  <span>Delete Account</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        </header>
+            
+            <div className="flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={`https://avatar.vercel.sh/${user?.email}`} alt="Profile" />
+                      <AvatarFallback>{user?.email?.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56 bg-background border border-border z-50" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{getDisplayName()}</p>
+                      <p className="text-xs leading-none text-muted-foreground">
+                        {user?.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
+                    <User className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
+                    <Shield className="mr-2 h-4 w-4" />
+                    <span>Privacy Policy</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
+                    <FileText className="mr-2 h-4 w-4" />
+                    <span>Terms of Service</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    <span>Delete Account</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </header>
 
-        {/* Main Content */}
-        <main className="flex-1 overflow-auto">
-          {children}
-        </main>
+          {/* Main Content */}
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
+        </div>
+
+        {/* Dialogs */}
+        <Dialog open={showFitnessProfile} onOpenChange={setShowFitnessProfile}>
+          <DialogContent className="bg-background border border-border">
+            <DialogHeader>
+              <DialogTitle>Fitness Profile</DialogTitle>
+              <DialogDescription>
+                Update your fitness information to get better workout recommendations.
+              </DialogDescription>
+            </DialogHeader>
+            <FitnessProfileForm isOpen={showFitnessProfile} onClose={() => setShowFitnessProfile(false)} />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showPrivacyPolicy} onOpenChange={setShowPrivacyPolicy}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
+            <DialogHeader>
+              <DialogTitle>Privacy Policy</DialogTitle>
+            </DialogHeader>
+            <PrivacyPolicy isOpen={showPrivacyPolicy} onClose={() => setShowPrivacyPolicy(false)} />
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={showTermsConditions} onOpenChange={setShowTermsConditions}>
+          <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
+            <DialogHeader>
+              <DialogTitle>Terms of Service</DialogTitle>
+            </DialogHeader>
+            <TermsOfConditions isOpen={showTermsConditions} onClose={() => setShowTermsConditions(false)} />
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <AlertDialogContent className="bg-background border border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your account
+                and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleDeleteAccount}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                Delete Account
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-
-      {/* Dialogs */}
-      <Dialog open={showFitnessProfile} onOpenChange={setShowFitnessProfile}>
-        <DialogContent className="bg-background border border-border">
-          <DialogHeader>
-            <DialogTitle>Fitness Profile</DialogTitle>
-            <DialogDescription>
-              Update your fitness information to get better workout recommendations.
-            </DialogDescription>
-          </DialogHeader>
-          <FitnessProfileForm isOpen={showFitnessProfile} onClose={() => setShowFitnessProfile(false)} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showPrivacyPolicy} onOpenChange={setShowPrivacyPolicy}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
-          <DialogHeader>
-            <DialogTitle>Privacy Policy</DialogTitle>
-          </DialogHeader>
-          <PrivacyPolicy isOpen={showPrivacyPolicy} onClose={() => setShowPrivacyPolicy(false)} />
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showTermsConditions} onOpenChange={setShowTermsConditions}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
-          <DialogHeader>
-            <DialogTitle>Terms of Service</DialogTitle>
-          </DialogHeader>
-          <TermsOfConditions isOpen={showTermsConditions} onClose={() => setShowTermsConditions(false)} />
-        </DialogContent>
-      </Dialog>
-
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent className="bg-background border border-border">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDeleteAccount}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Delete Account
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    </SidebarProvider>
   );
 };
 

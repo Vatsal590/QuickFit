@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
@@ -41,9 +40,8 @@ export function AppSidebar() {
     isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   return (
-    <SidebarProvider>
-      <Sidebar collapsible="icon">
-        <SidebarTrigger className="m-2 self-end" />
+    <Sidebar collapsible="icon">
+      <SidebarTrigger className="m-2 self-end" />
 
         <SidebarContent>
           <SidebarGroup>
@@ -91,8 +89,7 @@ export function AppSidebar() {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        </SidebarContent>
-      </Sidebar>
-    </SidebarProvider>
+      </SidebarContent>
+    </Sidebar>
   );
 }
