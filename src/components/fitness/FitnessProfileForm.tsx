@@ -30,10 +30,14 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
   const [formData, setFormData] = useState({
     height: '',
     weight: '',
+    goal_weight: '',
     fitness_goal: '',
     body_type: [] as string[],
     workout_days_per_week: '',
-    available_equipment: [] as string[]
+    available_equipment: [] as string[],
+    diet_preferences: [] as string[],
+    food_allergies: [] as string[],
+    taste_preferences: [] as string[]
   });
 
   useEffect(() => {
@@ -41,10 +45,14 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
       setFormData({
         height: profile.height.toString(),
         weight: profile.weight.toString(),
+        goal_weight: profile.goal_weight ? profile.goal_weight.toString() : '',
         fitness_goal: profile.fitness_goal,
         body_type: Array.isArray(profile.body_type) ? profile.body_type : [profile.body_type],
         workout_days_per_week: profile.workout_days_per_week.toString(),
-        available_equipment: profile.available_equipment || []
+        available_equipment: profile.available_equipment || [],
+        diet_preferences: profile.diet_preferences || [],
+        food_allergies: profile.food_allergies || [],
+        taste_preferences: profile.taste_preferences || []
       });
     }
   }, [profile]);
@@ -88,7 +96,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.height || !formData.weight || !formData.fitness_goal || 
+    if (!formData.height || !formData.weight || !formData.goal_weight || !formData.fitness_goal || 
         formData.body_type.length === 0 || !formData.workout_days_per_week) {
       toast({
         title: "Missing information",
@@ -111,10 +119,14 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
       const profileData = {
         height: parseFloat(formData.height),
         weight: parseFloat(formData.weight),
+        goal_weight: parseFloat(formData.goal_weight),
         fitness_goal: formData.fitness_goal,
         body_type: formData.body_type,
         workout_days_per_week: parseInt(formData.workout_days_per_week),
-        available_equipment: formData.available_equipment
+        available_equipment: formData.available_equipment,
+        diet_preferences: formData.diet_preferences,
+        food_allergies: formData.food_allergies,
+        taste_preferences: formData.taste_preferences
       };
 
       let savedProfile;
@@ -178,7 +190,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                 <CardTitle className="text-lg">Basic Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <Label htmlFor="height">Height (cm)</Label>
                     <Input
@@ -190,13 +202,23 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                     />
                   </div>
                   <div>
-                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Label htmlFor="weight">Current Weight (kg)</Label>
                     <Input
                       id="weight"
                       type="number"
                       placeholder="70"
                       value={formData.weight}
                       onChange={(e) => setFormData(prev => ({ ...prev, weight: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
+                    <Input
+                      id="goal_weight"
+                      type="number"
+                      placeholder="75"
+                      value={formData.goal_weight}
+                      onChange={(e) => setFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
                     />
                   </div>
                 </div>
@@ -311,6 +333,77 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                     ))}
                   </SelectContent>
                 </Select>
+              </CardContent>
+            </Card>
+
+            {/* Diet Preferences */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg">Diet Preferences</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <Label className="text-sm font-medium">Dietary Restrictions</Label>
+                  <div className="grid grid-cols-3 gap-3 mt-2">
+                    {['Vegetarian', 'Vegan', 'Lactose Intolerant'].map((diet) => (
+                      <div key={diet} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={diet}
+                          checked={formData.diet_preferences.includes(diet)}
+                          onCheckedChange={(checked) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              diet_preferences: checked 
+                                ? [...prev.diet_preferences, diet]
+                                : prev.diet_preferences.filter(d => d !== diet)
+                            }));
+                          }}
+                        />
+                        <Label htmlFor={diet} className="text-sm font-normal">
+                          {diet}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="food-allergies">Food Allergies (comma-separated)</Label>
+                  <Input
+                    id="food-allergies"
+                    placeholder="e.g., nuts, shellfish, eggs"
+                    value={formData.food_allergies.join(', ')}
+                    onChange={(e) => setFormData(prev => ({ 
+                      ...prev, 
+                      food_allergies: e.target.value.split(',').map(s => s.trim()).filter(s => s)
+                    }))}
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium">Taste Preferences</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                    {['American', 'Italian', 'Indian', 'Continental', 'Greek', 'French', 'South American', 'Mexican'].map((cuisine) => (
+                      <div key={cuisine} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={cuisine}
+                          checked={formData.taste_preferences.includes(cuisine)}
+                          onCheckedChange={(checked) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              taste_preferences: checked 
+                                ? [...prev.taste_preferences, cuisine]
+                                : prev.taste_preferences.filter(c => c !== cuisine)
+                            }));
+                          }}
+                        />
+                        <Label htmlFor={cuisine} className="text-sm font-normal">
+                          {cuisine}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

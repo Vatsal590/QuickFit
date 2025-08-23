@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -34,9 +34,13 @@ export type Database = {
           available_equipment: string[]
           body_type: string
           created_at: string
+          diet_preferences: string[] | null
           fitness_goal: string
+          food_allergies: string[] | null
+          goal_weight: number | null
           height: number
           id: string
+          taste_preferences: string[] | null
           updated_at: string
           user_id: string
           weight: number
@@ -46,9 +50,13 @@ export type Database = {
           available_equipment?: string[]
           body_type: string
           created_at?: string
+          diet_preferences?: string[] | null
           fitness_goal: string
+          food_allergies?: string[] | null
+          goal_weight?: number | null
           height: number
           id?: string
+          taste_preferences?: string[] | null
           updated_at?: string
           user_id: string
           weight: number
@@ -58,9 +66,13 @@ export type Database = {
           available_equipment?: string[]
           body_type?: string
           created_at?: string
+          diet_preferences?: string[] | null
           fitness_goal?: string
+          food_allergies?: string[] | null
+          goal_weight?: number | null
           height?: number
           id?: string
+          taste_preferences?: string[] | null
           updated_at?: string
           user_id?: string
           weight?: number
@@ -140,6 +152,30 @@ export type Database = {
           p256dh_key?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weight_entries: {
+        Row: {
+          created_at: string
+          id: string
+          recorded_date: string
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recorded_date: string
+          user_id: string
+          weight: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recorded_date?: string
+          user_id?: string
+          weight?: number
         }
         Relationships: []
       }

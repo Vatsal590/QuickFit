@@ -9,10 +9,14 @@ export interface FitnessProfile {
   user_id: string;
   height: number;
   weight: number;
+  goal_weight?: number;
   fitness_goal: 'muscle_gain' | 'fat_loss' | 'athlete_training';
   body_type: string[];
   workout_days_per_week: number;
   available_equipment: string[];
+  diet_preferences?: string[];
+  food_allergies?: string[];
+  taste_preferences?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -20,10 +24,14 @@ export interface FitnessProfile {
 export interface CreateFitnessProfileData {
   height: number;
   weight: number;
+  goal_weight?: number;
   fitness_goal: string;
   body_type: string[];
   workout_days_per_week: number;
   available_equipment: string[];
+  diet_preferences?: string[];
+  food_allergies?: string[];
+  taste_preferences?: string[];
 }
 
 export const useFitnessProfile = () => {
@@ -61,7 +69,10 @@ export const useFitnessProfile = () => {
       
       return {
         ...data,
-        body_type: bodyType
+        body_type: bodyType,
+        diet_preferences: data.diet_preferences || [],
+        food_allergies: data.food_allergies || [],
+        taste_preferences: data.taste_preferences || []
       } as FitnessProfile;
     },
     enabled: !!user
