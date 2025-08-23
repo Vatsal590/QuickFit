@@ -1,4 +1,4 @@
-import { Calendar, History, Home, Target } from "lucide-react";
+import { Calendar, History, Home, Dumbbell } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar";
 
 const mainItems = [
@@ -20,7 +19,7 @@ const mainItems = [
 
 const workoutItems = [
   { title: "My Plans", url: "/home?section=plans", icon: Calendar },
-  { title: "Quick Workout", url: "/home?section=generator", icon: Target },
+  { title: "Quick Workout", url: "/home?section=generator", icon: Dumbbell },
 ];
 
 export function AppSidebar() {
@@ -40,9 +39,7 @@ export function AppSidebar() {
     isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
 
   return (
-    <Sidebar collapsible="icon">
-      <SidebarTrigger className="m-2 self-end" />
-
+    <Sidebar collapsible="icon" className="bg-sidebar border-r border-sidebar-border">
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Navigation</SidebarGroupLabel>
