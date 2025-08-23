@@ -122,7 +122,9 @@ const Home = () => {
 
     const handleOpenCustomize = () => {
       console.log('Opening customization dialog');
-      setShowPlanGenerator(true);
+      // This should open the fitness profile form, not the plan generator
+      const event = new CustomEvent('openFitnessProfileForm');
+      window.dispatchEvent(event);
     };
 
     const handleOpenFitnessProfile = () => {

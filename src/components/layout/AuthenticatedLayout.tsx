@@ -100,6 +100,18 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
     }
   };
 
+  // Listen for fitness profile form event
+  React.useEffect(() => {
+    const handleOpenFitnessProfile = () => {
+      setShowFitnessProfile(true);
+    };
+
+    window.addEventListener('openFitnessProfileForm', handleOpenFitnessProfile);
+    return () => {
+      window.removeEventListener('openFitnessProfileForm', handleOpenFitnessProfile);
+    };
+  }, []);
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
@@ -109,9 +121,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           {/* Header */}
           <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
-              <div className="md:hidden">
-                <SidebarTrigger />
-              </div>
+              <SidebarTrigger />
               <div className="flex items-center space-x-2">
                 <img 
                   src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
