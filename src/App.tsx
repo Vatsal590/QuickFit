@@ -13,6 +13,8 @@ import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import DeleteAccount from "./pages/DeleteAccount";
+import WeightTracker from "./pages/WeightTracker";
+import DietPlan from "./pages/DietPlan";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -107,6 +109,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <About />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/weight-tracker" 
+        element={
+          <ProtectedRoute>
+            <WeightTracker />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/diet-plan" 
+        element={
+          <ProtectedRoute>
+            <DietPlan />
           </ProtectedRoute>
         } 
       />

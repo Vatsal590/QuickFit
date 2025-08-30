@@ -207,9 +207,9 @@ const WeightTracker = () => {
                     {trend > 0 ? (
                       <TrendingUp className="h-4 w-4 text-green-500" />
                     ) : trend < 0 ? (
-                      <TrendingDown className="h-4 w-4 text-red-500" />
+                      <TrendingDown className="h-4 w-4 text-destructive" />
                     ) : null}
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {trend > 0 ? '+' : ''}{trend.toFixed(1)}kg from last entry
                     </span>
                   </div>
@@ -254,7 +254,7 @@ const WeightTracker = () => {
           <CardContent>
             <div className="space-y-2">
               {weightEntries.slice(-5).reverse().map((entry) => (
-                <div key={entry.id} className="flex justify-between items-center p-2 bg-gray-50 rounded">
+                <div key={entry.id} className="flex justify-between items-center p-2 bg-muted/50 rounded">
                   <span>{format(new Date(entry.recorded_date), 'PPP')}</span>
                   <span className="font-medium">{entry.weight}kg</span>
                 </div>
