@@ -5,10 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { CalendarIcon, Scale, TrendingUp, TrendingDown } from 'lucide-react';
+import { CalendarIcon, Scale, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -49,6 +50,31 @@ const WeightTracker = () => {
       }
     } catch (error) {
       console.error('Error loading weight entries:', error);
+    }
+  };
+
+  const deleteWeightEntry = async (entryId: string) => {
+    try {
+      const { error } = await supabase
+        .from('weight_entries')
+        .delete()
+        .eq('id', entryId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Entry deleted",
+        description: "Weight entry has been deleted successfully."
+      });
+      
+      loadWeightEntries();
+    } catch (error) {
+      console.error('Error deleting weight entry:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete weight entry. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -254,9 +280,36 @@ const WeightTracker = () => {
           <CardContent>
             <div className="space-y-2">
               {weightEntries.slice(-5).reverse().map((entry) => (
-                <div key={entry.id} className="flex justify-between items-center p-2 bg-muted/50 rounded">
+                <div key={entry.id} className="flex justify-between items-center p-2 bg-muted/50 rounded group">
                   <span>{format(new Date(entry.recorded_date), 'PPP')}</span>
-                  <span className="font-medium">{entry.weight}kg</span>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">{entry.weight}kg</span>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Weight Entry</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete this weight entry from {format(new Date(entry.recorded_date), 'PPP')}? This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteWeightEntry(entry.id)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
                 </div>
               ))}
             </div>
