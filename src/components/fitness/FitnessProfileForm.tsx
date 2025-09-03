@@ -344,8 +344,8 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardContent className="space-y-4">
                 <div>
                   <Label className="text-sm font-medium">Dietary Restrictions</Label>
-                  <div className="grid grid-cols-3 gap-3 mt-2">
-                    {['Vegetarian', 'Vegan', 'Lactose Intolerant'].map((diet) => (
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {['Vegetarian', 'Vegan', 'Ketogenic', 'Paleo', 'Lactose Intolerant', 'Gluten-Free'].map((diet) => (
                       <div key={diet} className="flex items-center space-x-2">
                         <Checkbox
                           id={diet}
@@ -368,22 +368,34 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                 </div>
                 
                 <div>
-                  <Label htmlFor="food-allergies">Food Allergies (comma-separated)</Label>
-                  <Input
-                    id="food-allergies"
-                    placeholder="e.g., nuts, shellfish, eggs"
-                    value={formData.food_allergies.join(', ')}
-                    onChange={(e) => setFormData(prev => ({ 
-                      ...prev, 
-                      food_allergies: e.target.value.split(',').map(s => s.trim()).filter(s => s)
-                    }))}
-                  />
+                  <Label className="text-sm font-medium">Food Allergies</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {['Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Soy', 'Wheat', 'Fish', 'Sesame'].map((allergy) => (
+                      <div key={allergy} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`allergy-${allergy}`}
+                          checked={formData.food_allergies.includes(allergy)}
+                          onCheckedChange={(checked) => {
+                            setFormData(prev => ({
+                              ...prev,
+                              food_allergies: checked 
+                                ? [...prev.food_allergies, allergy]
+                                : prev.food_allergies.filter(a => a !== allergy)
+                            }));
+                          }}
+                        />
+                        <Label htmlFor={`allergy-${allergy}`} className="text-sm font-normal">
+                          {allergy}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium">Taste Preferences</Label>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
-                    {['American', 'Italian', 'Indian', 'Continental', 'Greek', 'French', 'South American', 'Mexican'].map((cuisine) => (
+                  <Label className="text-sm font-medium">Cuisine Preferences</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {['American', 'Italian', 'Indian', 'Mexican', 'Chinese', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
                       <div key={cuisine} className="flex items-center space-x-2">
                         <Checkbox
                           id={cuisine}
