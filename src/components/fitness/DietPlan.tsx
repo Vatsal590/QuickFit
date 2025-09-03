@@ -110,70 +110,125 @@ const DietPlan = () => {
           'Tofu scramble with nutritional yeast and spinach',
           'Quinoa breakfast bowl with pumpkin seeds and berries',
           'Chia seed pudding with protein powder and nuts',
-          'Smoothie bowl with plant protein, spinach, and peanut butter'
+          'Smoothie bowl with plant protein, spinach, and peanut butter',
+          'Overnight oats with chia seeds and protein powder',
+          'Tempeh bacon with avocado toast',
+          'Protein-rich buckwheat pancakes with nuts',
+          'Green smoothie with hemp protein and spinach',
+          'Lentil breakfast hash with vegetables'
         ] : isVegetarian ? [
           'Greek yogurt with granola and mixed nuts', 
           'Scrambled eggs with cheese and whole grain toast',
           'Protein smoothie with whey protein and banana',
           'Cottage cheese pancakes with berries',
-          'Egg white omelet with vegetables and feta cheese'
+          'Egg white omelet with vegetables and feta cheese',
+          'Ricotta toast with honey and almonds',
+          'Protein-rich French toast with Greek yogurt',
+          'Quinoa breakfast bowl with Greek yogurt',
+          'Spinach and mushroom frittata',
+          'High-protein muesli with milk and nuts'
         ] : [
           'Scrambled eggs with turkey bacon and avocado',
           'Protein pancakes with Greek yogurt and berries',
           'Egg and chicken sausage breakfast burrito',
           'Smoked salmon bagel with cream cheese',
-          'Steak and eggs with sweet potato hash'
+          'Steak and eggs with sweet potato hash',
+          'Chicken and vegetable breakfast bowl',
+          'Turkey sausage with egg white scramble',
+          'Salmon and spinach omelet',
+          'Lean beef breakfast patty with eggs',
+          'Tuna and egg breakfast wrap'
         ],
         lunch: isVegan ? [
           'Lentil and quinoa salad with tahini dressing',
           'Black bean and tofu burger with sweet potato fries',
           'Buddha bowl with tempeh, quinoa, and hemp seeds',
           'Chickpea curry with brown rice',
-          'Protein-packed veggie wrap with hummus and nuts'
+          'Protein-packed veggie wrap with hummus and nuts',
+          'Tempeh stir-fry with brown rice and vegetables',
+          'Quinoa stuffed bell peppers with black beans',
+          'Lentil and vegetable protein bowl',
+          'Chickpea salad sandwich with avocado',
+          'Tofu and vegetable curry with quinoa'
         ] : isVegetarian ? [
           'Caprese sandwich with mozzarella and basil',
           'Quinoa and black bean veggie wrap',
           'Greek salad with feta and chickpeas',
           'Vegetarian protein bowl with eggs and cheese',
-          'Lentil soup with whole grain bread'
+          'Lentil soup with whole grain bread',
+          'Paneer and vegetable curry with rice',
+          'Egg salad sandwich with whole grain bread',
+          'Greek yogurt bowl with nuts and seeds',
+          'Cheese and spinach quesadilla',
+          'Vegetarian chef salad with hard-boiled eggs'
         ] : [
           'Grilled chicken Caesar salad with parmesan',
           'Turkey and avocado wrap with whole grain tortilla',
           'Lean beef and quinoa power bowl',
           'Salmon salad with mixed greens and nuts',
-          'Chicken breast with sweet potato and broccoli'
+          'Chicken breast with sweet potato and broccoli',
+          'Tuna salad with mixed vegetables',
+          'Grilled chicken and quinoa bowl',
+          'Turkey meatball sub with vegetables',
+          'Baked cod with roasted vegetables',
+          'Chicken thigh with brown rice and greens'
         ],
         dinner: isVegan ? [
           'Lentil walnut bolognese with whole grain pasta',
           'Stuffed bell peppers with quinoa and black beans',
           'Chickpea and vegetable curry with brown rice',
           'Tofu stir-fry with cashews and edamame',
-          'Black bean and sweet potato enchiladas'
+          'Black bean and sweet potato enchiladas',
+          'Tempeh and vegetable stir-fry with quinoa',
+          'Lentil shepherd\'s pie with sweet potato topping',
+          'Chickpea tikka masala with brown rice',
+          'Black bean and quinoa stuffed squash',
+          'Tofu pad thai with vegetables and peanuts'
         ] : isVegetarian ? [
           'Vegetable lasagna with ricotta and mozzarella',
           'Mushroom and spinach risotto with parmesan',
           'Eggplant parmesan with side salad',
           'Quinoa stuffed portobello mushrooms',
-          'Vegetarian chili with cornbread'
+          'Vegetarian chili with cornbread',
+          'Spinach and ricotta stuffed shells',
+          'Mushroom stroganoff with egg noodles',
+          'Caprese stuffed chicken (vegetarian version)',
+          'Greek moussaka with lentils',
+          'Cheese and vegetable enchiladas'
         ] : [
           'Grilled salmon with quinoa and asparagus',
           'Lean beef steak with roasted vegetables',
           'Chicken breast with brown rice and steamed broccoli',
           'Pork tenderloin with sweet potato and green beans',
-          'Turkey meatballs with zucchini noodles'
+          'Turkey meatballs with zucchini noodles',
+          'Baked cod with herb quinoa',
+          'Grilled chicken thighs with roasted Brussels sprouts',
+          'Lean ground beef stir-fry with vegetables',
+          'Pan-seared salmon with sweet potato',
+          'Turkey breast with wild rice and green vegetables'
         ],
         snacks: isVegan ? [
           'Mixed nuts and seeds with dried fruit',
           'Hummus with vegetables and whole grain crackers',
           'Protein smoothie with plant-based powder',
           'Almond butter with apple slices',
-          'Trail mix with cashews and pumpkin seeds'
+          'Trail mix with cashews and pumpkin seeds',
+          'Roasted chickpeas with spices',
+          'Chia pudding with coconut milk',
+          'Edamame with sea salt',
+          'Homemade energy balls with dates and nuts',
+          'Avocado toast with hemp seeds'
         ] : [
           'Greek yogurt with berries and granola',
           'Cottage cheese with cucumber and tomatoes',
           'Hard-boiled eggs with whole grain crackers',
           'Protein bar with nuts and seeds',
-          'String cheese with almonds'
+          'String cheese with almonds',
+          'Turkey roll-ups with cheese',
+          'Protein smoothie with whey powder',
+          'Tuna salad with crackers',
+          'Greek yogurt with nuts and honey',
+          'Cheese and whole grain crackers'
         ]
       },
       Italian: {
@@ -347,17 +402,31 @@ const DietPlan = () => {
       });
     };
 
-    // Randomly select meals
-    const getRandomMeal = (meals: string[]) => {
+    // Randomly select unique meals for each category
+    const getRandomMeals = (meals: string[], count: number = 2) => {
       const filtered = filterAllergies(meals);
-      return filtered[Math.floor(Math.random() * filtered.length)] || 'Custom meal';
+      const selected: string[] = [];
+      const availableMeals = [...filtered];
+      
+      for (let i = 0; i < count && availableMeals.length > 0; i++) {
+        const randomIndex = Math.floor(Math.random() * availableMeals.length);
+        selected.push(availableMeals[randomIndex]);
+        availableMeals.splice(randomIndex, 1); // Remove to avoid duplicates
+      }
+      
+      // If we don't have enough unique meals, fill with 'Custom meal'
+      while (selected.length < count) {
+        selected.push('Custom meal option');
+      }
+      
+      return selected;
     };
 
     return {
-      breakfast: [getRandomMeal(cuisineMeals.breakfast), getRandomMeal(cuisineMeals.breakfast)],
-      lunch: [getRandomMeal(cuisineMeals.lunch), getRandomMeal(cuisineMeals.lunch)],
-      dinner: [getRandomMeal(cuisineMeals.dinner), getRandomMeal(cuisineMeals.dinner)],
-      snacks: [getRandomMeal(cuisineMeals.snacks), getRandomMeal(cuisineMeals.snacks)]
+      breakfast: getRandomMeals(cuisineMeals.breakfast),
+      lunch: getRandomMeals(cuisineMeals.lunch),
+      dinner: getRandomMeals(cuisineMeals.dinner),
+      snacks: getRandomMeals(cuisineMeals.snacks)
     };
   };
 
