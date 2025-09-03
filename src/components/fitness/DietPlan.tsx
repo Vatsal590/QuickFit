@@ -4,8 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useFitnessProfile } from '@/hooks/useFitnessProfile';
-import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, RefreshCw } from 'lucide-react';
+import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, RefreshCw, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface MealPlan {
@@ -20,10 +24,28 @@ interface MealPlan {
 }
 
 const DietPlan = () => {
-  const { profile } = useFitnessProfile();
+  const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editFormData, setEditFormData] = useState({
+    goal_weight: '',
+    diet_preferences: [] as string[],
+    food_allergies: [] as string[],
+    taste_preferences: [] as string[]
+  });
+
+  useEffect(() => {
+    if (profile) {
+      setEditFormData({
+        goal_weight: profile.goal_weight ? profile.goal_weight.toString() : '',
+        diet_preferences: profile.diet_preferences || [],
+        food_allergies: profile.food_allergies || [],
+        taste_preferences: profile.taste_preferences || []
+      });
+    }
+  }, [profile]);
 
   const generateDietPlan = () => {
     if (!profile) {
@@ -56,9 +78,8 @@ const DietPlan = () => {
     const isDietVegan = profile.diet_preferences?.includes('Vegan');
     const isLactoseIntolerant = profile.diet_preferences?.includes('Lactose Intolerant');
     
-    // Get taste preferences
+    // Get taste preferences for multi-cuisine support
     const tastePreferences = profile.taste_preferences || ['American'];
-    const primaryCuisine = tastePreferences[0];
 
     // Get food allergies to avoid
     const allergies = profile.food_allergies || [];
@@ -68,7 +89,7 @@ const DietPlan = () => {
 
     for (let day = 1; day <= 7; day++) {
       const meals = generateMealsForDay(
-        primaryCuisine,
+        tastePreferences, // Pass all cuisines instead of just primary
         isDietVegetarian,
         isDietVegan,
         isLactoseIntolerant,
@@ -94,7 +115,7 @@ const DietPlan = () => {
   };
 
   const generateMealsForDay = (
-    cuisine: string,
+    cuisines: string[],
     isVegetarian: boolean,
     isVegan: boolean,
     isLactoseIntolerant: boolean,
@@ -390,9 +411,6 @@ const DietPlan = () => {
       }
     };
 
-    // Get meals for the selected cuisine or default to American
-    const cuisineMeals = mealOptions[cuisine as keyof typeof mealOptions] || mealOptions.American;
-
     // Filter out foods with allergies
     const filterAllergies = (foods: string[]) => {
       return foods.filter(food => {
@@ -402,7 +420,49 @@ const DietPlan = () => {
       });
     };
 
-    // Randomly select unique meals for each category
+    // Get meals from multiple cuisines, ensuring each cuisine appears at least once
+    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2) => {
+      const selected: string[] = [];
+      
+      if (cuisines.length === 1) {
+        // Single cuisine - use existing logic
+        const cuisineName = cuisines[0];
+        const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
+        return getRandomMeals(cuisineMeals[mealType], count);
+      }
+      
+      // Multiple cuisines - ensure each is represented
+      const availableCuisines = [...cuisines];
+      
+      // First, get one meal from each cuisine
+      for (let i = 0; i < Math.min(count, availableCuisines.length); i++) {
+        const cuisineName = availableCuisines[i];
+        const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
+        const meals = filterAllergies(cuisineMeals[mealType]);
+        if (meals.length > 0) {
+          const randomIndex = Math.floor(Math.random() * meals.length);
+          selected.push(`${meals[randomIndex]} (${cuisineName})`);
+        }
+      }
+      
+      // Fill remaining slots with random meals from any selected cuisine
+      while (selected.length < count) {
+        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
+        const cuisineMeals = mealOptions[randomCuisine as keyof typeof mealOptions] || mealOptions.American;
+        const meals = filterAllergies(cuisineMeals[mealType]);
+        if (meals.length > 0) {
+          const randomIndex = Math.floor(Math.random() * meals.length);
+          const meal = `${meals[randomIndex]} (${randomCuisine})`;
+          if (!selected.includes(meal)) {
+            selected.push(meal);
+          }
+        }
+      }
+      
+      return selected;
+    };
+
+    // Randomly select unique meals for each category (single cuisine)
     const getRandomMeals = (meals: string[], count: number = 2) => {
       const filtered = filterAllergies(meals);
       const selected: string[] = [];
@@ -423,11 +483,51 @@ const DietPlan = () => {
     };
 
     return {
-      breakfast: getRandomMeals(cuisineMeals.breakfast),
-      lunch: getRandomMeals(cuisineMeals.lunch),
-      dinner: getRandomMeals(cuisineMeals.dinner),
-      snacks: getRandomMeals(cuisineMeals.snacks)
+      breakfast: getMealsFromMultipleCuisines('breakfast'),
+      lunch: getMealsFromMultipleCuisines('lunch'),
+      dinner: getMealsFromMultipleCuisines('dinner'),
+      snacks: getMealsFromMultipleCuisines('snacks')
     };
+  };
+
+  const handleUpdateProfile = async () => {
+    if (!profile) return;
+
+    try {
+      await updateProfile({
+        ...profile,
+        goal_weight: editFormData.goal_weight ? parseFloat(editFormData.goal_weight) : null,
+        diet_preferences: editFormData.diet_preferences,
+        food_allergies: editFormData.food_allergies,
+        taste_preferences: editFormData.taste_preferences
+      });
+
+      toast({
+        title: "Profile Updated",
+        description: "Your diet preferences have been updated successfully."
+      });
+
+      setIsEditingProfile(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleCheckboxChange = (
+    field: 'diet_preferences' | 'food_allergies' | 'taste_preferences', 
+    value: string, 
+    checked: boolean
+  ) => {
+    setEditFormData(prev => ({
+      ...prev,
+      [field]: checked 
+        ? [...prev[field], value]
+        : prev[field].filter(item => item !== value)
+    }));
   };
 
   const clearDietPlan = () => {
@@ -517,6 +617,89 @@ const DietPlan = () => {
                 >
                   {isGenerating ? 'Generating...' : 'Generate 7-Day Diet Plan'}
                 </Button>
+
+                <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" size="icon">
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle>Edit Diet Preferences</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-6 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
+                        <Input
+                          id="goal_weight"
+                          type="number"
+                          step="0.1"
+                          placeholder="Enter your goal weight"
+                          value={editFormData.goal_weight}
+                          onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label>Diet Preferences</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['Vegetarian', 'Vegan', 'Ketogenic', 'Paleo', 'Lactose Intolerant', 'Gluten-Free'].map((pref) => (
+                            <div key={pref} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`diet-${pref}`}
+                                checked={editFormData.diet_preferences.includes(pref)}
+                                onCheckedChange={(checked) => handleCheckboxChange('diet_preferences', pref, checked as boolean)}
+                              />
+                              <Label htmlFor={`diet-${pref}`} className="text-sm">{pref}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label>Food Allergies</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Soy', 'Wheat', 'Fish', 'Sesame'].map((allergy) => (
+                            <div key={allergy} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`allergy-${allergy}`}
+                                checked={editFormData.food_allergies.includes(allergy)}
+                                onCheckedChange={(checked) => handleCheckboxChange('food_allergies', allergy, checked as boolean)}
+                              />
+                              <Label htmlFor={`allergy-${allergy}`} className="text-sm">{allergy}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label>Cuisine Preferences</Label>
+                        <div className="grid grid-cols-2 gap-2">
+                          {['American', 'Italian', 'Indian', 'Mexican', 'Chinese', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
+                            <div key={cuisine} className="flex items-center space-x-2">
+                              <Checkbox
+                                id={`cuisine-${cuisine}`}
+                                checked={editFormData.taste_preferences.includes(cuisine)}
+                                onCheckedChange={(checked) => handleCheckboxChange('taste_preferences', cuisine, checked as boolean)}
+                              />
+                              <Label htmlFor={`cuisine-${cuisine}`} className="text-sm">{cuisine}</Label>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <div className="flex gap-2 pt-4">
+                        <Button onClick={handleUpdateProfile} className="flex-1">
+                          Save Changes
+                        </Button>
+                        <Button variant="outline" onClick={() => setIsEditingProfile(false)} className="flex-1">
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 
                 {dietPlan.length > 0 && (
                   <AlertDialog>
