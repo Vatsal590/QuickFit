@@ -24,6 +24,7 @@ interface MealPlan {
 }
 
 const DietPlan = () => {
+  console.log('DietPlan component rendering...');
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
@@ -123,6 +124,7 @@ const DietPlan = () => {
     isBulking: boolean,
     isCutting: boolean
   ) => {
+    console.log('generateMealsForDay called with cuisines:', cuisines);
     // Define meal options by cuisine and dietary restrictions with more protein-dense options
     const mealOptions = {
       American: {
@@ -235,7 +237,7 @@ const DietPlan = () => {
           'Mushroom stroganoff with egg noodles',
           'Greek moussaka with lentils',
           'Cheese and vegetable enchiladas',
-          'Vegetarian shepherd\'s pie',
+          'Vegetarian shepherds pie',
           'Stuffed zucchini with quinoa and cheese',
           'Vegetarian curry with basmati rice'
         ] : [
