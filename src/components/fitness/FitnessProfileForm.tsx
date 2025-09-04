@@ -348,7 +348,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                     {['Vegetarian', 'Vegan', 'Ketogenic', 'Paleo', 'Lactose Intolerant', 'Gluten-Free'].map((diet) => (
                       <div key={diet} className="flex items-center space-x-2">
                         <Checkbox
-                          id={diet}
+                          id={`diet-${diet}`}
                           checked={formData.diet_preferences.includes(diet)}
                           onCheckedChange={(checked) => {
                             setFormData(prev => ({
@@ -359,7 +359,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                             }));
                           }}
                         />
-                        <Label htmlFor={diet} className="text-sm font-normal">
+                        <Label htmlFor={`diet-${diet}`} className="text-sm font-normal">
                           {diet}
                         </Label>
                       </div>
