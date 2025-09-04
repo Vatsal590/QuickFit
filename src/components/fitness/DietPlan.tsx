@@ -1049,14 +1049,9 @@ const DietPlan = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
-                            {plan.meals.breakfast.map((meal, index) => (
-                              <div key={index} className="text-sm">
-                                {meal}
-                                {index < plan.meals.breakfast.length - 1 && (
-                                  <span className="text-muted-foreground"> or </span>
-                                )}
-                              </div>
-                            ))}
+                            <div className="text-sm">
+                              {plan.meals.breakfast.join(' or ')}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -1070,14 +1065,9 @@ const DietPlan = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
-                            {plan.meals.lunch.map((meal, index) => (
-                              <div key={index} className="text-sm">
-                                {meal}
-                                {index < plan.meals.lunch.length - 1 && (
-                                  <span className="text-muted-foreground"> or </span>
-                                )}
-                              </div>
-                            ))}
+                            <div className="text-sm">
+                              {plan.meals.lunch.join(' or ')}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -1091,14 +1081,9 @@ const DietPlan = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
-                            {plan.meals.dinner.map((meal, index) => (
-                              <div key={index} className="text-sm">
-                                {meal}
-                                {index < plan.meals.dinner.length - 1 && (
-                                  <span className="text-muted-foreground"> or </span>
-                                )}
-                              </div>
-                            ))}
+                            <div className="text-sm">
+                              {plan.meals.dinner.join(' or ')}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
@@ -1109,14 +1094,9 @@ const DietPlan = () => {
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
-                            {plan.meals.snacks.map((snack, index) => (
-                              <div key={index} className="text-sm">
-                                {snack}
-                                {index < plan.meals.snacks.length - 1 && (
-                                  <span className="text-muted-foreground"> or </span>
-                                )}
-                              </div>
-                            ))}
+                            <div className="text-sm">
+                              {plan.meals.snacks.join(' or ')}
+                            </div>
                           </div>
                         </CardContent>
                       </Card>
