@@ -395,7 +395,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                 <div>
                   <Label className="text-sm font-medium">Cuisine Preferences</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
-                    {['American', 'Italian', 'Indian', 'Mexican', 'Chinese', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
+                    {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
                       <div key={cuisine} className="flex items-center space-x-2">
                         <Checkbox
                           id={cuisine}
