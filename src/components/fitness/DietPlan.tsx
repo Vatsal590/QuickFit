@@ -64,13 +64,13 @@ const DietPlan = () => {
     const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
 
     // Calculate target calories
-    const baseCalories = 2000; // Base calculation would be more complex in real app
+    const baseCalories = 2000;
     let targetCalories = baseCalories;
     
     if (isBulking) {
-      targetCalories += 500; // Surplus for bulking
+      targetCalories += 500;
     } else if (isCutting) {
-      targetCalories -= 500; // Deficit for cutting
+      targetCalories -= 500;
     }
 
     // Get dietary preferences
@@ -89,7 +89,7 @@ const DietPlan = () => {
 
     for (let day = 1; day <= 7; day++) {
       const meals = generateMealsForDay(
-        tastePreferences, // Pass all cuisines instead of just primary
+        tastePreferences,
         isDietVegetarian,
         isDietVegan,
         isLactoseIntolerant,
@@ -123,32 +123,22 @@ const DietPlan = () => {
     isBulking: boolean,
     isCutting: boolean
   ) => {
-    // Define meal options by cuisine and dietary restrictions with more protein-dense options
-    // Define meal options by cuisine and dietary restrictions with more protein-dense options
+    // Define meal options by cuisine and dietary restrictions
     const mealOptions = {
       American: {
         breakfast: isVegan ? [
-          'Protein-packed oatmeal with hemp seeds and almond butter', 
+          'Protein-packed oatmeal with hemp seeds and almond butter',
           'Tofu scramble with nutritional yeast and spinach',
           'Quinoa breakfast bowl with pumpkin seeds and berries',
           'Chia seed pudding with protein powder and nuts',
-          'Smoothie bowl with plant protein, spinach, and peanut butter',
+          'Smoothie bowl with plant protein and spinach',
           'Overnight oats with chia seeds and protein powder',
           'Tempeh bacon with avocado toast',
           'Protein-rich buckwheat pancakes with nuts',
           'Green smoothie with hemp protein and spinach',
-          'Lentil breakfast hash with vegetables',
-          'Vegan protein waffles with almond butter',
-          'Cashew cream parfait with berries',
-          'Plant-based breakfast sandwich with tofu',
-          'Acai bowl with granola and mixed nuts',
-          'Vegan breakfast burrito with black beans',
-          'Steel-cut oats with cinnamon and walnuts',
-          'Quinoa porridge with maple syrup and pecans',
-          'Coconut yogurt parfait with chia seeds',
-          'Avocado toast with hemp hearts and lime'
+          'Lentil breakfast hash with vegetables'
         ] : isVegetarian ? [
-          'Greek yogurt with granola and mixed nuts', 
+          'Greek yogurt with granola and mixed nuts',
           'Scrambled eggs with cheese and whole grain toast',
           'Protein smoothie with whey protein and banana',
           'Cottage cheese pancakes with berries',
@@ -157,16 +147,7 @@ const DietPlan = () => {
           'Protein-rich French toast with Greek yogurt',
           'Quinoa breakfast bowl with Greek yogurt',
           'Spinach and mushroom frittata',
-          'High-protein muesli with milk and nuts',
-          'Breakfast parfait with Greek yogurt and nuts',
-          'Vegetarian breakfast burrito with black beans',
-          'Protein-packed smoothie bowl',
-          'Cottage cheese bowl with fresh berries',
-          'Vegetarian eggs benedict with spinach',
-          'Chia seed breakfast pudding with yogurt',
-          'High-protein pancakes with cottage cheese',
-          'Greek yogurt bowl with nuts and honey',
-          'Vegetarian breakfast hash with sweet potatoes'
+          'High-protein muesli with milk and nuts'
         ] : [
           'Scrambled eggs with turkey bacon and avocado',
           'Protein pancakes with Greek yogurt and berries',
@@ -177,58 +158,31 @@ const DietPlan = () => {
           'Turkey sausage with egg white scramble',
           'Salmon and spinach omelet',
           'Lean beef breakfast patty with eggs',
-          'Tuna and egg breakfast wrap',
-          'Chicken breakfast hash with sweet potatoes',
-          'Turkey and egg breakfast sandwich',
-          'Bacon and egg breakfast bowl',
-          'Protein-rich breakfast skillet with ground turkey',
-          'Smoked salmon and cream cheese scramble',
-          'Chicken apple sausage with sweet potato',
-          'Beef and egg breakfast wrap',
-          'Turkey bacon and avocado toast',
-          'Salmon breakfast bowl with quinoa'
+          'Chicken breakfast hash with sweet potatoes'
         ],
         lunch: isVegan ? [
           'Lentil and quinoa salad with tahini dressing',
           'Black bean and tofu burger with sweet potato fries',
-          'Buddha bowl with tempeh, quinoa, and hemp seeds',
+          'Buddha bowl with tempeh and quinoa',
           'Chickpea curry with brown rice',
-          'Protein-packed veggie wrap with hummus and nuts',
+          'Protein-packed veggie wrap with hummus',
           'Tempeh stir-fry with brown rice and vegetables',
           'Quinoa stuffed bell peppers with black beans',
-          'Lentil and vegetable protein bowl',
-          'Chickpea salad sandwich with avocado',
-          'Tofu and vegetable curry with quinoa',
-          'Vegan mac and cheese with cashew cream',
-          'Black bean quinoa burrito bowl',
-          'Lentil walnut meatballs with marinara'
+          'Lentil and vegetable protein bowl'
         ] : isVegetarian ? [
           'Quinoa and black bean veggie wrap',
           'Greek salad with feta and chickpeas',
           'Vegetarian protein bowl with eggs and cheese',
           'Lentil soup with whole grain bread',
           'Paneer and vegetable curry with rice',
-          'Egg salad sandwich with whole grain bread',
-          'Greek yogurt bowl with nuts and seeds',
-          'Cheese and spinach quesadilla',
-          'Vegetarian chef salad with hard-boiled eggs',
-          'Grilled halloumi and vegetable wrap',
-          'Vegetarian pasta salad with mozzarella',
-          'Spinach and ricotta stuffed portobello'
+          'Egg salad sandwich with whole grain bread'
         ] : [
           'Grilled chicken Caesar salad with parmesan',
           'Turkey and avocado wrap with whole grain tortilla',
           'Lean beef and quinoa power bowl',
           'Salmon salad with mixed greens and nuts',
           'Chicken breast with sweet potato and broccoli',
-          'Tuna salad with mixed vegetables',
-          'Grilled chicken and quinoa bowl',
-          'Turkey meatball sub with vegetables',
-          'Baked cod with roasted vegetables',
-          'Chicken thigh with brown rice and greens',
-          'Buffalo chicken salad with blue cheese',
-          'Turkey club sandwich with sweet potato fries',
-          'Grilled salmon and avocado salad'
+          'Tuna salad with mixed vegetables'
         ],
         dinner: isVegan ? [
           'Lentil walnut bolognese with whole grain pasta',
@@ -236,41 +190,21 @@ const DietPlan = () => {
           'Chickpea and vegetable curry with brown rice',
           'Tofu stir-fry with cashews and edamame',
           'Black bean and sweet potato enchiladas',
-          'Tempeh and vegetable stir-fry with quinoa',
-          'Lentil shepherd pie with sweet potato topping',
-          'Chickpea tikka masala with brown rice',
-          'Black bean and quinoa stuffed squash',
-          'Tofu pad thai with vegetables and peanuts',
-          'Vegan chili with cornbread',
-          'Stuffed acorn squash with quinoa and cranberries',
-          'Mushroom and lentil stroganoff'
+          'Tempeh and vegetable stir-fry with quinoa'
         ] : isVegetarian ? [
           'Vegetable lasagna with ricotta and mozzarella',
           'Mushroom and spinach risotto with parmesan',
           'Eggplant parmesan with side salad',
           'Quinoa stuffed portobello mushrooms',
           'Vegetarian chili with cornbread',
-          'Spinach and ricotta stuffed shells',
-          'Mushroom stroganoff with egg noodles',
-          'Greek moussaka with lentils',
-          'Cheese and vegetable enchiladas',
-          'Vegetarian shepherd pie',
-          'Stuffed zucchini with quinoa and cheese',
-          'Vegetarian curry with basmati rice'
+          'Spinach and ricotta stuffed shells'
         ] : [
           'Grilled salmon with quinoa and asparagus',
           'Lean beef steak with roasted vegetables',
           'Chicken breast with brown rice and steamed broccoli',
           'Pork tenderloin with sweet potato and green beans',
           'Turkey meatballs with zucchini noodles',
-          'Baked cod with herb quinoa',
-          'Grilled chicken thighs with roasted Brussels sprouts',
-          'Lean ground beef stir-fry with vegetables',
-          'Pan-seared salmon with sweet potato',
-          'Turkey breast with wild rice and green vegetables',
-          'Beef and broccoli with brown rice',
-          'Grilled chicken with roasted sweet potatoes',
-          'Pan-seared halibut with quinoa pilaf'
+          'Baked cod with herb quinoa'
         ],
         snacks: isVegan ? [
           'Mixed nuts and seeds with dried fruit',
@@ -278,22 +212,14 @@ const DietPlan = () => {
           'Protein smoothie with plant-based powder',
           'Almond butter with apple slices',
           'Trail mix with cashews and pumpkin seeds',
-          'Roasted chickpeas with spices',
-          'Chia pudding with coconut milk',
-          'Edamame with sea salt',
-          'Homemade energy balls with dates and nuts',
-          'Avocado toast with hemp seeds'
+          'Roasted chickpeas with spices'
         ] : [
           'Greek yogurt with berries and granola',
           'Cottage cheese with cucumber and tomatoes',
           'Hard-boiled eggs with whole grain crackers',
           'Protein bar with nuts and seeds',
           'String cheese with almonds',
-          'Turkey roll-ups with cheese',
-          'Protein smoothie with whey powder',
-          'Tuna salad with crackers',
-          'Greek yogurt with nuts and honey',
-          'Cheese and whole grain crackers'
+          'Turkey roll-ups with cheese'
         ]
       },
       Italian: {
@@ -301,389 +227,50 @@ const DietPlan = () => {
           'Espresso with vegan protein pastry and nuts',
           'Oat milk cappuccino with almond biscotti',
           'Fresh fruit salad with hemp seeds',
-          'Vegan cornetto with cashew cream',
-          'Quinoa breakfast bowl with Italian herbs',
-          'Vegan tiramisu overnight oats',
-          'Italian fruit and nut granola bowl'
+          'Vegan cornetto with cashew cream'
         ] : [
           'Cappuccino with ricotta-filled cornetto',
           'Italian frittata with herbs and parmesan',
           'Espresso with Greek yogurt and honey',
-          'Prosciutto and mozzarella breakfast wrap',
-          'Italian breakfast pastry with cappuccino',
-          'Ricotta and berry breakfast bowl',
-          'Italian-style egg scramble with herbs'
+          'Prosciutto and mozzarella breakfast wrap'
         ],
         lunch: isVegan ? [
           'Pasta e fagioli with white beans and herbs',
           'Minestrone soup with cannellini beans',
           'Vegan pasta with lentil bolognese',
-          'Chickpea and vegetable risotto',
-          'Vegan arancini with mushrooms',
-          'Pasta with roasted vegetables and herbs',
-          'Italian-style stuffed tomatoes with quinoa'
+          'Chickpea and vegetable risotto'
         ] : isVegetarian ? [
           'Margherita pizza with extra mozzarella',
           'Caprese salad with burrata cheese',
           'Pasta carbonara with eggs and parmesan',
-          'Eggplant parmigiana with ricotta',
-          'Four cheese risotto with spinach',
-          'Penne with pesto and pine nuts',
-          'Italian vegetable soup with parmesan'
+          'Eggplant parmigiana with ricotta'
         ] : [
           'Chicken parmigiana with marinara sauce',
           'Prosciutto and arugula pizza',
           'Seafood risotto with shrimp and scallops',
-          'Osso buco with polenta',
-          'Pasta with Italian sausage and peppers',
-          'Grilled branzino with Italian herbs',
-          'Chicken saltimbocca with sage'
+          'Osso buco with polenta'
         ],
         dinner: isVegan ? [
           'Pasta arrabbiata with white beans',
           'Vegan eggplant parmigiana with cashew cheese',
           'Lentil and herb pasta with nutritional yeast',
-          'Chickpea and spinach curry Italian-style',
-          'Vegan risotto with mushrooms and herbs',
-          'Pasta with roasted vegetables and balsamic',
-          'Italian-style stuffed zucchini with quinoa'
+          'Chickpea and spinach curry Italian-style'
         ] : isVegetarian ? [
           'Four cheese ravioli with spinach',
           'Mushroom and truffle risotto',
           'Gnocchi with gorgonzola and walnuts',
-          'Vegetarian lasagna with ricotta',
-          'Penne with vodka sauce and parmesan',
-          'Italian vegetable gratin with mozzarella',
-          'Risotto with asparagus and lemon'
+          'Vegetarian lasagna with ricotta'
         ] : [
           'Osso buco with saffron risotto',
           'Seafood linguine with clams and mussels',
           'Veal piccata with lemon and capers',
-          'Grilled branzino with herbs',
-          'Chicken cacciatore with polenta',
-          'Italian braised short ribs',
-          'Salmon with Italian herb crust'
+          'Grilled branzino with herbs'
         ],
         snacks: [
           'Olives and nuts mix',
           'Bruschetta with tomatoes and basil',
           'Italian nuts and dried fruits',
-          'Parmigiano-Reggiano with walnuts',
-          'Italian antipasto plate',
-          'Focaccia with olive tapenade'
-        ]
-      },
-      Indian: {
-        breakfast: isVegan ? [
-          'Upma with vegetables and cashews',
-          'Poha with peanuts and curry leaves',
-          'Idli with sambar and coconut chutney',
-          'Quinoa upma with mixed vegetables',
-          'Moong dal cheela with vegetables',
-          'Masala oats with vegetables',
-          'Ragi dosa with coconut chutney'
-        ] : [
-          'Paratha with Greek yogurt and pickle',
-          'Dosa with paneer filling and chutney',
-          'Scrambled paneer with roti',
-          'Lassi with almonds and honey',
-          'Egg curry with chapati',
-          'Paneer sandwich with mint chutney',
-          'Vegetable uttapam with sambar'
-        ],
-        lunch: isVegan ? [
-          'Dal tadka with brown rice and vegetables',
-          'Chana masala with quinoa',
-          'Mixed vegetable curry with roti',
-          'Rajma (kidney bean curry) with rice',
-          'Palak dal with jeera rice',
-          'Bhindi masala with chapati',
-          'Aloo gobi with brown rice'
-        ] : isVegetarian ? [
-          'Paneer butter masala with naan',
-          'Palak paneer with brown rice',
-          'Chole bhature with yogurt',
-          'Vegetable biryani with raita',
-          'Paneer tikka with mint chutney',
-          'Dal makhani with jeera rice',
-          'Vegetable korma with basmati rice'
-        ] : [
-          'Chicken tikka masala with basmati rice',
-          'Lamb biryani with boiled eggs',
-          'Fish curry with coconut rice',
-          'Butter chicken with garlic naan',
-          'Mutton curry with jeera rice',
-          'Tandoori chicken with vegetables',
-          'Chicken biryani with raita'
-        ],
-        dinner: isVegan ? [
-          'Mixed dal with vegetables and quinoa',
-          'Baingan bharta with roti',
-          'Aloo gobi with brown rice',
-          'Vegetable korma with coconut milk',
-          'Chana dal with mixed vegetables',
-          'Bhindi curry with chapati',
-          'Vegetable pulao with cucumber raita'
-        ] : isVegetarian ? [
-          'Palak paneer with whole wheat roti',
-          'Paneer makhani with jeera rice',
-          'Vegetable biryani with cucumber raita',
-          'Dal makhani with naan',
-          'Paneer curry with basmati rice',
-          'Vegetable korma with rice',
-          'Chole with bhature'
-        ] : [
-          'Tandoori chicken with mint chutney',
-          'Mutton curry with basmati rice',
-          'Fish tikka with vegetable curry',
-          'Chicken biryani with boiled eggs',
-          'Lamb curry with naan',
-          'Chicken curry with jeera rice',
-          'Fish curry with coconut rice'
-        ],
-        snacks: [
-          'Roasted chickpeas with spices',
-          'Masala chai with nuts',
-          'Mixed namkeen with peanuts',
-          'Almonds and dates mix',
-          'Samosa with mint chutney',
-          'Dhokla with green chutney'
-        ]
-      },
-      Mexican: {
-        breakfast: isVegan ? [
-          'Tofu scramble with black beans and salsa',
-          'Avocado toast with hemp seeds',
-          'Quinoa breakfast bowl with peppers',
-          'Chia seed pudding with coconut and lime',
-          'Bean and vegetable breakfast burrito',
-          'Vegan breakfast tacos with mushrooms',
-          'Mexican quinoa bowl with black beans'
-        ] : [
-          'Huevos rancheros with refried beans',
-          'Breakfast burrito with eggs and cheese',
-          'Scrambled eggs with chorizo and peppers',
-          'Greek yogurt with granola and berries',
-          'Mexican egg scramble with jalapeños',
-          'Breakfast quesadilla with eggs and cheese',
-          'Chilaquiles with fried eggs'
-        ],
-        lunch: isVegan ? [
-          'Black bean and quinoa tacos',
-          'Veggie burrito bowl with guacamole',
-          'Lentil and vegetable quesadilla',
-          'Chickpea and sweet potato tacos',
-          'Vegan Mexican rice bowl',
-          'Black bean and corn salad',
-          'Stuffed bell peppers Mexican-style'
-        ] : isVegetarian ? [
-          'Cheese quesadilla with black beans',
-          'Veggie burrito with rice and beans',
-          'Bean and cheese enchiladas',
-          'Mexican salad with avocado and cheese',
-          'Vegetarian taco bowl',
-          'Cheese and spinach quesadilla',
-          'Mexican stuffed sweet potatoes'
-        ] : [
-          'Chicken tacos with cilantro and onions',
-          'Carnitas bowl with brown rice',
-          'Fish tacos with cabbage slaw',
-          'Beef barbacoa burrito',
-          'Chicken fajita bowl',
-          'Carne asada with Mexican rice',
-          'Shrimp tacos with avocado'
-        ],
-        dinner: isVegan ? [
-          'Vegetable and black bean fajitas',
-          'Quinoa stuffed bell peppers',
-          'Lentil and sweet potato enchiladas',
-          'Chickpea and vegetable tostadas',
-          'Vegan chili with cornbread',
-          'Mexican stuffed zucchini',
-          'Black bean and quinoa stuffed peppers'
-        ] : isVegetarian ? [
-          'Cheese enchiladas with verde sauce',
-          'Veggie burrito with guacamole',
-          'Black bean and cheese quesadillas',
-          'Vegetable fajitas with peppers',
-          'Mexican rice and bean bowl',
-          'Cheese and bean tostadas',
-          'Vegetarian Mexican lasagna'
-        ] : [
-          'Chicken fajitas with peppers and onions',
-          'Carne asada with cilantro lime rice',
-          'Fish tacos with mango salsa',
-          'Pork carnitas with black beans',
-          'Beef enchiladas with cheese',
-          'Chicken and rice Mexican bowl',
-          'Shrimp fajitas with vegetables'
-        ],
-        snacks: [
-          'Guacamole with baked tortilla chips',
-          'Salsa with fresh vegetables',
-          'Mixed nuts with chili powder',
-          'Roasted pumpkin seeds',
-          'Mexican trail mix',
-          'Bean and cheese nachos'
-        ]
-      },
-      Thai: {
-        breakfast: isVegan ? [
-          'Thai coconut oatmeal with mango',
-          'Tofu pad see ew with vegetables',
-          'Thai quinoa breakfast bowl',
-          'Coconut chia pudding with tropical fruits',
-          'Thai-style vegetable omelet with tofu'
-        ] : [
-          'Thai-style scrambled eggs with basil',
-          'Coconut rice with mango and nuts',
-          'Thai breakfast wrap with eggs',
-          'Green curry breakfast bowl'
-        ],
-        lunch: isVegan ? [
-          'Pad thai with tofu and vegetables',
-          'Green curry with tofu and vegetables',
-          'Thai basil stir-fry with tofu',
-          'Tom yum soup with mushrooms',
-          'Thai quinoa salad with peanut dressing'
-        ] : isVegetarian ? [
-          'Pad thai with eggs and vegetables',
-          'Green curry with vegetables and jasmine rice',
-          'Thai fried rice with eggs',
-          'Massaman curry with potatoes'
-        ] : [
-          'Pad thai with shrimp',
-          'Green curry chicken with jasmine rice',
-          'Thai basil beef stir-fry',
-          'Tom kha gai soup with chicken'
-        ],
-        dinner: isVegan ? [
-          'Red curry with tofu and vegetables',
-          'Thai eggplant and basil stir-fry',
-          'Pad see ew with tofu',
-          'Thai green papaya salad with tofu'
-        ] : isVegetarian ? [
-          'Massaman curry with vegetables',
-          'Thai fried rice with eggs and vegetables',
-          'Pad kra pao with fried egg',
-          'Thai coconut soup with vegetables'
-        ] : [
-          'Thai red curry with chicken',
-          'Pad kra pao with ground pork',
-          'Thai fish curry with vegetables',
-          'Larb with ground chicken'
-        ],
-        snacks: [
-          'Thai mixed nuts',
-          'Mango with sticky rice',
-          'Thai fruit salad',
-          'Coconut chips with lime'
-        ]
-      },
-      Japanese: {
-        breakfast: isVegan ? [
-          'Miso soup with tofu and seaweed',
-          'Japanese rice bowl with vegetables',
-          'Edamame and brown rice',
-          'Tofu teriyaki with vegetables',
-          'Japanese vegetable curry'
-        ] : [
-          'Tamagoyaki with miso soup',
-          'Japanese rice bowl with salmon',
-          'Onigiri with tuna filling',
-          'Japanese breakfast set with grilled fish'
-        ],
-        lunch: isVegan ? [
-          'Vegetable sushi bowl with avocado',
-          'Miso ramen with tofu and vegetables',
-          'Teriyaki tofu with brown rice',
-          'Japanese curry with vegetables',
-          'Edamame and quinoa bowl'
-        ] : isVegetarian ? [
-          'Vegetable sushi with tamago',
-          'Udon noodles with tempura vegetables',
-          'Japanese rice bowl with eggs',
-          'Miso soup with tofu and vegetables'
-        ] : [
-          'Salmon teriyaki with steamed rice',
-          'Chicken katsu with miso soup',
-          'Sushi bowl with fresh fish',
-          'Beef teriyaki with vegetables'
-        ],
-        dinner: isVegan ? [
-          'Vegetable curry with brown rice',
-          'Miso-glazed eggplant with quinoa',
-          'Japanese stir-fry with tofu',
-          'Vegetable ramen with miso broth'
-        ] : isVegetarian ? [
-          'Tempura vegetables with rice',
-          'Japanese curry with vegetables',
-          'Vegetable sushi with miso soup',
-          'Udon with egg and vegetables'
-        ] : [
-          'Grilled salmon with miso glaze',
-          'Chicken teriyaki with steamed broccoli',
-          'Japanese beef curry with rice',
-          'Sashimi bowl with brown rice'
-        ],
-        snacks: [
-          'Edamame with sea salt',
-          'Japanese mixed nuts',
-          'Seaweed snacks',
-          'Mochi with green tea'
-        ]
-      },
-      Mediterranean: {
-        breakfast: isVegan ? [
-          'Mediterranean quinoa bowl with olives',
-          'Hummus toast with vegetables',
-          'Mediterranean fruit and nut bowl',
-          'Olive tapenade on whole grain bread',
-          'Mediterranean chickpea scramble'
-        ] : [
-          'Greek yogurt with honey and nuts',
-          'Mediterranean omelet with feta',
-          'Shakshuka with whole grain bread',
-          'Mediterranean breakfast wrap'
-        ],
-        lunch: isVegan ? [
-          'Mediterranean quinoa salad',
-          'Hummus and vegetable wrap',
-          'Lentil and olive salad',
-          'Mediterranean chickpea curry',
-          'Stuffed grape leaves with quinoa'
-        ] : isVegetarian ? [
-          'Greek salad with feta cheese',
-          'Mediterranean wrap with hummus',
-          'Caprese salad with basil',
-          'Greek spinach and feta pie'
-        ] : [
-          'Grilled chicken Greek salad',
-          'Mediterranean salmon with quinoa',
-          'Greek chicken bowl with tzatziki',
-          'Mediterranean tuna salad'
-        ],
-        dinner: isVegan ? [
-          'Mediterranean vegetable stew',
-          'Quinoa tabbouleh with vegetables',
-          'Mediterranean lentil curry',
-          'Stuffed eggplant with herbs'
-        ] : isVegetarian ? [
-          'Greek moussaka with vegetables',
-          'Mediterranean pasta with feta',
-          'Spinach and feta stuffed chicken',
-          'Greek vegetable casserole'
-        ] : [
-          'Grilled fish with Mediterranean herbs',
-          'Greek lamb with quinoa pilaf',
-          'Mediterranean chicken with olives',
-          'Salmon with Mediterranean vegetables'
-        ],
-        snacks: [
-          'Olives and nuts',
-          'Hummus with vegetables',
-          'Greek yogurt with berries',
-          'Mediterranean mixed nuts'
+          'Parmigiano-Reggiano with walnuts'
         ]
       }
     };
@@ -697,61 +284,37 @@ const DietPlan = () => {
       });
     };
 
-    // Get meals from multiple cuisines, ensuring each cuisine appears at least once
+    // Get meals from multiple cuisines
     const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2) => {
       const selected: string[] = [];
       
       if (cuisines.length === 1) {
-        // Single cuisine - use existing logic
         const cuisineName = cuisines[0];
         const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
-        return getRandomMeals(cuisineMeals[mealType], count);
-      }
-      
-      // Multiple cuisines - ensure each is represented
-      const availableCuisines = [...cuisines];
-      
-      // First, get one meal from each cuisine
-      for (let i = 0; i < Math.min(count, availableCuisines.length); i++) {
-        const cuisineName = availableCuisines[i];
-        const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
         const meals = filterAllergies(cuisineMeals[mealType]);
-        if (meals.length > 0) {
+        
+        for (let i = 0; i < count && i < meals.length; i++) {
           const randomIndex = Math.floor(Math.random() * meals.length);
-          selected.push(`${meals[randomIndex]} (${cuisineName})`);
+          if (!selected.includes(meals[randomIndex])) {
+            selected.push(meals[randomIndex]);
+          }
         }
-      }
-      
-      // Fill remaining slots with random meals from any selected cuisine
-      while (selected.length < count) {
-        const randomCuisine = cuisines[Math.floor(Math.random() * cuisines.length)];
-        const cuisineMeals = mealOptions[randomCuisine as keyof typeof mealOptions] || mealOptions.American;
-        const meals = filterAllergies(cuisineMeals[mealType]);
-        if (meals.length > 0) {
-          const randomIndex = Math.floor(Math.random() * meals.length);
-          const meal = `${meals[randomIndex]} (${randomCuisine})`;
-          if (!selected.includes(meal)) {
-            selected.push(meal);
+      } else {
+        // Multiple cuisines
+        const availableCuisines = [...cuisines];
+        
+        for (let i = 0; i < Math.min(count, availableCuisines.length); i++) {
+          const cuisineName = availableCuisines[i];
+          const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
+          const meals = filterAllergies(cuisineMeals[mealType]);
+          if (meals.length > 0) {
+            const randomIndex = Math.floor(Math.random() * meals.length);
+            selected.push(`${meals[randomIndex]} (${cuisineName})`);
           }
         }
       }
       
-      return selected;
-    };
-
-    // Randomly select unique meals for each category (single cuisine)
-    const getRandomMeals = (meals: string[], count: number = 2) => {
-      const filtered = filterAllergies(meals);
-      const selected: string[] = [];
-      const availableMeals = [...filtered];
-      
-      for (let i = 0; i < count && availableMeals.length > 0; i++) {
-        const randomIndex = Math.floor(Math.random() * availableMeals.length);
-        selected.push(availableMeals[randomIndex]);
-        availableMeals.splice(randomIndex, 1); // Remove to avoid duplicates
-      }
-      
-      // If we don't have enough unique meals, fill with 'Custom meal'
+      // Fill remaining slots if needed
       while (selected.length < count) {
         selected.push('Custom meal option');
       }
@@ -852,39 +415,6 @@ const DietPlan = () => {
                   <span className="font-medium">Fitness Goal:</span> {profile.fitness_goal}
                 </div>
               </div>
-              
-              {profile.diet_preferences && profile.diet_preferences.length > 0 && (
-                <div>
-                  <span className="font-medium text-sm">Diet Preferences:</span>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    {profile.diet_preferences.map((pref, index) => (
-                      <Badge key={index} variant="outline">{pref}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profile.food_allergies && profile.food_allergies.length > 0 && (
-                <div>
-                  <span className="font-medium text-sm">Food Allergies:</span>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    {profile.food_allergies.map((allergy, index) => (
-                      <Badge key={index} variant="destructive">{allergy}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {profile.taste_preferences && profile.taste_preferences.length > 0 && (
-                <div>
-                  <span className="font-medium text-sm">Cuisine Preferences:</span>
-                  <div className="flex gap-2 mt-1 flex-wrap">
-                    {profile.taste_preferences.map((taste, index) => (
-                      <Badge key={index} variant="secondary">{taste}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
 
               <div className="flex gap-2">
                 <Button 
@@ -901,27 +431,26 @@ const DietPlan = () => {
                       <Settings className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl">
+                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                     <DialogHeader>
                       <DialogTitle>Edit Diet Preferences</DialogTitle>
                     </DialogHeader>
-                    <div className="space-y-6 py-4">
-                      <div className="space-y-2">
+                    <div className="space-y-6">
+                      <div>
                         <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
                         <Input
                           id="goal_weight"
                           type="number"
-                          step="0.1"
-                          placeholder="Enter your goal weight"
                           value={editFormData.goal_weight}
                           onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
+                          placeholder="Enter your goal weight"
                         />
                       </div>
 
-                      <div className="space-y-3">
+                      <div>
                         <Label>Diet Preferences</Label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {['Vegetarian', 'Vegan', 'Ketogenic', 'Paleo', 'Lactose Intolerant', 'Gluten-Free'].map((pref) => (
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          {['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Lactose Intolerant'].map((pref) => (
                             <div key={pref} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`diet-${pref}`}
@@ -934,10 +463,10 @@ const DietPlan = () => {
                         </div>
                       </div>
 
-                      <div className="space-y-3">
+                      <div>
                         <Label>Food Allergies</Label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {['Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Soy', 'Wheat', 'Fish', 'Sesame'].map((allergy) => (
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          {['Nuts', 'Shellfish', 'Eggs', 'Fish', 'Soy', 'Wheat'].map((allergy) => (
                             <div key={allergy} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`allergy-${allergy}`}
@@ -950,10 +479,10 @@ const DietPlan = () => {
                         </div>
                       </div>
 
-                      <div className="space-y-3">
+                      <div>
                         <Label>Cuisine Preferences</Label>
-                        <div className="grid grid-cols-2 gap-2">
-                          {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
+                        <div className="grid grid-cols-2 gap-2 mt-2">
+                          {['American', 'Italian', 'Mexican', 'Asian', 'Mediterranean', 'Indian'].map((cuisine) => (
                             <div key={cuisine} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`cuisine-${cuisine}`}
@@ -966,18 +495,13 @@ const DietPlan = () => {
                         </div>
                       </div>
 
-                      <div className="flex gap-2 pt-4">
-                        <Button onClick={handleUpdateProfile} className="flex-1">
-                          Save Changes
-                        </Button>
-                        <Button variant="outline" onClick={() => setIsEditingProfile(false)} className="flex-1">
-                          Cancel
-                        </Button>
-                      </div>
+                      <Button onClick={handleUpdateProfile} className="w-full">
+                        Update Preferences
+                      </Button>
                     </div>
                   </DialogContent>
                 </Dialog>
-                
+
                 {dietPlan.length > 0 && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
@@ -987,14 +511,14 @@ const DietPlan = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Diet Plan</AlertDialogTitle>
+                        <AlertDialogTitle>Clear Diet Plan</AlertDialogTitle>
                         <AlertDialogDescription>
-                          Are you sure you want to delete your current diet plan? This action cannot be undone.
+                          Are you sure you want to clear your current diet plan? This action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={clearDietPlan}>Delete</AlertDialogAction>
+                        <AlertDialogAction onClick={clearDietPlan}>Clear Plan</AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
@@ -1003,62 +527,41 @@ const DietPlan = () => {
             </div>
           ) : (
             <div className="text-center py-8">
-              <UtensilsCrossed className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground mb-4">
-                Complete your fitness profile to generate a personalized diet plan
+              <UtensilsCrossed className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">
+                Please complete your fitness profile first to generate a personalized diet plan.
               </p>
-              <Button onClick={() => {
-                const event = new CustomEvent('openFitnessProfileForm');
-                window.dispatchEvent(event);
-              }}>
-                Complete Profile
-              </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Diet Plan Display */}
+      {/* Generated Diet Plan */}
       {dietPlan.length > 0 && (
         <Card>
           <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="flex items-center gap-2">
-                <Calendar className="h-5 w-5" />
-                Your 7-Day {getPlanType()} Plan
-              </CardTitle>
-              <Button
-                onClick={generateDietPlan}
-                disabled={isGenerating}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <RefreshCw className="h-4 w-4" />
-                {isGenerating ? 'Generating...' : 'Generate New Plan'}
-              </Button>
-            </div>
+            <CardTitle className="flex items-center gap-2">
+              <Calendar className="h-5 w-5" />
+              Your 7-Day Diet Plan
+              <Badge variant="outline" className="ml-2">
+                {dietPlan[0]?.calories} calories/day
+              </Badge>
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="day1" className="w-full">
+            <Tabs defaultValue="day-1" className="w-full">
               <TabsList className="grid w-full grid-cols-7">
-                {dietPlan.map((plan) => (
-                  <TabsTrigger key={plan.day} value={`day${plan.day}`}>
-                    Day {plan.day}
+                {dietPlan.map((_, index) => (
+                  <TabsTrigger key={index} value={`day-${index + 1}`}>
+                    Day {index + 1}
                   </TabsTrigger>
                 ))}
               </TabsList>
               
-              {dietPlan.map((plan) => (
-                <TabsContent key={plan.day} value={`day${plan.day}`}>
-                  <div className="space-y-4">
-                    <div className="text-center mb-4">
-                      <Badge variant="outline" className="text-lg px-4 py-2">
-                        Target: {plan.calories} calories
-                      </Badge>
-                    </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {dietPlan.map((plan, index) => (
+                <TabsContent key={index} value={`day-${index + 1}`} className="mt-6">
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                       <Card>
                         <CardHeader className="pb-3">
                           <CardTitle className="text-lg flex items-center gap-2">
@@ -1077,10 +580,7 @@ const DietPlan = () => {
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <UtensilsCrossed className="h-4 w-4" />
-                            Lunch
-                          </CardTitle>
+                          <CardTitle className="text-lg">Lunch</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
@@ -1093,10 +593,7 @@ const DietPlan = () => {
 
                       <Card>
                         <CardHeader className="pb-3">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <ChefHat className="h-4 w-4" />
-                            Dinner
-                          </CardTitle>
+                          <CardTitle className="text-lg">Dinner</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <div className="space-y-1">
