@@ -24,6 +24,7 @@ interface MealPlan {
 }
 
 const DietPlan = () => {
+  console.log('DietPlan component starting...');
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
@@ -123,6 +124,8 @@ const DietPlan = () => {
     isBulking: boolean,
     isCutting: boolean
   ) => {
+    console.log('generateMealsForDay starting with cuisines:', cuisines);
+    try {
     // Define meal options by cuisine and dietary restrictions with more protein-dense options
     const mealOptions = {
       American: {
@@ -764,6 +767,15 @@ const DietPlan = () => {
       dinner: getMealsFromMultipleCuisines('dinner'),
       snacks: getMealsFromMultipleCuisines('snacks')
     };
+    } catch (error) {
+      console.error('Error in generateMealsForDay:', error);
+      return {
+        breakfast: ['Error generating meals'],
+        lunch: ['Error generating meals'],  
+        dinner: ['Error generating meals'],
+        snacks: ['Error generating meals']
+      };
+    }
   };
 
   const handleUpdateProfile = async () => {
