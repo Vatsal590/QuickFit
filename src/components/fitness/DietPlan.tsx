@@ -24,7 +24,6 @@ interface MealPlan {
 }
 
 const DietPlan = () => {
-  console.log('DietPlan component rendering...');
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
@@ -124,7 +123,6 @@ const DietPlan = () => {
     isBulking: boolean,
     isCutting: boolean
   ) => {
-    console.log('generateMealsForDay called with cuisines:', cuisines);
     // Define meal options by cuisine and dietary restrictions with more protein-dense options
     const mealOptions = {
       American: {
@@ -141,7 +139,13 @@ const DietPlan = () => {
           'Lentil breakfast hash with vegetables',
           'Vegan protein waffles with almond butter',
           'Cashew cream parfait with berries',
-          'Plant-based breakfast sandwich with tofu'
+          'Plant-based breakfast sandwich with tofu',
+          'Acai bowl with granola and mixed nuts',
+          'Vegan breakfast burrito with black beans',
+          'Steel-cut oats with cinnamon and walnuts',
+          'Quinoa porridge with maple syrup and pecans',
+          'Coconut yogurt parfait with chia seeds',
+          'Avocado toast with hemp hearts and lime'
         ] : isVegetarian ? [
           'Greek yogurt with granola and mixed nuts', 
           'Scrambled eggs with cheese and whole grain toast',
@@ -155,7 +159,13 @@ const DietPlan = () => {
           'High-protein muesli with milk and nuts',
           'Breakfast parfait with Greek yogurt and nuts',
           'Vegetarian breakfast burrito with black beans',
-          'Protein-packed smoothie bowl'
+          'Protein-packed smoothie bowl',
+          'Cottage cheese bowl with fresh berries',
+          'Vegetarian eggs benedict with spinach',
+          'Chia seed breakfast pudding with yogurt',
+          'High-protein pancakes with cottage cheese',
+          'Greek yogurt bowl with nuts and honey',
+          'Vegetarian breakfast hash with sweet potatoes'
         ] : [
           'Scrambled eggs with turkey bacon and avocado',
           'Protein pancakes with Greek yogurt and berries',
@@ -169,7 +179,13 @@ const DietPlan = () => {
           'Tuna and egg breakfast wrap',
           'Chicken breakfast hash with sweet potatoes',
           'Turkey and egg breakfast sandwich',
-          'Bacon and egg breakfast bowl'
+          'Bacon and egg breakfast bowl',
+          'Protein-rich breakfast skillet with ground turkey',
+          'Smoked salmon and cream cheese scramble',
+          'Chicken apple sausage with sweet potato',
+          'Beef and egg breakfast wrap',
+          'Turkey bacon and avocado toast',
+          'Salmon breakfast bowl with quinoa'
         ],
         lunch: isVegan ? [
           'Lentil and quinoa salad with tahini dressing',
@@ -237,7 +253,7 @@ const DietPlan = () => {
           'Mushroom stroganoff with egg noodles',
           'Greek moussaka with lentils',
           'Cheese and vegetable enchiladas',
-          'Vegetarian shepherds pie',
+          'Vegetarian shepherd pie',
           'Stuffed zucchini with quinoa and cheese',
           'Vegetarian curry with basmati rice'
         ] : [
