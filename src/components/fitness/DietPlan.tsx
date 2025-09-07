@@ -174,7 +174,7 @@ const DietPlan = () => {
           'Greek salad with feta and chickpeas',
           'Vegetarian protein bowl with eggs and cheese',
           'Lentil soup with whole grain bread',
-          'Paneer and vegetable curry with rice',
+          'Caprese salad with mozzarella and basil',
           'Egg salad sandwich with whole grain bread'
         ] : [
           'Grilled chicken Caesar salad with parmesan',
