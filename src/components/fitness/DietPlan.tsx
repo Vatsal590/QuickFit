@@ -272,6 +272,276 @@ const DietPlan = () => {
           'Italian nuts and dried fruits',
           'Parmigiano-Reggiano with walnuts'
         ]
+      },
+      Japanese: {
+        breakfast: isVegan ? [
+          'Miso soup with tofu and wakame',
+          'Rice bowl with natto and sesame seeds',
+          'Green tea with rice balls and pickled vegetables',
+          'Oatmeal with matcha powder and nuts'
+        ] : [
+          'Traditional Japanese breakfast with rice and grilled fish',
+          'Tamago kake gohan (egg rice bowl)',
+          'Miso soup with tofu and salmon',
+          'Green tea with rice and nori'
+        ],
+        lunch: isVegan ? [
+          'Vegetable sushi rolls with quinoa',
+          'Ramen with tofu and vegetables',
+          'Teriyaki tempeh with brown rice',
+          'Miso soup with vegetables and tofu'
+        ] : isVegetarian ? [
+          'Vegetable sushi rolls with brown rice',
+          'Ramen with egg and vegetables',
+          'Teriyaki tofu with steamed vegetables',
+          'Udon noodles with vegetables and egg'
+        ] : [
+          'Salmon sushi and miso soup',
+          'Chicken teriyaki with steamed rice',
+          'Ramen with pork and vegetables',
+          'Grilled fish with rice and pickled vegetables'
+        ],
+        dinner: isVegan ? [
+          'Vegetable curry with brown rice',
+          'Stir-fried tofu with vegetables and quinoa',
+          'Miso-glazed eggplant with rice',
+          'Vegetable tempura with soba noodles'
+        ] : isVegetarian ? [
+          'Vegetable tempura with rice',
+          'Egg fried rice with vegetables',
+          'Miso-glazed tofu with steamed vegetables',
+          'Vegetable soba noodles with egg'
+        ] : [
+          'Grilled salmon with teriyaki sauce and rice',
+          'Chicken katsu with steamed vegetables',
+          'Beef yakitori with rice and miso soup',
+          'Sashimi with rice and pickled vegetables'
+        ],
+        snacks: [
+          'Edamame with sea salt',
+          'Rice crackers with nori',
+          'Green tea with mochi',
+          'Seaweed salad'
+        ]
+      },
+      Thai: {
+        breakfast: isVegan ? [
+          'Thai-style coconut rice with fruits',
+          'Mango and coconut smoothie bowl',
+          'Thai basil and tofu scramble',
+          'Rice porridge with coconut milk and nuts'
+        ] : [
+          'Thai-style omelet with jasmine rice',
+          'Coconut rice with fresh fruit',
+          'Thai basil chicken with rice',
+          'Mango sticky rice with protein'
+        ],
+        lunch: isVegan ? [
+          'Pad Thai with tofu and vegetables',
+          'Green curry with tofu and brown rice',
+          'Som tam (papaya salad) with peanuts',
+          'Tom yum soup with tofu and vegetables'
+        ] : isVegetarian ? [
+          'Vegetable Pad Thai with egg',
+          'Green curry with vegetables and rice',
+          'Thai basil fried rice with egg',
+          'Coconut soup with vegetables'
+        ] : [
+          'Pad Thai with chicken and vegetables',
+          'Green curry chicken with jasmine rice',
+          'Thai basil beef with steamed rice',
+          'Tom yum soup with shrimp'
+        ],
+        dinner: isVegan ? [
+          'Red curry with tofu and vegetables',
+          'Massaman curry with potatoes and tofu',
+          'Stir-fried vegetables with Thai basil',
+          'Thai-style fried rice with vegetables'
+        ] : isVegetarian ? [
+          'Vegetable red curry with rice',
+          'Thai green curry with vegetables',
+          'Pad see ew with vegetables and egg',
+          'Thai coconut soup with vegetables'
+        ] : [
+          'Red curry with chicken and vegetables',
+          'Massaman beef curry with potatoes',
+          'Thai basil pork with jasmine rice',
+          'Green curry fish with vegetables'
+        ],
+        snacks: [
+          'Fresh tropical fruits',
+          'Thai rice crackers',
+          'Coconut water with mixed nuts',
+          'Thai-style fruit salad'
+        ]
+      },
+      Mediterranean: {
+        breakfast: isVegan ? [
+          'Avocado toast with tomatoes and olive oil',
+          'Oatmeal with nuts and dried fruits',
+          'Hummus with whole grain pita and vegetables',
+          'Smoothie bowl with tahini and berries'
+        ] : isVegetarian ? [
+          'Greek yogurt with honey and walnuts',
+          'Feta cheese with tomatoes and olives',
+          'Vegetarian omelet with herbs',
+          'Ricotta with figs and almonds'
+        ] : [
+          'Greek yogurt with honey and nuts',
+          'Smoked salmon with cream cheese on whole grain bread',
+          'Mediterranean omelet with feta and olives',
+          'Prosciutto with figs and cheese'
+        ],
+        lunch: isVegan ? [
+          'Chickpea and vegetable stew',
+          'Quinoa tabbouleh with herbs',
+          'Lentil soup with olive oil and herbs',
+          'Hummus bowl with vegetables and quinoa'
+        ] : isVegetarian ? [
+          'Greek salad with feta cheese',
+          'Vegetarian moussaka',
+          'Caprese salad with mozzarella',
+          'Spinach and feta stuffed pita'
+        ] : [
+          'Grilled chicken with Greek salad',
+          'Salmon with quinoa and vegetables',
+          'Lamb souvlaki with tzatziki',
+          'Tuna salad with olives and feta'
+        ],
+        dinner: isVegan ? [
+          'Ratatouille with quinoa',
+          'Lentil and vegetable stew',
+          'Stuffed bell peppers with quinoa',
+          'Mediterranean vegetable curry'
+        ] : isVegetarian ? [
+          'Vegetarian paella with vegetables',
+          'Eggplant moussaka with cheese',
+          'Spinach and ricotta cannelloni',
+          'Mediterranean quinoa bowl'
+        ] : [
+          'Grilled fish with herbs and olive oil',
+          'Lamb with roasted vegetables',
+          'Chicken souvlaki with rice',
+          'Seafood paella with vegetables'
+        ],
+        snacks: [
+          'Mixed olives and nuts',
+          'Hummus with vegetable sticks',
+          'Greek yogurt with berries',
+          'Feta cheese with cucumber'
+        ]
+      },
+      Indian: {
+        breakfast: isVegan ? [
+          'Quinoa upma with vegetables',
+          'Coconut chutney with dosa made from lentils',
+          'Oats poha with curry leaves',
+          'Chia seed pudding with cardamom'
+        ] : isVegetarian ? [
+          'Vegetable poha with yogurt',
+          'Masala dosa with coconut chutney',
+          'Upma with vegetables and paneer',
+          'Idli with sambar and chutney'
+        ] : [
+          'Chicken tikka with whole wheat roti',
+          'Egg curry with rice',
+          'Keema with paratha',
+          'Fish curry with rice'
+        ],
+        lunch: isVegan ? [
+          'Dal with brown rice and vegetables',
+          'Chickpea curry with quinoa',
+          'Vegetable biryani with lentils',
+          'Sambar with brown rice'
+        ] : isVegetarian ? [
+          'Paneer curry with brown rice',
+          'Dal with roti and yogurt',
+          'Vegetable biryani with raita',
+          'Palak paneer with quinoa'
+        ] : [
+          'Chicken curry with brown rice',
+          'Lamb biryani with raita',
+          'Fish curry with rice',
+          'Tandoori chicken with vegetables'
+        ],
+        dinner: isVegan ? [
+          'Mixed dal with quinoa',
+          'Vegetable curry with brown rice',
+          'Chana masala with roti',
+          'Lentil and spinach curry'
+        ] : isVegetarian ? [
+          'Paneer makhani with rice',
+          'Vegetable korma with roti',
+          'Palak paneer with quinoa',
+          'Dal makhani with brown rice'
+        ] : [
+          'Chicken tikka masala with rice',
+          'Lamb curry with naan',
+          'Fish tandoori with vegetables',
+          'Butter chicken with quinoa'
+        ],
+        snacks: [
+          'Roasted chickpeas with spices',
+          'Mixed nuts and dried fruits',
+          'Yogurt with cucumber (raita)',
+          'Spiced tea with whole grain crackers'
+        ]
+      },
+      Mexican: {
+        breakfast: isVegan ? [
+          'Black bean and avocado breakfast bowl',
+          'Quinoa breakfast burrito with vegetables',
+          'Chia seed pudding with tropical fruits',
+          'Tofu scramble with peppers and onions'
+        ] : isVegetarian ? [
+          'Vegetarian breakfast burrito with eggs',
+          'Black bean quesadilla with cheese',
+          'Huevos rancheros with beans',
+          'Avocado toast with Mexican spices'
+        ] : [
+          'Huevos rancheros with lean protein',
+          'Breakfast burrito with eggs and turkey',
+          'Mexican omelet with cheese and salsa',
+          'Chorizo and egg breakfast bowl'
+        ],
+        lunch: isVegan ? [
+          'Black bean and quinoa bowl',
+          'Lentil and vegetable tacos',
+          'Chickpea and avocado salad',
+          'Mexican quinoa stuffed peppers'
+        ] : isVegetarian ? [
+          'Cheese quesadilla with black beans',
+          'Vegetarian taco bowl with rice',
+          'Bean and cheese burrito',
+          'Mexican salad with feta'
+        ] : [
+          'Chicken taco bowl with brown rice',
+          'Lean beef burrito with vegetables',
+          'Fish tacos with avocado',
+          'Turkey and bean quesadilla'
+        ],
+        dinner: isVegan ? [
+          'Lentil and vegetable enchiladas',
+          'Black bean and quinoa stuffed peppers',
+          'Vegetable fajitas with guacamole',
+          'Mexican-style stuffed sweet potatoes'
+        ] : isVegetarian ? [
+          'Cheese enchiladas with beans',
+          'Vegetarian fajitas with cheese',
+          'Bean and cheese quesadilla',
+          'Mexican quinoa casserole'
+        ] : [
+          'Chicken fajitas with vegetables',
+          'Lean beef tacos with avocado',
+          'Fish tacos with cilantro lime rice',
+          'Turkey and bean burrito bowl'
+        ],
+        snacks: [
+          'Guacamole with vegetable sticks',
+          'Mixed nuts with chili powder',
+          'Greek yogurt with salsa',
+          'Roasted pumpkin seeds'
+        ]
       }
     };
 
@@ -485,7 +755,7 @@ const DietPlan = () => {
                       <div>
                         <Label>Cuisine Preferences</Label>
                         <div className="grid grid-cols-2 gap-2 mt-2">
-                          {['American', 'Italian', 'Mexican', 'Asian', 'Mediterranean', 'Indian'].map((cuisine) => (
+                          {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
                             <div key={cuisine} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`cuisine-${cuisine}`}
