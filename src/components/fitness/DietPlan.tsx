@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -431,10 +431,13 @@ const DietPlan = () => {
                       <Settings className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Edit Diet Preferences</DialogTitle>
-                    </DialogHeader>
+                   <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                     <DialogHeader>
+                       <DialogTitle>Edit Diet Preferences</DialogTitle>
+                       <DialogDescription>
+                         Update your dietary preferences, allergies, and cuisine choices to get a personalized diet plan.
+                       </DialogDescription>
+                     </DialogHeader>
                     <div className="space-y-6">
                       <div>
                         <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
