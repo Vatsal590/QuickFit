@@ -24,9 +24,7 @@ interface MealPlan {
 }
 
 const DietPlan = () => {
-  console.log('DietPlan component starting to render...');
   const { profile, updateProfile } = useFitnessProfile();
-  console.log('Profile loaded:', profile);
   const { toast } = useToast();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -903,5 +901,4 @@ const DietPlan = () => {
   );
 };
 
-console.log('DietPlan component definition completed');
 export default DietPlan;
