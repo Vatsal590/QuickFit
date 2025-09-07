@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFitnessProfile } from '@/hooks/useFitnessProfile';
-import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, RefreshCw, Settings } from 'lucide-react';
+import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface MealPlan {
