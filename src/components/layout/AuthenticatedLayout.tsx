@@ -33,8 +33,9 @@ import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Trash2, User, Shield, FileText, Menu } from 'lucide-react';
+import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
+import { MenuIcon } from '@/components/ui/menu-icon';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -123,7 +124,7 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
               <SidebarTrigger className="p-2">
-                <Menu className="h-5 w-5" />
+                <MenuIcon className="h-5 w-5" />
               </SidebarTrigger>
               <div className="flex items-center space-x-2">
                 <img 
