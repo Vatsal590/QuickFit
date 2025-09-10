@@ -33,7 +33,8 @@ import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
+import { LogOut, Trash2, User, Shield, FileText, Menu } from 'lucide-react';
+import Chatbot from '@/components/chat/Chatbot';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -121,7 +122,9 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
           {/* Header */}
           <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
-              <SidebarTrigger />
+              <SidebarTrigger className="p-2">
+                <Menu className="h-5 w-5" />
+              </SidebarTrigger>
               <div className="flex items-center space-x-2">
                 <img 
                   src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
@@ -233,6 +236,9 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        
+        {/* Chatbot */}
+        <Chatbot />
       </div>
     </SidebarProvider>
   );
