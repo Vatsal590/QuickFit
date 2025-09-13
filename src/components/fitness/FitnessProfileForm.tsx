@@ -129,24 +129,35 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
         taste_preferences: formData.taste_preferences
       };
 
-      let savedProfile;
+      let savedProfileRecord: any;
       
       if (profile) {
-        savedProfile = await updateProfile(profileData);
+        savedProfileRecord = await updateProfile(profileData);
         toast({
           title: "Profile updated",
           description: "Your fitness profile has been updated successfully!"
         });
       } else {
-        savedProfile = await createProfile(profileData);
+        savedProfileRecord = await createProfile(profileData);
         toast({
           title: "Profile created",
           description: "Your fitness profile has been created! You can now generate personalized workout plans."
         });
       }
       
+      // Normalize and use the saved profile (ensures we have the new profile id on first try)
+      const normalizedProfile = {
+        ...savedProfileRecord,
+        body_type: Array.isArray(savedProfileRecord?.body_type)
+          ? savedProfileRecord.body_type
+          : (() => { try { return JSON.parse(savedProfileRecord?.body_type ?? '[]'); } catch { return profileData.body_type; } })(),
+        diet_preferences: savedProfileRecord?.diet_preferences ?? profileData.diet_preferences ?? [],
+        food_allergies: savedProfileRecord?.food_allergies ?? profileData.food_allergies ?? [],
+        taste_preferences: savedProfileRecord?.taste_preferences ?? profileData.taste_preferences ?? []
+      };
+      
       // Set the updated profile and show plan generator
-      setUpdatedProfile({ ...profile, ...profileData });
+      setUpdatedProfile(normalizedProfile);
       setShowPlanGenerator(true);
       
     } catch (error) {
