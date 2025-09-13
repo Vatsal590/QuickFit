@@ -95,7 +95,8 @@ const DietPlan = () => {
         isLactoseIntolerant,
         allergies,
         isBulking,
-        isCutting
+        isCutting,
+        day
       );
 
       plans.push({
@@ -121,7 +122,8 @@ const DietPlan = () => {
     isLactoseIntolerant: boolean,
     allergies: string[],
     isBulking: boolean,
-    isCutting: boolean
+    isCutting: boolean,
+    dayNumber: number = 1
   ) => {
     // Define meal options by cuisine and dietary restrictions
     const mealOptions = {
@@ -554,49 +556,66 @@ const DietPlan = () => {
       });
     };
 
-    // Get meals from multiple cuisines
-    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2) => {
+    // Get meals from multiple cuisines with variety across days
+    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2, dayNumber: number = 1) => {
       const selected: string[] = [];
+      const usedMeals = new Set<string>();
       
-      if (cuisines.length === 1) {
-        const cuisineName = cuisines[0];
+      // Filter out French cuisine
+      const filteredCuisines = cuisines.filter(cuisine => cuisine !== 'French');
+      const activeCuisines = filteredCuisines.length > 0 ? filteredCuisines : ['American'];
+      
+      if (activeCuisines.length === 1) {
+        const cuisineName = activeCuisines[0];
         const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
         const meals = filterAllergies(cuisineMeals[mealType]);
         
+        // Use day number to ensure variety across days
+        const startIndex = ((dayNumber - 1) * count) % meals.length;
+        
         for (let i = 0; i < count && i < meals.length; i++) {
-          const randomIndex = Math.floor(Math.random() * meals.length);
-          if (!selected.includes(meals[randomIndex])) {
-            selected.push(meals[randomIndex]);
+          const mealIndex = (startIndex + i) % meals.length;
+          if (!usedMeals.has(meals[mealIndex])) {
+            selected.push(meals[mealIndex]);
+            usedMeals.add(meals[mealIndex]);
           }
         }
       } else {
-        // Multiple cuisines
-        const availableCuisines = [...cuisines];
+        // Multiple cuisines - rotate through them for variety
+        const shuffledCuisines = [...activeCuisines];
         
-        for (let i = 0; i < Math.min(count, availableCuisines.length); i++) {
-          const cuisineName = availableCuisines[i];
+        // Use day number to vary cuisine selection
+        for (let i = 0; i < count; i++) {
+          const cuisineIndex = ((dayNumber - 1) + i) % shuffledCuisines.length;
+          const cuisineName = shuffledCuisines[cuisineIndex];
           const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
           const meals = filterAllergies(cuisineMeals[mealType]);
+          
           if (meals.length > 0) {
-            const randomIndex = Math.floor(Math.random() * meals.length);
-            selected.push(`${meals[randomIndex]} (${cuisineName})`);
+            // Use day number to select different meals from the same cuisine
+            const mealIndex = ((dayNumber - 1) * 2 + i) % meals.length;
+            const selectedMeal = meals[mealIndex];
+            selected.push(selectedMeal);
+            usedMeals.add(selectedMeal);
           }
         }
       }
       
-      // Fill remaining slots if needed
+      // Fill remaining slots if needed with fallback options
       while (selected.length < count) {
-        selected.push('Custom meal option');
+        const fallbackMeals = mealOptions.American[mealType];
+        const fallbackIndex = (selected.length + dayNumber) % fallbackMeals.length;
+        selected.push(fallbackMeals[fallbackIndex]);
       }
       
       return selected;
     };
 
     return {
-      breakfast: getMealsFromMultipleCuisines('breakfast'),
-      lunch: getMealsFromMultipleCuisines('lunch'),
-      dinner: getMealsFromMultipleCuisines('dinner'),
-      snacks: getMealsFromMultipleCuisines('snacks')
+      breakfast: getMealsFromMultipleCuisines('breakfast', 2, dayNumber),
+      lunch: getMealsFromMultipleCuisines('lunch', 2, dayNumber),
+      dinner: getMealsFromMultipleCuisines('dinner', 2, dayNumber),
+      snacks: getMealsFromMultipleCuisines('snacks', 2, dayNumber)
     };
   };
 
@@ -755,7 +774,7 @@ const DietPlan = () => {
                       <div>
                         <Label>Cuisine Preferences</Label>
                         <div className="grid grid-cols-2 gap-2 mt-2">
-                          {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
+                         {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
                             <div key={cuisine} className="flex items-center space-x-2">
                               <Checkbox
                                 id={`cuisine-${cuisine}`}
