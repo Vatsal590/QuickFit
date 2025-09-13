@@ -498,6 +498,86 @@ export const exercises: Exercise[] = [
     restTime: 45,
     description: "Lie on back with band around knees. Lift hips up while pushing knees out against band resistance."
   },
+  {
+    id: "jump-squats",
+    name: "Jump Squats",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Perform a squat then explosively jump up, landing softly back into squat position."
+  },
+  {
+    id: "jump-lunges",
+    name: "Jump Lunges",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Start in lunge position, jump up and switch legs in the air, landing in opposite lunge."
+  },
+  {
+    id: "calf-raises",
+    name: "Calf Raises",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 3,
+    reps: 20,
+    restTime: 45,
+    description: "Stand on balls of feet, raise up as high as possible, then lower slowly back down."
+  },
+  {
+    id: "lateral-squats",
+    name: "Lateral Squats",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Step wide to one side, squat down on that leg while keeping other leg straight, then return to center."
+  },
+  {
+    id: "superman",
+    name: "Superman",
+    muscleGroup: "back",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Lie face down, simultaneously lift chest and legs off ground, hold briefly, then lower back down."
+  },
+  {
+    id: "cat-cow-pose",
+    name: "Cat-Cow Pose",
+    muscleGroup: "back",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 30,
+    description: "On hands and knees, alternate between arching back (cow) and rounding spine (cat)."
+  },
+  {
+    id: "bird-dog-pose",
+    name: "Bird Dog Pose",
+    muscleGroup: "back",
+    equipment: ["none"],
+    sets: 3,
+    reps: 8,
+    restTime: 45,
+    description: "On hands and knees, extend opposite arm and leg, hold for a few seconds, then switch sides."
+  },
+  {
+    id: "towel-leg-curls",
+    name: "Towel Leg Curls",
+    muscleGroup: "biceps",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Lie on back, place towel under one foot, hold towel ends and curl leg up while providing resistance with towel."
+  },
 
   // Biceps exercises
   {
