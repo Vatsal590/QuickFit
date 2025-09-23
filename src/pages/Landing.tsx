@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle } from 'lucide-react';
 
 const Landing = () => {
   return (
@@ -31,139 +31,209 @@ const Landing = () => {
 
       {/* Hero Section */}
       <main className="flex-grow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-20">
+            <h2 className="text-5xl md:text-7xl font-bold text-gray-900 mb-8">
               Your Complete
-              <span className="text-fitness-primary"> Fitness Solution</span>
+              <span className="block text-fitness-primary mt-2">Fitness Companion</span>
             </h2>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-              Create personalized 30-day workout plans, generate instant workouts, and get expert fitness advice with our AI chatbot—all tailored to your goals and equipment.
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
+              Everything you need to reach your fitness goals: instant workouts, 30-day plans, 
+              nutrition guidance, progress tracking, and AI coaching—all in one powerful app.
             </p>
-            <Link to="/auth">
-              <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90 text-lg px-8 py-3">
-                Start Your Journey
-              </Button>
-            </Link>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <Link to="/auth">
+                <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90 text-lg px-12 py-4 font-semibold">
+                  Start Free Today
+                </Button>
+              </Link>
+              <p className="text-sm text-gray-500">No credit card required • Get started in 2 minutes</p>
+            </div>
+
+            <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-600">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>Instant workout generation</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>30-day personalized plans</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span>AI fitness coaching</span>
+              </div>
+            </div>
           </div>
 
-          {/* Main Features */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
-            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-primary/20">
+          {/* Core Features */}
+          <div className="mb-20">
+            <h3 className="text-3xl font-bold text-center text-gray-900 mb-4">
+              Everything You Need to Succeed
+            </h3>
+            <p className="text-lg text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+              QuickFit combines intelligent workout generation, comprehensive planning, 
+              and smart tracking to make fitness simple and effective.
+            </p>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <Card className="text-center hover:shadow-xl transition-all duration-300 border-2 hover:border-fitness-primary/30 bg-white">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto bg-gradient-to-br from-fitness-primary to-fitness-primary/80 w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Zap className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">Instant Workouts</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base leading-relaxed">
+                    Generate personalized workouts in seconds. Choose your time, equipment, 
+                    target muscles, and intensity—get a complete routine instantly.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center hover:shadow-xl transition-all duration-300 border-2 hover:border-fitness-secondary/30 bg-white">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto bg-gradient-to-br from-fitness-secondary to-fitness-secondary/80 w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Calendar className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">30-Day Plans</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base leading-relaxed">
+                    Complete month-long workout programs tailored to your goals. 
+                    Progressive training that adapts to your fitness level and equipment.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center hover:shadow-xl transition-all duration-300 border-2 hover:border-fitness-accent/30 bg-white">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto bg-gradient-to-br from-fitness-accent to-fitness-accent/80 w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Apple className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">7-Day Diet Plans</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base leading-relaxed">
+                    Personalized nutrition plans that complement your workouts. 
+                    Meal suggestions and dietary guidance for optimal results.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-500/30 bg-white">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto bg-gradient-to-br from-blue-500 to-blue-600 w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Scale className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">Weight Tracker</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base leading-relaxed">
+                    Monitor your progress with intuitive weight tracking. 
+                    Visualize your journey with charts and milestone celebrations.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+
+              <Card className="text-center hover:shadow-xl transition-all duration-300 border-2 hover:border-green-500/30 bg-white">
+                <CardHeader className="pb-4">
+                  <div className="mx-auto bg-gradient-to-br from-green-500 to-green-600 w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <MessageCircle className="h-10 w-10 text-white" />
+                  </div>
+                  <CardTitle className="text-2xl mb-2">AI Fitness Coach</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base leading-relaxed">
+                    Get instant answers to fitness questions. Form tips, nutrition advice, 
+                    and motivation—your personal trainer available 24/7.
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Why Choose QuickFit */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+            <Card className="text-center hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-gray-50">
               <CardHeader>
                 <div className="mx-auto bg-fitness-primary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <Calendar className="h-8 w-8 text-fitness-primary" />
+                  <Clock className="h-8 w-8 text-fitness-primary" />
                 </div>
-                <CardTitle className="text-xl">30-Day Workout Plans</CardTitle>
+                <CardTitle className="text-lg">Any Schedule</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Get a complete month-long personalized workout program designed around your fitness goals and available equipment.
+                  10-minute quickies to full 90-minute sessions. Workouts that adapt to your time.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-secondary/20">
+            <Card className="text-center hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-gray-50">
               <CardHeader>
                 <div className="mx-auto bg-fitness-secondary/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <Zap className="h-8 w-8 text-fitness-secondary" />
+                  <Dumbbell className="h-8 w-8 text-fitness-secondary" />
                 </div>
-                <CardTitle className="text-xl">Instant Workouts</CardTitle>
+                <CardTitle className="text-lg">Any Equipment</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Need a quick workout? Generate personalized routines in seconds based on your time, equipment, target muscles and intensity.
+                  Bodyweight only, home gym, or full commercial gym—we've got you covered.
                 </CardDescription>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow border-2 hover:border-fitness-accent/20">
+            <Card className="text-center hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-gray-50">
               <CardHeader>
                 <div className="mx-auto bg-fitness-accent/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                  <MessageCircle className="h-8 w-8 text-fitness-accent" />
+                  <Target className="h-8 w-8 text-fitness-accent" />
                 </div>
-                <CardTitle className="text-xl">AI Fitness Coach</CardTitle>
+                <CardTitle className="text-lg">Your Goals</CardTitle>
               </CardHeader>
               <CardContent>
                 <CardDescription>
-                  Ask our AI chatbot any fitness question—from form tips to nutrition advice. Get guidance 24/7.
+                  Strength, endurance, weight loss, or athletic performance—tailored to you.
+                </CardDescription>
+              </CardContent>
+            </Card>
+
+            <Card className="text-center hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-gray-50">
+              <CardHeader>
+                <div className="mx-auto bg-green-500/10 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                  <BarChart3 className="h-8 w-8 text-green-500" />
+                </div>
+                <CardTitle className="text-lg">Track Progress</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>
+                  Monitor improvements with detailed analytics and milestone tracking.
                 </CardDescription>
               </CardContent>
             </Card>
           </div>
 
-          {/* Additional Features Grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-fitness-primary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                  <Clock className="h-6 w-6 text-fitness-primary" />
-                </div>
-                <CardTitle className="text-lg">Time-Based</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  From 10-minute quickies to full hour sessions—workouts that fit your schedule.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-fitness-secondary/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                  <Dumbbell className="h-6 w-6 text-fitness-secondary" />
-                </div>
-                <CardTitle className="text-lg">Equipment Smart</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Works with any equipment setup—from bodyweight to full gym access.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-fitness-accent/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                  <Target className="h-6 w-6 text-fitness-accent" />
-                </div>
-                <CardTitle className="text-lg">Goal-Oriented</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Focused workouts for strength, athlete-style, or weight loss goals.
-                </CardDescription>
-              </CardContent>
-            </Card>
-
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="mx-auto bg-fitness-dark/10 w-12 h-12 rounded-full flex items-center justify-center mb-4">
-                  <Zap className="h-6 w-6 text-fitness-dark" />
-                </div>
-                <CardTitle className="text-lg">Start Instantly</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  Get your personalized workout plan in seconds, ready to start immediately.
-                </CardDescription>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center bg-white rounded-2xl p-8 shadow-sm">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Ready to Transform Your Fitness?
+          {/* Final CTA Section */}
+          <div className="text-center bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-3xl p-12 shadow-2xl text-white">
+            <h3 className="text-4xl font-bold mb-6">
+              Ready to Transform Your Fitness Journey?
             </h3>
-            <p className="text-gray-600 mb-6">
-              Join others who've made fitness simple with personalized plans and instant workouts.
+            <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
+              Join thousands who've made fitness simple with QuickFit's intelligent approach to workouts, nutrition, and progress tracking.
             </p>
-            <Link to="/auth">
-              <Button size="lg" className="bg-fitness-primary hover:bg-fitness-primary/90">
-                Get started for free
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
+              <Link to="/auth">
+                <Button size="lg" variant="secondary" className="bg-white text-fitness-primary hover:bg-gray-100 px-12 py-4 text-lg font-semibold">
+                  Start Your Free Journey
+                </Button>
+              </Link>
+            </div>
+            <div className="flex flex-wrap justify-center items-center gap-6 text-sm opacity-80">
+              <span>✓ No subscription required</span>
+              <span>✓ Instant access</span>
+              <span>✓ Works on any device</span>
+            </div>
           </div>
         </div>
       </main>
