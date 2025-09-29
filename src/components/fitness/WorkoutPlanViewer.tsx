@@ -363,6 +363,28 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'neutral grip band work': 'https://gymvisual.com/img/p/1/2/6/5/0/12650.gif',
     
 
+      //resistance band
+      'resistance band chest press': 'https://gymbeam.cz/blog/wp-content/uploads/2020/12/bench-press.gif',
+      'resistance band chest fly': 'https://gymvisual.com/img/p/2/1/5/2/3/21523.gif',
+      'resistance band row': 'https://gymvisual.com/img/p/1/8/4/1/2/18412.gif',
+      'resistance band lat pulldown': 'https://www.inspireusafoundation.org/file/2022/10/band-lat-pulldown.gif',
+      'resistance band reverse fly': 'https://pelank.com/wp-content/uploads/2025/01/cable-rear-delt-fly.gif',
+      'resistance band face pulls': 'https://www.inspireusafoundation.org/file/2023/01/banded-face-pull.gif',
+      'resistance band shoulder press': 'https://gymvisual.com/img/p/1/2/5/1/7/12517.gif',
+      'resistance band lateral raise': 'https://gymvisual.com/img/p/6/9/7/5/6975.gif',
+      'resistance band front raise': 'https://gymvisual.com/img/p/5/6/9/1/5691.gif',
+      'resistance band squat': 'https://www.inspireusafoundation.org/file/2022/10/band-squat.gif',
+      'resistance band lateral walk': 'https://gymvisual.com/img/p/2/9/5/4/7/29547.gif',
+      'resistance band glute bridge': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/01/resistance-band-glute-bridge.gif',
+      'resistance band hammer curl': 'https://fitnessprogramer.com/wp-content/uploads/2022/07/Hammer-Curl-with-Resistance-Band.gif',
+      'resistance band tricep extension': 'https://fitliferegime.com/wp-content/uploads/2023/10/Band-Tricep-Extension.gif',
+      'resistance band tricep pushdown': 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Band-Pushdown.gif',
+      'resistance band wood chop': 'https://gymvisual.com/img/p/1/9/8/4/4/19844.gif',
+      'resistance band pallof press': 'https://gymvisual.com/img/p/5/6/9/2/5692.gif',
+      'resistance band squat to press': 'https://gymvisual.com/img/p/1/8/6/4/7/18647.gif',
+      'lying hamstring curls': 'https://fitnessprogramer.com/wp-content/uploads/2022/04/Lying-Dumbbell-Leg-Curl.gif',
+      'resistance band jumping jacks': 'https://gymvisual.com/img/p/1/0/6/3/9/10639.gif',
+
     };
 
     // Try exact match first
