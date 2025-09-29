@@ -315,6 +315,20 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
       'kettlebell swings 2': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
       
+      //Pain exercises
+      'clamshells': 'https://www.strengthlog.com/wp-content/uploads/2024/01/clamshell.gif',
+      'deadbugs': 'https://fitnessprogramer.com/wp-content/uploads/2021/05/Dead-Bug.gif',
+      'seated upper body press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
+      'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'bird dogs': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'supported bicep curl':'https://fitnessprogramer.com/wp-content/uploads/2022/02/Two-dumbbell-preacher-curl.gif',
+      'supported bicep curls':'https://fitnessprogramer.com/wp-content/uploads/2022/02/Two-dumbbell-preacher-curl.gif',
+      'knee plank': 'https://cdn.mos.cms.futurecdn.net/pR4NPNU6n2S9wknA5uALhL-1200-80.jpg.webp',
+      'knee planks': 'https://cdn.mos.cms.futurecdn.net/pR4NPNU6n2S9wknA5uALhL-1200-80.jpg.webp',
+      'straight arm band pulls': 'https://gymvisual.com/img/p/2/1/7/8/0/21780.gif',
+      'straight arm band pull': 'https://gymvisual.com/img/p/2/1/7/8/0/21780.gif',
+      'standing core twists': 'https://gymvisual.com/img/p/2/0/4/5/1/20451.gif',
+      'neutral grip band work': 'https://gymvisual.com/img/p/1/2/6/5/0/12650.gif',
     };
 
     // Try exact match first
