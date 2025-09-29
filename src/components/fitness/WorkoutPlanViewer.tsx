@@ -327,6 +327,8 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'dumbbell squat': 'https://fitnessprogramer.com/wp-content/uploads/2023/09/Dumbbell-Squat.gif',
       'cat cow stretch v2': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2020/05/400x400_The_Best_Postpartum_Exercises_to_do_Right_Now_Cat_Cow_in_Tabletop.gif',
       'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'bird dogs': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+
       'kettlebell deadlift' :'https://burnfit.io/wp-content/uploads/2023/11/KB_SM_DL.gif',
       'kettlebell press': 'https://i.pinimg.com/originals/56/54/ca/5654ca13e5e33cf34e685a8030e2d398.gif',
       'kettlebell windmill': 'https://i.pinimg.com/originals/10/b3/78/10b378afe3e7f411013f571f7b59e5c4.gif',
@@ -345,6 +347,22 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'kettlebell figure-8': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Kettlebell-Figure-8.gif',
       'kettlebell swings alt': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/russian-kettlebell-swing.gif',
       
+      //Pain exercises
+      'clamshells': 'https://www.strengthlog.com/wp-content/uploads/2024/01/clamshell.gif',
+      'deadbugs': 'https://fitnessprogramer.com/wp-content/uploads/2021/05/Dead-Bug.gif',
+      'seated upper body press': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Dumbbell-Shoulder-Press.gif',
+      'bird dog': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'bird dogs': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/02/NarrowVibrantHawk-size_restricted.gif',
+      'supported bicep curl':'https://fitnessprogramer.com/wp-content/uploads/2022/02/Two-dumbbell-preacher-curl.gif',
+      'supported bicep curls':'https://fitnessprogramer.com/wp-content/uploads/2022/02/Two-dumbbell-preacher-curl.gif',
+      'knee plank': 'https://cdn.mos.cms.futurecdn.net/pR4NPNU6n2S9wknA5uALhL-1200-80.jpg.webp',
+      'knee planks': 'https://cdn.mos.cms.futurecdn.net/pR4NPNU6n2S9wknA5uALhL-1200-80.jpg.webp',
+      'straight arm band pulls': 'https://gymvisual.com/img/p/2/1/7/8/0/21780.gif',
+      'straight arm band pull': 'https://gymvisual.com/img/p/2/1/7/8/0/21780.gif',
+      'standing core twists': 'https://gymvisual.com/img/p/2/0/4/5/1/20451.gif',
+      'neutral grip band work': 'https://gymvisual.com/img/p/1/2/6/5/0/12650.gif',
+    
+
     };
 
     // Try exact match first
