@@ -162,11 +162,11 @@ const Landing = () => {
           </h3>
           <div className="max-w-3xl mx-auto">
             <div className="flex flex-col items-center text-center bg-white rounded-2xl shadow-lg border p-6 md:p-10">
-              <div className="w-full max-w-md mb-6">
+              <div className="w-full max-w-md mb-6 h-96 overflow-hidden rounded-xl shadow-md">
                 <img
                   src="/lovable-uploads/vatsal-agarwala-founder.jpg"
                   alt="Vatsal Agarwala - Founder of QuickFit"
-                  className="w-full h-auto rounded-xl object-cover shadow-md"
+                  className="w-full h-full object-cover object-bottom"
                 />
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
