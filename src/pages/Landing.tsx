@@ -13,8 +13,10 @@ const Landing = () => {
     `${import.meta.env.BASE_URL}lovable-uploads/vatsal-agarwala-founder`
   ];
   const allCandidates = React.useMemo(() => {
+    const v = Date.now().toString();
+    const withV = (p: string) => `${p}?v=${v}`;
     const list: string[] = [];
-    bases.forEach(b => exts.forEach(e => list.push(`${b}${e}`)));
+    bases.forEach(b => exts.forEach(e => list.push(withV(`${b}${e}`))));
     return list;
   }, []);
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
