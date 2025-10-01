@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -110,7 +111,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[85vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-fitness-primary" />
@@ -121,93 +122,97 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
           </DialogDescription>
         </DialogHeader>
 
-        {!profile ? (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <div className="bg-gray-100 rounded-full p-4 mb-4 mx-auto w-fit">
-                <Sparkles className="h-8 w-8 text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">Complete Your Profile First</h3>
-              <p className="text-gray-500 mb-4">
-                You need to complete your fitness profile before generating a workout plan.
-              </p>
-              <Button 
-                onClick={() => {
-                  onClose();
-                  // Navigate to profile page - you might need to implement this
-                  window.location.href = '/profile';
-                }}
-                className="bg-fitness-primary hover:bg-fitness-primary/90"
-              >
-                Complete Profile
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
+        <ScrollArea className="flex-1 pr-4">
+          {!profile ? (
             <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Your Profile Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
-                <div><strong>Body Type:</strong> {Array.isArray(profile.body_type) ? profile.body_type.join(', ') : profile.body_type}</div>
-                <div><strong>Height:</strong> {profile.height}cm</div>
-                <div><strong>Weight:</strong> {profile.weight}kg</div>
-                <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
-                <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
-              </CardContent>
-            </Card>
-
-            {/* Body Pain Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <AlertTriangle className="h-5 w-5 text-fitness-primary" />
-                  Any Body Pains?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-gray-600 mb-3">
-                  Select any areas where you experience pain. We'll customize your plan to avoid aggravating these areas.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {bodyPainOptions.map(({ value, label }) => (
-                    <Button
-                      key={value}
-                      type="button"
-                      variant={selectedPains.includes(value) ? "default" : "outline"}
-                      onClick={() => toggleBodyPain(value)}
-                      className={selectedPains.includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
-                      size="sm"
-                    >
-                      {label}
-                    </Button>
-                  ))}
+              <CardContent className="py-8 text-center">
+                <div className="bg-gray-100 rounded-full p-4 mb-4 mx-auto w-fit">
+                  <Sparkles className="h-8 w-8 text-gray-400" />
                 </div>
+                <h3 className="text-lg font-medium mb-2">Complete Your Profile First</h3>
+                <p className="text-gray-500 mb-4">
+                  You need to complete your fitness profile before generating a workout plan.
+                </p>
+                <Button 
+                  onClick={() => {
+                    onClose();
+                    // Navigate to profile page - you might need to implement this
+                    window.location.href = '/profile';
+                  }}
+                  className="bg-fitness-primary hover:bg-fitness-primary/90"
+                >
+                  Complete Profile
+                </Button>
               </CardContent>
             </Card>
+          ) : (
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Your Profile Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                  <div><strong>Goal:</strong> {capitalizeWords(profile.fitness_goal)}</div>
+                  <div><strong>Body Type:</strong> {Array.isArray(profile.body_type) ? profile.body_type.join(', ') : profile.body_type}</div>
+                  <div><strong>Height:</strong> {profile.height}cm</div>
+                  <div><strong>Weight:</strong> {profile.weight}kg</div>
+                  <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
+                  <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
+                </CardContent>
+              </Card>
 
-            <div className="flex gap-3">
-              <Button variant="outline" onClick={onClose} className="flex-1">
-                Cancel
-              </Button>
-              <Button 
-                onClick={generateWorkoutPlan}
-                disabled={isGenerating}
-                className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generating...
-                  </>
-                ) : (
-                  'Generate Plan'
-                )}
-              </Button>
+              {/* Body Pain Selection */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-fitness-primary" />
+                    Any Body Pains?
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-3">
+                    Select any areas where you experience pain. We'll customize your plan to avoid aggravating these areas.
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {bodyPainOptions.map(({ value, label }) => (
+                      <Button
+                        key={value}
+                        type="button"
+                        variant={selectedPains.includes(value) ? "default" : "outline"}
+                        onClick={() => toggleBodyPain(value)}
+                        className={selectedPains.includes(value) ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
+                        size="sm"
+                      >
+                        {label}
+                      </Button>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
-          </>
+          )}
+        </ScrollArea>
+
+        {profile && (
+          <div className="flex gap-3 mt-4 pt-4 border-t">
+            <Button variant="outline" onClick={onClose} className="flex-1">
+              Cancel
+            </Button>
+            <Button 
+              onClick={generateWorkoutPlan}
+              disabled={isGenerating}
+              className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate Plan'
+              )}
+            </Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>
