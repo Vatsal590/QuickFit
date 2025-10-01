@@ -270,7 +270,7 @@ const Landing = () => {
               Ready to Transform Your Fitness Journey?
             </h3>
             <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-              Join thousands who've made fitness simple with QuickFit's intelligent approach to workouts, nutrition, and progress tracking.
+              Join the others who've made fitness simple with QuickFit's intelligent approach to workouts, nutrition, and progress tracking.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
               <Link to="/auth">
