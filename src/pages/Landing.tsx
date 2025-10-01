@@ -155,6 +155,27 @@ const Landing = () => {
             </div>
           </div>
 
+        {/* About the Founder */}
+        <div className="mb-20">
+          <h3 className="text-3xl font-bold text-center text-gray-900 mb-6">
+            About the Founder
+          </h3>
+          <div className="max-w-3xl mx-auto">
+            <div className="flex flex-col items-center text-center bg-white rounded-2xl shadow-lg border p-6 md:p-10">
+              <div className="w-full max-w-md mb-6">
+                <img
+                  src="/lovable-uploads/vatsal-agarwala-founder.jpg"
+                  alt="Vatsal Agarwala - Founder of QuickFit"
+                  className="w-full h-auto rounded-xl object-cover shadow-md"
+                />
+              </div>
+              <p className="text-lg text-gray-700 leading-relaxed">
+                QuickFit was created by Vatsal Agarwala, a 15-year-old student, athlete, and AI enthusiast based in Luxembourg. Vatsal began his fitness journey at the age of 13. After trying multiple fitness apps, watching countless YouTube videos, and reading numerous fitness articles, he ended up even more confused. However, the best thing he did was not giving up. He did what suited his body, pushed to the limits, ate healthy, and the result is above. That's why he created QuickFit - to help people stay active and healthy, whether they’re beginners, office goers or anyone for that matter.
+              </p>
+            </div>
+          </div>
+        </div>
+
           {/* Why Choose QuickFit */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             <Card className="text-center hover:shadow-lg transition-all duration-300 bg-gradient-to-b from-white to-gray-50">
