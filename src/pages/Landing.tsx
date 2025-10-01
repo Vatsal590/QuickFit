@@ -9,8 +9,8 @@ const Landing = () => {
   const vRef = React.useRef(Date.now().toString());
   const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG', '.webp', '.avif'];
   const bases = [
-    '/lovable-uploads/vatsal-agarwala-founder',
-    'lovable-uploads/vatsal-agarwala-founder',
+    '/lovable-uploads/vatsal-agarwala-founder.jpg',
+    'lovable-uploads/vatsal-agarwala-founder.jpg',
     `${import.meta.env.BASE_URL}lovable-uploads/vatsal-agarwala-founder`
   ];
   const allCandidates = React.useMemo(() => {
@@ -19,7 +19,7 @@ const Landing = () => {
     const list: string[] = [];
     bases.forEach(b => exts.forEach(e => list.push(withV(`${b}${e}`))));
     // Known existing image in repo as a final fallback
-    list.push(withV('/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png'));
+    list.push(withV('/lovable-uploads/vatsal-agarwala-founder.jpg'));
     return list;
   }, []);
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
