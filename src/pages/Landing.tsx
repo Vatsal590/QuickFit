@@ -6,18 +6,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle } from 'lucide-react';
 
 const Landing = () => {
-  const [founderSrc, setFounderSrc] = React.useState('/lovable-uploads/vatsal-agarwala-founder.jpg');
-  const fallbackPaths = React.useRef([
-    '/lovable-uploads/vatsal-agarwala-founder.jpeg',
-    '/lovable-uploads/vatsal-agarwala-founder.png',
-    '/lovable-uploads/vatsal-agarwala-founder.JPG',
-    '/lovable-uploads/vatsal-agarwala-founder.JPEG',
-    '/lovable-uploads/vatsal-agarwala-founder.PNG'
-  ]);
+  const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG', '.webp', '.avif'];
+  const bases = [
+    '/lovable-uploads/vatsal-agarwala-founder',
+    'lovable-uploads/vatsal-agarwala-founder',
+    `${import.meta.env.BASE_URL}lovable-uploads/vatsal-agarwala-founder`
+  ];
+  const allCandidates = React.useMemo(() => {
+    const list: string[] = [];
+    bases.forEach(b => exts.forEach(e => list.push(`${b}${e}`)));
+    return list;
+  }, []);
+  const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
+  const fallbackPaths = React.useRef(allCandidates.slice(1));
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
     if (next) {
       setFounderSrc(next);
+    } else {
+      // no-op; keep broken icon rather than crashing
     }
   };
   return (
