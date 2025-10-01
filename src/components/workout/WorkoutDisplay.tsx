@@ -8,7 +8,6 @@ import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer, Play }
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import ExerciseTimer from './ExerciseTimer';
-import ExerciseAlternatives from './ExerciseAlternatives';
 
 interface WorkoutDisplayProps {
   workout: Workout;
@@ -605,12 +604,6 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                 <h3 className="font-medium text-lg">5-Minute Cooldown ({workout.cooldownExercises.length})</h3>
               </div>
               {renderExerciseList(workout.cooldownExercises, true)}
-              
-              {/* AI Exercise Alternatives */}
-              <ExerciseAlternatives 
-                exercises={workout.exercises}
-                equipment={workout.equipment}
-              />
             </>
           )}
         </CardContent>
