@@ -6,6 +6,20 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle } from 'lucide-react';
 
 const Landing = () => {
+  const [founderSrc, setFounderSrc] = React.useState('/lovable-uploads/vatsal-agarwala-founder.jpg');
+  const fallbackPaths = React.useRef([
+    '/lovable-uploads/vatsal-agarwala-founder.jpeg',
+    '/lovable-uploads/vatsal-agarwala-founder.png',
+    '/lovable-uploads/vatsal-agarwala-founder.JPG',
+    '/lovable-uploads/vatsal-agarwala-founder.JPEG',
+    '/lovable-uploads/vatsal-agarwala-founder.PNG'
+  ]);
+  const handleFounderImgError = () => {
+    const next = fallbackPaths.current.shift();
+    if (next) {
+      setFounderSrc(next);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-gray-50 to-blue-100">
       {/* Header */}
@@ -164,9 +178,10 @@ const Landing = () => {
             <div className="flex flex-col items-center text-center bg-white rounded-2xl shadow-lg border p-6 md:p-10">
               <div className="w-full max-w-md mb-6 h-96 overflow-hidden rounded-xl shadow-md">
                 <img
-                  src="/lovable-uploads/vatsal-agarwala-founder.jpg"
+                  src={founderSrc}
                   alt="Vatsal Agarwala - Founder of QuickFit"
                   className="w-full h-full object-cover object-bottom"
+                  onError={handleFounderImgError}
                 />
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
