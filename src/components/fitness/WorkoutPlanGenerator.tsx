@@ -50,7 +50,22 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
   };
 
   const generateWorkoutPlan = async () => {
-    if (!user || !profile) return;
+    if (!user) {
+      toast({
+        title: "You're not signed in",
+        description: "Please sign in again and try generating the plan.",
+        variant: "destructive"
+      });
+      return;
+    }
+    if (!profile) {
+      toast({
+        title: "Profile not ready",
+        description: "Please complete and save your fitness profile first.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setIsGenerating(true);
     try {
@@ -111,7 +126,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-fitness-primary" />
@@ -144,7 +159,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
             </CardContent>
           </Card>
         ) : (
-          <ScrollArea className="flex-1 pr-4">
+          <ScrollArea className="flex-1 pr-4 h-[60vh]">
             <div className="space-y-4">
               {/* Profile Summary */}
               <Card>
