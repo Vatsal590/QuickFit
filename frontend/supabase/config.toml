@@ -27,3 +27,6 @@ verify_jwt = true
 
 [functions.verify-workout-purchase]
 verify_jwt = true
+
+[functions.exercise-alternatives]
+verify_jwt = false

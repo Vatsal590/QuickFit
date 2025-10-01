@@ -111,7 +111,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-fitness-primary" />
@@ -122,31 +122,31 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
           </DialogDescription>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 pr-4">
-          {!profile ? (
-            <Card>
-              <CardContent className="py-8 text-center">
-                <div className="bg-gray-100 rounded-full p-4 mb-4 mx-auto w-fit">
-                  <Sparkles className="h-8 w-8 text-gray-400" />
-                </div>
-                <h3 className="text-lg font-medium mb-2">Complete Your Profile First</h3>
-                <p className="text-gray-500 mb-4">
-                  You need to complete your fitness profile before generating a workout plan.
-                </p>
-                <Button 
-                  onClick={() => {
-                    onClose();
-                    // Navigate to profile page - you might need to implement this
-                    window.location.href = '/profile';
-                  }}
-                  className="bg-fitness-primary hover:bg-fitness-primary/90"
-                >
-                  Complete Profile
-                </Button>
-              </CardContent>
-            </Card>
-          ) : (
+        {!profile ? (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <div className="bg-gray-100 rounded-full p-4 mb-4 mx-auto w-fit">
+                <Sparkles className="h-8 w-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium mb-2">Complete Your Profile First</h3>
+              <p className="text-gray-500 mb-4">
+                You need to complete your fitness profile before generating a workout plan.
+              </p>
+              <Button 
+                onClick={() => {
+                  onClose();
+                  window.location.href = '/profile';
+                }}
+                className="bg-fitness-primary hover:bg-fitness-primary/90"
+              >
+                Complete Profile
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <ScrollArea className="flex-1 pr-4">
             <div className="space-y-4">
+              {/* Profile Summary */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Your Profile Summary</CardTitle>
@@ -157,11 +157,11 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
                   <div><strong>Height:</strong> {profile.height}cm</div>
                   <div><strong>Weight:</strong> {profile.weight}kg</div>
                   <div><strong>Workout Days:</strong> {profile.workout_days_per_week} per week</div>
-                  <div><strong>Equipment:</strong> {profile.available_equipment.join(', ')}</div>
+                  <div><strong>Available Equipment:</strong> {profile.available_equipment.join(', ')}</div>
                 </CardContent>
               </Card>
 
-              {/* Body Pain Selection */}
+              {/* Body Pain Selection - Now below equipment */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -190,8 +190,8 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
                 </CardContent>
               </Card>
             </div>
-          )}
-        </ScrollArea>
+          </ScrollArea>
+        )}
 
         {profile && (
           <div className="flex gap-3 mt-4 pt-4 border-t">

@@ -8,7 +8,6 @@ import UserWorkoutPlans from '../components/fitness/UserWorkoutPlans';
 import WorkoutPlanViewer from '../components/fitness/WorkoutPlanViewer';
 import WorkoutPlanGenerator from '../components/fitness/WorkoutPlanGenerator';
 import WeightTracker from '../components/fitness/WeightTracker';
-import ExerciseAlternativesDialog from '../components/workout/ExerciseAlternativesDialog';
 import { Workout, WorkoutFormData, WorkoutPlan } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
@@ -24,8 +23,6 @@ const Home = () => {
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
   const [showPlanGenerator, setShowPlanGenerator] = useState(false);
-  const [showAlternatives, setShowAlternatives] = useState(false);
-  const [alternativesEquipment, setAlternativesEquipment] = useState<string[]>([]);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
   const { profile, isLoading: profileLoading } = useFitnessProfile();
   const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans, addWorkoutPlan } = useWorkoutPlans();
@@ -51,7 +48,6 @@ const Home = () => {
         formData.bodyPains
       );
       setCurrentWorkout(newWorkout);
-      setAlternativesEquipment(formData.equipment);
       
       toast({
         title: "Workout generated",
@@ -59,9 +55,6 @@ const Home = () => {
       });
       
       addWorkoutToHistory(newWorkout);
-      
-      // Show alternatives dialog after workout is created
-      setTimeout(() => setShowAlternatives(true), 500);
     } catch (error) {
       console.error("Failed to generate workout:", error);
       toast({
@@ -247,14 +240,6 @@ const Home = () => {
           onClose={() => setShowPlanGenerator(false)}
           profile={profile}
           onPlanGenerated={handlePlanGenerated}
-        />
-
-        {/* Exercise Alternatives Dialog */}
-        <ExerciseAlternativesDialog
-          isOpen={showAlternatives}
-          onClose={() => setShowAlternatives(false)}
-          exercises={currentWorkout?.exercises || []}
-          equipment={alternativesEquipment}
         />
       </div>
     </PageContainer>
