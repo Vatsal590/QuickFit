@@ -518,6 +518,43 @@ export const generateWorkout = (
     maxExercises = time <= 20 ? 2 : 3;
   }
 
+  // Chest selection rules
+  if (muscleGroups.includes("chest")) {
+    // Remove bodyweight chest movements when dumbbells and/or barbell are selected
+    const hasDumbbells = equipment.includes("dumbbells");
+    const hasBarbell = equipment.includes("barbell");
+    const hasCable = equipment.includes("cable machine");
+
+    if (hasDumbbells || hasBarbell) {
+      selectedExercises = selectedExercises.filter(ex => {
+        if (ex.muscleGroup !== "chest") return true;
+        const isBodyweightChest = ex.equipment.length === 1 && ex.equipment.includes("none");
+        return !isBodyweightChest;
+      });
+    }
+
+    // Ensure a fly if dumbbells only, or bench press if barbell included
+    const ensureExercise = (id: string) => {
+      const exists = selectedExercises.some(ex => ex.id === id);
+      if (!exists) {
+        const found = exercises.find(ex => ex.id === id);
+        if (found) selectedExercises.unshift(found);
+      }
+    };
+
+    if (hasDumbbells && !hasBarbell) {
+      ensureExercise("dumbbell-chest-fly");
+    }
+    if (hasBarbell) {
+      ensureExercise("barbell-bench-press");
+    }
+
+    // If cable machine is available, include cable chest fly
+    if (hasCable) {
+      ensureExercise("cable-chest-fly");
+    }
+  }
+
   // Special ordering for back exercises when specific equipment is available
   if (muscleGroups.includes("back") && 
       equipment.includes("barbell") && 

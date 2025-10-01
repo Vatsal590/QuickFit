@@ -33,6 +33,16 @@ export const exercises: Exercise[] = [
     description: "Lie on a bench holding dumbbells at chest level. Press the weights up until arms are extended, then lower back to start position."
   },
   {
+    id: "dumbbell-chest-fly",
+    name: "Dumbbell Chest Fly",
+    muscleGroup: "chest",
+    equipment: ["dumbbells", "bench"],
+    sets: 3,
+    reps: 12,
+    restTime: 60,
+    description: "Lie on a bench holding dumbbells over your chest with a slight bend in elbows. Lower arms out to sides in an arc until you feel a stretch in the chest, then bring them back up over chest by squeezing pecs."
+  },
+  {
     id: "barbell-bench-press",
     name: "Barbell Bench Press",
     muscleGroup: "chest",
