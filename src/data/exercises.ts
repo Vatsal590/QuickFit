@@ -579,14 +579,14 @@ export const exercises: Exercise[] = [
     description: "On hands and knees, extend opposite arm and leg, hold for a few seconds, then switch sides."
   },
   {
-    id: "towel-leg-curls",
-    name: "Towel Leg Curls",
+    id: "bodyweight-bicep-curls",
+    name: "Bodyweight Bicep Curls",
     muscleGroup: "biceps",
     equipment: ["none"],
     sets: 3,
     reps: 12,
-    restTime: 60,
-    description: "Lie on back, place towel under one foot, hold towel ends and curl leg up while providing resistance with towel."
+    restTime: 30,
+    description: "Bicep curls without weights"
   },
 
   // Biceps exercises
