@@ -12,6 +12,7 @@ import ForgotPassword from './ForgotPassword';
 import PrivacyPolicy from '../legal/PrivacyPolicy';
 import TermsOfConditions from '../legal/TermsOfConditions';
 import { supabase } from '@/integrations/supabase/client';
+import { ReferralDialog } from '../referral/ReferralDialog';
 
 const AuthForm = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -27,6 +28,8 @@ const AuthForm = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showReferralDialog, setShowReferralDialog] = useState(false);
+  const [pendingSignup, setPendingSignup] = useState<{email: string, password: string, fullName: string} | null>(null);
   
   const { signIn, signUp } = useAuth();
   const { toast } = useToast();
@@ -172,19 +175,11 @@ const AuthForm = () => {
           window.location.replace('/home');
         }
       } else {
-        result = await signUp(email, password, fullName);
-        if (result.error) {
-          toast({
-            title: "Error",
-            description: result.error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Success!",
-            description: "Account created successfully. Please check your email to verify your account.",
-          });
-        }
+        // Show referral dialog before signup
+        setPendingSignup({ email, password, fullName });
+        setShowReferralDialog(true);
+        setLoading(false);
+        return;
       }
     } catch (error) {
       toast({
@@ -194,6 +189,44 @@ const AuthForm = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleReferralSubmit = async (referralCode: string | null) => {
+    setShowReferralDialog(false);
+    setLoading(true);
+
+    if (!pendingSignup) return;
+
+    try {
+      const result = await signUp(
+        pendingSignup.email,
+        pendingSignup.password,
+        pendingSignup.fullName,
+        referralCode || undefined
+      );
+
+      if (result.error) {
+        toast({
+          title: "Error",
+          description: result.error.message,
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Success!",
+          description: "Account created successfully. Please check your email to verify your account.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+      setPendingSignup(null);
     }
   };
 
@@ -439,6 +472,12 @@ const AuthForm = () => {
       <TermsOfConditions 
         isOpen={showTermsOfConditions}
         onClose={() => setShowTermsOfConditions(false)}
+      />
+
+      {/* Referral Dialog */}
+      <ReferralDialog
+        open={showReferralDialog}
+        onSubmit={handleReferralSubmit}
       />
     </div>
   );

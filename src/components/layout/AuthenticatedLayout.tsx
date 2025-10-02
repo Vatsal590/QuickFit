@@ -36,6 +36,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
 import { MenuIcon } from '@/components/ui/menu-icon';
+import { ReferralCongrats } from '@/components/referral/ReferralCongrats';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -255,6 +256,9 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       
       {/* Chatbot */}
       <Chatbot />
+      
+      {/* Referral Congrats */}
+      <ReferralCongrats />
     </div>
   );
 };
