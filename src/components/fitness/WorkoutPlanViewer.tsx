@@ -177,6 +177,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'resistance band curl': 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Band-Biceps-Curl.gif',
       'resistance band curls': 'https://fitnessprogramer.com/wp-content/uploads/2022/02/Band-Biceps-Curl.gif',
       'barbell reverse curl' : 'https://burnfit.io/wp-content/uploads/2023/11/REV_BB_CURL.gif',
+      'bodyweight bicep curls': 'https://www.inspireusafoundation.org/file/2024/02/bodyweight-bicep-curl.gif',
 
       
       // Leg exercises
