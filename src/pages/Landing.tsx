@@ -197,7 +197,7 @@ const Landing = () => {
                 />
               </div>
               <p className="text-lg text-gray-700 leading-relaxed">
-                QuickFit was created by Vatsal Agarwala, a 15-year-old student, athlete, and AI enthusiast based in Luxembourg. Vatsal began his fitness journey at the age of 13. After trying multiple fitness apps, watching countless YouTube videos, and reading numerous fitness articles, he ended up even more confused. However, the best thing he did was not giving up. He did what suited his body, pushed to the limits, ate healthy, and the result is above. That's why he created QuickFit - to help people stay active and healthy, whether they’re beginners, office goers or anyone for that matter.
+                QuickFit was created by Vatsal Agarwala, a 15-year-old student in Luxembourg. Vatsal began his fitness journey at the age of 13. After trying multiple fitness apps, watching countless YouTube videos, and reading numerous fitness articles, he ended up even more confused. However, the best thing he did was not giving up. He did what suited his body, pushed to the limits, ate healthy, and the result is above. That's why he created QuickFit - to help people stay active and healthy, whether they’re beginners, office goers or anyone for that matter.
               </p>
             </div>
           </div>
