@@ -215,7 +215,8 @@ const AuthForm = () => {
       } else {
         toast({
           title: "Success!",
-          description: "Account created successfully. Please check your email to verify your account.",
+          description: "Account created! Please check your email for a confirmation link. Make sure to use the latest email if you've signed up before.",
+          duration: 8000,
         });
       }
     } catch (error) {

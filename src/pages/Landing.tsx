@@ -1,11 +1,16 @@
 
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Landing = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const vRef = React.useRef(Date.now().toString());
   const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG', '.webp', '.avif'];
   const bases = [
@@ -33,6 +38,44 @@ const Landing = () => {
       setFounderSrc(`/placeholder.svg?v=${vRef.current}`);
     }
   };
+
+  // Handle email verification redirects
+  useEffect(() => {
+    const checkVerification = async () => {
+      const error = searchParams.get('error');
+      const errorDescription = searchParams.get('error_description');
+      
+      // Handle email verification errors
+      if (error || errorDescription) {
+        if (errorDescription?.includes('expired') || errorDescription?.includes('invalid')) {
+          toast({
+            title: "Verification Link Expired",
+            description: "Your email confirmation link has expired or is invalid. Please sign up again to receive a new confirmation email.",
+            variant: "destructive",
+          });
+          // Clear the URL parameters
+          navigate('/', { replace: true });
+        } else {
+          toast({
+            title: "Verification Error",
+            description: errorDescription || "There was an issue verifying your email. Please try again.",
+            variant: "destructive",
+          });
+          navigate('/', { replace: true });
+        }
+      }
+      
+      // Check if this is a successful verification
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // User is verified and logged in, redirect to home
+        navigate('/home', { replace: true });
+      }
+    };
+
+    checkVerification();
+  }, [searchParams, navigate, toast]);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 via-gray-50 to-blue-100">
       {/* Header */}
