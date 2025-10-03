@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Copy, Check, Gift } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -12,6 +14,8 @@ export function FreeAccessSection() {
   const [referralCode, setReferralCode] = useState<string>('');
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [inputReferralCode, setInputReferralCode] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -79,6 +83,69 @@ export function FreeAccessSection() {
     }
   };
 
+  const handleSubmitReferralCode = async () => {
+    if (!user || !inputReferralCode.trim()) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Find the referrer by their referral code
+      const { data: referrer, error: referrerError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('referral_code', inputReferralCode.trim().toUpperCase())
+        .single();
+
+      if (referrerError || !referrer) {
+        toast({
+          title: "Invalid Code",
+          description: "The referral code you entered is not valid.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Check if user already used a referral code
+      const { data: existingReferral } = await supabase
+        .from('referrals')
+        .select('id')
+        .eq('referred_id', user.id)
+        .single();
+
+      if (existingReferral) {
+        toast({
+          title: "Already Used",
+          description: "You have already used a referral code.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Insert the referral
+      const { error: insertError } = await supabase
+        .from('referrals')
+        .insert({
+          referrer_id: referrer.id,
+          referred_id: user.id,
+        });
+
+      if (insertError) throw insertError;
+
+      toast({
+        title: "Success!",
+        description: "Referral code applied successfully.",
+      });
+      setInputReferralCode('');
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to apply referral code.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -113,6 +180,26 @@ export function FreeAccessSection() {
           <div className="flex items-center justify-between bg-muted px-4 py-3 rounded-md">
             <span className="text-sm">Total Referrals</span>
             <span className="text-2xl font-bold">{referralCount}</span>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="enter-referral">Enter a Referral Code</Label>
+          <div className="flex items-center gap-2">
+            <Input
+              id="enter-referral"
+              placeholder="Enter 5-digit code"
+              value={inputReferralCode}
+              onChange={(e) => setInputReferralCode(e.target.value.toUpperCase())}
+              maxLength={5}
+              className="uppercase flex-1"
+            />
+            <Button
+              onClick={handleSubmitReferralCode}
+              disabled={!inputReferralCode.trim() || isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </Button>
           </div>
         </div>
 
