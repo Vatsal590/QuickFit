@@ -7,6 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Copy, Check, Gift } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export function FreeAccessSection() {
   const { user } = useAuth();
@@ -16,6 +26,9 @@ export function FreeAccessSection() {
   const [copied, setCopied] = useState(false);
   const [inputReferralCode, setInputReferralCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [referrerName, setReferrerName] = useState<string>('');
+  const [pendingReferrer, setPendingReferrer] = useState<{ id: string; name: string } | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -39,6 +52,26 @@ export function FreeAccessSection() {
         .eq('referrer_id', user.id);
 
       setReferralCount(referrals?.length || 0);
+
+      // Check if user was referred by someone
+      const { data: myReferral } = await supabase
+        .from('referrals')
+        .select('referrer_id')
+        .eq('referred_id', user.id)
+        .single();
+
+      if (myReferral) {
+        // Get referrer's name
+        const { data: referrerProfile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', myReferral.referrer_id)
+          .single();
+
+        if (referrerProfile?.full_name) {
+          setReferrerName(referrerProfile.full_name);
+        }
+      }
     };
 
     fetchReferralData();
@@ -91,7 +124,7 @@ export function FreeAccessSection() {
       // Find the referrer by their referral code
       const { data: referrer, error: referrerError } = await supabase
         .from('profiles')
-        .select('id')
+        .select('id, full_name')
         .eq('referral_code', inputReferralCode.trim().toUpperCase())
         .single();
 
@@ -101,6 +134,7 @@ export function FreeAccessSection() {
           description: "The referral code you entered is not valid.",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
 
@@ -117,14 +151,34 @@ export function FreeAccessSection() {
           description: "You have already used a referral code.",
           variant: "destructive",
         });
+        setIsSubmitting(false);
         return;
       }
 
+      // Show confirmation dialog
+      setPendingReferrer({ id: referrer.id, name: referrer.full_name || 'Unknown' });
+      setShowConfirmDialog(true);
+      setIsSubmitting(false);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to validate referral code.",
+        variant: "destructive",
+      });
+      setIsSubmitting(false);
+    }
+  };
+
+  const confirmReferral = async () => {
+    if (!pendingReferrer || !user) return;
+
+    setIsSubmitting(true);
+    try {
       // Insert the referral
       const { error: insertError } = await supabase
         .from('referrals')
         .insert({
-          referrer_id: referrer.id,
+          referrer_id: pendingReferrer.id,
           referred_id: user.id,
         });
 
@@ -134,7 +188,10 @@ export function FreeAccessSection() {
         title: "Success!",
         description: "Referral code applied successfully.",
       });
+      setReferrerName(pendingReferrer.name);
       setInputReferralCode('');
+      setShowConfirmDialog(false);
+      setPendingReferrer(null);
     } catch (error) {
       toast({
         title: "Error",
@@ -193,20 +250,48 @@ export function FreeAccessSection() {
               onChange={(e) => setInputReferralCode(e.target.value.toUpperCase())}
               maxLength={5}
               className="uppercase flex-1"
+              disabled={!!referrerName}
             />
             <Button
               onClick={handleSubmitReferralCode}
-              disabled={!inputReferralCode.trim() || isSubmitting}
+              disabled={!inputReferralCode.trim() || isSubmitting || !!referrerName}
             >
               {isSubmitting ? 'Submitting...' : 'Submit'}
             </Button>
           </div>
+          {referrerName && (
+            <p className="text-sm text-muted-foreground">
+              Referred by <span className="font-semibold">{referrerName}</span>
+            </p>
+          )}
         </div>
 
         <div className="text-xs text-muted-foreground space-y-1">
           <p className="text-center">Share your referral code with friends!</p>
         </div>
       </CardContent>
+
+      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirm Referral</AlertDialogTitle>
+            <AlertDialogDescription>
+              Referred by {pendingReferrer?.name}?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowConfirmDialog(false);
+              setPendingReferrer(null);
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmReferral} disabled={isSubmitting}>
+              {isSubmitting ? 'Confirming...' : 'Confirm'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

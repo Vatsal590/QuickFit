@@ -33,12 +33,12 @@ const FreeAccess = () => {
             <div className="w-full mb-6 rounded-xl shadow-md overflow-hidden">
               <img 
                 src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
-                alt="Vatsal Agarwala" 
-                className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
+                alt="Vatsal Agarwala - Founder of QuickFit" 
+                className="w-full h-auto object-contain"
               />
-              <h3 className="text-xl font-semibold text-fitness-primary mb-2">Vatsal Agarwala</h3>
-              <p className="text-muted-foreground mb-4">Founder & CEO, Age 15</p>
             </div>
+            <h3 className="text-xl font-semibold text-fitness-primary mb-2">Vatsal Agarwala</h3>
+            <p className="text-muted-foreground mb-4">Founder & CEO, Age 15</p>
             
             <div className="text-left max-w-3xl mx-auto space-y-4 text-muted-foreground">
               <p>
