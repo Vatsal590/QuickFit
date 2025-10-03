@@ -125,7 +125,7 @@ export function FreeAccessSection() {
       const { data: referrer, error: referrerError } = await supabase
         .from('profiles')
         .select('id, full_name')
-        .ilike('referral_code', inputReferralCode.trim())
+        .ilike('referral_code', inputReferralCode.trim().toUpperCase())
         .single();
 
       if (referrerError || !referrer) {
