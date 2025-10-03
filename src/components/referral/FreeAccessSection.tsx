@@ -125,7 +125,7 @@ export function FreeAccessSection() {
       const { data: referrer, error: referrerError } = await supabase
         .from('profiles')
         .select('id, full_name')
-        .ilike('referral_code', inputReferralCode.trim().toUpperCase())
+        .eq('referral_code', inputReferralCode.trim())
         .single();
 
       if (referrerError || !referrer) {
@@ -247,7 +247,7 @@ export function FreeAccessSection() {
               id="enter-referral"
               placeholder="Enter 5-digit code"
               value={inputReferralCode}
-              onChange={(e) => setInputReferralCode(e.target.value.toUpperCase())}
+              onChange={(e) => setInputReferralCode(e.target.value.toUpperCase().trim())}
               maxLength={5}
               className="uppercase flex-1"
               disabled={!!referrerName}
