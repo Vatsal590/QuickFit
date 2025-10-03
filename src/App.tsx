@@ -15,6 +15,7 @@ import TermsOfService from "./pages/TermsOfService";
 import DeleteAccount from "./pages/DeleteAccount";
 import WeightTracker from "./pages/WeightTracker";
 import DietPlan from "./pages/DietPlan";
+import FreeAccess from "./pages/FreeAccess";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -125,6 +126,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <DietPlan />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/free-access" 
+        element={
+          <ProtectedRoute>
+            <FreeAccess />
           </ProtectedRoute>
         } 
       />

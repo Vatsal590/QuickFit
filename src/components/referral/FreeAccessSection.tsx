@@ -117,8 +117,7 @@ export function FreeAccessSection() {
         </div>
 
         <div className="text-xs text-muted-foreground space-y-1">
-          <p>• Get 3 referrals for a reward!</p>
-          <p>• Get 6 referrals for an even better reward!</p>
+          <p className="text-center">Share your referral code with friends!</p>
         </div>
       </CardContent>
     </Card>
