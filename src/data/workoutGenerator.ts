@@ -429,6 +429,23 @@ export const generateWorkout = (
     selectedExercises = [...selectedExercises, ...uniqueAlternatives];
   }
   
+  // Special handling for biceps + dumbbells workouts
+  if (muscleGroups.includes("biceps") && equipment.includes("dumbbells")) {
+    const bicepCurl = exercises.find(ex => ex.id === "dumbbell-bicep-curl");
+    const hammerCurl = exercises.find(ex => ex.id === "hammer-curl");
+    
+    if (time === 10) {
+      // 10 mins: Only dumbbell bicep curls
+      selectedExercises = bicepCurl ? [bicepCurl] : selectedExercises;
+    } else if (time === 20 || time === 30) {
+      // 20 and 30 mins: Dumbbell bicep curls and hammer curls
+      selectedExercises = [];
+      if (bicepCurl) selectedExercises.push(bicepCurl);
+      if (hammerCurl) selectedExercises.push(hammerCurl);
+    }
+    // For other time durations, use default logic
+  }
+  
   // Special handling for barbell full body workouts
   if (muscleGroups.includes("full body") && equipment.includes("barbell")) {
     const barbellExercises = exercises.filter(ex => 
