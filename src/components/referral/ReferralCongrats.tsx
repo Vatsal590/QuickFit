@@ -21,6 +21,11 @@ export const ReferralCongrats = () => {
   useEffect(() => {
     if (!user) return;
 
+    // Load previously shown milestones from localStorage FIRST
+    const stored = localStorage.getItem(`referral_milestone_${user.id}`);
+    const previouslyShown = stored ? JSON.parse(stored) : [];
+    setShownMilestones(previouslyShown);
+
     const checkReferrals = async () => {
       try {
         // Get user's full name
@@ -43,30 +48,28 @@ export const ReferralCongrats = () => {
         const count = referrals?.length || 0;
         setReferralCount(count);
 
+        // Get the current shown milestones from localStorage
+        const currentStored = localStorage.getItem(`referral_milestone_${user.id}`);
+        const currentShown = currentStored ? JSON.parse(currentStored) : [];
+
         // Check if we should show congratulations for 3 or 6 referrals
         const milestones = [3, 6];
-        const reachedMilestones = milestones.filter(m => count >= m && !shownMilestones.includes(m));
+        const reachedMilestones = milestones.filter(m => count >= m && !currentShown.includes(m));
         
         if (reachedMilestones.length > 0) {
           // Show the highest reached milestone
           const milestone = Math.max(...reachedMilestones);
-          setReferralCount(count); // Keep the actual count
           setShowDialog(true);
-          setShownMilestones([...shownMilestones, milestone]);
           
-          // Store shown milestones in localStorage
-          localStorage.setItem(`referral_milestone_${user.id}`, JSON.stringify([...shownMilestones, milestone]));
+          // Update shown milestones
+          const updatedShown = [...currentShown, milestone];
+          setShownMilestones(updatedShown);
+          localStorage.setItem(`referral_milestone_${user.id}`, JSON.stringify(updatedShown));
         }
       } catch (error) {
         console.error('Error checking referrals:', error);
       }
     };
-
-    // Load previously shown milestones from localStorage
-    const stored = localStorage.getItem(`referral_milestone_${user.id}`);
-    if (stored) {
-      setShownMilestones(JSON.parse(stored));
-    }
 
     checkReferrals();
 
@@ -90,7 +93,7 @@ export const ReferralCongrats = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [user, shownMilestones]);
+  }, [user]);
 
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
