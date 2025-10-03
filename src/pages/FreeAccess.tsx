@@ -32,7 +32,7 @@ const FreeAccess = () => {
           <CardContent className="text-center">
             <div className="mb-6">
               <img 
-                src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+                src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
                 alt="Vatsal Agarwala" 
                 className="w-32 h-32 rounded-full mx-auto mb-4 object-cover"
               />
