@@ -21,7 +21,7 @@ const mainItems = [
 ];
 
 const workoutItems = [
-  { title: "My Plans", url: "/home?section=plans", icon: Calendar },
+  { title: "My 30 Day Plan", url: "/home?section=plans", icon: Calendar },
   { title: "Quick Workout", url: "/home?section=generator", icon: Dumbbell },
 ];
 
