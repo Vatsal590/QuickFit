@@ -50,7 +50,7 @@ export const ReferralCongrats = () => {
         if (reachedMilestones.length > 0) {
           // Show the highest reached milestone
           const milestone = Math.max(...reachedMilestones);
-          setReferralCount(milestone);
+          setReferralCount(count); // Keep the actual count
           setShowDialog(true);
           setShownMilestones([...shownMilestones, milestone]);
           
