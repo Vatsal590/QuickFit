@@ -323,6 +323,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      validate_referral_code: {
+        Args: { code: string }
+        Returns: {
+          full_name: string
+          user_id: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

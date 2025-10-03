@@ -121,11 +121,9 @@ export function FreeAccessSection() {
     
     setIsSubmitting(true);
     try {
-      // Find the referrer by their referral code
+      // Use secure function to validate referral code without exposing sensitive data
       const { data: referrer, error: referrerError } = await supabase
-        .from('profiles')
-        .select('id, full_name')
-        .eq('referral_code', inputReferralCode.trim())
+        .rpc('validate_referral_code', { code: inputReferralCode.trim() })
         .single();
 
       if (referrerError || !referrer) {
@@ -137,6 +135,12 @@ export function FreeAccessSection() {
         setIsSubmitting(false);
         return;
       }
+
+      // Map the function result to match expected structure
+      const referrerData = {
+        id: referrer.user_id,
+        full_name: referrer.full_name
+      };
 
       // Check if user already used a referral code
       const { data: existingReferral } = await supabase
@@ -156,7 +160,7 @@ export function FreeAccessSection() {
       }
 
       // Show confirmation dialog
-      setPendingReferrer({ id: referrer.id, name: referrer.full_name || 'Unknown' });
+      setPendingReferrer({ id: referrerData.id, name: referrerData.full_name || 'Unknown' });
       setShowConfirmDialog(true);
       setIsSubmitting(false);
     } catch (error) {
