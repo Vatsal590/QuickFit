@@ -30,7 +30,7 @@ const FreeAccess = () => {
             <CardTitle className="text-2xl text-center">Meet the Founder</CardTitle>
           </CardHeader>
           <CardContent className="text-center">
-            <div className="mb-6">
+            <div className="w-full mb-6 rounded-xl shadow-md overflow-hidden">
               <img 
                 src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
                 alt="Vatsal Agarwala" 
