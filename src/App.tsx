@@ -16,6 +16,7 @@ import DeleteAccount from "./pages/DeleteAccount";
 import WeightTracker from "./pages/WeightTracker";
 import DietPlan from "./pages/DietPlan";
 import FreeAccess from "./pages/FreeAccess";
+import Blogs from "./pages/Blogs";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -134,6 +135,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <FreeAccess />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/blogs" 
+        element={
+          <ProtectedRoute>
+            <Blogs />
           </ProtectedRoute>
         } 
       />

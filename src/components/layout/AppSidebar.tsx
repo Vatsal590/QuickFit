@@ -1,4 +1,4 @@
-import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Gift } from "lucide-react";
+import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Gift, BookOpen } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -18,6 +18,7 @@ const mainItems = [
   { title: "Weight Tracker", url: "/weight-tracker", icon: Scale },
   { title: "Diet Plan", url: "/diet-plan", icon: UtensilsCrossed },
   { title: "Free Access", url: "/free-access", icon: Gift },
+  { title: "Blogs", url: "/blogs", icon: BookOpen },
 ];
 
 const workoutItems = [
