@@ -58,7 +58,7 @@ export function FreeAccessSection() {
         .from('referrals')
         .select('referrer_id')
         .eq('referred_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (myReferral) {
         // Get referrer's name
@@ -143,7 +143,7 @@ export function FreeAccessSection() {
         .from('referrals')
         .select('id')
         .eq('referred_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (existingReferral) {
         toast({
