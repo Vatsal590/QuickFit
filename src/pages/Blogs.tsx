@@ -64,6 +64,51 @@ const blogsData = [
       </>
     ),
   },
+  {
+    id: 2,
+    title: "How to lose fat and gain muscle",
+    description: "Master body recomposition with the right balance of training, nutrition, and recovery",
+    content: (
+      <>
+        <p className="text-muted-foreground">
+          Losing fat and gaining muscle at the same time is called body recomposition. It's possible if you balance training, nutrition, and recovery the right way.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-6 mb-3 text-foreground">1. Prioritize Strength Training</h2>
+        <p className="text-muted-foreground">
+          Focus on resistance training 3–5 times per week. Compound movements like squats, deadlifts, bench presses, and pull-ups are the most effective for stimulating muscle growth.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-6 mb-3 text-foreground">2. Eat Enough Protein</h2>
+        <p className="text-muted-foreground">
+          Protein repairs and builds muscle. Aim for 1.6–2.2g of protein per kg of body weight daily. Choose lean meats, fish, eggs, dairy, beans, or plant-based sources.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-6 mb-3 text-foreground">3. Be in a Slight Calorie Deficit</h2>
+        <p className="text-muted-foreground">
+          To burn fat, you need to eat fewer calories than you burn — but not too few. A small deficit of 200–400 calories/day is enough to shed fat without sacrificing muscle.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-6 mb-3 text-foreground">4. Do Cardio Wisely</h2>
+        <p className="text-muted-foreground">
+          Add 2–3 sessions of cardio per week. Low to moderate intensity (walking, cycling, swimming) helps burn calories without harming recovery.
+        </p>
+
+        <h2 className="text-xl font-semibold mt-6 mb-3 text-foreground">5. Stay Consistent and Patient</h2>
+        <p className="text-muted-foreground mb-3">
+          Body recomposition takes time. Track progress using photos, strength gains, and measurements — not just the scale.
+        </p>
+
+        <p className="text-muted-foreground font-semibold mt-6">
+          💡 Pro tip: Beginners often see results faster since their bodies adapt quickly to new training and nutrition habits.
+        </p>
+
+        <p className="text-muted-foreground mt-4">
+          By combining structured workouts, smart eating, and proper recovery, you can lose fat and gain lean muscle at the same time.
+        </p>
+      </>
+    ),
+  },
 ];
 
 const Blogs = () => {
