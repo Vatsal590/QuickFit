@@ -1,8 +1,7 @@
 import { useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 const blogsData = [
   {
@@ -95,15 +94,14 @@ const Blogs = () => {
       </div>
 
       <Dialog open={!!selectedBlog} onOpenChange={() => setSelectedBlog(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogContent className="max-w-4xl w-[92vw] md:w-auto max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl">{selectedBlog?.title}</DialogTitle>
+            <DialogDescription className="sr-only">Full article content</DialogDescription>
           </DialogHeader>
-          <ScrollArea className="flex-1 pr-4">
-            <div className="prose prose-slate dark:prose-invert max-w-none pb-6">
-              {selectedBlog?.content}
-            </div>
-          </ScrollArea>
+          <div className="prose prose-slate dark:prose-invert max-w-none pb-6">
+            {selectedBlog?.content}
+          </div>
         </DialogContent>
       </Dialog>
     </PageContainer>
