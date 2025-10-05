@@ -116,35 +116,64 @@ const Blogs = () => {
 
   return (
     <PageContainer>
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-bold text-foreground">Blogs</h1>
-          <p className="text-muted-foreground">Tips and advice for a healthier lifestyle</p>
+      <div className="max-w-7xl mx-auto space-y-12">
+        <div className="text-center space-y-6 animate-fade-in">
+          <div className="inline-block">
+            <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase bg-fitness-primary/10 px-6 py-2 rounded-full">
+              Health & Fitness
+            </span>
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black text-gray-900">
+            Fitness Blogs
+          </h1>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+            Expert tips and advice for a healthier, stronger you
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {blogsData.map((blog) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {blogsData.map((blog, idx) => (
             <Card
               key={blog.id}
-              className="cursor-pointer hover:shadow-lg transition-shadow"
+              className="group cursor-pointer border-2 border-transparent hover:border-fitness-primary/20 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 overflow-hidden animate-fade-in-up"
+              style={{ animationDelay: `${idx * 0.1}s` }}
               onClick={() => setSelectedBlog(blog)}
             >
-              <CardHeader>
-                <CardTitle className="text-xl">{blog.title}</CardTitle>
-                <CardDescription>{blog.description}</CardDescription>
+              <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/5 to-fitness-secondary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <CardHeader className="relative p-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-fitness-primary to-fitness-secondary rounded-xl flex items-center justify-center mb-4 transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6">
+                  <span className="text-2xl font-bold text-white">
+                    {blog.id}
+                  </span>
+                </div>
+                <CardTitle className="text-2xl font-bold mb-3 group-hover:text-fitness-primary transition-colors duration-300">
+                  {blog.title}
+                </CardTitle>
+                <CardDescription className="text-base leading-relaxed text-gray-600 font-medium">
+                  {blog.description}
+                </CardDescription>
+                <div className="mt-6 text-fitness-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
+                  Read more
+                  <span className="transform group-hover:translate-x-1 transition-transform duration-300">→</span>
+                </div>
               </CardHeader>
+              
+              {/* Decorative corner */}
+              <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br from-fitness-primary to-fitness-secondary opacity-5 rounded-full blur-2xl group-hover:opacity-20 transition-opacity duration-500"></div>
             </Card>
           ))}
         </div>
       </div>
 
       <Dialog open={!!selectedBlog} onOpenChange={() => setSelectedBlog(null)}>
-        <DialogContent className="max-w-4xl w-[92vw] md:w-auto max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-2xl">{selectedBlog?.title}</DialogTitle>
+        <DialogContent className="max-w-4xl w-[92vw] md:w-auto max-h-[90vh] overflow-y-auto bg-white/95 backdrop-blur-md border-2">
+          <DialogHeader className="border-b pb-6">
+            <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
+              {selectedBlog?.title}
+            </DialogTitle>
             <DialogDescription className="sr-only">Full article content</DialogDescription>
           </DialogHeader>
-          <div className="prose prose-slate dark:prose-invert max-w-none pb-6">
+          <div className="prose prose-slate prose-lg dark:prose-invert max-w-none pb-6 pt-6">
             {selectedBlog?.content}
           </div>
         </DialogContent>
