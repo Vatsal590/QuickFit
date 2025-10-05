@@ -65,7 +65,7 @@ const PrivacyPolicyContent = () => {
 
       <section>
         <h3 className="text-lg font-semibold mb-2">8. Contact Information</h3>
-        <p>If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us through the app's support system.</p>
+        <p>If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us - vatsal.agarwala123@gmail.com .</p>
       </section>
 
       <section>
