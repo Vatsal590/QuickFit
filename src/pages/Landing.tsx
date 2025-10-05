@@ -368,7 +368,7 @@ const Landing = () => {
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-bold border border-white/30">
                 <Sparkles className="h-4 w-4" />
-                <span>Join Thousands of Fitness Enthusiasts</span>
+                <span>Join the other Fitness Enthusiasts</span>
               </div>
 
               <h3 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
