@@ -198,7 +198,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto mt-16">
           {children}
         </main>
       </div>
