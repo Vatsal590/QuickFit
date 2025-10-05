@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, Award } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -225,9 +225,9 @@ const Landing = () => {
                 delay: '0.4s'
               },
               {
-                icon: TrendingUp,
-                title: 'Progress Analytics',
-                description: 'Track your improvements with detailed analytics and insights. See your strength gains and achievement milestones.',
+                icon: BookOpen,
+                title: 'Fitness Blogs',
+                description: 'Discover simple tips for a healthier lifestyle. Stay strong, active, and motivated every day.',
                 gradient: 'from-purple-500 to-pink-600',
                 delay: '0.5s'
               }
