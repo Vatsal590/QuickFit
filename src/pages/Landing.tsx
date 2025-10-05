@@ -96,8 +96,8 @@ const Landing = () => {
               </h1>
             </div>
             <Link to="/auth">
-              <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-8 py-2 text-base font-semibold">
-                Get Started <Sparkles className="ml-2 h-4 w-4" />
+              <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-6 py-2 text-base font-semibold">
+                Get Started <Sparkles className="ml-2 h-3 w-3" />
               </Button>
             </Link>
           </div>
