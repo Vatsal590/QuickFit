@@ -295,8 +295,9 @@ const Landing = () => {
                   </div>
                   <div className="p-10 flex flex-col justify-center space-y-6">
                     <h4 className="text-3xl font-bold text-gray-900">Vatsal Agarwala</h4>
-                    <p className="text-gray-600 font-semibold text-sm tracking-wide uppercase text-fitness-primary">
-                      Want access to Vatsal's workout & diet plan FOR FREE? Login and see for yourself!
+                    <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
+                      🎉 Want access to Vatsal's workout & diet plan <span className="underline">FOR FREE</span>?  
+                     <br /> Login and see for yourself!
                     </p>
                     <p className="text-lg text-gray-700 leading-relaxed">
                       QuickFit was created by Vatsal Agarwala, a 15-year-old student in Luxembourg. Vatsal began his fitness journey at the age of 13. After trying multiple fitness apps, watching countless YouTube videos, and reading numerous fitness articles, he ended up even more confused.
