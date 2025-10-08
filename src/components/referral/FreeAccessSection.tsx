@@ -213,7 +213,7 @@ export function FreeAccessSection() {
             className={`flex-1 transition-all duration-300 text-white ${
               activeTab === 'skip'
                 ? 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 shadow-lg shadow-orange-400/40'
-                : 'bg-gradient-to-r from-orange-400 to-pink-400 opacity-80 hover:opacity-100'
+                : 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 opacity-100 hover:opacity-90'
             }`}
           >
             Skip the headache
@@ -268,6 +268,12 @@ export function FreeAccessSection() {
                   Referred by <span className="font-semibold">{referrerName}</span>
                 </p>
               )}
+            </div>
+
+            {/* Referral goal section (only under Refer) */}
+            <div className="text-center text-sm text-muted-foreground space-y-1">
+              <p>Refer 3 people to see Vatsal's workout and diet plan.</p>
+              <p>Refer 6 people for access AND a call with him!</p>
             </div>
           </>
         )}
