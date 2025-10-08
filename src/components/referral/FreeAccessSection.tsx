@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Copy, Check, Gift } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -103,7 +103,7 @@ export function FreeAccessSection() {
         description: "Referral code copied to clipboard.",
       });
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to copy referral code.",
@@ -114,7 +114,7 @@ export function FreeAccessSection() {
 
   const handleSubmitReferralCode = async () => {
     if (!user || !inputReferralCode.trim()) return;
-    
+
     setIsSubmitting(true);
     try {
       const { data: referrer, error: referrerError } = await supabase
@@ -131,10 +131,7 @@ export function FreeAccessSection() {
         return;
       }
 
-      const referrerData = {
-        id: referrer.user_id,
-        full_name: referrer.full_name
-      };
+      const referrerData = { id: referrer.user_id, full_name: referrer.full_name };
 
       const { data: existingReferral } = await supabase
         .from('referrals')
@@ -154,13 +151,13 @@ export function FreeAccessSection() {
 
       setPendingReferrer({ id: referrerData.id, name: referrerData.full_name || 'Unknown' });
       setShowConfirmDialog(true);
-      setIsSubmitting(false);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to validate referral code.",
         variant: "destructive",
       });
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -170,14 +167,12 @@ export function FreeAccessSection() {
 
     setIsSubmitting(true);
     try {
-      const { error: insertError } = await supabase
-        .from('referrals')
-        .insert({
-          referrer_id: pendingReferrer.id,
-          referred_id: user.id,
-        });
+      const { error } = await supabase.from('referrals').insert({
+        referrer_id: pendingReferrer.id,
+        referred_id: user.id,
+      });
 
-      if (insertError) throw insertError;
+      if (error) throw error;
 
       toast({
         title: "Success!",
@@ -187,7 +182,7 @@ export function FreeAccessSection() {
       setInputReferralCode('');
       setShowConfirmDialog(false);
       setPendingReferrer(null);
-    } catch (error) {
+    } catch {
       toast({
         title: "Error",
         description: "Failed to apply referral code.",
@@ -205,18 +200,20 @@ export function FreeAccessSection() {
         <CardDescription>Choose how you want to unlock Vatsal's plans</CardDescription>
         <div className="flex gap-2 mt-4">
           <Button
-            variant={activeTab === 'refer' ? 'default' : 'outline'}
+            variant="outline"
             onClick={() => setActiveTab('refer')}
-            className="flex-1"
+            className={`flex-1 border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 ${
+              activeTab === 'refer' ? 'ring-2 ring-orange-400' : ''
+            }`}
           >
             Refer
           </Button>
           <Button
             onClick={() => setActiveTab('skip')}
-            className={`flex-1 transition-all duration-300 ${
+            className={`flex-1 transition-all duration-300 text-white ${
               activeTab === 'skip'
-                ? 'bg-gradient-to-r from-pink-500 via-red-500 to-orange-400 text-white shadow-lg shadow-orange-400/40 border-none'
-                : 'border border-orange-400 text-orange-500 hover:bg-orange-50'
+                ? 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 shadow-lg shadow-orange-400/40'
+                : 'bg-gradient-to-r from-orange-400 to-pink-400 opacity-80 hover:opacity-100'
             }`}
           >
             Skip the headache
@@ -233,12 +230,7 @@ export function FreeAccessSection() {
                 <code className="flex-1 bg-muted px-4 py-3 rounded-md text-2xl font-bold tracking-wider text-center">
                   {referralCode || 'Loading...'}
                 </code>
-                <Button
-                  onClick={handleCopy}
-                  size="icon"
-                  variant="outline"
-                  disabled={!referralCode}
-                >
+                <Button onClick={handleCopy} size="icon" variant="outline" disabled={!referralCode}>
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
@@ -283,14 +275,14 @@ export function FreeAccessSection() {
         {activeTab === 'skip' && (
           <div className="text-center space-y-6 py-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Skip the headache of referring and pay the amount you would for a sandwich 🍔
-              to get access to <span className="font-semibold">Vatsal's workout & diet plans</span> 
+              Skip the headache of referring and pay the amount you would for a sandwich 🥪
+              to get access to <span className="font-semibold">Vatsal's workout & diet plans </span>
               AND a <span className="font-semibold">1-on-1 call with him</span>.
             </p>
             <Button
               asChild
               size="lg"
-              className="bg-gradient-to-r from-pink-500 via-red-500 to-orange-400 text-white hover:opacity-90 shadow-lg shadow-orange-400/40"
+              className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40"
             >
               <a
                 href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
@@ -313,10 +305,12 @@ export function FreeAccessSection() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => {
-              setShowConfirmDialog(false);
-              setPendingReferrer(null);
-            }}>
+            <AlertDialogCancel
+              onClick={() => {
+                setShowConfirmDialog(false);
+                setPendingReferrer(null);
+              }}
+            >
               Cancel
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmReferral} disabled={isSubmitting}>
