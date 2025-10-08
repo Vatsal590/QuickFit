@@ -29,12 +29,12 @@ export function FreeAccessSection() {
   const [referrerName, setReferrerName] = useState<string>('');
   const [pendingReferrer, setPendingReferrer] = useState<{ id: string; name: string } | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState<'refer' | 'skip'>('refer');
 
   useEffect(() => {
     if (!user) return;
 
     const fetchReferralData = async () => {
-      // Get user's referral code
       const { data: profile } = await supabase
         .from('profiles')
         .select('referral_code')
@@ -45,7 +45,6 @@ export function FreeAccessSection() {
         setReferralCode(profile.referral_code);
       }
 
-      // Get referral count
       const { data: referrals } = await supabase
         .from('referrals')
         .select('id')
@@ -53,7 +52,6 @@ export function FreeAccessSection() {
 
       setReferralCount(referrals?.length || 0);
 
-      // Check if user was referred by someone
       const { data: myReferral } = await supabase
         .from('referrals')
         .select('referrer_id')
@@ -61,7 +59,6 @@ export function FreeAccessSection() {
         .maybeSingle();
 
       if (myReferral) {
-        // Get referrer's name
         const { data: referrerProfile } = await supabase
           .from('profiles')
           .select('full_name')
@@ -76,7 +73,6 @@ export function FreeAccessSection() {
 
     fetchReferralData();
 
-    // Subscribe to realtime changes
     const channel = supabase
       .channel('referral-updates')
       .on(
@@ -85,7 +81,7 @@ export function FreeAccessSection() {
           event: 'INSERT',
           schema: 'public',
           table: 'referrals',
-          filter: `referrer_id=eq.${user.id}`,
+          filter: `referrer_id=eq.${user?.id}`,
         },
         () => {
           fetchReferralData();
@@ -121,7 +117,6 @@ export function FreeAccessSection() {
     
     setIsSubmitting(true);
     try {
-      // Use secure function to validate referral code without exposing sensitive data
       const { data: referrer, error: referrerError } = await supabase
         .rpc('validate_referral_code', { code: inputReferralCode.trim() })
         .single();
@@ -136,13 +131,11 @@ export function FreeAccessSection() {
         return;
       }
 
-      // Map the function result to match expected structure
       const referrerData = {
         id: referrer.user_id,
         full_name: referrer.full_name
       };
 
-      // Check if user already used a referral code
       const { data: existingReferral } = await supabase
         .from('referrals')
         .select('id')
@@ -159,7 +152,6 @@ export function FreeAccessSection() {
         return;
       }
 
-      // Show confirmation dialog
       setPendingReferrer({ id: referrerData.id, name: referrerData.full_name || 'Unknown' });
       setShowConfirmDialog(true);
       setIsSubmitting(false);
@@ -178,7 +170,6 @@ export function FreeAccessSection() {
 
     setIsSubmitting(true);
     try {
-      // Insert the referral
       const { error: insertError } = await supabase
         .from('referrals')
         .insert({
@@ -210,69 +201,107 @@ export function FreeAccessSection() {
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-center gap-2">
-          <Gift className="h-5 w-5 text-primary" />
-          <CardTitle>Free Access</CardTitle>
+        <CardTitle>Get Access</CardTitle>
+        <CardDescription>Choose how you want to unlock Vatsal's plans</CardDescription>
+        <div className="flex gap-2 mt-4">
+          <Button
+            variant={activeTab === 'refer' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('refer')}
+            className="flex-1"
+          >
+            Refer
+          </Button>
+          <Button
+            onClick={() => setActiveTab('skip')}
+            className={`flex-1 transition-all duration-300 ${
+              activeTab === 'skip'
+                ? 'bg-gradient-to-r from-pink-500 via-red-500 to-orange-400 text-white shadow-lg shadow-orange-400/40 border-none'
+                : 'border border-orange-400 text-orange-500 hover:bg-orange-50'
+            }`}
+          >
+            Skip the headache
+          </Button>
         </div>
-        <CardDescription>
-          Refer friends and get rewards!
-        </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <p className="text-sm font-medium mb-2">Your Referral Code</p>
-          <div className="flex items-center gap-2">
-            <code className="flex-1 bg-muted px-4 py-3 rounded-md text-2xl font-bold tracking-wider text-center">
-              {referralCode || 'Loading...'}
-            </code>
-            <Button
-              onClick={handleCopy}
-              size="icon"
-              variant="outline"
-              disabled={!referralCode}
-            >
-              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-            </Button>
-          </div>
-        </div>
 
-        <div>
-          <p className="text-sm font-medium mb-2">Referrals</p>
-          <div className="flex items-center justify-between bg-muted px-4 py-3 rounded-md">
-            <span className="text-sm">Total Referrals</span>
-            <span className="text-2xl font-bold">{referralCount}</span>
-          </div>
-        </div>
+      <CardContent className="space-y-6">
+        {activeTab === 'refer' && (
+          <>
+            <div>
+              <p className="text-sm font-medium mb-2">Your Referral Code</p>
+              <div className="flex items-center gap-2">
+                <code className="flex-1 bg-muted px-4 py-3 rounded-md text-2xl font-bold tracking-wider text-center">
+                  {referralCode || 'Loading...'}
+                </code>
+                <Button
+                  onClick={handleCopy}
+                  size="icon"
+                  variant="outline"
+                  disabled={!referralCode}
+                >
+                  {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="enter-referral">Enter a Referral Code</Label>
-          <div className="flex items-center gap-2">
-            <Input
-              id="enter-referral"
-              placeholder="Enter 5-digit code"
-              value={inputReferralCode}
-              onChange={(e) => setInputReferralCode(e.target.value.toUpperCase().trim())}
-              maxLength={5}
-              className="uppercase flex-1"
-              disabled={!!referrerName}
-            />
-            <Button
-              onClick={handleSubmitReferralCode}
-              disabled={!inputReferralCode.trim() || isSubmitting || !!referrerName}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit'}
-            </Button>
-          </div>
-          {referrerName && (
-            <p className="text-sm text-muted-foreground">
-              Referred by <span className="font-semibold">{referrerName}</span>
+            <div>
+              <p className="text-sm font-medium mb-2">Referrals</p>
+              <div className="flex items-center justify-between bg-muted px-4 py-3 rounded-md">
+                <span className="text-sm">Total Referrals</span>
+                <span className="text-2xl font-bold">{referralCount}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="enter-referral">Enter a Referral Code</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="enter-referral"
+                  placeholder="Enter 5-digit code"
+                  value={inputReferralCode}
+                  onChange={(e) => setInputReferralCode(e.target.value.toUpperCase().trim())}
+                  maxLength={5}
+                  className="uppercase flex-1"
+                  disabled={!!referrerName}
+                />
+                <Button
+                  onClick={handleSubmitReferralCode}
+                  disabled={!inputReferralCode.trim() || isSubmitting || !!referrerName}
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
+                </Button>
+              </div>
+              {referrerName && (
+                <p className="text-sm text-muted-foreground">
+                  Referred by <span className="font-semibold">{referrerName}</span>
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {activeTab === 'skip' && (
+          <div className="text-center space-y-6 py-6">
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Skip the headache of referring and pay the amount you would for a sandwich 🍔
+              to get access to <span className="font-semibold">Vatsal's workout & diet plans</span> 
+              AND a <span className="font-semibold">1-on-1 call with him</span>.
             </p>
-          )}
-        </div>
-
-        <div className="text-xs text-muted-foreground space-y-1">
-          <p className="text-center">Share your referral code with friends!</p>
-        </div>
+            <Button
+              asChild
+              size="lg"
+              className="bg-gradient-to-r from-pink-500 via-red-500 to-orange-400 text-white hover:opacity-90 shadow-lg shadow-orange-400/40"
+            >
+              <a
+                href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Pay & Get Instant Access
+              </a>
+            </Button>
+          </div>
+        )}
       </CardContent>
 
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
