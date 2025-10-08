@@ -17,13 +17,13 @@ const mainItems = [
   { title: "History", url: "/history", icon: History },
   { title: "Weight Tracker", url: "/weight-tracker", icon: Scale },
   { title: "Diet Plan", url: "/diet-plan", icon: UtensilsCrossed },
-  { title: "Free Access", url: "/free-access", icon: Gift },
-  { title: "Blogs", url: "/blogs", icon: BookOpen },
+  { title: "FREE ACCESS", url: "/free-access", icon: Gift },
+  { title: " Fitness Blogs", url: "/blogs", icon: BookOpen },
 ];
 
 const workoutItems = [
   { title: "My 30 Day Plan", url: "/home?section=plans", icon: Calendar },
-  { title: "Quick Workout", url: "/home?section=generator", icon: Dumbbell },
+  { title: "Quick Workout/Home", url: "/home?section=generator", icon: Dumbbell },
 ];
 
 export function AppSidebar() {
