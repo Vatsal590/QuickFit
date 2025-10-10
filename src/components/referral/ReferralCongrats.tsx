@@ -116,7 +116,7 @@ export const ReferralCongrats = () => {
             🎉 Take a screenshot of this message 🎉
           </p>
           <p className="text-sm text-muted-foreground">
-            Contact <span className="font-semibold">vatsal.agarwala123@gmail.com</span> with your screenshot to claim your reward!
+            Contact <span className="font-semibold">info@quickfit.dev</span> with your screenshot to claim your reward!
           </p>
         </div>
         <Button onClick={() => setShowDialog(false)} className="w-full">
