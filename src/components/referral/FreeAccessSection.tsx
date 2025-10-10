@@ -271,12 +271,19 @@ export function FreeAccessSection() {
             </div>
 
             {/* Referral goal section (only under Refer) */}
-            <div className="text-center text-sm text-muted-foreground space-y-1">
-              <p>Refer 3 people to see Vatsal's workout and diet plan.</p>
-              <p>Refer 6 people for access AND a call with him!</p>
-            </div>
-          </>
-        )}
+<div className="text-center text-sm text-muted-foreground space-y-1">
+  {referralCount >= 3 ? (
+    <p>
+      Congratulations! Kindly contact - <span className="font-semibold">info@quickfit.dev</span> to receive your award!
+    </p>
+  ) : (
+    <>
+      <p>Refer 3 people to see Vatsal's workout and diet plan.</p>
+      <p>Refer 6 people for access AND a call with him!</p>
+    </>
+  )}
+</div>
+
 
         {activeTab === 'skip' && (
           <div className="text-center space-y-6 py-6">
