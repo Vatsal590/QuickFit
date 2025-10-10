@@ -285,6 +285,7 @@ export function FreeAccessSection() {
 </div>
 
 
+
         {activeTab === 'skip' && (
           <div className="text-center space-y-6 py-6">
             <p className="text-sm text-muted-foreground leading-relaxed">
