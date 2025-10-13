@@ -788,7 +788,7 @@ export const exercises: Exercise[] = [
     id: "russian-twist",
     name: "Russian Twist",
     muscleGroup: "core",
-    equipment: ["none", "kettlebell", "dumbbells"],
+    equipment: ["none"],
     sets: 3,
     reps: 20,
     restTime: 30,
