@@ -29,7 +29,7 @@ const adjustExerciseForIntensity = (exercise: Exercise, intensity: IntensityLeve
       adjusted.sets = Math.max(2, exercise.sets - 1);
       adjusted.restTime = Math.max(60, exercise.restTime + 15);
       break;
-    case "moderate": break; // keep default
+    case "moderate": break;
     case "intense":
       adjusted.sets = exercise.sets + 1;
       adjusted.reps = Math.min(20, exercise.reps + 2);
@@ -142,11 +142,11 @@ export const generateWorkout = (
     );
 
     const alternatives = bodyPains.flatMap(pain => getAlternativeExercises(pain, equipment));
-    const existingNames = new Set(selectedExercises.map(ex => ex.name.toLowerCase()));
-    alternatives.forEach(ex => { if (!existingNames.has(ex.name.toLowerCase())) selectedExercises.push(ex); });
+    const existing = new Set(selectedExercises.map(ex => ex.name.toLowerCase()));
+    alternatives.forEach(ex => { if (!existing.has(ex.name.toLowerCase())) selectedExercises.push(ex); });
   }
 
-  // Special cases
+  // Full body barbell prioritization
   if (muscleGroups.includes("full body") && equipment.includes("barbell")) {
     const barbellExercises = exercises.filter(ex => ex.equipment.includes("barbell") && ["chest","back","legs","shoulders","biceps","triceps"].includes(ex.muscleGroup));
     const bodyweightExercises = exercises.filter(ex => ex.equipment.includes("none") && ["core","full body"].includes(ex.muscleGroup));
@@ -156,24 +156,12 @@ export const generateWorkout = (
     selectedExercises = [...barbellExercises.slice(0, barbellCount), ...bodyweightExercises.slice(0, bodyweightCount)];
   }
 
-  // Biceps dumbbells special case
-  if (muscleGroups.length === 1 && muscleGroups.includes("biceps") && equipment.includes("dumbbells")) {
-    const bicepCurl = exercises.find(ex => ex.id === "dumbbell-bicep-curl");
-    const hammerCurl = exercises.find(ex => ex.id === "hammer-curl");
-    selectedExercises = [];
-    if (time === 10 && bicepCurl) selectedExercises.push(bicepCurl);
-    if ((time === 20 || time === 30) && bicepCurl) selectedExercises.push(bicepCurl);
-    if ((time === 20 || time === 30) && hammerCurl) selectedExercises.push(hammerCurl);
-  }
-
-  // Dumbbell general case
-  if (equipment.includes("dumbbells") && !equipment.includes("none") && !muscleGroups.includes("biceps")) {
+  // Dumbbell workouts - simplified & logical
+  if (equipment.includes("dumbbells")) {
     const dumbbellExercises = exercises.filter(ex => ex.equipment.includes("dumbbells") && (muscleGroups.includes("full body") ? true : muscleGroups.includes(ex.muscleGroup)));
-    let pool: Exercise[] = [];
-    if (time <= 20) pool = dumbbellExercises.filter(ex => ["full body"].includes(ex.muscleGroup) || ["Thruster","Clean","Squat","Row"].some(w => ex.name.includes(w)));
-    else if (time <= 30) pool = dumbbellExercises.filter(ex => ["full body","chest","back","legs"].includes(ex.muscleGroup));
-    else pool = dumbbellExercises;
-    selectedExercises = pool.sort(() => Math.random() - 0.5);
+    if (time <= 20) selectedExercises = dumbbellExercises.filter(ex => ["full body"].includes(ex.muscleGroup) || ["Thruster","Clean","Squat","Row"].some(w => ex.name.includes(w)));
+    else if (time <= 30) selectedExercises = dumbbellExercises.filter(ex => ["full body","chest","back","legs"].includes(ex.muscleGroup));
+    else selectedExercises = dumbbellExercises;
   }
 
   // Ensure minimum exercises
@@ -183,41 +171,18 @@ export const generateWorkout = (
     selectedExercises.push(...supplementary.filter(ex => !existing.has(ex.name)));
   }
 
-  // Max exercises
+  // Limit exercises based on time
   let maxExercises: number;
   if (time === 30) maxExercises = Math.random() < 0.5 ? 3 : 4;
   else if (time === 45) maxExercises = 4;
-  else if (time === 60) maxExercises = muscleGroups.includes("chest") ? Math.max(5, selectedExercises.length) : 6;
+  else if (time === 60) maxExercises = Math.max(5, selectedExercises.length);
   else maxExercises = time <= 20 ? 2 : 3;
 
-  // Chest special handling
-  if (muscleGroups.includes("chest")) {
-    const hasDumbbells = equipment.includes("dumbbells");
-    const hasBarbell = equipment.includes("barbell");
-    const hasCable = equipment.includes("cable machine");
-
-    if (hasDumbbells || hasBarbell) selectedExercises = selectedExercises.filter(ex => !(ex.muscleGroup === "chest" && ex.equipment.includes("none")));
-
-    const ensure = (id: string) => { if (!selectedExercises.some(ex => ex.id === id)) { const found = exercises.find(ex => ex.id === id); if (found) selectedExercises.unshift(found); } };
-    if (hasDumbbells && !hasBarbell) ensure("dumbbell-chest-fly");
-    if (hasBarbell) ensure("barbell-bench-press");
-    if (hasCable) ensure("cable-chest-fly");
-  }
-
-  // Back special ordering
-  if (muscleGroups.includes("back") && ["barbell","dumbbells","pull-up bar"].every(eq => equipment.includes(eq))) {
-    const orderIds = ["pull-up","barbell-deadlift","bent-over-row","hammer-curl","dumbbell-bicep-curl"];
-    selectedExercises = orderIds.map(id => exercises.find(ex => ex.id === id)).filter(Boolean) as Exercise[];
-  }
-
-  // Limit exercises & adjust intensity
   const adjustedExercises = selectedExercises.slice(0, maxExercises).map(ex => adjustExerciseForIntensity(ex, intensity, time));
 
-  // Warmup & cooldown
   const warmup = generateWarmupExercises(equipment).slice(0,3);
   const cooldown = generateCooldownExercises(muscleGroups).slice(0,3);
 
-  // Workout title
   const title = generateWorkoutTitle(muscleGroups, intensity);
 
   const workout: Workout = {
