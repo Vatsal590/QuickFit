@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { FitnessProfile } from '../../hooks/useFitnessProfile';
-import { exercises, getFilteredExercises } from '@/data/exercises';
+import { exercises } from '@/data/exercises';
 import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { BodyPain } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,18 +36,13 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
   ];
 
   const toggleBodyPain = (pain: BodyPain) => {
-    setSelectedPains(prev => {
-      if (prev.includes(pain)) {
-        return prev.filter(p => p !== pain);
-      } else {
-        return [...prev, pain];
-      }
-    });
+    setSelectedPains(prev =>
+      prev.includes(pain) ? prev.filter(p => p !== pain) : [...prev, pain]
+    );
   };
 
-  const capitalizeWords = (str: string) => {
-    return str.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-  };
+  const capitalizeWords = (str: string) =>
+    str.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
   const generateWorkoutPlan = async () => {
     if (!user) {
@@ -70,9 +65,9 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
     setIsGenerating(true);
     try {
       const dailyWorkouts = generatePersonalizedPlan(profile, selectedPains);
-      
+
       const planName = `${capitalizeWords(profile.fitness_goal)} Plan - ${new Date().toLocaleDateString()}`;
-      
+
       const { data, error } = await supabase
         .from('workout_plans')
         .insert({
@@ -100,9 +95,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
         dailyWorkouts: data.daily_workouts
       };
 
-      if (onPlanGenerated) {
-        onPlanGenerated(newPlan);
-      }
+      onPlanGenerated?.(newPlan);
 
       toast({
         title: "Plan generated successfully!",
@@ -110,7 +103,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
       });
 
       window.dispatchEvent(new CustomEvent('planGenerated'));
-      
       onClose();
     } catch (error) {
       console.error('Error generating workout plan:', error);
@@ -147,7 +139,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
               <p className="text-gray-500 mb-4">
                 You need to complete your fitness profile before generating a workout plan.
               </p>
-              <Button 
+              <Button
                 onClick={() => {
                   onClose();
                   window.location.href = '/profile';
@@ -161,7 +153,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
         ) : (
           <ScrollArea className="flex-1 pr-4 h-[60vh]">
             <div className="space-y-4">
-              {/* Profile Summary */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Your Profile Summary</CardTitle>
@@ -176,7 +167,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
                 </CardContent>
               </Card>
 
-              {/* Body Pain Selection - Now below equipment */}
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -213,7 +203,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
             <Button variant="outline" onClick={onClose} className="flex-1">
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={generateWorkoutPlan}
               disabled={isGenerating}
               className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90"
@@ -234,333 +224,163 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
   );
 };
 
-// Helper function to check if exercise can be performed with available equipment
-const canPerformExercise = (exercise: any, availableEquipment: string[]) => {
-  // If exercise requires no equipment, it can always be performed
-  if (!exercise.equipment || exercise.equipment.length === 0 || exercise.equipment.includes('none')) {
-    return true;
-  }
-  
-  // Check if user has at least one piece of required equipment
-  return exercise.equipment.some((required: string) => 
-    availableEquipment.includes(required) || required === 'none'
-  );
-};
-
-// Helper function to get user-specific exercise modifications
-const customizeExerciseForUser = (exercise: any, profile: FitnessProfile) => {
-  const { weight, height, body_type, fitness_goal } = profile;
-  const bmi = weight / ((height / 100) ** 2);
-  
-  let modifiedExercise = { ...exercise };
-  
-  // Adjust based on BMI and body type
-  if (bmi > 30 || body_type.includes('endomorph')) {
-    // Lower impact modifications for higher BMI
-    if (exercise.name.includes('Jump') || exercise.name.includes('Plyometric')) {
-      modifiedExercise.sets = Math.max(2, exercise.sets - 1);
-      modifiedExercise.reps = typeof exercise.reps === 'string' ? exercise.reps : Math.max(5, exercise.reps - 2);
-    }
-  }
-  
-  // Adjust based on fitness goal
-  if (fitness_goal === 'muscle_gain') {
-    if (typeof exercise.sets === 'number') modifiedExercise.sets = Math.min(5, exercise.sets + 1);
-    if (typeof exercise.reps === 'string' && exercise.reps.includes('-')) {
-      const [min, max] = exercise.reps.split('-').map(n => parseInt(n));
-      modifiedExercise.reps = `${Math.max(6, min)}${max ? `-${Math.min(12, max + 2)}` : ''}`;
-    }
-  } else if (fitness_goal === 'fat_loss') {
-    if (typeof exercise.sets === 'number') modifiedExercise.sets = Math.min(4, exercise.sets);
-    modifiedExercise.rest = exercise.rest?.replace(/\d+/, (match: string) => 
-      Math.max(30, parseInt(match) - 15).toString()
-    );
-  }
-  
-  return modifiedExercise;
-};
+/* ------------------------------ LOGIC SECTION ------------------------------ */
 
 const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
-  const { fitness_goal, body_type, workout_days_per_week, available_equipment } = profile;
-  
-  const dailyWorkouts = [];
-  
-  // Define workout days based on workout_days_per_week
-  const getWorkoutDays = (daysPerWeek: number) => {
-    switch (daysPerWeek) {
-      case 1: return [3]; // Wednesday only
-      case 2: return [2, 5]; // Tuesday and Friday
-      case 3: return [1, 3, 5]; // Monday, Wednesday, Friday
-      case 4: return [1, 2, 4, 6]; // Monday, Tuesday, Thursday, Saturday
-      case 5: return [1, 2, 3, 4, 5]; // Monday to Friday
-      case 6: return [1, 2, 3, 4, 5, 6]; // Monday to Saturday
-      case 7: return [1, 2, 3, 4, 5, 6, 7]; // All days
-      default: return [1, 3, 5]; // Default to 3 days
-    }
+  const { fitness_goal, workout_days_per_week, available_equipment } = profile;
+  const dailyWorkouts: any[] = [];
+
+  const getWorkoutDays = (days: number) => {
+    const map: Record<number, number[]> = {
+      1: [3], 2: [2, 5], 3: [1, 3, 5], 4: [1, 2, 4, 6],
+      5: [1, 2, 3, 4, 5], 6: [1, 2, 3, 4, 5, 6], 7: [1, 2, 3, 4, 5, 6, 7]
+    };
+    return map[days] || [1, 3, 5];
   };
-  
-  const workoutDaysInWeek = getWorkoutDays(workout_days_per_week);
-  
+  const workoutDays = getWorkoutDays(workout_days_per_week);
+
   for (let day = 1; day <= 30; day++) {
-    const dayOfWeek = ((day - 1) % 7) + 1; // 1 = Monday, 7 = Sunday
-    const isWorkoutDay = workoutDaysInWeek.includes(dayOfWeek);
-    
-    if (isWorkoutDay) {
-      const workout = generateDayWorkout(day, fitness_goal, body_type, available_equipment, profile, bodyPains);
-      dailyWorkouts.push({
-        day,
-        isRestDay: false,
-        workout,
-        completed: false
-      });
+    const dayOfWeek = ((day - 1) % 7) + 1;
+    if (workoutDays.includes(dayOfWeek)) {
+      const workout = generateDayWorkout(day, profile, bodyPains);
+      dailyWorkouts.push({ day, isRestDay: false, workout, completed: false });
     } else {
-      dailyWorkouts.push({
-        day,
-        isRestDay: true,
-        restType: getRestDayActivity(fitness_goal),
-        completed: false
-      });
+      dailyWorkouts.push({ day, isRestDay: true, restType: getRestDayActivity(fitness_goal), completed: false });
     }
   }
-  
+
   return dailyWorkouts;
 };
 
-const generateDayWorkout = (day: number, goal: string, bodyType: string[], equipment: string[], profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
+const generateDayWorkout = (day: number, profile: FitnessProfile, bodyPains: BodyPain[]) => {
+  const { fitness_goal, body_type, available_equipment } = profile;
   const week = Math.ceil(day / 7);
   const dayInWeek = ((day - 1) % 7) + 1;
-  
-  // Progressive difficulty based on week
+
   const intensity = week === 1 ? 'beginner' : week <= 2 ? 'intermediate' : 'advanced';
-  
-  // Focus areas based on goal and day
-  let focusArea = '';
-  if (goal === 'muscle_gain') {
-    const focusAreas = ['chest_triceps', 'back_biceps', 'legs', 'shoulders', 'core'];
-    focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
-  } else if (goal === 'fat_loss') {
-    const focusAreas = ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'];
-    focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
-  } else if (goal === 'athlete_training') {
-    const focusAreas = [
-      'explosive_power', 
-      'agility_speed', 
-      'functional_strength', 
-      'sport_specific_conditioning', 
-      'movement_mobility',
-      'plyometric_training',
-      'core_stability'
-    ];
-    focusArea = focusAreas[(dayInWeek - 1) % focusAreas.length];
-  }
-  
+  const duration = getDuration(profile);
+
+  const focusAreas: Record<string, string[]> = {
+    muscle_gain: ['chest_triceps', 'back_biceps', 'legs', 'shoulders', 'core'],
+    fat_loss: ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'],
+    athlete_training: ['explosive_power', 'agility_speed', 'functional_strength', 'movement_mobility']
+  };
+
+  const focusList = focusAreas[fitness_goal] || ['full_body_strength'];
+  const focusArea = focusList[(dayInWeek - 1) % focusList.length];
+
   return {
-    title: `Day ${day} - ${focusArea.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`,
+    title: `Day ${day} - ${focusArea.replace(/_/g, ' ')}`,
     focus: focusArea,
     intensity,
-    duration: getDuration(goal, bodyType),
-    exercises: generateExercises(focusArea, equipment, intensity, day, profile, bodyPains),
-    notes: getWorkoutNotes(goal, bodyType, week)
+    duration,
+    exercises: generateExercises(focusArea, available_equipment, intensity, duration, profile, bodyPains),
+    notes: getWorkoutNotes(fitness_goal, body_type, week)
   };
 };
 
-const getDuration = (goal: string, bodyType: string[]) => {
-  if (goal === 'fat_loss') return 45;
-  if (goal === 'athlete_training') return 60;
-  return bodyType.includes('ectomorph') ? 45 : 50;
+const getDuration = (profile: FitnessProfile) => {
+  if (profile.preferred_workout_time) return profile.preferred_workout_time;
+  if (profile.fitness_goal === 'athlete_training') return 60;
+  if (profile.fitness_goal === 'fat_loss') return 45;
+  return 50;
 };
 
-// Get alternative exercises for pain conditions
-const getPainAlternatives = (pain: BodyPain, equipment: string[]): any[] => {
-  
-  const alternatives: Record<string, any[]> = {
-    "knee pain": [
-      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Lie on back, lift hips by squeezing glutes." },
-      { id: uuidv4(), name: "Clamshells", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 12, restTime: 45, description: "Side-lying hip abductor exercise." },
-      { id: uuidv4(), name: "Deadbugs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Core stability exercise lying on back." }
-    ],
-    "ankle pain": [
-      { id: uuidv4(), name: "Seated Upper Body Press", muscleGroup: "shoulders", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 60, description: "Seated shoulder exercise." },
-      { id: uuidv4(), name: "Lying Hamstring Curls", muscleGroup: "legs", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Hamstring exercise lying down." }
-    ],
-    "hip pain": [
-      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Hip-safe glute strengthening." },
-      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Core stability on hands and knees." }
-    ],
-    "shoulder pain": [
-      { id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Low anchor point rowing." },
-      { id: uuidv4(), name: "Supported Bicep Curls", muscleGroup: "biceps", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 45, description: "Bicep curls with support." }
-    ],
-    "lower back pain": [
-      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Safe core strengthening." },
-      { id: uuidv4(), name: "Modified Planks", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Plank with knees down." }
-    ],
-    "elbow pain": [
-      { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." },
-      { id: uuidv4(), name: "Straight Arm Band Pulls", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 45, description: "Straight arm resistance work." }
-    ],
-    "wrist pain": [
-      { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core work without wrist stress." },
-      { id: uuidv4(), name: "Neutral Grip Band Work", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Wrist-friendly resistance work." }
-    ]
-  };
+const generateExercises = (
+  focusArea: string,
+  equipment: string[],
+  intensity: string,
+  duration: number,
+  profile: FitnessProfile,
+  bodyPains: BodyPain[]
+) => {
+  const normalizedEquipment = equipment.length === 0 ? ['none'] : equipment;
 
-  return alternatives[pain] || [];
-};
-
-const generateExercises = (focusArea: string, equipment: string[], intensity: string, day: number, profile: FitnessProfile, bodyPains: BodyPain[] = []) => {
-  // Define muscle group mappings for each focus area
-  const focusAreaMuscleGroups = {
-    explosive_power: ['full body', 'legs', 'chest'],
-    agility_speed: ['cardio', 'legs'],
-    functional_strength: ['full body', 'chest', 'back', 'legs'],
-    sport_specific_conditioning: ['full body', 'cardio', 'core'],
-    movement_mobility: ['core', 'shoulders'],
-    plyometric_training: ['legs', 'full body'],
-    core_stability: ['core'],
+  const focusMap: Record<string, string[]> = {
     chest_triceps: ['chest', 'triceps'],
     back_biceps: ['back', 'biceps'],
     legs: ['legs'],
     shoulders: ['shoulders'],
+    core: ['core'],
     hiit_cardio: ['cardio', 'full body'],
     full_body_strength: ['full body', 'chest', 'back', 'legs'],
     cardio_core: ['cardio', 'core'],
-    circuit_training: ['full body', 'cardio']
+    circuit_training: ['full body', 'cardio'],
+    explosive_power: ['legs', 'core', 'full body'],
+    agility_speed: ['cardio', 'legs'],
+    functional_strength: ['full body', 'chest', 'back'],
+    movement_mobility: ['core', 'shoulders']
   };
 
-  // Get muscle groups for this focus area
-  const targetMuscleGroups = (focusAreaMuscleGroups[focusArea as keyof typeof focusAreaMuscleGroups] || ['full body']) as any[];
-  
-  // Handle empty or "none" equipment properly - ensure we always have a valid equipment array
-  const normalizedEquipment = equipment.length === 0 || equipment.includes('none') ? ['none'] : equipment;
-  
-  // Get exercises that match target muscle groups first
-  let availableExercises = exercises.filter((exercise: any) => 
-    targetMuscleGroups.includes(exercise.muscleGroup)
-  );
+  const targetGroups = focusMap[focusArea] || ['full body'];
+  let pool = exercises.filter(ex => targetGroups.includes(ex.muscleGroup));
 
-  // Filter out exercises that could aggravate body pains using detailed guidance
-  if (bodyPains.length > 0) {
-    availableExercises = availableExercises.filter((exercise: any) => {
-      const exerciseName = exercise.name.toLowerCase();
-      
-      const painExercises = {
-        "knee pain": ["squat", "lunge", "jump", "step-up", "knee bend", "run", "box jump"],
-        "ankle pain": ["jump", "run", "lunge", "calf raise", "burpee", "step-up"],
-        "hip pain": ["lunge", "high knee", "leg raise", "jump", "deep squat", "hip thrust"],
-        "shoulder pain": ["overhead", "push-up", "plank", "dip", "lateral raise", "front raise", "press"],
-        "lower back pain": ["deadlift", "toe touch", "sit-up", "twist", "crunch", "bend"],
-        "elbow pain": ["pull-up", "chin-up", "push-up", "curl", "extension", "tricep"],
-        "wrist pain": ["plank", "push-up", "bear crawl", "curl", "press"]
-      };
+  // Exclude pain-related exercises
+  const painTriggers: Record<BodyPain, string[]> = {
+    "knee pain": ["squat", "lunge", "jump", "step-up", "run"],
+    "ankle pain": ["jump", "run", "calf", "lunge"],
+    "hip pain": ["lunge", "thrust", "deep squat"],
+    "shoulder pain": ["overhead", "press", "dip", "push-up"],
+    "lower back pain": ["deadlift", "crunch", "twist", "bend"],
+    "elbow pain": ["curl", "extension", "push-up"],
+    "wrist pain": ["plank", "push-up", "press"]
+  };
 
-      return !bodyPains.some(pain => {
-        const problematicWords = painExercises[pain] || [];
-        return problematicWords.some(word => exerciseName.includes(word));
-      });
-    });
+  pool = pool.filter(ex => !bodyPains.some(pain => (painTriggers[pain] || []).some(word => ex.name.toLowerCase().includes(word))));
 
-    // Add alternative exercises for each pain type
-    bodyPains.forEach(pain => {
-      const alternatives = getPainAlternatives(pain, normalizedEquipment);
-      availableExercises.push(...alternatives.slice(0, 2)); // Add 2 alternatives per pain
-    });
+  // Include safe alternatives if needed
+  if (pool.length < 3) {
+    bodyPains.forEach(p => pool.push(...getPainAlternatives(p, normalizedEquipment)));
   }
-  
-  // If no exercises found for specific muscle groups, get all exercises
-  if (availableExercises.length === 0) {
-    availableExercises = exercises;
-  }
-  
-  // Filter by equipment availability
-  let selectedExercises = availableExercises.filter((exercise: any) => {
-    // If no equipment specified, only show bodyweight exercises
-    if (normalizedEquipment.includes('none')) {
-      return exercise.equipment.includes('none');
-    }
-    // Otherwise, show exercises that can be performed with available equipment
-    return exercise.equipment.some((eq: string) => normalizedEquipment.includes(eq));
-  });
-  
-  // Equipment-specific exercise selection to ensure equipment diversity
-  if (normalizedEquipment.length > 0 && !normalizedEquipment.includes('none')) {
-    const equipmentSpecificExercises: any[] = [];
-    
-    normalizedEquipment.forEach(equipmentType => {
-      // Get exercises that specifically use this equipment
-      const equipmentExercises = exercises.filter((ex: any) => 
-        ex.equipment.includes(equipmentType) && 
-        targetMuscleGroups.includes(ex.muscleGroup)
-      );
-      
-      // Add equipment-specific exercises with priority
-      if (equipmentExercises.length > 0) {
-        const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
-        equipmentSpecificExercises.push(...shuffled.slice(0, 2)); // 2 exercises per equipment type
-      }
-    });
-    
-    // Mix equipment-specific exercises with general filtered exercises
-    if (equipmentSpecificExercises.length > 0) {
-      const remainingSlots = Math.max(0, 5 - equipmentSpecificExercises.length);
-      const additionalExercises = selectedExercises
-        .filter(ex => !equipmentSpecificExercises.some(added => added.id === ex.id))
-        .slice(0, remainingSlots);
-      
-      selectedExercises = [...equipmentSpecificExercises, ...additionalExercises];
-    }
-  }
-  
-  // Ensure we have at least 3-5 exercises
-  const targetExerciseCount = Math.min(5, Math.max(3, selectedExercises.length));
-  const finalExercises = selectedExercises.slice(0, targetExerciseCount);
-  
-  // Convert to the expected format and customize
-  const convertedExercises = finalExercises.map((exercise: any) => ({
-    name: exercise.name,
-    sets: exercise.sets,
-    reps: typeof exercise.reps === 'string' ? exercise.reps : exercise.reps.toString(),
-    rest: `${exercise.restTime}s`,
-    equipment: exercise.equipment,
-    description: exercise.description
+
+  // Filter by equipment
+  pool = pool.filter(ex => ex.equipment.some(eq => normalizedEquipment.includes(eq) || eq === 'none'));
+
+  // Adjust count based on duration
+  const count = duration <= 20 ? 3 : duration <= 40 ? 4 : duration <= 50 ? 5 : 6;
+  const chosen = [...pool].sort(() => 0.5 - Math.random()).slice(0, count);
+
+  // Intensity-based volume adjustments
+  const volume = {
+    beginner: { sets: 2, reps: '10-12', rest: '60s' },
+    intermediate: { sets: 3, reps: '12-15', rest: '45s' },
+    advanced: { sets: 4, reps: '15-20', rest: '30s' }
+  }[intensity];
+
+  return chosen.map(ex => ({
+    name: ex.name,
+    sets: volume.sets,
+    reps: volume.reps,
+    rest: volume.rest,
+    equipment: ex.equipment,
+    description: ex.description
   }));
-  
-  // If we still don't have enough exercises, add bodyweight fallbacks
-  if (convertedExercises.length < 3) {
-    const bodyweightFallbacks = [
-      { name: 'Push-ups', sets: 3, reps: '10-12', rest: '60s', equipment: ['none'], description: 'Start in a plank position and lower your body to the ground, then push back up.' },
-      { name: 'Bodyweight Squats', sets: 3, reps: '15', rest: '60s', equipment: ['none'], description: 'Stand with feet shoulder-width apart and lower into a squat position.' },
-      { name: 'Plank', sets: 3, reps: '30s', rest: '45s', equipment: ['none'], description: 'Hold a plank position with your body in a straight line.' },
-      { name: 'Lunges', sets: 3, reps: '10 each leg', rest: '60s', equipment: ['none'], description: 'Step forward and lower your body until both knees are bent at 90 degrees.' },
-      { name: 'Mountain Climbers', sets: 3, reps: '20', rest: '45s', equipment: ['none'], description: 'Start in a plank position and alternate bringing knees to chest quickly.' }
-    ];
-    
-    const needed = 3 - convertedExercises.length;
-    convertedExercises.push(...bodyweightFallbacks.slice(0, needed));
-  }
-  
-  // Customize exercises for the user's profile
-  return convertedExercises.map(exercise => customizeExerciseForUser(exercise, profile));
+};
+
+const getPainAlternatives = (pain: BodyPain, equipment: string[]) => {
+  const alt = {
+    "knee pain": [{ id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], description: "Strengthen glutes safely." }],
+    "shoulder pain": [{ id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], description: "Rowing motion without strain." }],
+    "hip pain": [{ id: uuidv4(), name: "Bird Dogs", muscleGroup: "core", equipment: ["none"], description: "Core control without hip load." }],
+    "lower back pain": [{ id: uuidv4(), name: "Modified Plank", muscleGroup: "core", equipment: ["none"], description: "Knee-supported plank." }]
+  };
+  return alt[pain] || [];
 };
 
 const getRestDayActivity = (goal: string) => {
-  if (goal === 'fat_loss') return 'Light cardio (walking, stretching)';
-  if (goal === 'athlete_training') return 'Active recovery (mobility, light movement, skill work)';
-  return 'Complete rest or gentle stretching';
+  if (goal === 'fat_loss') return 'Light cardio or walking';
+  if (goal === 'athlete_training') return 'Mobility and active recovery';
+  return 'Full rest or stretching';
 };
 
 const getWorkoutNotes = (goal: string, bodyType: string[], week: number) => {
-  const baseNotes = {
-    muscle_gain: 'Focus on progressive overload. Increase weight when you can complete all reps easily.',
-    fat_loss: 'Maintain high intensity. Focus on form over speed.',
-    athlete_training: 'Focus on explosive movements, proper technique, and sport-specific adaptations. Train like your sport depends on it.'
+  const base: Record<string, string> = {
+    muscle_gain: 'Focus on progressive overload and form.',
+    fat_loss: 'Keep heart rate elevated and move consistently.',
+    athlete_training: 'Prioritize explosiveness and controlled power.'
   };
-  
-  const weekNotes = week === 1 ? ' Start conservatively to build movement patterns.' : 
-                   week <= 2 ? ' Increase intensity and complexity.' : 
-                   ' Peak performance training - push your athletic limits.';
-  
-  return baseNotes[goal as keyof typeof baseNotes] + weekNotes;
+  const phase = week === 1 ? 'Start easy.' : week === 2 ? 'Increase intensity.' : 'Push performance.';
+  return `${base[goal] || ''} ${phase}`;
 };
 
 export default WorkoutPlanGenerator;
