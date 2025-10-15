@@ -1,204 +1,14 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/contexts/AuthContext';
-import { useTranslation } from '@/contexts/TranslationContext';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Loader2, Dumbbell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Dumbbell, Eye, EyeOff } from 'lucide-react';
-import ForgotPassword from './ForgotPassword';
-import PrivacyPolicy from '../legal/PrivacyPolicy';
-import TermsOfConditions from '../legal/TermsOfConditions';
 import { supabase } from '@/integrations/supabase/client';
+import { motion } from 'framer-motion';
 
 const AuthForm = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
-  const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
-  const [showTermsOfConditions, setShowTermsOfConditions] = useState(false);
-  const [isPasswordReset, setIsPasswordReset] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  
-  const { signIn, signUp } = useAuth();
   const { toast } = useToast();
-  const { t } = useTranslation();
-
-  // Check if this is a password reset flow
-  useEffect(() => {
-    const checkSession = async () => {
-      // Check URL parameters for reset mode
-      const urlParams = new URLSearchParams(window.location.search);
-      console.log('Current URL params:', Object.fromEntries(urlParams.entries()));
-      
-      // Check for recovery tokens in URL
-      const accessToken = urlParams.get('access_token');
-      const refreshToken = urlParams.get('refresh_token');
-      const type = urlParams.get('type');
-      
-      if (type === 'recovery' && accessToken && refreshToken) {
-        console.log('Password reset tokens detected, setting session');
-        
-        try {
-          // Set the session using the tokens from the URL
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
-          
-          if (error) {
-            console.error('Error setting session:', error);
-            toast({
-              title: "Error",
-              description: "Invalid reset link. Please request a new password reset.",
-              variant: "destructive"
-            });
-          } else if (data.session) {
-            console.log('Session set successfully for password reset');
-            setIsPasswordReset(true);
-            setIsLogin(false);
-            
-            if (data.session.user.email) {
-              setEmail(data.session.user.email);
-            }
-          }
-        } catch (error) {
-          console.error('Error setting session:', error);
-          toast({
-            title: "Error",
-            description: "Failed to process reset link. Please try again.",
-            variant: "destructive"
-          });
-        }
-      }
-    };
-    
-    checkSession();
-  }, [toast]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      let result;
-      
-      if (isPasswordReset) {
-        // Handle password update for reset flow
-        if (password !== confirmPassword) {
-          toast({
-            title: "Password mismatch",
-            description: "Passwords do not match. Please try again.",
-            variant: "destructive"
-          });
-          setLoading(false);
-          return;
-        }
-
-        if (password.length < 6) {
-          toast({
-            title: "Password too short",
-            description: "Password must be at least 6 characters long.",
-            variant: "destructive"
-          });
-          setLoading(false);
-          return;
-        }
-
-        // Check if we have an active session before updating password
-        const { data: { session } } = await supabase.auth.getSession();
-        console.log('Current session for password update:', session);
-        
-        if (!session) {
-          console.log('No session found, cannot update password');
-          toast({
-            title: "Session expired",
-            description: "Please click the reset link again to update your password.",
-            variant: "destructive"
-          });
-          setLoading(false);
-          return;
-        }
-
-        console.log('Attempting to update password for user:', session.user.email);
-
-        const { error } = await supabase.auth.updateUser({
-          password: password
-        });
-
-        if (error) {
-          console.error('Password update error:', error);
-          toast({
-            title: "Error",
-            description: error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Password updated successfully!",
-            description: "Redirecting you to the home page...",
-          });
-          
-          // Clear URL parameters and redirect to home page
-          window.history.replaceState({}, document.title, window.location.pathname);
-          
-          // Redirect to home page after successful password reset
-          setTimeout(() => {
-            window.location.replace('/home');
-          }, 1000);
-        }
-      } else if (isLogin) {
-        result = await signIn(email, password);
-        if (result.error) {
-          toast({
-            title: "Error",
-            description: result.error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Welcome back!",
-            description: "You've been signed in successfully.",
-          });
-          // Force immediate redirect to home page - no delays, no conditions
-          window.location.replace('/home');
-        }
-      } else {
-        // Direct signup without referral dialog
-        result = await signUp(email, password, fullName);
-        if (result.error) {
-          toast({
-            title: "Error",
-            description: result.error.message,
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Success!",
-            description: "Account created! Please check your email for a confirmation link.",
-            duration: 8000,
-          });
-        }
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred.",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
-
 
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
@@ -210,169 +20,58 @@ const AuthForm = () => {
           queryParams: { prompt: 'select_account' }
         }
       });
-      
       if (error) {
         toast({
-          title: "Error",
+          title: 'Error',
           description: error.message,
-          variant: "destructive"
+          variant: 'destructive'
         });
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to sign in with Google.",
-        variant: "destructive"
+        title: 'Error',
+        description: 'Failed to sign in with Google.',
+        variant: 'destructive'
       });
     } finally {
       setGoogleLoading(false);
     }
   };
 
-  if (showForgotPassword) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4">
-        <ForgotPassword onBack={() => setShowForgotPassword(false)} />
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
-          <div className="flex justify-center mb-4">
-            <div className="bg-fitness-primary rounded-full p-3">
-              <Dumbbell className="h-8 w-8 text-white" />
-            </div>
-          </div>
-          <CardTitle className="text-2xl">
-            {isPasswordReset ? 'Update Password' : isLogin ? t('Welcome Back') : t('Get Started')}
-          </CardTitle>
-          <CardDescription>
-            {isPasswordReset ? 'Enter your new password below' : isLogin ? t('Sign in to your QuickFit account') : t('Create your QuickFit account')}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="fullName">{t('Full Name')}</Label>
-                <Input
-                  id="fullName"
-                  type="text"
-                  placeholder={t('Enter your full name')}
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required={!isLogin}
-                />
-              </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">{t('Email')}</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder={t('Enter your email')}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">{t('Password')}</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder={t('Enter your password')}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                  className="pr-10"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-              {isLogin && (
-                <div className="text-right">
-                  <button
-                    type="button"
-                    onClick={() => setShowForgotPassword(true)}
-                    className="text-xs text-fitness-primary hover:underline"
-                  >
-                    {t('Forgot Password?')}
-                  </button>
-                </div>
-              )}
-            </div>
-            
-            {isPasswordReset && (
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Confirm your new password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    required
-                    minLength={6}
-                    className="pr-10"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  >
-                    {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
-            )}
-            
-            <Button
-              type="submit" 
-              className="w-full bg-fitness-primary hover:bg-fitness-primary/90"
-              disabled={loading}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-100 via-white to-green-100 px-4">
+      <motion.div
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+      >
+        <Card className="w-full max-w-sm shadow-2xl rounded-3xl overflow-hidden border-0">
+          <CardHeader className="text-center py-8 bg-gradient-to-r from-fitness-primary to-green-400 text-white">
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="inline-block mb-4"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isPasswordReset ? 'Update Password' : isLogin ? t('Sign In') : t('Create Account')}
-            </Button>
-          </form>
-
-          {!isPasswordReset && (
-            <>
-              <div className="relative my-6">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
-                    Or continue with
-                  </span>
-                </div>
-              </div>
-
+              <Dumbbell className="h-12 w-12 mx-auto text-white" />
+            </motion.div>
+            <CardTitle className="text-3xl font-bold">Welcome to QuickFit</CardTitle>
+            <CardDescription className="mt-2 text-white/80">
+              Sign in with Google to continue
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-8 flex flex-col gap-6">
+            <motion.div
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+            >
               <Button
                 type="button"
-                variant="default"
-                size="lg"
-                className="w-full bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-300 shadow-md hover:shadow-lg transition-all"
+                className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 border-2 border-gray-300 shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all py-3 rounded-xl font-semibold text-lg"
                 onClick={handleGoogleSignIn}
                 disabled={googleLoading}
               >
-                {googleLoading && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
-                <svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">
+                {googleLoading && <Loader2 className="h-5 w-5 animate-spin" />}
+                <svg className="h-5 w-5" viewBox="0 0 24 24">
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -390,60 +89,29 @@ const AuthForm = () => {
                     d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                   />
                 </svg>
-                <span className="font-semibold">Continue with Google</span>
+                Continue with Google
               </Button>
-            </>
-          )}
+            </motion.div>
 
-          {!isLogin && (
-            <div className="mt-3 text-xs text-gray-500 text-center">
-              {t('By creating an account, you accept our')}{' '}
-              <button
-                type="button"
-                onClick={() => setShowPrivacyPolicy(true)}
-                className="text-fitness-primary hover:underline"
-              >
-                {t('Privacy Policy')}
-              </button>
-              {' '}{t('and')}{' '}
-              <button
-                type="button"
-                onClick={() => setShowTermsOfConditions(true)}
-                className="text-fitness-primary hover:underline"
-              >
-                {t('Terms of Conditions')}
-              </button>
-            </div>
-          )}
-          
-          {!isPasswordReset && (
-            <div className="mt-4 text-center">
-              <button
-                type="button"
-                onClick={() => setIsLogin(!isLogin)}
-                className="text-sm text-fitness-primary hover:underline"
-              >
-                {isLogin 
-                  ? t("Don't have an account? Sign up")
-                  : t("Already have an account? Sign in")
-                }
-              </button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Privacy Policy Modal */}
-      <PrivacyPolicy 
-        isOpen={showPrivacyPolicy}
-        onClose={() => setShowPrivacyPolicy(false)}
-      />
-
-      {/* Terms of Conditions Modal */}
-      <TermsOfConditions 
-        isOpen={showTermsOfConditions}
-        onClose={() => setShowTermsOfConditions(false)}
-      />
+            <motion.p
+              className="text-center text-sm text-gray-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              By signing in, you agree to our{' '}
+              <a href="/privacy-policy" className="text-fitness-primary underline">
+                Privacy Policy
+              </a>{' '}
+              and{' '}
+              <a href="/terms-of-conditions" className="text-fitness-primary underline">
+                Terms & Conditions
+              </a>
+              .
+            </motion.p>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };
