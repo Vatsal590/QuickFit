@@ -20,18 +20,10 @@ const AuthForm = () => {
         }
       });
       if (error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive'
-        });
+        toast({ title: 'Error', description: error.message, variant: 'destructive' });
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to sign in with Google.',
-        variant: 'destructive'
-      });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to sign in with Google.', variant: 'destructive' });
     } finally {
       setGoogleLoading(false);
     }
@@ -39,13 +31,35 @@ const AuthForm = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-50 via-white to-green-50 overflow-hidden">
-      {/* Moving Background Blobs */}
-      <div className="absolute top-[-100px] left-[-50px] w-72 h-72 bg-fitness-primary/20 rounded-full animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-[-100px] right-[-50px] w-80 h-80 bg-green-400/20 rounded-full animate-blob animation-delay-4000"></div>
-      <div className="absolute top-1/3 right-[-60px] w-64 h-64 bg-blue-400/10 rounded-full animate-blob animation-delay-6000"></div>
+      {/* Dynamic Background Blobs */}
+      <div className="absolute w-72 h-72 bg-fitness-primary/20 rounded-full animate-blob animation-delay-0 top-[-80px] left-[-50px]"></div>
+      <div className="absolute w-80 h-80 bg-green-400/20 rounded-full animate-blob animation-delay-3000 bottom-[-100px] right-[-50px]"></div>
+      <div className="absolute w-64 h-64 bg-blue-400/10 rounded-full animate-blob animation-delay-6000 top-1/3 right-[-60px]"></div>
 
-      <div className="relative z-10 w-full max-w-sm shadow-2xl rounded-3xl overflow-hidden border-0">
-        <Card className="border-0 backdrop-blur-md bg-white/60 shadow-lg rounded-3xl">
+      {/* Particle dots */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <span
+            key={i}
+            className={`absolute bg-white/30 rounded-full w-2 h-2 animate-pulse`}
+            style={{
+              top: `${Math.random() * 100}%`,
+              left: `${Math.random() * 100}%`,
+              animationDuration: `${3 + Math.random() * 5}s`,
+              animationDelay: `${Math.random() * 5}s`
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Floating shapes */}
+      <div className="absolute w-32 h-32 bg-purple-300/20 rounded-full animate-float left-10 top-20"></div>
+      <div className="absolute w-24 h-24 bg-pink-300/20 rounded-full animate-float right-16 bottom-32"></div>
+      <div className="absolute w-20 h-20 bg-yellow-300/15 rounded-full animate-float left-1/2 top-40"></div>
+
+      {/* Login Card */}
+      <div className="relative z-10 w-full max-w-sm">
+        <Card className="border-0 backdrop-blur-md bg-white/60 shadow-2xl rounded-3xl">
           <CardHeader className="text-center py-8 bg-gradient-to-r from-fitness-primary to-green-400 text-white rounded-t-3xl">
             <div className="inline-block mb-4 animate-bounce">
               <Dumbbell className="h-12 w-12 mx-auto text-white" />
@@ -81,19 +95,28 @@ const AuthForm = () => {
         </Card>
       </div>
 
-      {/* Tailwind Blob Animation CSS */}
       <style jsx>{`
         @keyframes blob {
           0%, 100% { transform: translate(0px, 0px) scale(1); }
           33% { transform: translate(30px, -20px) scale(1.1); }
           66% { transform: translate(-20px, 20px) scale(0.9); }
         }
-        .animate-blob {
-          animation: blob 20s infinite;
-        }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
+        .animate-blob { animation: blob 20s infinite; }
+        .animation-delay-0 { animation-delay: 0s; }
+        .animation-delay-3000 { animation-delay: 3s; }
         .animation-delay-6000 { animation-delay: 6s; }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        @keyframes fadeIn {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 1s ease-out forwards; }
       `}</style>
     </div>
   );
