@@ -312,49 +312,76 @@ const Landing = () => {
           </div>
         </div>
 
-        {/* Why Choose QuickFit - Pattern Background */}
-        <div className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #dcfce7 100%)' }}>
-          {/* Dot Pattern Overlay */}
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-          
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <span className="text-fitness-accent font-bold text-sm tracking-widest uppercase bg-fitness-accent/20 px-6 py-2 rounded-full">
-                Why Choose Us
-              </span>
-              <h3 className="text-5xl font-black text-gray-900 mt-6">
-                Built for Everyone
-              </h3>
-            </div>
+       {/* Reviews Section */}
+<div className="relative py-24 overflow-hidden" style={{ background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #dcfce7 100%)' }}>
+  {/* Dot Pattern Overlay */}
+  <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-              {[
-                { icon: Clock, title: 'Any Schedule', desc: '10-minute quickies to full 90-minute sessions. Workouts that adapt to your time.', color: 'fitness-primary' },
-                { icon: Dumbbell, title: 'Any Equipment', desc: 'Bodyweight only, home gym, or full commercial gym—we\'ve got you covered.', color: 'fitness-secondary' },
-                { icon: Target, title: 'Your Goals', desc: 'Strength, endurance, weight loss, or athletic performance—tailored to you.', color: 'fitness-accent' },
-                { icon: BarChart3, title: 'Track Progress', desc: 'Monitor improvements with detailed analytics and milestone tracking.', color: 'fitness-primary' }
-              ].map((item, idx) => (
-                <Card 
-                  key={idx} 
-                  className="group text-center bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 animate-scale-in"
-                  style={{ animationDelay: `${idx * 0.1}s` }}
-                >
-                  <CardHeader>
-                    <div className={`mx-auto bg-${item.color}/10 w-20 h-20 rounded-2xl flex items-center justify-center mb-4 transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                      <item.icon className={`h-10 w-10 text-${item.color}`} />
-                    </div>
-                    <CardTitle className="text-xl font-bold">{item.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <CardDescription className="text-base leading-relaxed font-medium">
-                      {item.desc}
-                    </CardDescription>
-                  </CardContent>
-                </Card>
-              ))}
+  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="text-center mb-16">
+      <span className="text-fitness-accent font-bold text-sm tracking-widest uppercase bg-fitness-accent/20 px-6 py-2 rounded-full">
+        Reviews
+      </span>
+      <h3 className="text-5xl font-black text-gray-900 mt-6">
+        What Our Users Say
+      </h3>
+    </div>
+
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {[
+        {
+          name: 'Andrew',
+          role: 'Student',
+          text: 'Clear, well organised. I like the weight tracker.',
+        },
+        {
+          name: 'Nina',
+          role: 'Mother',
+          text: 'Easy to use and navigate.',
+        },
+        {
+          name: 'Harshit',
+          role: 'Student',
+          text: 'Liked how so many features were there for free, even the AI fitness chatbot.',
+        },
+        {
+          name: 'Vedika',
+          role: 'Housewife',
+          text: 'The exercise animations make it so much easier to workout. I like the fitness blogs!',
+        },
+      ].map((review, idx) => (
+        <Card
+          key={idx}
+          className="group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 animate-scale-in"
+          style={{ animationDelay: `${idx * 0.1}s` }}
+        >
+          <CardContent className="flex flex-col items-center text-center p-6">
+            <div className="mb-4 w-16 h-16 rounded-full bg-fitness-primary/10 flex items-center justify-center text-2xl font-bold text-fitness-primary">
+              {review.name[0]}
             </div>
-          </div>
-        </div>
+            <p className="text-gray-900 font-semibold text-lg">{review.name}</p>
+            <p className="text-gray-500 text-sm mb-4">{review.role}</p>
+            <CardDescription className="text-base leading-relaxed font-medium text-gray-700">
+              "{review.text}"
+            </CardDescription>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </div>
+</div>
+
+{/* Tailwind animation */}
+<style jsx>{`
+  @keyframes scale-in {
+    0% { opacity: 0; transform: scale(0.95); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+  .animate-scale-in {
+    animation: scale-in 0.5s ease forwards;
+  }
+`}</style>
+
 
         {/* Final CTA with Gradient and Glow */}
         <div className="relative py-24 overflow-hidden">
