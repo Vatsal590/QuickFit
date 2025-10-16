@@ -220,7 +220,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'reverse crunch': 'https://www.inspireusafoundation.org/file/2022/01/reverse-crunch.gif',
       'flutter kicks': 'https://newlife.com.cy/wp-content/uploads/2019/11/28911301-Flutter-Kicks-hands-under-hips-head-up-female_Waist_360.gif',
       'flutter kick': 'https://newlife.com.cy/wp-content/uploads/2019/11/28911301-Flutter-Kicks-hands-under-hips-head-up-female_Waist_360.gif',
-      
+      'bird-dogs': 'https://i.pinimg.com/originals/99/38/1d/99381d5561abd19223679f7c157d47a8.gif',
       // HIIT/Cardio exercises
       'burpees': 'https://gymvisual.com/img/p/1/7/3/3/8/17338.gif',
       'burpee': 'https://gymvisual.com/img/p/1/7/3/3/8/17338.gif',
