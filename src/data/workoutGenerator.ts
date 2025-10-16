@@ -56,6 +56,12 @@ const generateWarmupExercises = (equipment: Equipment[]): Exercise[] => {
     { id: uuidv4(), name: "Bodyweight Squats", muscleGroup: "legs", equipment: ["none"], sets: 1, reps: 15, restTime: 0, description: "Light squats to warm up legs." },
     { id: uuidv4(), name: "Shoulder Stretches", muscleGroup: "shoulders", equipment: ["none"], sets: 1, reps: 10, restTime: 0, description: "Cross one arm across chest and hold." }
   ];
+
+  // If only "no equipment" selected, return bodyweight warm-ups only
+  if (equipment.includes("none") && equipment.length === 1) {
+    return warmup.filter(ex => ex.equipment.includes("none")).slice(0, 4);
+  }
+
   return warmup.slice(0, 4);
 };
 
@@ -75,39 +81,61 @@ const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[
   return targetSpecific.slice(0, 4);
 };
 
-// Alternative exercises for body pains
+// Alternative exercises for body pains (fixed to respect equipment)
 const getAlternativeExercises = (pain: import('@/types').BodyPain, equipment: Equipment[]): Exercise[] => {
+  const hasEquipment = !equipment.includes("none");
+
   const alternatives: Record<string, Exercise[]> = {
     "knee pain": [
       { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Lie on back, lift hips." },
       { id: uuidv4(), name: "Clamshells", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 12, restTime: 45, description: "Side-lying hip exercise." },
       { id: uuidv4(), name: "Deadbugs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Core stability on back." }
     ],
-    "ankle pain": [
-      { id: uuidv4(), name: "Seated Upper Body Press", muscleGroup: "shoulders", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 60, description: "Seated shoulder press." },
-      { id: uuidv4(), name: "Lying Hamstring Curls", muscleGroup: "legs", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Hamstring exercise lying down." }
-    ],
+    "ankle pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Seated Upper Body Press", muscleGroup: "shoulders", equipment: ["dumbbells"], sets: 3, reps: 12, restTime: 60, description: "Seated shoulder press." },
+          { id: uuidv4(), name: "Lying Hamstring Curls", muscleGroup: "legs", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Hamstring exercise lying down." }
+        ]
+      : [
+          { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "No-equipment hamstring work." },
+          { id: uuidv4(), name: "Wall March", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Drive knees up while leaning on wall." }
+        ],
     "hip pain": [
       { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Hip-safe glute strengthening." },
       { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Core stability on hands and knees." }
     ],
-    "shoulder pain": [
-      { id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Low anchor rowing motion." },
-      { id: uuidv4(), name: "Supported Bicep Curls", muscleGroup: "biceps", equipment: equipment.includes("dumbbells") ? ["dumbbells"] : ["resistance bands"], sets: 3, reps: 12, restTime: 45, description: "Bicep curls with support." }
-    ],
+    "shoulder pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Low anchor rowing motion." },
+          { id: uuidv4(), name: "Supported Bicep Curls", muscleGroup: "biceps", equipment: ["dumbbells"], sets: 3, reps: 12, restTime: 45, description: "Bicep curls with support." }
+        ]
+      : [
+          { id: uuidv4(), name: "Scapular Retractions", muscleGroup: "back", equipment: ["none"], sets: 3, reps: 15, restTime: 45, description: "Squeeze shoulder blades together." },
+          { id: uuidv4(), name: "Wall Angels", muscleGroup: "shoulders", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Improve shoulder mobility." }
+        ],
     "lower back pain": [
       { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Safe core strengthening." },
       { id: uuidv4(), name: "Modified Planks", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Plank with knees down." }
     ],
-    "elbow pain": [
-      { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." },
-      { id: uuidv4(), name: "Straight Arm Band Pulls", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 45, description: "Resistance band exercise." }
-    ],
+    "elbow pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Straight Arm Band Pulls", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 45, description: "Resistance band exercise." },
+          { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." }
+        ]
+      : [
+          { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." },
+          { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core exercise without arm strain." }
+        ],
     "wrist pain": [
       { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core exercise without wrist stress." },
-      { id: uuidv4(), name: "Neutral Grip Band Exercises", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Neutral wrist resistance band work." }
+      ...(hasEquipment
+        ? [
+            { id: uuidv4(), name: "Neutral Grip Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Neutral wrist resistance band work." }
+          ]
+        : [])
     ]
   };
+
   return alternatives[pain] || [];
 };
 
@@ -123,9 +151,14 @@ export const generateWorkout = (
 
   let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
 
-  // Filter exercises for body pains and add alternatives
+  // Respect "no equipment" — only use bodyweight exercises
+  if (equipment.includes("none") && equipment.length === 1) {
+    selectedExercises = selectedExercises.filter(ex => ex.equipment.includes("none"));
+  }
+
+  // Filter by body pains and add suitable alternatives
   if (bodyPains?.length) {
-    const painExercises: Record<string, string[]> = {
+    const painKeywords: Record<string, string[]> = {
       "knee pain": ["squat","lunge","jump","step-up","knee bend","run","box jump"],
       "ankle pain": ["jump","run","lunge","calf raise","burpee","step-up"],
       "hip pain": ["lunge","high knee","leg raise","jump","deep squat","hip thrust"],
@@ -137,34 +170,22 @@ export const generateWorkout = (
 
     selectedExercises = selectedExercises.filter(ex =>
       !bodyPains.some(pain =>
-        (painExercises[pain] || []).some(word => ex.name.toLowerCase().includes(word))
+        (painKeywords[pain] || []).some(word => ex.name.toLowerCase().includes(word))
       )
     );
 
     const alternatives = bodyPains.flatMap(pain => getAlternativeExercises(pain, equipment));
+    const validAlternatives = equipment.includes("none")
+      ? alternatives.filter(ex => ex.equipment.includes("none"))
+      : alternatives;
+
     const existing = new Set(selectedExercises.map(ex => ex.name.toLowerCase()));
-    alternatives.forEach(ex => { if (!existing.has(ex.name.toLowerCase())) selectedExercises.push(ex); });
+    validAlternatives.forEach(ex => {
+      if (!existing.has(ex.name.toLowerCase())) selectedExercises.push(ex);
+    });
   }
 
-  // Full body barbell prioritization
-  if (muscleGroups.includes("full body") && equipment.includes("barbell")) {
-    const barbellExercises = exercises.filter(ex => ex.equipment.includes("barbell") && ["chest","back","legs","shoulders","biceps","triceps"].includes(ex.muscleGroup));
-    const bodyweightExercises = exercises.filter(ex => ex.equipment.includes("none") && ["core","full body"].includes(ex.muscleGroup));
-    const total = Math.min(10, barbellExercises.length + bodyweightExercises.length);
-    const barbellCount = Math.ceil(total * 0.8);
-    const bodyweightCount = total - barbellCount;
-    selectedExercises = [...barbellExercises.slice(0, barbellCount), ...bodyweightExercises.slice(0, bodyweightCount)];
-  }
-
-  // Dumbbell workouts - simplified & logical
-  if (equipment.includes("dumbbells")) {
-    const dumbbellExercises = exercises.filter(ex => ex.equipment.includes("dumbbells") && (muscleGroups.includes("full body") ? true : muscleGroups.includes(ex.muscleGroup)));
-    if (time <= 20) selectedExercises = dumbbellExercises.filter(ex => ["full body"].includes(ex.muscleGroup) || ["Thruster","Clean","Squat","Row"].some(w => ex.name.includes(w)));
-    else if (time <= 30) selectedExercises = dumbbellExercises.filter(ex => ["full body","chest","back","legs"].includes(ex.muscleGroup));
-    else selectedExercises = dumbbellExercises;
-  }
-
-  // Ensure minimum exercises
+  // Ensure at least 3 exercises
   if (selectedExercises.length < 3) {
     const supplementary = getFilteredExercises(["cardio","core"], equipment, intensity);
     const existing = new Set(selectedExercises.map(ex => ex.name));
@@ -179,10 +200,8 @@ export const generateWorkout = (
   else maxExercises = time <= 20 ? 2 : 3;
 
   const adjustedExercises = selectedExercises.slice(0, maxExercises).map(ex => adjustExerciseForIntensity(ex, intensity, time));
-
   const warmup = generateWarmupExercises(equipment).slice(0,3);
   const cooldown = generateCooldownExercises(muscleGroups).slice(0,3);
-
   const title = generateWorkoutTitle(muscleGroups, intensity);
 
   const workout: Workout = {
