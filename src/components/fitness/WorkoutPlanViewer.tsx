@@ -240,6 +240,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'v ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/05/v-sit-ups.gif',
       'side plank': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/side-plank-1024x593.png',
       'side planks': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/08/side-plank-1024x593.png',
+      'modified planks': 'https://bunny-wp-pullzone-wwrvnwx855.b-cdn.net/wp-content/uploads/2023/10/Knee-Plank.jpg',
       'plank to downward dog': 'https://gymvisual.com/img/p/2/4/6/9/7/24697.gif',
       'reverse crunches': 'https://www.inspireusafoundation.org/file/2022/01/reverse-crunch.gif',
       'reverse crunch': 'https://www.inspireusafoundation.org/file/2022/01/reverse-crunch.gif',
