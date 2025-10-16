@@ -385,6 +385,9 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'lying hamstring curls': 'https://spotebi.com/wp-content/uploads/2015/05/lying-hamstring-curls-exercise-illustration-spotebi.gif',
       'resistance band jumping jacks': 'https://gymvisual.com/img/p/1/0/6/3/9/10639.gif',
 
+      'scapular retractions': 'https://gymvisual.com/img/p/1/2/5/2/4/12524.gif',
+      'wall angels': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/04/GRT-1.7.Wall-Angels.gif,
+      'wall march': 'https://gymvisual.com/img/p/5/3/6/0/5360.gif',
     };
 
     // Try exact match first
