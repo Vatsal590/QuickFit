@@ -214,6 +214,8 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'barbell front squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell front-squat': 'https://www.kettlebellkings.com/cdn/shop/articles/Front_Squats.gif?v=1694617488',
       'barbell split squat': 'https://www.inspireusafoundation.org/file/2023/08/barbell-split-squat.gif',
+      'lateral squats': 'https://www.inspireusafoundation.org/file/2023/08/cossack-squat.gif',
+      'jump lunges': 'https://media.tenor.com/r6-pyTNtT_UAAAAM/afundo.gif',
 
 
       // Abs/Core exercises
