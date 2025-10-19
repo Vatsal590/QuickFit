@@ -269,7 +269,8 @@ export function FreeAccessSection() {
               )}
             </div>
 
-            <div className="text-center text-sm text-muted-foreground space-y-1">
+            {/* Referral goal section (only once, at bottom) */}
+            <div className="text-center text-sm text-muted-foreground space-y-1 pt-4">
               {referralCount >= 3 ? (
                 <p>
                   Congratulations! Kindly contact -{' '}
@@ -315,7 +316,7 @@ export function FreeAccessSection() {
               <CardHeader>
                 <CardTitle>QuickFit Pro</CardTitle>
                 <CardDescription>
-                  €6.99 — Everything in Lite plus a 1-on-1 call and personalized plan for you, made by Vatsal
+                  €6.99 — Everything in Lite plus a 1-on-1 call and personalized plan from Vatsal
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
