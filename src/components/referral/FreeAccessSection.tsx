@@ -99,15 +99,15 @@ export function FreeAccessSection() {
       await navigator.clipboard.writeText(referralCode);
       setCopied(true);
       toast({
-        title: "Copied!",
-        description: "Referral code copied to clipboard.",
+        title: 'Copied!',
+        description: 'Referral code copied to clipboard.',
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to copy referral code.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to copy referral code.',
+        variant: 'destructive',
       });
     }
   };
@@ -123,9 +123,9 @@ export function FreeAccessSection() {
 
       if (referrerError || !referrer) {
         toast({
-          title: "Invalid Code",
-          description: "The referral code you entered is not valid.",
-          variant: "destructive",
+          title: 'Invalid Code',
+          description: 'The referral code you entered is not valid.',
+          variant: 'destructive',
         });
         setIsSubmitting(false);
         return;
@@ -141,9 +141,9 @@ export function FreeAccessSection() {
 
       if (existingReferral) {
         toast({
-          title: "Already Used",
-          description: "You have already used a referral code.",
-          variant: "destructive",
+          title: 'Already Used',
+          description: 'You have already used a referral code.',
+          variant: 'destructive',
         });
         setIsSubmitting(false);
         return;
@@ -153,9 +153,9 @@ export function FreeAccessSection() {
       setShowConfirmDialog(true);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to validate referral code.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to validate referral code.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -175,8 +175,8 @@ export function FreeAccessSection() {
       if (error) throw error;
 
       toast({
-        title: "Success!",
-        description: "Referral code applied successfully.",
+        title: 'Success!',
+        description: 'Referral code applied successfully.',
       });
       setReferrerName(pendingReferrer.name);
       setInputReferralCode('');
@@ -184,9 +184,9 @@ export function FreeAccessSection() {
       setPendingReferrer(null);
     } catch {
       toast({
-        title: "Error",
-        description: "Failed to apply referral code.",
-        variant: "destructive",
+        title: 'Error',
+        description: 'Failed to apply referral code.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -196,7 +196,7 @@ export function FreeAccessSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Unlock Vatsal's plans! (his physique below)</CardTitle>
+        <CardTitle>Unlock Vatsal&apos;s plans! (his physique below)</CardTitle>
         <div className="flex gap-2 mt-4">
           <Button
             variant="outline"
@@ -269,15 +269,15 @@ export function FreeAccessSection() {
               )}
             </div>
 
-            {/* Referral goal section */}
             <div className="text-center text-sm text-muted-foreground space-y-1">
               {referralCount >= 3 ? (
                 <p>
-                  Congratulations! Kindly contact - <span className="font-semibold">info@quickfit.dev</span> to receive your award!
+                  Congratulations! Kindly contact -{' '}
+                  <span className="font-semibold">info@quickfit.dev</span> to receive your award!
                 </p>
               ) : (
                 <>
-                  <p>Refer 3 people to see Vatsal's workout and diet plan.</p>
+                  <p>Refer 3 people to see Vatsal&apos;s workout and diet plan.</p>
                   <p>Refer 6 people for access AND a call with him!</p>
                 </>
               )}
@@ -286,25 +286,54 @@ export function FreeAccessSection() {
         )}
 
         {activeTab === 'skip' && (
-          <div className="text-center space-y-6 py-6">
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Skip the headache of referring and pay the amount you would for a sandwich 🥪
-              to get access to <span className="font-semibold">Vatsal's workout & diet plans </span>
-              AND a <span className="font-semibold">1-on-1 call with him</span>.
-            </p>
-            <Button
-              asChild
-              size="lg"
-              className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40"
-            >
-              <a
-                href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Pay & Get Instant Access
-              </a>
-            </Button>
+          <div className="flex flex-col md:flex-row gap-6 py-6 justify-center items-stretch">
+            {/* QuickFit Lite */}
+            <Card className="flex-1 max-w-sm mx-auto md:mx-0">
+              <CardHeader>
+                <CardTitle>QuickFit Lite</CardTitle>
+                <CardDescription>€4.99 — Access to Vatsal&apos;s workout and diet plan</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40 mt-4 w-full"
+                >
+                  <a
+                    href="https://buy.stripe.com/5kQfZi4pD2LH8ay94Zds403"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Pay & Get Instant Access
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* QuickFit Pro */}
+            <Card className="flex-1 max-w-sm mx-auto md:mx-0">
+              <CardHeader>
+                <CardTitle>QuickFit Pro</CardTitle>
+                <CardDescription>
+                  €6.99 — Everything in Lite plus a 1-on-1 call and personalized plan for you, made by Vatsal
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button
+                  asChild
+                  size="lg"
+                  className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40 mt-4 w-full"
+                >
+                  <a
+                    href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Pay & Get Instant Access
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         )}
       </CardContent>
@@ -313,9 +342,7 @@ export function FreeAccessSection() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Referral</AlertDialogTitle>
-            <AlertDialogDescription>
-              Referred by {pendingReferrer?.name}?
-            </AlertDialogDescription>
+            <AlertDialogDescription>Referred by {pendingReferrer?.name}?</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel
