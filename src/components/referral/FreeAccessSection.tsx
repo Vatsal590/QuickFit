@@ -196,8 +196,7 @@ export function FreeAccessSection() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Get Access</CardTitle>
-        <CardDescription>Choose how you want to unlock Vatsal's plans</CardDescription>
+        <CardTitle>Choose how you want to unlock Vatsal's plans</CardTitle>
         <div className="flex gap-2 mt-4">
           <Button
             variant="outline"
