@@ -15,6 +15,7 @@ import TermsOfService from "./pages/TermsOfService";
 import DeleteAccount from "./pages/DeleteAccount";
 import WeightTracker from "./pages/WeightTracker";
 import DietPlan from "./pages/DietPlan";
+import FoodTracker from "./pages/FoodTracker";
 import FreeAccess from "./pages/FreeAccess";
 import Blogs from "./pages/Blogs";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
@@ -119,6 +120,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <WeightTracker />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/food-tracker" 
+        element={
+          <ProtectedRoute>
+            <FoodTracker />
           </ProtectedRoute>
         } 
       />

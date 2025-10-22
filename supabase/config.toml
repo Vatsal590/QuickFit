@@ -1,1 +1,31 @@
 project_id = "tlliijookodviezygwqk"
+
+[functions.chatbot]
+verify_jwt = false
+
+[functions.exercise-alternatives]
+verify_jwt = true
+
+[functions.create-workout-purchase]
+verify_jwt = false
+
+[functions.verify-workout-purchase]
+verify_jwt = false
+
+[functions.send-password-reset]
+verify_jwt = false
+
+[functions.reset-password]
+verify_jwt = false
+
+[functions.send-reset-code]
+verify_jwt = false
+
+[functions.delete-user-account]
+verify_jwt = true
+
+[functions.send-daily-notifications]
+verify_jwt = false
+
+[functions.analyze-food-image]
+verify_jwt = true

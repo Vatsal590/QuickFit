@@ -80,6 +80,48 @@ export type Database = {
         }
         Relationships: []
       }
+      food_logs: {
+        Row: {
+          created_at: string
+          foods: Json
+          id: string
+          image_url: string | null
+          meal_type: string | null
+          notes: string | null
+          total_calories: number | null
+          total_carbs: number | null
+          total_fats: number | null
+          total_protein: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          foods?: Json
+          id?: string
+          image_url?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fats?: number | null
+          total_protein?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          foods?: Json
+          id?: string
+          image_url?: string | null
+          meal_type?: string | null
+          notes?: string | null
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fats?: number | null
+          total_protein?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       lastused: {
         Row: {
           created_at: string
@@ -193,6 +235,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_nutrition_goals: {
+        Row: {
+          created_at: string
+          daily_calories: number | null
+          daily_carbs: number | null
+          daily_fats: number | null
+          daily_protein: number | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_calories?: number | null
+          daily_carbs?: number | null
+          daily_fats?: number | null
+          daily_protein?: number | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_calories?: number | null
+          daily_carbs?: number | null
+          daily_fats?: number | null
+          daily_protein?: number | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       weight_entries: {
         Row: {
