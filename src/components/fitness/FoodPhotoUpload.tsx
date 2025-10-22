@@ -23,6 +23,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const [mealType, setMealType] = useState<string>('');
   const [notes, setNotes] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -87,6 +88,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       setMealType('');
       setNotes('');
       if (fileInputRef.current) fileInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
       onFoodLogged();
     } catch (error: any) {
       console.error('Error saving food log:', error);
@@ -103,18 +105,56 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div>
-          <Label htmlFor="photo-upload">Upload Photo</Label>
-          <div className="mt-2">
-            <Input
-              ref={fileInputRef}
-              id="photo-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleFileSelect}
-              disabled={isAnalyzing}
-              className="cursor-pointer"
-            />
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <Label htmlFor="photo-upload">Upload Photo</Label>
+            <div className="mt-2">
+              <Input
+                ref={fileInputRef}
+                id="photo-upload"
+                type="file"
+                accept="image/*"
+                onChange={handleFileSelect}
+                disabled={isAnalyzing}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isAnalyzing}
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Choose File
+              </Button>
+            </div>
+          </div>
+          
+          <div>
+            <Label htmlFor="camera-capture">Take Photo</Label>
+            <div className="mt-2">
+              <Input
+                ref={cameraInputRef}
+                id="camera-capture"
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileSelect}
+                disabled={isAnalyzing}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                onClick={() => cameraInputRef.current?.click()}
+                disabled={isAnalyzing}
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Take Photo
+              </Button>
+            </div>
           </div>
         </div>
 
