@@ -1,22 +1,25 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.10';
 import webpush from 'npm:web-push@3.6.7';
+import { Resend } from 'npm:resend@4.0.0';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const resendApiKey = Deno.env.get('RESEND_API_KEY')!;
 
-// VAPID keys for Web Push - you need to generate these
+// VAPID keys for Web Push
 const VAPID_PUBLIC_KEY = 'BJthRQ5myDjc7NvUpIAtvbsZVSXGPIsWQdGquzqP-rqyKxTpJMU5nHmJdIJDzgJC_mMuuHXhJEhpGg5u0UqxJlw';
 const VAPID_PRIVATE_KEY = Deno.env.get('VAPID_PRIVATE_KEY')!;
 
 // Configure web-push
 webpush.setVapidDetails(
-  'mailto:your-email@quickfit.com',
+  'mailto:support@quickfit.com',
   VAPID_PUBLIC_KEY,
   VAPID_PRIVATE_KEY
 );
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -120,6 +123,66 @@ async function getUserContexts(): Promise<UserContext[]> {
   return userContexts;
 }
 
+async function sendEmailNotification(user: UserContext, message: string): Promise<void> {
+  try {
+    const emailHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
+            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+            .header { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); padding: 40px 20px; text-align: center; }
+            .logo { color: white; font-size: 32px; font-weight: bold; margin: 0; }
+            .content { padding: 40px 20px; }
+            .message { font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px; }
+            .cta-button { display: inline-block; background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; }
+            .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; border-top: 1px solid #eee; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h1 class="logo">💪 QuickFit</h1>
+            </div>
+            <div class="content">
+              <p class="message">${message}</p>
+              <p style="text-align: center;">
+                <a href="https://quickfit.lovable.app/home" class="cta-button">Start Your Workout</a>
+              </p>
+              <p style="color: #666; margin-top: 30px;">
+                Keep crushing your fitness goals! Every workout counts. 🔥
+              </p>
+            </div>
+            <div class="footer">
+              <p>QuickFit - Your Personal Fitness Companion</p>
+              <p>Stay strong, stay consistent! 💪</p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `;
+
+    const { error } = await resend.emails.send({
+      from: 'QuickFit <onboarding@resend.dev>',
+      to: [user.email],
+      subject: "Don't forget your QuickFit workout for today!",
+      html: emailHtml,
+    });
+
+    if (error) {
+      console.error(`Failed to send email to ${user.email}:`, error);
+      throw error;
+    }
+
+    console.log(`Email sent successfully to ${user.email}`);
+  } catch (error) {
+    console.error(`Error sending email notification to ${user.email}:`, error);
+    throw error;
+  }
+}
+
 async function sendPushNotification(user: UserContext, message: string): Promise<void> {
   try {
     // Get user's push subscriptions
@@ -134,7 +197,7 @@ async function sendPushNotification(user: UserContext, message: string): Promise
     }
 
     const notificationPayload = JSON.stringify({
-      title: 'Hey there!',
+      title: 'QuickFit Reminder',
       body: message,
       icon: '/favicon.ico',
       badge: '/favicon.ico'
@@ -152,9 +215,9 @@ async function sendPushNotification(user: UserContext, message: string): Promise
         };
 
         await webpush.sendNotification(pushSubscription, notificationPayload);
-        console.log(`Notification sent successfully to ${user.email}`);
+        console.log(`Push notification sent successfully to ${user.email}`);
       } catch (error) {
-        console.error(`Failed to send notification to subscription ${subscription.id}:`, error);
+        console.error(`Failed to send push notification to subscription ${subscription.id}:`, error);
         
         // If subscription is invalid (410 error), remove it from database
         if (error.statusCode === 410) {
@@ -191,10 +254,15 @@ const handler = async (req: Request): Promise<Response> => {
     for (const user of userContexts) {
       if (!user.email) continue; // Skip users without email
       
-      const message = getNotificationMessage(user);
+      const message = "Don't forget your QuickFit workout for today!";
       
       try {
-        await sendPushNotification(user, message);
+        // Send both email and push notifications
+        await Promise.allSettled([
+          sendEmailNotification(user, message),
+          sendPushNotification(user, message)
+        ]);
+        
         notifications.push({
           userId: user.id,
           email: user.email,
@@ -202,7 +270,7 @@ const handler = async (req: Request): Promise<Response> => {
           status: 'sent'
         });
       } catch (error) {
-        console.error(`Failed to send notification to ${user.email}:`, error);
+        console.error(`Failed to send notifications to ${user.email}:`, error);
         notifications.push({
           userId: user.id,
           email: user.email,

@@ -315,14 +315,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      generate_referral_code: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
-      update_user_last_used: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      generate_referral_code: { Args: never; Returns: string }
+      update_user_last_used: { Args: never; Returns: undefined }
       validate_referral_code: {
         Args: { code: string }
         Returns: {
