@@ -12,13 +12,20 @@ import { useFitnessProfile } from '@/hooks/useFitnessProfile';
 import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface MealWithMacros {
+  name: string;
+  protein: number;
+  carbs: number;
+  fats: number;
+}
+
 interface MealPlan {
   day: number;
   meals: {
-    breakfast: string[];
-    lunch: string[];
-    dinner: string[];
-    snacks: string[];
+    breakfast: MealWithMacros[];
+    lunch: MealWithMacros[];
+    dinner: MealWithMacros[];
+    snacks: MealWithMacros[];
   };
   calories: number;
 }
@@ -556,8 +563,73 @@ const DietPlan = () => {
       });
     };
 
+    // Function to estimate macros based on meal type and content
+    const estimateMacros = (mealName: string, mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks'): { protein: number; carbs: number; fats: number } => {
+      const lower = mealName.toLowerCase();
+      
+      // Base macros by meal type
+      const baseMacros = {
+        breakfast: { protein: 25, carbs: 40, fats: 15 },
+        lunch: { protein: 35, carbs: 45, fats: 18 },
+        dinner: { protein: 40, carbs: 50, fats: 20 },
+        snacks: { protein: 10, carbs: 15, fats: 8 }
+      };
+      
+      let macros = { ...baseMacros[mealType] };
+      
+      // Adjust based on protein sources
+      if (lower.includes('salmon') || lower.includes('tuna') || lower.includes('fish')) {
+        macros.protein += 10;
+        macros.fats += 5;
+      } else if (lower.includes('chicken') || lower.includes('turkey')) {
+        macros.protein += 8;
+        macros.carbs -= 5;
+      } else if (lower.includes('beef') || lower.includes('steak') || lower.includes('lamb')) {
+        macros.protein += 12;
+        macros.fats += 8;
+      } else if (lower.includes('eggs')) {
+        macros.protein += 6;
+        macros.fats += 5;
+      } else if (lower.includes('tofu') || lower.includes('tempeh')) {
+        macros.protein += 5;
+        macros.carbs += 3;
+      } else if (lower.includes('lentils') || lower.includes('beans') || lower.includes('chickpea')) {
+        macros.protein += 7;
+        macros.carbs += 10;
+      }
+      
+      // Adjust based on carb sources
+      if (lower.includes('quinoa') || lower.includes('rice') || lower.includes('pasta')) {
+        macros.carbs += 15;
+      } else if (lower.includes('oats') || lower.includes('oatmeal')) {
+        macros.carbs += 12;
+        macros.protein += 3;
+      } else if (lower.includes('sweet potato')) {
+        macros.carbs += 10;
+      }
+      
+      // Adjust for high-fat foods
+      if (lower.includes('avocado') || lower.includes('nuts') || lower.includes('almond')) {
+        macros.fats += 10;
+      } else if (lower.includes('cheese') || lower.includes('yogurt')) {
+        macros.protein += 5;
+        macros.fats += 6;
+      }
+      
+      // Vegan/vegetarian meals typically lower in protein
+      if (lower.includes('vegan') || (!lower.includes('chicken') && !lower.includes('beef') && 
+          !lower.includes('fish') && !lower.includes('salmon') && !lower.includes('eggs') && 
+          !lower.includes('turkey'))) {
+        if (mealType !== 'snacks') {
+          macros.protein = Math.max(15, macros.protein - 5);
+        }
+      }
+      
+      return macros;
+    };
+
     // Get meals from multiple cuisines with variety across days
-    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2, dayNumber: number = 1) => {
+    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2, dayNumber: number = 1): MealWithMacros[] => {
       const selected: string[] = [];
       const usedMeals = new Set<string>();
       
@@ -608,7 +680,11 @@ const DietPlan = () => {
         selected.push(fallbackMeals[fallbackIndex]);
       }
       
-      return selected;
+      // Convert to MealWithMacros
+      return selected.map(mealName => ({
+        name: mealName,
+        ...estimateMacros(mealName, mealType)
+      }));
     };
 
     return {
@@ -862,10 +938,17 @@ const DietPlan = () => {
                           </CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="space-y-1">
-                            <div className="text-sm">
-                              {plan.meals.breakfast.join(' or ')}
-                            </div>
+                          <div className="space-y-3">
+                            {plan.meals.breakfast.map((meal, idx) => (
+                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
+                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex gap-3 text-xs text-muted-foreground">
+                                  <span>Protein: {meal.protein}g</span>
+                                  <span>Carbs: {meal.carbs}g</span>
+                                  <span>Fats: {meal.fats}g</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </CardContent>
                       </Card>
@@ -875,10 +958,17 @@ const DietPlan = () => {
                           <CardTitle className="text-lg">Lunch</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="space-y-1">
-                            <div className="text-sm">
-                              {plan.meals.lunch.join(' or ')}
-                            </div>
+                          <div className="space-y-3">
+                            {plan.meals.lunch.map((meal, idx) => (
+                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
+                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex gap-3 text-xs text-muted-foreground">
+                                  <span>Protein: {meal.protein}g</span>
+                                  <span>Carbs: {meal.carbs}g</span>
+                                  <span>Fats: {meal.fats}g</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </CardContent>
                       </Card>
@@ -888,10 +978,17 @@ const DietPlan = () => {
                           <CardTitle className="text-lg">Dinner</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="space-y-1">
-                            <div className="text-sm">
-                              {plan.meals.dinner.join(' or ')}
-                            </div>
+                          <div className="space-y-3">
+                            {plan.meals.dinner.map((meal, idx) => (
+                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
+                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex gap-3 text-xs text-muted-foreground">
+                                  <span>Protein: {meal.protein}g</span>
+                                  <span>Carbs: {meal.carbs}g</span>
+                                  <span>Fats: {meal.fats}g</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </CardContent>
                       </Card>
@@ -901,10 +998,17 @@ const DietPlan = () => {
                           <CardTitle className="text-lg">Snacks</CardTitle>
                         </CardHeader>
                         <CardContent>
-                          <div className="space-y-1">
-                            <div className="text-sm">
-                              {plan.meals.snacks.join(' or ')}
-                            </div>
+                          <div className="space-y-3">
+                            {plan.meals.snacks.map((meal, idx) => (
+                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
+                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex gap-3 text-xs text-muted-foreground">
+                                  <span>Protein: {meal.protein}g</span>
+                                  <span>Carbs: {meal.carbs}g</span>
+                                  <span>Fats: {meal.fats}g</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </CardContent>
                       </Card>
