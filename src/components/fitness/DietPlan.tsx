@@ -205,6 +205,24 @@ const DietPlan = () => {
       }
     };
 
+    // Fallback meal when a meal is not found in database
+    const createFallbackMeal = (name: string, mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks'): MealOption => {
+      const baseMacros = {
+        breakfast: { protein: 25, carbs: 40, fats: 15, calories: 400 },
+        lunch: { protein: 40, carbs: 45, fats: 20, calories: 520 },
+        dinner: { protein: 45, carbs: 50, fats: 22, calories: 580 },
+        snacks: { protein: 12, carbs: 25, fats: 12, calories: 250 }
+      };
+
+      return {
+        name,
+        macros: baseMacros[mealType],
+        ingredients: [
+          { name: 'See meal description', amount: 1, unit: 'serving' }
+        ]
+      };
+    };
+
     // Get meals from selected cuisines
     const getMealsFromCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 1): MealOption[] => {
       const selected: MealOption[] = [];
@@ -218,12 +236,24 @@ const DietPlan = () => {
         if (cuisineMealNames && cuisineMealNames.length > 0) {
           const mealIndex = ((dayNumber - 1) * 2 + i) % cuisineMealNames.length;
           const mealName = cuisineMealNames[mealIndex];
-          const meal = getMealByName(mealName);
+          let meal = getMealByName(mealName);
+          
+          // If meal not found in database, create fallback
+          if (!meal) {
+            console.warn(`Meal not found in database: ${mealName}`);
+            meal = createFallbackMeal(mealName, mealType);
+          }
           
           if (meal && !selected.some(m => m.name === meal.name)) {
             selected.push(meal);
           }
         }
+      }
+      
+      // Ensure we always return at least one meal
+      if (selected.length === 0) {
+        const fallbackName = `Default ${mealType}`;
+        selected.push(createFallbackMeal(fallbackName, mealType));
       }
       
       return selected;
