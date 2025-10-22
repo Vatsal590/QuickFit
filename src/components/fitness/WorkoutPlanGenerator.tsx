@@ -230,6 +230,20 @@ const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[]
   const { fitness_goal, workout_days_per_week, available_equipment } = profile;
   const dailyWorkouts: any[] = [];
 
+  // Define workout splits based on days per week
+  const getWorkoutSplit = (days: number) => {
+    const splits: Record<number, string[]> = {
+      1: ['full_body'],
+      2: ['upper_body', 'lower_body'],
+      3: ['chest_triceps_shoulders', 'back_biceps', 'legs'],
+      4: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'full_body'],
+      5: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'upper_body', 'lower_body'],
+      6: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'chest_triceps_shoulders', 'back_biceps', 'legs'],
+      7: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'chest_triceps_shoulders', 'back_biceps', 'legs', 'full_body']
+    };
+    return splits[days] || splits[3];
+  };
+
   const getWorkoutDays = (days: number) => {
     const map: Record<number, number[]> = {
       1: [3], 2: [2, 5], 3: [1, 3, 5], 4: [1, 2, 4, 6],
@@ -237,13 +251,18 @@ const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[]
     };
     return map[days] || [1, 3, 5];
   };
-  const workoutDays = getWorkoutDays(workout_days_per_week);
 
+  const workoutDays = getWorkoutDays(workout_days_per_week);
+  const workoutSplit = getWorkoutSplit(workout_days_per_week);
+
+  let workoutIndex = 0;
   for (let day = 1; day <= 30; day++) {
     const dayOfWeek = ((day - 1) % 7) + 1;
     if (workoutDays.includes(dayOfWeek)) {
-      const workout = generateDayWorkout(day, profile, bodyPains);
+      const focusArea = workoutSplit[workoutIndex % workoutSplit.length];
+      const workout = generateDayWorkout(day, profile, bodyPains, focusArea);
       dailyWorkouts.push({ day, isRestDay: false, workout, completed: false });
+      workoutIndex++;
     } else {
       dailyWorkouts.push({ day, isRestDay: true, restType: getRestDayActivity(fitness_goal), completed: false });
     }
@@ -252,23 +271,12 @@ const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[]
   return dailyWorkouts;
 };
 
-const generateDayWorkout = (day: number, profile: FitnessProfile, bodyPains: BodyPain[]) => {
+const generateDayWorkout = (day: number, profile: FitnessProfile, bodyPains: BodyPain[], focusArea: string) => {
   const { fitness_goal, body_type, available_equipment } = profile;
   const week = Math.ceil(day / 7);
-  const dayInWeek = ((day - 1) % 7) + 1;
 
   const intensity = week === 1 ? 'beginner' : week <= 2 ? 'intermediate' : 'advanced';
   const duration = getDuration(profile);
-
-  // Improved rotation with more leg focus for muscle gain
-  const focusAreas: Record<string, string[]> = {
-    muscle_gain: ['chest_triceps', 'legs', 'back_biceps', 'legs', 'shoulders', 'legs', 'core'],
-    fat_loss: ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'],
-    athlete_training: ['explosive_power', 'agility_speed', 'functional_strength', 'movement_mobility']
-  };
-
-  const focusList = focusAreas[fitness_goal] || ['full_body_strength'];
-  const focusArea = focusList[(dayInWeek - 1) % focusList.length];
 
   return {
     title: `Day ${day} - ${focusArea.replace(/_/g, ' ')}`,
@@ -297,13 +305,15 @@ const generateExercises = (
   const normalizedEquipment = equipment.length === 0 ? ['none'] : equipment;
 
   const focusMap: Record<string, string[]> = {
-    chest_triceps: ['chest', 'triceps'],
+    chest_triceps_shoulders: ['chest', 'triceps', 'shoulders'],
     back_biceps: ['back', 'biceps'],
     legs: ['legs'],
+    upper_body: ['chest', 'back', 'shoulders', 'biceps', 'triceps'],
+    lower_body: ['legs'],
+    full_body: ['full body', 'chest', 'back', 'legs', 'shoulders'],
     shoulders: ['shoulders'],
     core: ['core'],
     hiit_cardio: ['cardio', 'full body'],
-    full_body_strength: ['full body', 'chest', 'back', 'legs'],
     cardio_core: ['cardio', 'core'],
     circuit_training: ['full body', 'cardio'],
     explosive_power: ['legs', 'core', 'full body'],
