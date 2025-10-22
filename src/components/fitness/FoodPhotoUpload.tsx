@@ -57,7 +57,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       toast.success('Food analyzed successfully!');
     } catch (error: any) {
       console.error('Error analyzing food:', error);
-      toast.error(error.message || 'Failed to analyze food image');
+      toast.error('Hmm...Maybe try uploading a different picture?');
     } finally {
       setIsAnalyzing(false);
     }
