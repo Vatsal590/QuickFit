@@ -127,10 +127,10 @@ const getAlternativeExercises = (pain: import('@/types').BodyPain, equipment: Eq
           { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core exercise without arm strain." }
         ],
     "wrist pain": [
-      { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core exercise without wrist stress." },
+      { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core" as MuscleGroup, equipment: ["none"] as Equipment[], sets: 3, reps: 20, restTime: 45, description: "Core exercise without wrist stress." },
       ...(hasEquipment
         ? [
-            { id: uuidv4(), name: "Neutral Grip Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Neutral wrist resistance band work." }
+            { id: uuidv4(), name: "Neutral Grip Band Rows", muscleGroup: "back" as MuscleGroup, equipment: ["resistance bands"] as Equipment[], sets: 3, reps: 15, restTime: 60, description: "Neutral wrist resistance band work." }
           ]
         : [])
     ]

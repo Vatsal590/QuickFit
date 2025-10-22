@@ -260,8 +260,9 @@ const generateDayWorkout = (day: number, profile: FitnessProfile, bodyPains: Bod
   const intensity = week === 1 ? 'beginner' : week <= 2 ? 'intermediate' : 'advanced';
   const duration = getDuration(profile);
 
+  // Improved rotation with more leg focus for muscle gain
   const focusAreas: Record<string, string[]> = {
-    muscle_gain: ['chest_triceps', 'back_biceps', 'legs', 'shoulders', 'core'],
+    muscle_gain: ['chest_triceps', 'legs', 'back_biceps', 'legs', 'shoulders', 'legs', 'core'],
     fat_loss: ['hiit_cardio', 'full_body_strength', 'cardio_core', 'circuit_training'],
     athlete_training: ['explosive_power', 'agility_speed', 'functional_strength', 'movement_mobility']
   };
@@ -280,7 +281,6 @@ const generateDayWorkout = (day: number, profile: FitnessProfile, bodyPains: Bod
 };
 
 const getDuration = (profile: FitnessProfile) => {
-  if (profile.preferred_workout_time) return profile.preferred_workout_time;
   if (profile.fitness_goal === 'athlete_training') return 60;
   if (profile.fitness_goal === 'fat_loss') return 45;
   return 50;
