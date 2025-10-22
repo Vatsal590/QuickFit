@@ -215,7 +215,7 @@ export function FreeAccessSection() {
                 : 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 opacity-100 hover:opacity-90'
             }`}
           >
-            Save your time
+            INSTANT ACCESS
           </Button>
         </div>
       </CardHeader>
