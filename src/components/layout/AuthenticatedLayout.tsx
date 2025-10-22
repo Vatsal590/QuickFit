@@ -135,13 +135,15 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
         <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4 
              fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top)]">
           <div className="flex items-center gap-4">
-            <button 
+            <Button 
               onClick={toggleSidebar}
-              className="flex items-center justify-center p-2 hover:bg-muted rounded-md transition-colors"
-              aria-label="Toggle sidebar"
+              variant="outline"
+              size="icon"
+              className="flex items-center justify-center h-10 w-10 border-2 border-fitness-primary/30 hover:bg-fitness-primary/10 hover:border-fitness-primary transition-all"
+              aria-label="Toggle menu"
             >
-              <MenuIcon className="h-5 w-5" />
-            </button>
+              <MenuIcon className="h-6 w-6 text-fitness-primary" />
+            </Button>
           </div>
           
           <div className="flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
@@ -150,7 +152,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
               alt="QuickFit Logo" 
               className="w-8 h-8"
             />
-            <h1 className="text-2xl font-bold text-fitness-primary">QuickFit</h1>
+            <h1 className="text-xl md:text-2xl font-bold text-fitness-primary">QuickFit</h1>
           </div>
           
           <div className="flex items-center space-x-4">
