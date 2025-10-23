@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, Upload, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,8 +22,10 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const [totals, setTotals] = useState<any>(null);
   const [mealType, setMealType] = useState<string>('');
   const [notes, setNotes] = useState('');
+  const [recalculatingIndex, setRecalculatingIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const portionDebounceRef = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -88,6 +90,82 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const removeFood = (index: number) => {
     setAnalyzedFoods(prev => prev.filter((_, i) => i !== index));
   };
+
+  const recalculateMacros = useCallback(async (
+    index: number,
+    foodName: string,
+    originalPortion: string,
+    newPortion: string,
+    originalMacros: { calories: number; protein: number; carbs: number; fats: number }
+  ) => {
+    if (!newPortion.trim() || newPortion === originalPortion) return;
+
+    setRecalculatingIndex(index);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('recalculate-macros', {
+        body: {
+          foodName,
+          originalPortion,
+          newPortion,
+          originalMacros
+        }
+      });
+
+      if (error) throw error;
+
+      // Update the food item with new macros
+      setAnalyzedFoods(prev => {
+        const updated = [...prev];
+        updated[index] = {
+          ...updated[index],
+          calories: data.calories,
+          protein: data.protein,
+          carbs: data.carbs,
+          fats: data.fats,
+        };
+        return updated;
+      });
+
+      toast.success('Macros recalculated!');
+    } catch (error: any) {
+      console.error('Error recalculating macros:', error);
+      toast.error('Failed to recalculate macros');
+    } finally {
+      setRecalculatingIndex(null);
+    }
+  }, []);
+
+  const handlePortionChange = useCallback((index: number, newPortion: string) => {
+    // Update the portion immediately for UI responsiveness
+    setAnalyzedFoods(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], portion: newPortion };
+      return updated;
+    });
+
+    // Clear existing debounce timer for this field
+    if (portionDebounceRef.current[index]) {
+      clearTimeout(portionDebounceRef.current[index]);
+    }
+
+    // Set new debounce timer
+    portionDebounceRef.current[index] = setTimeout(() => {
+      const food = analyzedFoods[index];
+      if (food && newPortion !== food.portion) {
+        // Store original values before update
+        const originalPortion = food.portion;
+        const originalMacros = {
+          calories: parseFloat(food.calories) || 0,
+          protein: parseFloat(food.protein) || 0,
+          carbs: parseFloat(food.carbs) || 0,
+          fats: parseFloat(food.fats) || 0,
+        };
+        
+        recalculateMacros(index, food.name, originalPortion, newPortion, originalMacros);
+      }
+    }, 1500); // Wait 1.5 seconds after user stops typing
+  }, [analyzedFoods, recalculateMacros]);
 
   const handleSaveLog = async () => {
     if (!user || analyzedFoods.length === 0) return;
@@ -224,9 +302,13 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                               <Label className="text-xs">Portion</Label>
                               <Input
                                 value={food.portion}
-                                onChange={(e) => updateFood(index, 'portion', e.target.value)}
+                                onChange={(e) => handlePortionChange(index, e.target.value)}
                                 className="h-8"
+                                disabled={recalculatingIndex === index}
                               />
+                              {recalculatingIndex === index && (
+                                <p className="text-xs text-muted-foreground mt-1">Recalculating...</p>
+                              )}
                             </div>
                           </div>
                           <Button
