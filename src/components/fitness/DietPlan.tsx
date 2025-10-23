@@ -9,8 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFitnessProfile } from '@/hooks/useFitnessProfile';
-import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings } from 'lucide-react';
+import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast as sonnerToast } from 'sonner';
 
 interface MealWithMacros {
   name: string;
@@ -33,9 +36,11 @@ interface MealPlan {
 const DietPlan = () => {
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [syncingMeal, setSyncingMeal] = useState<string | null>(null);
   const [editFormData, setEditFormData] = useState({
     goal_weight: '',
     diet_preferences: [] as string[],
@@ -836,6 +841,62 @@ const DietPlan = () => {
     return 'Maintenance';
   };
 
+  const syncMealToTracker = async (
+    meals: MealWithMacros[],
+    mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack',
+    dayNumber: number
+  ) => {
+    if (!user) {
+      sonnerToast.error('Please log in to sync meals');
+      return;
+    }
+
+    setSyncingMeal(`${dayNumber}-${mealType}`);
+
+    try {
+      // Calculate totals for the meal section
+      const totals = meals.reduce(
+        (acc, meal) => ({
+          calories: acc.calories + (meal.protein * 4 + meal.carbs * 4 + meal.fats * 9),
+          protein: acc.protein + meal.protein,
+          carbs: acc.carbs + meal.carbs,
+          fats: acc.fats + meal.fats,
+        }),
+        { calories: 0, protein: 0, carbs: 0, fats: 0 }
+      );
+
+      // Convert meals to the format expected by food_logs
+      const foods = meals.map(meal => ({
+        name: meal.name,
+        portion: '1 serving',
+        calories: Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9),
+        protein: meal.protein,
+        carbs: meal.carbs,
+        fats: meal.fats,
+      }));
+
+      const { error } = await supabase.from('food_logs').insert({
+        user_id: user.id,
+        foods: foods,
+        total_calories: Math.round(totals.calories),
+        total_protein: Math.round(totals.protein),
+        total_carbs: Math.round(totals.carbs),
+        total_fats: Math.round(totals.fats),
+        meal_type: mealType,
+        notes: `Synced from Day ${dayNumber} diet plan`,
+      });
+
+      if (error) throw error;
+
+      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} synced to food tracker!`);
+    } catch (error: any) {
+      console.error('Error syncing meal:', error);
+      sonnerToast.error('Failed to sync meal. Please try again.');
+    } finally {
+      setSyncingMeal(null);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Profile Summary & Generate Button */}
@@ -1032,9 +1093,22 @@ const DietPlan = () => {
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
                                   <span>Fats: {meal.fats}g</span>
+                                  <span className="text-primary">
+                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
+                                  </span>
                                 </div>
                               </div>
                             ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-2"
+                              onClick={() => syncMealToTracker(plan.meals.breakfast, 'breakfast', plan.day)}
+                              disabled={syncingMeal === `${plan.day}-breakfast`}
+                            >
+                              <Download className="h-3 w-3 mr-2" />
+                              {syncingMeal === `${plan.day}-breakfast` ? 'Syncing...' : 'Sync to Food Tracker'}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1052,9 +1126,22 @@ const DietPlan = () => {
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
                                   <span>Fats: {meal.fats}g</span>
+                                  <span className="text-primary">
+                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
+                                  </span>
                                 </div>
                               </div>
                             ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-2"
+                              onClick={() => syncMealToTracker(plan.meals.lunch, 'lunch', plan.day)}
+                              disabled={syncingMeal === `${plan.day}-lunch`}
+                            >
+                              <Download className="h-3 w-3 mr-2" />
+                              {syncingMeal === `${plan.day}-lunch` ? 'Syncing...' : 'Sync to Food Tracker'}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1072,9 +1159,22 @@ const DietPlan = () => {
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
                                   <span>Fats: {meal.fats}g</span>
+                                  <span className="text-primary">
+                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
+                                  </span>
                                 </div>
                               </div>
                             ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-2"
+                              onClick={() => syncMealToTracker(plan.meals.dinner, 'dinner', plan.day)}
+                              disabled={syncingMeal === `${plan.day}-dinner`}
+                            >
+                              <Download className="h-3 w-3 mr-2" />
+                              {syncingMeal === `${plan.day}-dinner` ? 'Syncing...' : 'Sync to Food Tracker'}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1092,9 +1192,22 @@ const DietPlan = () => {
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
                                   <span>Fats: {meal.fats}g</span>
+                                  <span className="text-primary">
+                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
+                                  </span>
                                 </div>
                               </div>
                             ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full mt-2"
+                              onClick={() => syncMealToTracker(plan.meals.snacks, 'snack', plan.day)}
+                              disabled={syncingMeal === `${plan.day}-snack`}
+                            >
+                              <Download className="h-3 w-3 mr-2" />
+                              {syncingMeal === `${plan.day}-snack` ? 'Syncing...' : 'Sync to Food Tracker'}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
