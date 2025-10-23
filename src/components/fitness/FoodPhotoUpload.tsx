@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { Camera, Upload, Loader2 } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Camera, Upload, Loader2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -53,7 +53,6 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       if (error) throw error;
 
       setAnalyzedFoods(data.foods || []);
-      setTotals(data.totals || {});
       toast.success('Food analyzed successfully!');
     } catch (error: any) {
       console.error('Error analyzing food:', error);
@@ -61,6 +60,33 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
     } finally {
       setIsAnalyzing(false);
     }
+  };
+
+  useEffect(() => {
+    if (analyzedFoods.length > 0) {
+      const newTotals = analyzedFoods.reduce(
+        (acc, food) => ({
+          calories: acc.calories + (parseFloat(food.calories) || 0),
+          protein: acc.protein + (parseFloat(food.protein) || 0),
+          carbs: acc.carbs + (parseFloat(food.carbs) || 0),
+          fats: acc.fats + (parseFloat(food.fats) || 0),
+        }),
+        { calories: 0, protein: 0, carbs: 0, fats: 0 }
+      );
+      setTotals(newTotals);
+    }
+  }, [analyzedFoods]);
+
+  const updateFood = (index: number, field: string, value: string) => {
+    setAnalyzedFoods(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const removeFood = (index: number) => {
+    setAnalyzedFoods(prev => prev.filter((_, i) => i !== index));
   };
 
   const handleSaveLog = async () => {
@@ -71,10 +97,10 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         user_id: user.id,
         image_url: selectedImage,
         foods: analyzedFoods,
-        total_calories: totals.calories,
-        total_protein: totals.protein,
-        total_carbs: totals.carbs,
-        total_fats: totals.fats,
+        total_calories: totals?.calories || 0,
+        total_protein: totals?.protein || 0,
+        total_carbs: totals?.carbs || 0,
+        total_fats: totals?.fats || 0,
         meal_type: mealType,
         notes: notes
       });
@@ -82,18 +108,22 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       if (error) throw error;
 
       toast.success('Meal logged successfully!');
-      setSelectedImage(null);
-      setAnalyzedFoods([]);
-      setTotals(null);
-      setMealType('');
-      setNotes('');
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      if (cameraInputRef.current) cameraInputRef.current.value = '';
+      resetForm();
       onFoodLogged();
     } catch (error: any) {
       console.error('Error saving food log:', error);
       toast.error('Failed to save meal log');
     }
+  };
+
+  const resetForm = () => {
+    setSelectedImage(null);
+    setAnalyzedFoods([]);
+    setTotals(null);
+    setMealType('');
+    setNotes('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
+    if (cameraInputRef.current) cameraInputRef.current.value = '';
   };
 
   return (
@@ -176,44 +206,105 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
             {analyzedFoods.length > 0 && (
               <>
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Detected Foods:</h3>
-                  <div className="space-y-2">
+                  <h3 className="font-semibold">Detected Foods (Edit as needed):</h3>
+                  <div className="space-y-3">
                     {analyzedFoods.map((food, index) => (
-                      <div key={index} className="p-3 bg-muted rounded-lg">
-                        <div className="font-medium">{food.name}</div>
-                        <div className="text-sm text-muted-foreground">Portion: {food.portion}</div>
-                        <div className="text-sm grid grid-cols-4 gap-2 mt-1">
-                          <span>🔥 {food.calories} cal</span>
-                          <span>💪 {food.protein}g</span>
-                          <span>🍞 {food.carbs}g</span>
-                          <span>🥑 {food.fats}g</span>
+                      <div key={index} className="p-3 bg-muted rounded-lg space-y-2">
+                        <div className="flex items-start gap-2">
+                          <div className="flex-1 space-y-2">
+                            <div>
+                              <Label className="text-xs">Food Name</Label>
+                              <Input
+                                value={food.name}
+                                onChange={(e) => updateFood(index, 'name', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                            <div>
+                              <Label className="text-xs">Portion</Label>
+                              <Input
+                                value={food.portion}
+                                onChange={(e) => updateFood(index, 'portion', e.target.value)}
+                                className="h-8"
+                              />
+                            </div>
+                          </div>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeFood(index)}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        <div className="grid grid-cols-4 gap-2">
+                          <div>
+                            <Label className="text-xs">Calories</Label>
+                            <Input
+                              type="number"
+                              value={food.calories}
+                              onChange={(e) => updateFood(index, 'calories', e.target.value)}
+                              className="h-8"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Protein (g)</Label>
+                            <Input
+                              type="number"
+                              value={food.protein}
+                              onChange={(e) => updateFood(index, 'protein', e.target.value)}
+                              className="h-8"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Carbs (g)</Label>
+                            <Input
+                              type="number"
+                              value={food.carbs}
+                              onChange={(e) => updateFood(index, 'carbs', e.target.value)}
+                              className="h-8"
+                            />
+                          </div>
+                          <div>
+                            <Label className="text-xs">Fats (g)</Label>
+                            <Input
+                              type="number"
+                              value={food.fats}
+                              onChange={(e) => updateFood(index, 'fats', e.target.value)}
+                              className="h-8"
+                            />
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="p-4 bg-primary/10 rounded-lg">
-                  <h3 className="font-semibold mb-2">Total Nutrition:</h3>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <div className="text-muted-foreground">Calories</div>
-                      <div className="text-lg font-bold">{Math.round(totals.calories)}</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Protein</div>
-                      <div className="text-lg font-bold">{Math.round(totals.protein)}g</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Carbs</div>
-                      <div className="text-lg font-bold">{Math.round(totals.carbs)}g</div>
-                    </div>
-                    <div>
-                      <div className="text-muted-foreground">Fats</div>
-                      <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
+                {totals && (
+                  <div className="p-4 bg-primary/10 rounded-lg">
+                    <h3 className="font-semibold mb-2">Total Nutrition:</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div>
+                        <div className="text-muted-foreground">Calories</div>
+                        <div className="text-lg font-bold">{Math.round(totals.calories)}</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Protein</div>
+                        <div className="text-lg font-bold">{Math.round(totals.protein)}g</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Carbs</div>
+                        <div className="text-lg font-bold">{Math.round(totals.carbs)}g</div>
+                      </div>
+                      <div>
+                        <div className="text-muted-foreground">Fats</div>
+                        <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 <div>
                   <Label htmlFor="meal-type">Meal Type</Label>
