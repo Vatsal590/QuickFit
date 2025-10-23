@@ -842,53 +842,46 @@ const DietPlan = () => {
   };
 
   const syncMealToTracker = async (
-    meals: MealWithMacros[],
+    meal: MealWithMacros,
     mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack',
-    dayNumber: number
+    dayNumber: number,
+    mealIndex: number
   ) => {
     if (!user) {
       sonnerToast.error('Please log in to sync meals');
       return;
     }
 
-    setSyncingMeal(`${dayNumber}-${mealType}`);
+    setSyncingMeal(`${dayNumber}-${mealType}-${mealIndex}`);
 
     try {
-      // Calculate totals for the meal section
-      const totals = meals.reduce(
-        (acc, meal) => ({
-          calories: acc.calories + (meal.protein * 4 + meal.carbs * 4 + meal.fats * 9),
-          protein: acc.protein + meal.protein,
-          carbs: acc.carbs + meal.carbs,
-          fats: acc.fats + meal.fats,
-        }),
-        { calories: 0, protein: 0, carbs: 0, fats: 0 }
-      );
+      // Calculate calories for the meal
+      const calories = Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9);
 
-      // Convert meals to the format expected by food_logs
-      const foods = meals.map(meal => ({
+      // Convert meal to the format expected by food_logs
+      const foods = [{
         name: meal.name,
         portion: '1 serving',
-        calories: Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9),
+        calories: calories,
         protein: meal.protein,
         carbs: meal.carbs,
         fats: meal.fats,
-      }));
+      }];
 
       const { error } = await supabase.from('food_logs').insert({
         user_id: user.id,
         foods: foods,
-        total_calories: Math.round(totals.calories),
-        total_protein: Math.round(totals.protein),
-        total_carbs: Math.round(totals.carbs),
-        total_fats: Math.round(totals.fats),
+        total_calories: calories,
+        total_protein: Math.round(meal.protein),
+        total_carbs: Math.round(meal.carbs),
+        total_fats: Math.round(meal.fats),
         meal_type: mealType,
         notes: `Synced from Day ${dayNumber} diet plan`,
       });
 
       if (error) throw error;
 
-      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} synced to food tracker!`);
+      sonnerToast.success(`Meal synced to food tracker!`);
     } catch (error: any) {
       console.error('Error syncing meal:', error);
       sonnerToast.error('Failed to sync meal. Please try again.');
@@ -1088,7 +1081,19 @@ const DietPlan = () => {
                           <div className="space-y-3">
                             {plan.meals.breakfast.map((meal, idx) => (
                               <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex justify-between items-start gap-2 mb-2">
+                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs"
+                                    onClick={() => syncMealToTracker(meal, 'breakfast', plan.day, idx)}
+                                    disabled={syncingMeal === `${plan.day}-breakfast-${idx}`}
+                                  >
+                                    <Download className="h-3 w-3 mr-1" />
+                                    {syncingMeal === `${plan.day}-breakfast-${idx}` ? 'Syncing...' : 'Sync'}
+                                  </Button>
+                                </div>
                                 <div className="flex gap-3 text-xs text-muted-foreground">
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
@@ -1099,16 +1104,6 @@ const DietPlan = () => {
                                 </div>
                               </div>
                             ))}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full mt-2"
-                              onClick={() => syncMealToTracker(plan.meals.breakfast, 'breakfast', plan.day)}
-                              disabled={syncingMeal === `${plan.day}-breakfast`}
-                            >
-                              <Download className="h-3 w-3 mr-2" />
-                              {syncingMeal === `${plan.day}-breakfast` ? 'Syncing...' : 'Sync to Food Tracker'}
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1121,7 +1116,19 @@ const DietPlan = () => {
                           <div className="space-y-3">
                             {plan.meals.lunch.map((meal, idx) => (
                               <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex justify-between items-start gap-2 mb-2">
+                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs"
+                                    onClick={() => syncMealToTracker(meal, 'lunch', plan.day, idx)}
+                                    disabled={syncingMeal === `${plan.day}-lunch-${idx}`}
+                                  >
+                                    <Download className="h-3 w-3 mr-1" />
+                                    {syncingMeal === `${plan.day}-lunch-${idx}` ? 'Syncing...' : 'Sync'}
+                                  </Button>
+                                </div>
                                 <div className="flex gap-3 text-xs text-muted-foreground">
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
@@ -1132,16 +1139,6 @@ const DietPlan = () => {
                                 </div>
                               </div>
                             ))}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full mt-2"
-                              onClick={() => syncMealToTracker(plan.meals.lunch, 'lunch', plan.day)}
-                              disabled={syncingMeal === `${plan.day}-lunch`}
-                            >
-                              <Download className="h-3 w-3 mr-2" />
-                              {syncingMeal === `${plan.day}-lunch` ? 'Syncing...' : 'Sync to Food Tracker'}
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1154,7 +1151,19 @@ const DietPlan = () => {
                           <div className="space-y-3">
                             {plan.meals.dinner.map((meal, idx) => (
                               <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex justify-between items-start gap-2 mb-2">
+                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs"
+                                    onClick={() => syncMealToTracker(meal, 'dinner', plan.day, idx)}
+                                    disabled={syncingMeal === `${plan.day}-dinner-${idx}`}
+                                  >
+                                    <Download className="h-3 w-3 mr-1" />
+                                    {syncingMeal === `${plan.day}-dinner-${idx}` ? 'Syncing...' : 'Sync'}
+                                  </Button>
+                                </div>
                                 <div className="flex gap-3 text-xs text-muted-foreground">
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
@@ -1165,16 +1174,6 @@ const DietPlan = () => {
                                 </div>
                               </div>
                             ))}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full mt-2"
-                              onClick={() => syncMealToTracker(plan.meals.dinner, 'dinner', plan.day)}
-                              disabled={syncingMeal === `${plan.day}-dinner`}
-                            >
-                              <Download className="h-3 w-3 mr-2" />
-                              {syncingMeal === `${plan.day}-dinner` ? 'Syncing...' : 'Sync to Food Tracker'}
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -1187,7 +1186,19 @@ const DietPlan = () => {
                           <div className="space-y-3">
                             {plan.meals.snacks.map((meal, idx) => (
                               <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="text-sm font-medium mb-2">{meal.name}</div>
+                                <div className="flex justify-between items-start gap-2 mb-2">
+                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-2 text-xs"
+                                    onClick={() => syncMealToTracker(meal, 'snack', plan.day, idx)}
+                                    disabled={syncingMeal === `${plan.day}-snack-${idx}`}
+                                  >
+                                    <Download className="h-3 w-3 mr-1" />
+                                    {syncingMeal === `${plan.day}-snack-${idx}` ? 'Syncing...' : 'Sync'}
+                                  </Button>
+                                </div>
                                 <div className="flex gap-3 text-xs text-muted-foreground">
                                   <span>Protein: {meal.protein}g</span>
                                   <span>Carbs: {meal.carbs}g</span>
@@ -1198,16 +1209,6 @@ const DietPlan = () => {
                                 </div>
                               </div>
                             ))}
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-full mt-2"
-                              onClick={() => syncMealToTracker(plan.meals.snacks, 'snack', plan.day)}
-                              disabled={syncingMeal === `${plan.day}-snack`}
-                            >
-                              <Download className="h-3 w-3 mr-2" />
-                              {syncingMeal === `${plan.day}-snack` ? 'Syncing...' : 'Sync to Food Tracker'}
-                            </Button>
                           </div>
                         </CardContent>
                       </Card>
