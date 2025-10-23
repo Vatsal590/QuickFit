@@ -10,6 +10,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const mainItems = [
@@ -29,6 +30,7 @@ const workoutItems = [
 
 export function AppSidebar() {
   const location = useLocation();
+  const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
   const currentSection = searchParams.get('section') || 'generator';
@@ -42,6 +44,10 @@ export function AppSidebar() {
 
   const getNavCls = (isActiveState: boolean) =>
     isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
+
+  const handleNavClick = () => {
+    setOpenMobile(false);
+  };
 
   return (
     <Sidebar collapsible="icon" className="bg-sidebar border-r border-sidebar-border">
@@ -57,6 +63,7 @@ export function AppSidebar() {
                         to={item.url} 
                         end 
                         className={getNavCls(isActive(item.url))}
+                        onClick={handleNavClick}
                       >
                         <item.icon className="mr-2 h-4 w-4" />
                         <span>{item.title}</span>
@@ -80,6 +87,7 @@ export function AppSidebar() {
                         <NavLink 
                           to={item.url} 
                           className={getNavCls(isActive('/home', section))}
+                          onClick={handleNavClick}
                         >
                           <item.icon className="mr-2 h-4 w-4" />
                           <span>{item.title}</span>
