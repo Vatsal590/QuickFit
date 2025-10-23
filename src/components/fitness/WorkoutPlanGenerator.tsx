@@ -230,16 +230,16 @@ const generatePersonalizedPlan = (profile: FitnessProfile, bodyPains: BodyPain[]
   const { fitness_goal, workout_days_per_week, available_equipment } = profile;
   const dailyWorkouts: any[] = [];
 
-  // Define workout splits based on days per week
+  // Define workout splits based on days per week - ensuring equal muscle group targeting
   const getWorkoutSplit = (days: number) => {
     const splits: Record<number, string[]> = {
       1: ['full_body'],
       2: ['upper_body', 'lower_body'],
-      3: ['chest_triceps_shoulders', 'back_biceps', 'legs'],
-      4: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'full_body'],
-      5: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'upper_body', 'lower_body'],
-      6: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'chest_triceps_shoulders', 'back_biceps', 'legs'],
-      7: ['chest_triceps_shoulders', 'back_biceps', 'legs', 'chest_triceps_shoulders', 'back_biceps', 'legs', 'full_body']
+      3: ['chest_shoulders', 'back_biceps', 'legs'],
+      4: ['chest_shoulders', 'back_biceps', 'legs', 'core'],
+      5: ['chest', 'back', 'shoulders', 'legs', 'biceps_triceps'],
+      6: ['chest', 'back', 'shoulders', 'legs', 'biceps_triceps', 'core'],
+      7: ['chest', 'back', 'shoulders', 'legs', 'biceps', 'triceps', 'core']
     };
     return splits[days] || splits[3];
   };
@@ -305,13 +305,19 @@ const generateExercises = (
   const normalizedEquipment = equipment.length === 0 ? ['none'] : equipment;
 
   const focusMap: Record<string, string[]> = {
+    chest_shoulders: ['chest', 'shoulders'],
     chest_triceps_shoulders: ['chest', 'triceps', 'shoulders'],
     back_biceps: ['back', 'biceps'],
     legs: ['legs'],
+    chest: ['chest'],
+    back: ['back'],
+    shoulders: ['shoulders'],
+    biceps: ['biceps'],
+    triceps: ['triceps'],
+    biceps_triceps: ['biceps', 'triceps'],
     upper_body: ['chest', 'back', 'shoulders', 'biceps', 'triceps'],
     lower_body: ['legs'],
     full_body: ['full body', 'chest', 'back', 'legs', 'shoulders'],
-    shoulders: ['shoulders'],
     core: ['core'],
     hiit_cardio: ['cardio', 'full body'],
     cardio_core: ['cardio', 'core'],
