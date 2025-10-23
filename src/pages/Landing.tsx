@@ -115,11 +115,6 @@ const Landing = () => {
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
             <div className="text-center mb-16 space-y-8">
-              <div className="inline-flex items-center gap-2 bg-fitness-primary/10 text-fitness-primary px-6 py-3 rounded-full text-sm font-semibold animate-fade-in backdrop-blur-sm border border-fitness-primary/20">
-                <Award className="h-4 w-4" />
-                <span>AI-Powered Fitness Revolution</span>
-              </div>
-
               <h2 className="text-6xl md:text-8xl font-black text-gray-900 mb-8 animate-fade-in-up leading-tight">
                 Your Complete
                 <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer" style={{ backgroundSize: '200% auto' }}>
@@ -128,8 +123,7 @@ const Landing = () => {
               </h2>
 
               <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '0.2s' }}>
-                Everything you need to reach your fitness goals: instant workouts, 30-day plans, 
-                nutrition guidance, progress tracking, and AI coaching—all in one powerful app.
+                Personalized workouts, nutrition plans, and AI coaching in one app.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12 animate-scale-in" style={{ animationDelay: '0.4s' }}>
@@ -173,17 +167,11 @@ const Landing = () => {
         {/* Core Features with Tilted Cards */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 -mt-12">
           <div className="text-center mb-20">
-            <div className="inline-block mb-6">
-              <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase bg-fitness-primary/10 px-6 py-2 rounded-full">
-                Powerful Features
-              </span>
-            </div>
             <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
-              Everything You Need to Succeed
+              Everything You Need
             </h3>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-medium leading-relaxed">
-              QuickFit combines intelligent workout generation, comprehensive planning, 
-              and smart tracking to make fitness simple and effective.
+              Workouts, meal plans, and tracking in one place.
             </p>
           </div>
           
@@ -192,42 +180,42 @@ const Landing = () => {
               {
                 icon: Zap,
                 title: 'Instant Workouts',
-                description: 'Generate personalized workouts in seconds. Choose your time, equipment, target muscles, and intensity—get a complete routine instantly.',
+                description: 'Generate personalized workouts in seconds based on your time, equipment, and goals.',
                 gradient: 'from-fitness-primary to-blue-600',
                 delay: '0s'
               },
               {
                 icon: Calendar,
                 title: '30-Day Plans',
-                description: 'Complete month-long workout programs tailored to your goals. Progressive training that adapts to your fitness level and equipment.',
+                description: 'Month-long programs that adapt to your fitness level and available equipment.',
                 gradient: 'from-fitness-secondary to-green-600',
                 delay: '0.1s'
               },
               {
                 icon: Apple,
                 title: '7-Day Diet Plans',
-                description: 'Personalized nutrition plans that complement your workouts. Meal suggestions and dietary guidance for optimal results.',
+                description: 'Personalized meal plans with nutritional guidance for your goals.',
                 gradient: 'from-fitness-accent to-yellow-600',
                 delay: '0.2s'
               },
               {
-                icon: Scale,
-                title: 'Weight Tracker',
-                description: 'Monitor your progress with intuitive weight tracking. Visualize your journey with charts and milestone celebrations.',
+                icon: Apple,
+                title: 'AI Food Tracker',
+                description: 'Log meals with photos and track nutrition automatically using AI.',
                 gradient: 'from-blue-500 to-indigo-600',
                 delay: '0.3s'
               },
               {
                 icon: MessageCircle,
                 title: 'AI Fitness Coach',
-                description: 'Get instant answers to fitness questions. Form tips, nutrition advice, and motivation—your personal trainer available 24/7.',
+                description: 'Get instant answers to fitness questions 24/7.',
                 gradient: 'from-green-500 to-emerald-600',
                 delay: '0.4s'
               },
               {
                 icon: BookOpen,
                 title: 'Fitness Blogs',
-                description: 'Discover simple tips for a healthier lifestyle. Stay strong, active, and motivated every day.',
+                description: 'Simple tips for a healthier lifestyle.',
                 gradient: 'from-purple-500 to-pink-600',
                 delay: '0.5s'
               }
@@ -270,10 +258,7 @@ const Landing = () => {
         <div className="relative bg-white py-24">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <span className="text-fitness-secondary font-bold text-sm tracking-widest uppercase bg-fitness-secondary/10 px-6 py-2 rounded-full">
-                Our Story
-              </span>
-              <h3 className="text-5xl font-black text-gray-900 mt-6 mb-4">
+              <h3 className="text-5xl font-black text-gray-900 mb-4">
                 About the Founder
               </h3>
             </div>
@@ -296,14 +281,10 @@ const Landing = () => {
                   <div className="p-10 flex flex-col justify-center space-y-6">
                     <h4 className="text-3xl font-bold text-gray-900">Vatsal Agarwala</h4>
                     <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
-                      🎉 Want access to Vatsal's workout & diet plan <span className="underline">FOR FREE</span>?  
-                     <br /> Login and see for yourself!
+                      🎉 Get Vatsal's workout & diet plan <span className="underline">FREE</span> when you sign up!
                     </p>
                     <p className="text-lg text-gray-700 leading-relaxed">
-                      QuickFit was created by Vatsal Agarwala, a 15-year-old student in Luxembourg. Vatsal began his fitness journey at the age of 13. After trying multiple fitness apps, watching countless YouTube videos, and reading numerous fitness articles, he ended up even more confused.
-                    </p>
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      However, the best thing he did was not giving up. He did what suited his body, pushed to the limits, ate healthy, and the result is above. That's why he created QuickFit - to help people stay active and healthy, whether they're beginners, office goers or anyone for that matter.
+                      Created by Vatsal Agarwala, a 15-year-old from Luxembourg who started his fitness journey at 13. After trying countless apps and videos, he built QuickFit to make fitness simple for everyone.
                     </p>
                   </div>
                 </div>
