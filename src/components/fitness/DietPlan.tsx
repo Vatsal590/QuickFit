@@ -157,13 +157,13 @@ const DietPlan = () => {
           'Vegetable omelet with toast',
           'Yogurt parfait with nuts'
         ] : [
-          'Eggs with whole wheat toast and turkey',
-          'Chicken breast with oatmeal',
-          'Tuna salad on whole wheat',
-          'Boiled eggs with fruit',
-          'Turkey sandwich on whole wheat',
-          'Grilled chicken with vegetables',
-          'Salmon with brown rice'
+          'Scrambled eggs with whole wheat toast and turkey bacon',
+          'Protein pancakes with Greek yogurt and berries',
+          'Egg white omelet with vegetables and turkey',
+          'Boiled eggs with whole wheat toast and fruit',
+          'Turkey sausage with eggs and vegetables',
+          'Egg and cheese breakfast wrap',
+          'Smoked salmon with whole wheat toast and eggs'
         ],
         lunch: isVegan ? [
           'Lentil soup with whole wheat bread',
@@ -228,15 +228,21 @@ const DietPlan = () => {
       },
       Italian: {
         breakfast: isVegan ? [
-          'Oatmeal with fruit',
+          'Oatmeal with fruit and nuts',
           'Toast with tomatoes and olive oil',
-          'Fruit salad',
-          'Whole wheat bread with jam'
+          'Fruit salad with granola',
+          'Whole wheat bread with jam and peanut butter',
+          'Smoothie with plant protein',
+          'Rice cakes with almond butter',
+          'Granola with plant milk and berries'
         ] : [
-          'Eggs with toast and tomatoes',
-          'Yogurt with fruit',
-          'Cheese sandwich on whole wheat',
-          'Omelet with vegetables'
+          'Scrambled eggs with toast and tomatoes',
+          'Greek yogurt with fruit and honey',
+          'Cheese omelet with whole wheat bread',
+          'Omelet with vegetables and toast',
+          'Ricotta with fruit and nuts',
+          'Eggs with cheese and vegetables',
+          'Yogurt parfait with granola'
         ],
         lunch: isVegan ? [
           'Pasta with tomato sauce and vegetables',
@@ -279,15 +285,21 @@ const DietPlan = () => {
       },
       Japanese: {
         breakfast: isVegan ? [
-          'Rice with vegetables',
-          'Tofu with rice',
-          'Vegetable soup with rice',
-          'Rice balls with vegetables'
+          'Oatmeal with soy milk and fruit',
+          'Tofu scramble with vegetables',
+          'Rice porridge with vegetables',
+          'Whole wheat toast with peanut butter and banana',
+          'Smoothie with plant protein and berries',
+          'Rice cakes with avocado',
+          'Fruit bowl with nuts'
         ] : [
-          'Rice with fish and vegetables',
-          'Egg with rice',
-          'Fish soup with rice',
-          'Rice with egg and vegetables'
+          'Grilled fish with rice and miso soup',
+          'Egg rice bowl with vegetables',
+          'Fish with miso soup and rice',
+          'Omelet with rice and pickles',
+          'Salmon with rice and seaweed',
+          'Eggs with toast and fruit',
+          'Rice with egg and nori'
         ],
         lunch: isVegan ? [
           'Vegetable rice bowl',
@@ -330,15 +342,21 @@ const DietPlan = () => {
       },
       Thai: {
         breakfast: isVegan ? [
-          'Rice with vegetables',
-          'Fruit smoothie',
-          'Rice porridge',
-          'Toast with peanut butter'
+          'Fruit smoothie with plant protein',
+          'Rice porridge with fruit',
+          'Toast with peanut butter and banana',
+          'Oatmeal with coconut milk',
+          'Fruit salad with nuts',
+          'Rice cakes with almond butter',
+          'Smoothie bowl with granola'
         ] : [
-          'Egg with rice',
-          'Rice with chicken',
-          'Omelet with vegetables',
-          'Rice with egg and vegetables'
+          'Egg omelet with vegetables',
+          'Scrambled eggs with toast',
+          'Rice porridge with egg',
+          'Omelet with fruit',
+          'Eggs with rice and vegetables',
+          'Toast with eggs and fruit',
+          'Egg fried rice with vegetables'
         ],
         lunch: isVegan ? [
           'Vegetable fried rice',
@@ -382,19 +400,28 @@ const DietPlan = () => {
       Mediterranean: {
         breakfast: isVegan ? [
           'Whole wheat bread with tomatoes and olive oil',
-          'Oatmeal with fruit',
-          'Hummus with whole wheat pita',
-          'Fruit smoothie'
+          'Oatmeal with dried fruit and nuts',
+          'Hummus with whole wheat pita and vegetables',
+          'Fruit smoothie with plant protein',
+          'Granola with plant milk',
+          'Toast with avocado and tomatoes',
+          'Fruit bowl with nuts and seeds'
         ] : isVegetarian ? [
-          'Greek yogurt with honey',
-          'Eggs with whole wheat bread',
-          'Cheese with tomatoes',
-          'Omelet with vegetables'
+          'Greek yogurt with honey and walnuts',
+          'Scrambled eggs with whole wheat bread',
+          'Feta cheese with tomatoes and olives',
+          'Vegetable omelet with herbs',
+          'Ricotta with fruit',
+          'Eggs with cheese and vegetables',
+          'Yogurt with granola and berries'
         ] : [
-          'Greek yogurt with nuts',
+          'Greek yogurt with nuts and honey',
           'Eggs with whole wheat bread and cheese',
-          'Fish with vegetables',
-          'Cheese and eggs'
+          'Omelet with vegetables and feta',
+          'Scrambled eggs with turkey',
+          'Fish with whole wheat toast',
+          'Eggs with smoked salmon',
+          'Greek yogurt with fruit and protein'
         ],
         lunch: isVegan ? [
           'Chickpea salad with vegetables',
@@ -437,20 +464,29 @@ const DietPlan = () => {
       },
       Indian: {
         breakfast: isVegan ? [
-          'Rice with vegetables',
-          'Whole wheat bread with vegetables',
-          'Oats with fruit',
-          'Lentil porridge'
+          'Oats porridge with fruit',
+          'Whole wheat bread with peanut butter',
+          'Rice flakes with vegetables',
+          'Lentil pancakes with chutney',
+          'Oats with plant milk and banana',
+          'Whole wheat toast with avocado',
+          'Fruit smoothie with oats'
         ] : isVegetarian ? [
-          'Vegetable rice',
-          'Whole wheat bread with vegetables',
-          'Eggs with bread',
-          'Rice with yogurt'
+          'Whole wheat bread with butter and eggs',
+          'Vegetable sandwich with yogurt',
+          'Rice flakes with yogurt',
+          'Eggs with whole wheat bread',
+          'Pancakes with honey and fruit',
+          'Omelet with bread and vegetables',
+          'Yogurt with granola and fruit'
         ] : [
-          'Chicken with rice',
-          'Eggs with bread',
-          'Fish curry with rice',
-          'Meat with bread'
+          'Eggs with whole wheat bread',
+          'Chicken sandwich with fruit',
+          'Egg curry with bread',
+          'Omelet with turkey and toast',
+          'Scrambled eggs with meat',
+          'Egg wrap with vegetables',
+          'Fish with whole wheat bread'
         ],
         lunch: isVegan ? [
           'Lentils with rice',
@@ -493,20 +529,29 @@ const DietPlan = () => {
       },
       Mexican: {
         breakfast: isVegan ? [
-          'Bean burrito with vegetables',
-          'Rice and beans',
-          'Whole wheat tortilla with vegetables',
-          'Bean and vegetable bowl'
+          'Black bean breakfast burrito with vegetables',
+          'Tofu scramble with peppers and onions',
+          'Whole wheat tortilla with avocado and beans',
+          'Smoothie with plant protein and berries',
+          'Oatmeal with cinnamon and fruit',
+          'Bean and vegetable breakfast bowl',
+          'Whole wheat tortilla with peanut butter and banana'
         ] : isVegetarian ? [
-          'Eggs with beans and tortilla',
-          'Cheese quesadilla',
-          'Egg burrito',
-          'Eggs with rice and beans'
+          'Scrambled eggs with beans and tortilla',
+          'Cheese quesadilla with vegetables',
+          'Egg and cheese breakfast burrito',
+          'Eggs with rice and beans',
+          'Vegetable omelet with tortilla',
+          'Huevos rancheros',
+          'Egg and cheese breakfast wrap'
         ] : [
-          'Eggs with beans and chicken',
-          'Turkey burrito',
-          'Chicken and egg bowl',
-          'Eggs with meat and beans'
+          'Eggs with black beans and turkey',
+          'Breakfast burrito with eggs and turkey',
+          'Chicken and egg breakfast bowl',
+          'Eggs with meat and beans',
+          'Turkey sausage with eggs and tortilla',
+          'Egg and chicken breakfast wrap',
+          'Scrambled eggs with turkey and vegetables'
         ],
         lunch: isVegan ? [
           'Bean and rice bowl',
