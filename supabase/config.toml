@@ -29,6 +29,3 @@ verify_jwt = false
 
 [functions.analyze-food-image]
 verify_jwt = true
-
-[functions.recalculate-macros]
-verify_jwt = true
