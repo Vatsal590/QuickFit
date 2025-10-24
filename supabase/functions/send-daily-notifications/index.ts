@@ -130,6 +130,7 @@ async function sendEmailNotification(user: UserContext, message: string): Promis
       <html>
         <head>
           <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
             .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
@@ -137,8 +138,9 @@ async function sendEmailNotification(user: UserContext, message: string): Promis
             .logo { color: white; font-size: 32px; font-weight: bold; margin: 0; }
             .content { padding: 40px 20px; }
             .message { font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px; }
-            .cta-button { display: inline-block; background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); color: white; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; }
+            .cta-button { display: inline-block; background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); color: white !important; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; }
             .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; border-top: 1px solid #eee; }
+            .unsubscribe { font-size: 12px; color: #999; margin-top: 20px; }
           </style>
         </head>
         <body>
@@ -149,7 +151,7 @@ async function sendEmailNotification(user: UserContext, message: string): Promis
             <div class="content">
               <p class="message">${message}</p>
               <p style="text-align: center;">
-                <a href="https://quickfit.lovable.app/home" class="cta-button">Start Your Workout</a>
+                <a href="https://quickfit.dev/home" class="cta-button">Start Your Workout</a>
               </p>
               <p style="color: #666; margin-top: 30px;">
                 Keep crushing your fitness goals! Every workout counts. 🔥
@@ -158,6 +160,7 @@ async function sendEmailNotification(user: UserContext, message: string): Promis
             <div class="footer">
               <p>QuickFit - Your Personal Fitness Companion</p>
               <p>Stay strong, stay consistent! 💪</p>
+              <p class="unsubscribe">You're receiving this because you signed up for QuickFit. <a href="https://quickfit.dev" style="color: #666;">Visit our website</a></p>
             </div>
           </div>
         </body>
@@ -165,10 +168,19 @@ async function sendEmailNotification(user: UserContext, message: string): Promis
     `;
 
     const { error } = await resend.emails.send({
-      from: 'QuickFit <onboarding@resend.dev>',
+      from: 'QuickFit <notifications@quickfit.dev>',
       to: [user.email],
-      subject: "Don't forget your QuickFit workout for today!",
+      subject: "Your Daily QuickFit Workout Reminder 💪",
       html: emailHtml,
+      headers: {
+        'X-Entity-Ref-ID': user.id,
+      },
+      tags: [
+        {
+          name: 'category',
+          value: 'workout_reminder',
+        },
+      ],
     });
 
     if (error) {
