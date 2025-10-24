@@ -254,7 +254,8 @@ const handler = async (req: Request): Promise<Response> => {
     for (const user of userContexts) {
       if (!user.email) continue; // Skip users without email
       
-      const message = "Don't forget your QuickFit workout for today!";
+      const message = getNotificationMessage(user);
+      console.log(`Sending notification to ${user.email}: ${message}`);
       
       try {
         // Send both email and push notifications
