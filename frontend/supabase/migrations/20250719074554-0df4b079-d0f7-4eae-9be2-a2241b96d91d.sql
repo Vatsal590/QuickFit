@@ -2,10 +2,10 @@
 CREATE EXTENSION IF NOT EXISTS pg_cron;
 CREATE EXTENSION IF NOT EXISTS pg_net;
 
--- Create cron job to send daily notifications at 9 AM UTC every day
+-- Create cron job to send daily notifications at 6 AM EST (11 AM UTC) every day
 SELECT cron.schedule(
   'daily-push-notifications',
-  '0 9 * * *', -- Every day at 9 AM UTC
+  '0 11 * * *', -- Every day at 6 AM EST (11 AM UTC)
   $$
   SELECT
     net.http_post(
