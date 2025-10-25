@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { Instagram } from 'lucide-react';
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -34,6 +35,15 @@ const PageContainer = ({ children }: PageContainerProps) => {
             </a>
             <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-medium">
               Terms of Service
+            </a>
+            <a 
+              href="https://www.instagram.com/quickfit.dev/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors duration-300 font-medium flex items-center gap-1"
+            >
+              <Instagram className="h-4 w-4" />
+              Instagram
             </a>
           </div>
         </div>
