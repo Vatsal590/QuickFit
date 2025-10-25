@@ -158,7 +158,7 @@ const Home = () => {
   // Get current section from URL
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const currentSection = searchParams.get('section') || 'generator';
+  const currentSection = searchParams.get('section') || 'plans';
 
   return (
     <PageContainer>

@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Home", url: "/home", icon: Home },
+  { title: "Home", url: "/home?section=plans", icon: Home },
   { title: "History", url: "/history", icon: History },
   { title: "Weight Tracker", url: "/weight-tracker", icon: Scale },
   { title: "AI Food Tracker", url: "/food-tracker", icon: Camera },
@@ -25,7 +25,7 @@ const mainItems = [
 
 const workoutItems = [
   { title: "My 30 Day Plan", url: "/home?section=plans", icon: Calendar },
-  { title: "Quick Workout/Home", url: "/home?section=generator", icon: Dumbbell },
+  { title: "Instant Workout", url: "/home?section=generator", icon: Dumbbell },
 ];
 
 export function AppSidebar() {
@@ -33,7 +33,7 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
   const searchParams = new URLSearchParams(location.search);
-  const currentSection = searchParams.get('section') || 'generator';
+  const currentSection = searchParams.get('section') || 'plans';
 
   const isActive = (path: string, section?: string) => {
     if (section) {
