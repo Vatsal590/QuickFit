@@ -44,6 +44,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" className="bg-sidebar border-r border-sidebar-border">
       <SidebarContent>
+        <div className="hidden md:block h-16" />
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
           <SidebarGroupContent>
