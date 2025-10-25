@@ -411,140 +411,96 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
   };
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div className="space-y-6 max-w-3xl mx-auto w-full">
+      {/* Header Card */}
       <Card>
         <CardHeader>
-          <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
-            <div className="flex-1">
-              <CardTitle className="text-xl md:text-2xl">{plan.title}</CardTitle>
-              <p className="text-sm md:text-base text-gray-600 mt-2">
+          <div className="flex justify-between items-start">
+            <div>
+              <CardTitle className="text-2xl">{plan.title}</CardTitle>
+              <p className="text-gray-600 mt-2">
                 {plan.daysLeft} days remaining of {plan.duration}-day program
               </p>
             </div>
-            <Badge variant="secondary" className="bg-fitness-primary/10 text-fitness-primary shrink-0">
+            <Badge variant="secondary" className="bg-fitness-primary/10 text-fitness-primary">
               <Target className="h-3 w-3 mr-1" />
               {capitalizedPlanType}
             </Badge>
           </div>
+          
+          {/* Day Navigation */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const prevDay = selectedDay - 1;
+                  if (prevDay >= 1 && isDayAccessible(prevDay)) {
+                    setSelectedDay(prevDay);
+                  }
+                }}
+                disabled={selectedDay === 1}
+                className="px-3"
+              >
+                Previous
+              </Button>
+              
+              <div className="text-center">
+                <div className="text-sm text-gray-500">Day</div>
+                <div className="text-2xl font-bold text-fitness-primary">{selectedDay}</div>
+                <div className="text-xs text-gray-500">of {dailyWorkouts.length}</div>
+              </div>
+              
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const nextDay = selectedDay + 1;
+                  if (nextDay <= dailyWorkouts.length && isDayAccessible(nextDay)) {
+                    setSelectedDay(nextDay);
+                  }
+                }}
+                disabled={selectedDay === dailyWorkouts.length || !isDayAccessible(selectedDay + 1)}
+                className="px-3"
+              >
+                Next
+              </Button>
+            </div>
+            
+            {/* Progress Bar */}
+            <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="absolute h-full bg-fitness-primary transition-all duration-300"
+                style={{ width: `${(selectedDay / dailyWorkouts.length) * 100}%` }}
+              />
+            </div>
+            <div className="flex justify-between mt-2 text-xs text-gray-500">
+              <span>{dailyWorkouts.filter((d: any) => d.completed).length} completed</span>
+              <span>{dailyWorkouts.length - dailyWorkouts.filter((d: any) => d.completed).length} remaining</span>
+            </div>
+          </div>
         </CardHeader>
       </Card>
 
-      {/* Day Selection Slider */}
-      <Card>
-        <CardContent className="p-4 md:p-6">
-          <div className="space-y-3 md:space-y-4">
-            <div className="text-center">
-              <h3 className="text-base md:text-lg font-semibold">Day {selectedDay}</h3>
-              <p className="text-xs md:text-sm text-gray-600">
-                {selectedDayData?.isRestDay ? 'Rest Day' : (() => {
-                  const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
-                  return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
-                })()}
-              </p>
-            </div>
-            
-            <div className="relative">
-              {/* Slider track */}
-              <div className="relative mb-3 md:mb-4">
-                <input
-                  type="range"
-                  min="1"
-                  max={dailyWorkouts.length}
-                  value={selectedDay}
-                  onChange={(e) => {
-                    const newDay = parseInt(e.target.value);
-                    if (isDayAccessible(newDay)) {
-                      setSelectedDay(newDay);
-                    }
-                  }}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                  style={{
-                    background: `linear-gradient(to right, #10b981 0%, #10b981 ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb ${((selectedDay - 1) / (dailyWorkouts.length - 1)) * 100}%, #e5e7eb 100%)`
-                  }}
-                />
-              </div>
-              
-              {/* Scrollable day markers */}
-              <div className="relative overflow-hidden">
-                <div 
-                  className="flex transition-transform duration-300 ease-out gap-1 md:gap-0"
-                  style={{
-                    transform: `translateX(-${Math.max(0, (selectedDay - 2.5) * (window.innerWidth < 768 ? 52 : 60))}px)`,
-                    width: `${dailyWorkouts.length * (window.innerWidth < 768 ? 52 : 60)}px`
-                  }}
-                >
-                  {dailyWorkouts.map((day: any) => {
-                    const isAccessible = isDayAccessible(day.day);
-                    const isSelected = selectedDay === day.day;
-                    
-                    return (
-                      <div 
-                        key={day.day} 
-                        className="flex flex-col items-center cursor-pointer flex-shrink-0"
-                        style={{ width: window.innerWidth < 768 ? '50px' : '60px' }}
-                        onClick={() => {
-                          if (isAccessible) {
-                            setSelectedDay(day.day);
-                          }
-                        }}
-                      >
-                        <div className={`
-                          w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
-                          ${isSelected
-                            ? 'bg-fitness-primary text-white shadow-lg scale-110' 
-                            : day.completed
-                              ? 'bg-green-500 text-white hover:bg-green-600' 
-                              : isAccessible
-                                ? 'bg-gray-300 text-gray-700 hover:bg-gray-400'
-                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                          }
-                          ${isAccessible ? 'hover:scale-105' : ''}
-                        `}>
-                          {day.completed ? (
-                            <CheckCircle className="h-3 w-3 md:h-4 md:w-4" />
-                          ) : !isAccessible ? (
-                            <Lock className="h-2.5 w-2.5 md:h-3 md:w-3" />
-                          ) : (
-                            day.day
-                          )}
-                        </div>
-                        <span className={`text-[10px] md:text-xs ${isSelected ? 'text-fitness-primary font-medium' : 'text-gray-500'}`}>
-                          Day {day.day}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                
-                {/* Fade effect for scrolling indication */}
-                <div className="absolute top-0 right-0 w-6 md:w-8 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
-                {selectedDay > 2 && (
-                  <div className="absolute top-0 left-0 w-6 md:w-8 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Selected Day Content */}
+      {/* Day Content */}
       {selectedDayData && (
-        <Card className={`${selectedDayData.completed ? 'bg-green-50 border-green-200' : ''}`}>
-          <CardHeader className="pb-3 p-4 md:p-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
+        <Card className={`shadow-lg ${selectedDayData.completed ? 'bg-green-50 border-green-200' : ''}`}>
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-3">
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                   selectedDayData.completed 
                     ? 'bg-green-500 text-white' 
                     : selectedDayData.isRestDay 
                       ? 'bg-gray-200 text-gray-600' 
                       : 'bg-fitness-primary text-white'
                 }`}>
-                  {selectedDayData.completed ? <CheckCircle className="h-3 w-3 md:h-4 md:w-4" /> : selectedDayData.day}
+                  {selectedDayData.completed ? <CheckCircle className="h-5 w-5" /> : selectedDayData.day}
                 </div>
                 <div>
-                  <h3 className="text-sm md:text-base font-semibold">Day {selectedDayData.day}</h3>
-                  <p className="text-xs md:text-sm text-gray-600">
+                  <h3 className="font-semibold text-lg">Day {selectedDayData.day}</h3>
+                  <p className="text-sm text-gray-600">
                     {selectedDayData.isRestDay ? 'Rest Day' : (() => {
                       const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
                       return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
@@ -555,69 +511,72 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
               {!selectedDayData.completed && isDayAccessible(selectedDayData.day) && (
                 <Button
                   onClick={() => onMarkComplete(plan.id, selectedDayData.day)}
-                  variant="outline"
-                  size="sm"
-                  className="border-green-500 text-green-600 hover:bg-green-50 text-xs md:text-sm w-full sm:w-auto"
+                  className="bg-fitness-secondary hover:bg-fitness-secondary/90"
                 >
-                  Mark Complete
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Complete
                 </Button>
               )}
               {selectedDayData.completed && (
-                <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
-                  Completed
+                <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                  Completed ✓
                 </Badge>
               )}
             </div>
           </CardHeader>
 
           {!selectedDayData.isRestDay && selectedDayData.workout?.exercises && (
-            <CardContent className="pt-0 p-4 md:p-6">
-              <div className="space-y-2 md:space-y-3">
+            <CardContent>
+              <h3 className="font-medium mb-3 text-lg">Exercises ({selectedDayData.workout.exercises.length})</h3>
+              <div className="space-y-3">
                 {selectedDayData.workout.exercises.map((exercise: any, index: number) => (
                   <Dialog key={index}>
                     <DialogTrigger asChild>
-                      <div className="flex justify-between items-center p-2.5 md:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm md:text-base font-medium flex items-center gap-2 truncate">
-                            <span className="truncate">{exercise.name}</span>
-                            <Play className="h-3 w-3 text-fitness-primary flex-shrink-0" />
-                          </h4>
-                          <p className="text-xs md:text-sm text-gray-600">
-                            {exercise.sets} sets × {exercise.reps}
-                          </p>
-                        </div>
-                        <div className="text-right ml-2 flex-shrink-0">
-                          <div className="flex items-center text-xs md:text-sm text-gray-500">
-                            <Clock className="h-3 w-3 mr-1" />
-                            <span className="hidden sm:inline">{exercise.rest} rest</span>
-                            <span className="sm:hidden">{exercise.rest}</span>
+                      <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                        <div className="flex items-center gap-3">
+                          <span className="flex-shrink-0 w-8 h-8 rounded-full bg-fitness-primary text-white flex items-center justify-center text-sm font-medium">
+                            {index + 1}
+                          </span>
+                          <div>
+                            <h4 className="font-medium flex items-center gap-2">
+                              {exercise.name}
+                              <Play className="h-3 w-3 text-fitness-primary" />
+                            </h4>
+                            <p className="text-sm text-gray-600">
+                              {exercise.sets} sets × {exercise.reps} • {exercise.rest} rest
+                            </p>
                           </div>
                         </div>
-                      </div>
+                        <div className="text-fitness-primary">
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                          </svg>
+                        </div>
+                      </button>
                     </DialogTrigger>
-                    <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-md">
                       <DialogHeader>
-                        <DialogTitle className="text-base md:text-lg">{exercise.name}</DialogTitle>
+                        <DialogTitle>{exercise.name}</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-3 md:space-y-4">
+                      <div className="space-y-4">
                         <div className="flex justify-center">
                           <img 
                             src={getExerciseAnimationUrl(exercise.name)}
                             alt={`${exercise.name} animation`}
                             className="w-full max-w-sm rounded-lg"
-                            style={{ maxHeight: '250px', objectFit: 'contain' }}
+                            style={{ maxHeight: '300px', objectFit: 'contain' }}
                           />
                         </div>
-                        <div className="space-y-2 text-xs md:text-sm">
+                        <div className="space-y-2 text-sm">
                           <p><strong>Sets:</strong> {exercise.sets}</p>
                           <p><strong>Reps:</strong> {exercise.reps}</p>
                           <p><strong>Rest:</strong> {exercise.rest}</p>
                         </div>
                         
                         {/* Rest Timer */}
-                        <div className="mt-3 md:mt-4">
+                        <div className="mt-4">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs md:text-sm font-medium">Rest Timer</span>
+                            <span className="text-sm font-medium">Rest Timer</span>
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -626,10 +585,9 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                                   ? null 
                                   : { exerciseIndex: index, show: true }
                               )}
-                              className="text-xs md:text-sm"
                             >
-                              <Timer className="h-3 w-3 md:h-4 md:w-4 mr-1" />
-                              {showTimer?.exerciseIndex === index && showTimer?.show ? 'Hide' : 'Start'}
+                              <Timer className="h-4 w-4 mr-1" />
+                              {showTimer?.exerciseIndex === index && showTimer?.show ? 'Hide' : 'Start'} Timer
                             </Button>
                           </div>
                           
@@ -653,12 +611,15 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
           )}
 
           {selectedDayData.isRestDay && (
-            <CardContent className="pt-0 p-4 md:p-6">
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <div className="flex items-start">
-                  <Calendar className="h-4 w-4 text-blue-600 mr-2 flex-shrink-0 mt-0.5" />
-                  <p className="text-xs md:text-sm text-blue-700">{selectedDayData.restType || 'Rest and recovery day. Stay hydrated and get good sleep!'}</p>
+            <CardContent>
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="flex items-center mb-2">
+                  <Calendar className="h-5 w-5 text-blue-600 mr-2" />
+                  <h4 className="font-medium text-blue-900">Rest Day</h4>
                 </div>
+                <p className="text-sm text-blue-700 leading-relaxed">
+                  {selectedDayData.restType || 'Rest and recovery day. Stay hydrated, get good sleep, and let your muscles recover. Light stretching or walking is encouraged!'}
+                </p>
               </div>
             </CardContent>
           )}
