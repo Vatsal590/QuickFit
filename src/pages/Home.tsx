@@ -167,10 +167,10 @@ const Home = () => {
           <>
             <div className="mb-8 text-center">
               <h1 className="text-4xl md:text-6xl font-bold mb-3">
-                {t('Your Workout Plans')}
+                {t('Your Workout Plan')}
               </h1>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                {t('Manage your 30-day workout plans and track your progress.')}
+                {t('Create your 30-day workout plans and track your progress.')}
               </p>
             </div>
 
