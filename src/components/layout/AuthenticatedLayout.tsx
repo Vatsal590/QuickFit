@@ -44,7 +44,7 @@ interface AuthenticatedLayoutProps {
 
 const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) => {
   return (
-    <SidebarProvider>
+    <SidebarProvider defaultOpen={true}>
       <AuthenticatedContent>
         {children}
       </AuthenticatedContent>
