@@ -411,17 +411,17 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <CardTitle className="text-2xl">{plan.title}</CardTitle>
-              <p className="text-gray-600 mt-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+            <div className="flex-1">
+              <CardTitle className="text-xl md:text-2xl">{plan.title}</CardTitle>
+              <p className="text-sm md:text-base text-gray-600 mt-2">
                 {plan.daysLeft} days remaining of {plan.duration}-day program
               </p>
             </div>
-            <Badge variant="secondary" className="bg-fitness-primary/10 text-fitness-primary">
+            <Badge variant="secondary" className="bg-fitness-primary/10 text-fitness-primary shrink-0">
               <Target className="h-3 w-3 mr-1" />
               {capitalizedPlanType}
             </Badge>
@@ -431,11 +431,11 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
 
       {/* Day Selection Slider */}
       <Card>
-        <CardContent className="p-6">
-          <div className="space-y-4">
+        <CardContent className="p-4 md:p-6">
+          <div className="space-y-3 md:space-y-4">
             <div className="text-center">
-              <h3 className="text-lg font-semibold">Day {selectedDay}</h3>
-              <p className="text-sm text-gray-600">
+              <h3 className="text-base md:text-lg font-semibold">Day {selectedDay}</h3>
+              <p className="text-xs md:text-sm text-gray-600">
                 {selectedDayData?.isRestDay ? 'Rest Day' : (() => {
                   const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
                   return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
@@ -445,7 +445,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
             
             <div className="relative">
               {/* Slider track */}
-              <div className="relative mb-4">
+              <div className="relative mb-3 md:mb-4">
                 <input
                   type="range"
                   min="1"
@@ -467,10 +467,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
               {/* Scrollable day markers */}
               <div className="relative overflow-hidden">
                 <div 
-                  className="flex transition-transform duration-300 ease-out"
+                  className="flex transition-transform duration-300 ease-out gap-1 md:gap-0"
                   style={{
-                    transform: `translateX(-${Math.max(0, (selectedDay - 3) * 60)}px)`,
-                    width: `${dailyWorkouts.length * 60}px`
+                    transform: `translateX(-${Math.max(0, (selectedDay - 2.5) * (window.innerWidth < 768 ? 52 : 60))}px)`,
+                    width: `${dailyWorkouts.length * (window.innerWidth < 768 ? 52 : 60)}px`
                   }}
                 >
                   {dailyWorkouts.map((day: any) => {
@@ -481,7 +481,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                       <div 
                         key={day.day} 
                         className="flex flex-col items-center cursor-pointer flex-shrink-0"
-                        style={{ width: '60px' }}
+                        style={{ width: window.innerWidth < 768 ? '50px' : '60px' }}
                         onClick={() => {
                           if (isAccessible) {
                             setSelectedDay(day.day);
@@ -489,7 +489,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                         }}
                       >
                         <div className={`
-                          w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
+                          w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs font-medium mb-1 transition-all
                           ${isSelected
                             ? 'bg-fitness-primary text-white shadow-lg scale-110' 
                             : day.completed
@@ -501,14 +501,14 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                           ${isAccessible ? 'hover:scale-105' : ''}
                         `}>
                           {day.completed ? (
-                            <CheckCircle className="h-4 w-4" />
+                            <CheckCircle className="h-3 w-3 md:h-4 md:w-4" />
                           ) : !isAccessible ? (
-                            <Lock className="h-3 w-3" />
+                            <Lock className="h-2.5 w-2.5 md:h-3 md:w-3" />
                           ) : (
                             day.day
                           )}
                         </div>
-                        <span className={`text-xs ${isSelected ? 'text-fitness-primary font-medium' : 'text-gray-500'}`}>
+                        <span className={`text-[10px] md:text-xs ${isSelected ? 'text-fitness-primary font-medium' : 'text-gray-500'}`}>
                           Day {day.day}
                         </span>
                       </div>
@@ -517,9 +517,9 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                 </div>
                 
                 {/* Fade effect for scrolling indication */}
-                <div className="absolute top-0 right-0 w-8 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
-                {selectedDay > 3 && (
-                  <div className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-6 md:w-8 h-full bg-gradient-to-l from-white to-transparent pointer-events-none"></div>
+                {selectedDay > 2 && (
+                  <div className="absolute top-0 left-0 w-6 md:w-8 h-full bg-gradient-to-r from-white to-transparent pointer-events-none"></div>
                 )}
               </div>
             </div>
@@ -530,21 +530,21 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       {/* Selected Day Content */}
       {selectedDayData && (
         <Card className={`${selectedDayData.completed ? 'bg-green-50 border-green-200' : ''}`}>
-          <CardHeader className="pb-3">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+          <CardHeader className="pb-3 p-4 md:p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
                   selectedDayData.completed 
                     ? 'bg-green-500 text-white' 
                     : selectedDayData.isRestDay 
                       ? 'bg-gray-200 text-gray-600' 
                       : 'bg-fitness-primary text-white'
                 }`}>
-                  {selectedDayData.completed ? <CheckCircle className="h-4 w-4" /> : selectedDayData.day}
+                  {selectedDayData.completed ? <CheckCircle className="h-3 w-3 md:h-4 md:w-4" /> : selectedDayData.day}
                 </div>
                 <div>
-                  <h3 className="font-semibold">Day {selectedDayData.day}</h3>
-                  <p className="text-sm text-gray-600">
+                  <h3 className="text-sm md:text-base font-semibold">Day {selectedDayData.day}</h3>
+                  <p className="text-xs md:text-sm text-gray-600">
                     {selectedDayData.isRestDay ? 'Rest Day' : (() => {
                       const focus = selectedDayData?.workout?.focus?.replace('_', ' ') || '';
                       return focus.toLowerCase().includes('training') ? focus : `${focus} training`;
@@ -557,13 +557,13 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                   onClick={() => onMarkComplete(plan.id, selectedDayData.day)}
                   variant="outline"
                   size="sm"
-                  className="border-green-500 text-green-600 hover:bg-green-50"
+                  className="border-green-500 text-green-600 hover:bg-green-50 text-xs md:text-sm w-full sm:w-auto"
                 >
                   Mark Complete
                 </Button>
               )}
               {selectedDayData.completed && (
-                <Badge variant="secondary" className="bg-green-100 text-green-700">
+                <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
                   Completed
                 </Badge>
               )}
@@ -571,52 +571,53 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
           </CardHeader>
 
           {!selectedDayData.isRestDay && selectedDayData.workout?.exercises && (
-            <CardContent className="pt-0">
-              <div className="space-y-3">
+            <CardContent className="pt-0 p-4 md:p-6">
+              <div className="space-y-2 md:space-y-3">
                 {selectedDayData.workout.exercises.map((exercise: any, index: number) => (
                   <Dialog key={index}>
                     <DialogTrigger asChild>
-                      <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
-                        <div>
-                          <h4 className="font-medium flex items-center gap-2">
-                            {exercise.name}
-                            <Play className="h-3 w-3 text-fitness-primary" />
+                      <div className="flex justify-between items-center p-2.5 md:p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm md:text-base font-medium flex items-center gap-2 truncate">
+                            <span className="truncate">{exercise.name}</span>
+                            <Play className="h-3 w-3 text-fitness-primary flex-shrink-0" />
                           </h4>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-xs md:text-sm text-gray-600">
                             {exercise.sets} sets × {exercise.reps}
                           </p>
                         </div>
-                        <div className="text-right">
-                          <div className="flex items-center text-sm text-gray-500">
+                        <div className="text-right ml-2 flex-shrink-0">
+                          <div className="flex items-center text-xs md:text-sm text-gray-500">
                             <Clock className="h-3 w-3 mr-1" />
-                            {exercise.rest} rest
+                            <span className="hidden sm:inline">{exercise.rest} rest</span>
+                            <span className="sm:hidden">{exercise.rest}</span>
                           </div>
                         </div>
                       </div>
                     </DialogTrigger>
-                    <DialogContent className="max-w-md">
+                    <DialogContent className="max-w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle>{exercise.name}</DialogTitle>
+                        <DialogTitle className="text-base md:text-lg">{exercise.name}</DialogTitle>
                       </DialogHeader>
-                      <div className="space-y-4">
+                      <div className="space-y-3 md:space-y-4">
                         <div className="flex justify-center">
                           <img 
                             src={getExerciseAnimationUrl(exercise.name)}
                             alt={`${exercise.name} animation`}
                             className="w-full max-w-sm rounded-lg"
-                            style={{ maxHeight: '300px', objectFit: 'contain' }}
+                            style={{ maxHeight: '250px', objectFit: 'contain' }}
                           />
                         </div>
-                        <div className="space-y-2 text-sm">
+                        <div className="space-y-2 text-xs md:text-sm">
                           <p><strong>Sets:</strong> {exercise.sets}</p>
                           <p><strong>Reps:</strong> {exercise.reps}</p>
                           <p><strong>Rest:</strong> {exercise.rest}</p>
                         </div>
                         
                         {/* Rest Timer */}
-                        <div className="mt-4">
+                        <div className="mt-3 md:mt-4">
                           <div className="flex items-center justify-between mb-2">
-                            <span className="text-sm font-medium">Rest Timer</span>
+                            <span className="text-xs md:text-sm font-medium">Rest Timer</span>
                             <Button 
                               variant="outline" 
                               size="sm"
@@ -625,9 +626,10 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                                   ? null 
                                   : { exerciseIndex: index, show: true }
                               )}
+                              className="text-xs md:text-sm"
                             >
-                              <Timer className="h-4 w-4 mr-1" />
-                              {showTimer?.exerciseIndex === index && showTimer?.show ? 'Hide' : 'Start'} Timer
+                              <Timer className="h-3 w-3 md:h-4 md:w-4 mr-1" />
+                              {showTimer?.exerciseIndex === index && showTimer?.show ? 'Hide' : 'Start'}
                             </Button>
                           </div>
                           
@@ -651,11 +653,11 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
           )}
 
           {selectedDayData.isRestDay && (
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 p-4 md:p-6">
               <div className="p-3 bg-blue-50 rounded-lg">
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 text-blue-600 mr-2" />
-                  <p className="text-blue-700">{selectedDayData.restType || 'Rest and recovery day. Stay hydrated and get good sleep!'}</p>
+                <div className="flex items-start">
+                  <Calendar className="h-4 w-4 text-blue-600 mr-2 flex-shrink-0 mt-0.5" />
+                  <p className="text-xs md:text-sm text-blue-700">{selectedDayData.restType || 'Rest and recovery day. Stay hydrated and get good sleep!'}</p>
                 </div>
               </div>
             </CardContent>
