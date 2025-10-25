@@ -194,10 +194,12 @@ export const generateWorkout = (
 
   // Limit exercises based on time
   let maxExercises: number;
-  if (time === 30) maxExercises = Math.random() < 0.5 ? 3 : 4;
+  if (time === 10) maxExercises = 1;
+  else if (time === 20) maxExercises = 2;
+  else if (time === 30) maxExercises = 3;
   else if (time === 45) maxExercises = 4;
-  else if (time === 60) maxExercises = Math.max(5, selectedExercises.length);
-  else maxExercises = time <= 20 ? 2 : 3;
+  else if (time === 60) maxExercises = 5;
+  else maxExercises = 3;
 
   const adjustedExercises = selectedExercises.slice(0, maxExercises).map(ex => adjustExerciseForIntensity(ex, intensity, time));
   const warmup = generateWarmupExercises(equipment).slice(0,3);
