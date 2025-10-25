@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -427,6 +427,15 @@ const Landing = () => {
             <a href="/" className="hover:text-white transition-colors duration-300 font-medium">Home</a>
             <a href="/privacy-policy" className="hover:text-white transition-colors duration-300 font-medium">Privacy Policy</a>
             <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-medium">Terms of Service</a>
+            <a 
+              href="https://www.instagram.com/quickfit.dev/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hover:text-white transition-colors duration-300 font-medium flex items-center gap-1"
+            >
+              <Instagram className="h-4 w-4" />
+              Instagram
+            </a>
           </div>
         </div>
       </footer>
