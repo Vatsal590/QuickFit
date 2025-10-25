@@ -66,6 +66,9 @@ const DietPlan = () => {
         description: "Please complete your fitness profile first to generate a diet plan.",
         variant: "destructive"
       });
+      // Trigger the fitness profile form
+      const event = new CustomEvent('openFitnessProfileForm');
+      window.dispatchEvent(event);
       return;
     }
 
@@ -1071,9 +1074,18 @@ const DietPlan = () => {
           ) : (
             <div className="text-center py-8">
               <UtensilsCrossed className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Please complete your fitness profile first to generate a personalized diet plan.
               </p>
+              <Button
+                onClick={() => {
+                  const event = new CustomEvent('openFitnessProfileForm');
+                  window.dispatchEvent(event);
+                }}
+                className="mx-auto"
+              >
+                Create Fitness Profile
+              </Button>
             </div>
           )}
         </CardContent>

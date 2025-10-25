@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import Index from "./pages/Index";
+import Plans from "./pages/Plans";
+import InstantWorkout from "./pages/InstantWorkout";
 import History from "./pages/History";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
@@ -96,6 +98,22 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Index />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/plans" 
+        element={
+          <ProtectedRoute>
+            <Plans />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/instant-workout" 
+        element={
+          <ProtectedRoute>
+            <InstantWorkout />
           </ProtectedRoute>
         } 
       />
