@@ -77,110 +77,42 @@ export default function Chatbot() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!input.trim() || isLoading) return;
 
-    const userMessage: Message = {
-      role: "user",
-      content: input.trim(),
-      timestamp: new Date()
-    };
-
+    const userMessage: Message = { role: "user", content: input.trim(), timestamp: new Date() };
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
 
     try {
-      const CHAT_URL = `https://tlliijookodviezygwqk.supabase.co/functions/v1/chatbot`;
-      
-      const response = await fetch(CHAT_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRsbGlpam9va29kdmllenlnd3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDkwNDE5MDcsImV4cCI6MjA2NDYxNzkwN30.GAZGOACK4mTZDa1htm08DuzMqGPDyrsHFC6PyhDtFiw'}`,
-        },
-        body: JSON.stringify({ messages: [...messages, userMessage] }),
+      const { data, error } = await supabase.functions.invoke('chatbot', {
+        body: { messages: [...messages, userMessage] }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to get response');
-      }
+      if (error) throw error;
 
-      if (!response.body) {
-        throw new Error('No response body');
-      }
-
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let textBuffer = '';
-      let assistantContent = '';
-      let streamDone = false;
-
-      // Add empty assistant message that we'll update
-      setMessages(prev => [...prev, {
+      const text = data?.answer as string | undefined;
+      const assistantMessage: Message = {
         role: "assistant",
-        content: "",
+        content: text || "I'm here to help! Could you please try rephrasing your question?",
         timestamp: new Date()
-      }]);
+      };
 
-      while (!streamDone) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        textBuffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = textBuffer.indexOf('\n')) !== -1) {
-          let line = textBuffer.slice(0, newlineIndex);
-          textBuffer = textBuffer.slice(newlineIndex + 1);
-
-          if (line.endsWith('\r')) line = line.slice(0, -1);
-          if (line.startsWith(':') || line.trim() === '') continue;
-          if (!line.startsWith('data: ')) continue;
-
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === '[DONE]') {
-            streamDone = true;
-            break;
-          }
-
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-            if (content) {
-              assistantContent += content;
-              setMessages(prev => {
-                const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = {
-                  role: "assistant",
-                  content: assistantContent,
-                  timestamp: new Date()
-                };
-                return newMessages;
-              });
-            }
-          } catch {
-            textBuffer = line + '\n' + textBuffer;
-            break;
-          }
-        }
-      }
-
-      if (!assistantContent) {
-        throw new Error('No content received from AI');
-      }
-
-    } catch (error) {
-      console.error('Error calling chatbot:', error);
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (err) {
+      console.error('Error calling chatbot:', err);
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to get response from chatbot. Please try again.",
-        variant: "destructive"
+        title: "Chat unavailable",
+        description: err instanceof Error ? err.message : 'Please try again in a moment.',
+        variant: "destructive",
       });
-      
-      // Remove the empty assistant message if there was an error
-      setMessages(prev => prev.filter((_, i) => i !== prev.length - 1 || prev[prev.length - 1].content !== ""));
+
+      const assistantMessage: Message = {
+        role: "assistant",
+        content: "Sorry, I'm having trouble right now. Please try again in a moment.",
+        timestamp: new Date(),
+      };
+      setMessages(prev => [...prev, assistantMessage]);
     } finally {
       setIsLoading(false);
     }
