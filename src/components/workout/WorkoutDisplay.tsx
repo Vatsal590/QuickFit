@@ -68,7 +68,6 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'incline barbell press': 'https://newlife.com.cy/wp-content/uploads/2019/11/00471301-Barbell-Incline-Bench-Press_Chest_360.gif',
       'close grip barbell press': 'https://www.inspireusafoundation.org/file/2022/01/close-grip-bench-press-movement.gif',
 
-
       
       // Back exercises
       'pull-ups': 'https://www.inspireusafoundation.org/file/2022/11/pull-up.gif',
@@ -180,8 +179,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'goblet squat': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/08/dumbbell-goblet-squat-muscles.gif',
       'romanian deadlifts': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/06/barbell-romanian-deadlift-movement.gif',
       'romanian deadlift': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/06/barbell-romanian-deadlift-movement.gif',
-      'single-leg deadlifts': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/barbell-single-leg-deadlift.gif',
-      'single leg deadlifts': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/10/barbell-single-leg-deadlift.gif',
+      'single-leg deadlifts': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Dumbbell-Single-Leg-Deadlift.gif',
+      'single leg deadlifts': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Dumbbell-Single-Leg-Deadlift.gif',
+      'single leg deadlift': 'https://fitnessprogramer.com/wp-content/uploads/2022/09/Dumbbell-Single-Leg-Deadlift.gif',
       'dumbbell step up': 'https://www.kettlebellkings.com/cdn/shop/articles/weighted-step-up.gif?v=1731311898',
       'dumbbell step-up': 'https://www.kettlebellkings.com/cdn/shop/articles/weighted-step-up.gif?v=1731311898',
       'barbell squats': 'https://media.tenor.com/Re3T3B66V9UAAAAM/barbellsquats-gymexercisesmen.gif',
@@ -367,6 +367,17 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'scapular retractions': 'https://gymvisual.com/img/p/1/2/5/2/4/12524.gif',
       'wall angels': 'https://media.post.rvohealth.io/wp-content/uploads/sites/2/2021/04/GRT-1.7.Wall-Angels.gif',
       'wall march': 'https://gymvisual.com/img/p/5/3/6/0/5360.gif',
+      'box jump': 'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
+      'farmer walk': 'https://barbend.com/wp-content/uploads/2024/02/farmers-carry-with-dumbbells-barbend-movement-gif-masters.gif',
+      'farmers walk': 'https://barbend.com/wp-content/uploads/2024/02/farmers-carry-with-dumbbells-barbend-movement-gif-masters.gif',
+      'medicine ball slam': 'https://pelank.com/wp-content/uploads/2025/06/Medicine-ball-Overhead-Slam-exercise.gif',
+      'lateral bound': 'https://media1.popsugar-assets.com/files/thumbor/HfyLbibGeha6GRVN4Ko9MJiOTms=/fit-in/792x446/top/filters:format_auto():upscale()/2021/02/04/109/n/45061871/9b923286601ca14b1dd6d3.87823207_LATERAL_BOUN.gif',
+      'agility ladder': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
+      'agility ladder drills': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
+      'agility ladder drill': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
+      'wall ball': 'https://gymvisual.com/img/p/2/4/5/0/9/24509.gif',
+      'rotation throw': 'https://gymvisual.com/img/p/7/4/1/5/7415.gif',
+      
 
     };
 
