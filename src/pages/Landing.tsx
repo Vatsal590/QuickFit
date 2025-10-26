@@ -79,7 +79,7 @@ const Landing = () => {
       </div>
 
       {/* Header with Glassmorphism */}
-      <header className="relative bg-white/80 backdrop-blur-lg shadow-lg border-b border-white/30 sticky top-0 z-50 transition-all duration-300">
+      <header className="relative bg-white/70 backdrop-blur-md shadow-sm border-b border-white/20 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-3 group">
@@ -87,17 +87,17 @@ const Landing = () => {
                 <img 
                   src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
                   alt="QuickFit Logo" 
-                  className="w-11 h-11 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12"
+                  className="w-10 h-10 transition-transform duration-300 group-hover:scale-100 group-hover:rotate-6"
                 />
-                <div className="absolute inset-0 bg-fitness-primary/30 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="absolute inset-0 bg-fitness-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <h1 className="text-3xl font-black font-display bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
                 QuickFit
               </h1>
             </div>
             <Link to="/auth">
-              <Button variant="gradient" className="px-8 py-2.5 text-base font-bold shadow-lg shadow-fitness-primary/20 hover:shadow-xl hover:shadow-fitness-primary/30">
-                Get Started <Sparkles className="ml-2 h-4 w-4" />
+              <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-6 py-2 text-base font-semibold">
+                Get Started <Sparkles className="ml-2 h-3 w-3" />
               </Button>
             </Link>
           </div>
@@ -114,28 +114,29 @@ const Landing = () => {
           </div>
 
           <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center mb-16 space-y-8">
-              <h2 className="text-6xl md:text-8xl font-black font-display text-gray-900 mb-8 animate-fade-in-up leading-tight tracking-tight">
+            <div className="text-center mb-16 space-y-8">
+              <h2 className="text-6xl md:text-8xl font-black text-gray-900 mb-8 animate-fade-in-up leading-tight">
                 Your Complete
-                <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer drop-shadow-2xl" style={{ backgroundSize: '200% auto' }}>
+                <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer" style={{ backgroundSize: '200% auto' }}>
                   Fitness Companion
                 </span>
               </h2>
 
-              <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '0.2s' }}>
+              <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '0.2s' }}>
                 Personalized workouts, nutrition plans, and AI coaching in one app.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12 animate-scale-in" style={{ animationDelay: '0.4s' }}>
                 <Link to="/auth" className="group">
-                  <Button variant="gradient" size="lg" className="text-lg px-16 py-8 font-black shadow-2xl shadow-fitness-primary/30 hover:shadow-fitness-primary/50 overflow-hidden">
-                    <span className="relative z-10 flex items-center gap-3">
+                  <Button size="lg" className="relative bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-2xl hover:shadow-fitness-primary/40 text-lg px-16 py-8 font-bold text-white overflow-hidden transition-all duration-300 hover:scale-105">
+                    <span className="relative z-10 flex items-center gap-2">
                       Start Free Today
                       <Zap className="h-5 w-5 group-hover:animate-pulse" />
                     </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-fitness-secondary to-fitness-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </Button>
                 </Link>
-                <p className="text-sm text-gray-600 font-semibold">
+                <p className="text-sm text-gray-600 font-medium">
                   No credit card required • Get started in 2 minutes
                 </p>
               </div>
@@ -146,9 +147,9 @@ const Landing = () => {
                   { icon: Calendar, text: '30-day personalized plans' },
                   { icon: Sparkles, text: 'AI fitness coaching' }
                 ].map((item, idx) => (
-                  <div key={idx} className="flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-4 rounded-full shadow-md border-2 border-gray-100 hover:shadow-xl hover:border-fitness-primary/30 transition-all duration-300 hover:scale-110">
+                  <div key={idx} className="flex items-center gap-3 bg-white/60 backdrop-blur-sm px-6 py-3 rounded-full shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:scale-105">
                     <item.icon className="h-5 w-5 text-fitness-primary" />
-                    <span className="font-bold">{item.text}</span>
+                    <span className="font-semibold">{item.text}</span>
                   </div>
                 ))}
               </div>
@@ -166,10 +167,10 @@ const Landing = () => {
         {/* Core Features with Tilted Cards */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 -mt-12">
           <div className="text-center mb-20">
-            <h3 className="text-5xl md:text-6xl font-black font-display text-gray-900 mb-6 tracking-tight">
+            <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
               Everything You Need
             </h3>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-semibold leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-medium leading-relaxed">
               Workouts, meal plans, and tracking in one place.
             </p>
           </div>
@@ -221,26 +222,26 @@ const Landing = () => {
             ].map((feature, idx) => (
               <Card 
                 key={idx} 
-                className="group relative overflow-hidden border-2 border-gray-100 hover:border-fitness-primary/30 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 animate-fade-in-up"
+                className="group relative overflow-hidden border-2 border-transparent hover:border-gray-200 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up"
                 style={{ animationDelay: feature.delay }}
               >
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                 <CardHeader className="pb-4 relative">
-                  <div className={`mx-auto bg-gradient-to-br ${feature.gradient} w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-xl transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
+                  <div className={`mx-auto bg-gradient-to-br ${feature.gradient} w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
                     <feature.icon className="h-10 w-10 text-white" />
                   </div>
-                  <CardTitle className="text-2xl font-black font-display mb-2 group-hover:text-fitness-primary transition-colors duration-300">
+                  <CardTitle className="text-2xl font-bold mb-2 group-hover:text-fitness-primary transition-colors duration-300">
                     {feature.title}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-base leading-relaxed text-gray-600 font-semibold">
+                  <CardDescription className="text-base leading-relaxed text-gray-600 font-medium">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
                 
                 {/* Decorative corner accent */}
-                <div className={`absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-10 rounded-full blur-2xl group-hover:opacity-25 transition-opacity duration-500`}></div>
+                <div className={`absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity duration-500`}></div>
               </Card>
             ))}
           </div>
@@ -257,7 +258,7 @@ const Landing = () => {
         <div className="relative bg-white py-24">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h3 className="text-5xl font-black font-display text-gray-900 mb-4 tracking-tight">
+              <h3 className="text-5xl font-black text-gray-900 mb-4">
                 About the Founder
               </h3>
             </div>
@@ -266,7 +267,7 @@ const Landing = () => {
               {/* Tilted background accent */}
               <div className="absolute -inset-4 bg-gradient-to-r from-fitness-primary/5 to-fitness-secondary/5 transform -rotate-1 rounded-3xl"></div>
               
-              <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden hover:shadow-3xl transition-shadow duration-500">
+              <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/10 to-fitness-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -278,11 +279,11 @@ const Landing = () => {
                     />
                   </div>
                   <div className="p-10 flex flex-col justify-center space-y-6">
-                    <h4 className="text-3xl font-black font-display text-gray-900">Vatsal Agarwala</h4>
-                    <p className="text-fitness-primary font-black text-lg tracking-wide text-center bg-fitness-primary/10 py-3 px-4 rounded-xl">
+                    <h4 className="text-3xl font-bold text-gray-900">Vatsal Agarwala</h4>
+                    <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
                       🎉 Get Vatsal's workout & diet plan <span className="underline">FREE</span> when you sign up!
                     </p>
-                    <p className="text-lg text-gray-700 leading-relaxed font-medium">
+                    <p className="text-lg text-gray-700 leading-relaxed">
                       Created by Vatsal Agarwala, a 15-year-old from Luxembourg who started his fitness journey at 13. After trying countless apps and videos, he built QuickFit to make fitness simple for everyone.
                     </p>
                   </div>
@@ -419,20 +420,20 @@ const Landing = () => {
       </main>
 
       {/* Footer */}
-      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-300 py-12 border-t border-gray-700">
+      <footer className="relative bg-fitness-dark text-white py-8">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-base font-bold mb-6">© 2025 QuickFit. Sculpted by Vatsal Agarwala.</p>
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm">
-            <a href="/" className="hover:text-white transition-colors duration-300 font-semibold hover:underline">Home</a>
-            <a href="/privacy-policy" className="hover:text-white transition-colors duration-300 font-semibold hover:underline">Privacy Policy</a>
-            <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-semibold hover:underline">Terms of Service</a>
+          <p className="text-base font-semibold mb-4">© 2025 QuickFit. Sculpted by Vatsal Agarwala.</p>
+          <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-white/70">
+            <a href="/" className="hover:text-white transition-colors duration-300 font-medium">Home</a>
+            <a href="/privacy-policy" className="hover:text-white transition-colors duration-300 font-medium">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-medium">Terms of Service</a>
             <a 
               href="https://www.instagram.com/quickfit.dev/" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors duration-300 font-semibold flex items-center gap-2 hover:scale-110 transform"
+              className="hover:text-white transition-colors duration-300 font-medium flex items-center gap-1"
             >
-              <Instagram className="h-5 w-5" />
+              <Instagram className="h-4 w-4" />
               Instagram
             </a>
           </div>
