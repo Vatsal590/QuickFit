@@ -29,42 +29,39 @@ const FunctionalExerciseCard = ({ exercise, index }: FunctionalExerciseCardProps
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="p-4 bg-background rounded-lg border hover:border-accent hover:bg-accent/5 transition-all cursor-pointer group">
-          <div className="flex items-start justify-between">
+        <button className="w-full p-4 bg-background rounded-lg border hover:border-primary hover:bg-accent/5 transition-all cursor-pointer group text-left">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <span className="text-primary font-semibold">{index + 1}</span>
+            </div>
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <Badge variant="outline" className="text-xs">
-                  Functional
-                </Badge>
-                <h4 className="font-semibold group-hover:text-accent transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="font-semibold text-base">
                   {exercise.name}
                 </h4>
+                <Play className="w-4 h-4 text-primary" />
               </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                {exercise.description}
+              <p className="text-sm text-muted-foreground">
+                {exercise.sets} sets × {exercise.reps} reps • {exercise.restTime}s rest
               </p>
-              <div className="flex gap-4 text-sm">
-                <span className="flex items-center gap-1">
-                  <Dumbbell className="w-4 h-4" />
-                  {exercise.sets} sets
-                </span>
-                <span>•</span>
-                <span>{exercise.reps} reps</span>
-                <span>•</span>
-                <span className="flex items-center gap-1">
-                  <Timer className="w-4 h-4" />
-                  {exercise.restTime}s rest
-                </span>
-              </div>
             </div>
-            <Play className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors ml-2" />
+            <div className="flex-shrink-0">
+              <svg 
+                className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" 
+                fill="none" 
+                strokeWidth="2" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
           </div>
-        </div>
+        </button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Badge variant="outline">Functional Exercise</Badge>
+          <DialogTitle className="text-xl">
             {exercise.name}
           </DialogTitle>
         </DialogHeader>
@@ -205,14 +202,11 @@ const InstantWorkout = () => {
               />
               
               {recommendedExercises.length > 0 && (
-                <Card className="bg-accent/10 border-accent">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Lightbulb className="w-5 h-5 text-accent" />
-                      Good to Add
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
+                <div className="space-y-4">
+                  <h2 className="text-2xl font-bold">
+                    Good to add - functional exercises ({recommendedExercises.length})
+                  </h2>
+                  <div className="space-y-3">
                     {recommendedExercises.map((exercise, index) => (
                       <FunctionalExerciseCard 
                         key={exercise.id} 
@@ -220,8 +214,8 @@ const InstantWorkout = () => {
                         index={index}
                       />
                     ))}
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               )}
             </>
           ) : (
