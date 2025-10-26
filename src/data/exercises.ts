@@ -1071,30 +1071,10 @@ export const exercises: Exercise[] = [
     description: "Hold heavy weights at sides with straight arms. Walk forward maintaining upright posture and engaged core."
   },
   {
-    id: "sled-push",
-    name: "Sled Push",
-    muscleGroup: "functional",
-    equipment: ["none"],
-    sets: 3,
-    reps: 20,
-    restTime: 90,
-    description: "Push a weighted sled or simulate the movement with a wall push to build functional pushing strength."
-  },
-  {
-    id: "battle-rope",
-    name: "Battle Rope Waves",
-    muscleGroup: "functional",
-    equipment: ["none"],
-    sets: 3,
-    reps: 30,
-    restTime: 45,
-    description: "Hold ropes in each hand, create alternating waves by moving arms up and down explosively. Builds endurance and coordination."
-  },
-  {
     id: "medicine-ball-slam",
     name: "Medicine Ball Slam",
     muscleGroup: "functional",
-    equipment: ["none"],
+    equipment: ["dumbbell", "kettlebell"],
     sets: 3,
     reps: 12,
     restTime: 45,
@@ -1104,7 +1084,7 @@ export const exercises: Exercise[] = [
     id: "single-leg-deadlift",
     name: "Single-Leg Deadlift",
     muscleGroup: "functional",
-    equipment: ["dumbbells", "kettlebell", "none"],
+    equipment: ["dumbbells", "kettlebell"],
     sets: 3,
     reps: 10,
     restTime: 60,
@@ -1134,51 +1114,21 @@ export const exercises: Exercise[] = [
     id: "wall-ball",
     name: "Wall Ball",
     muscleGroup: "functional",
-    equipment: ["none"],
+    equipment: ["dumbbells", "kettlebell"],
     sets: 3,
     reps: 15,
     restTime: 60,
     description: "Hold ball at chest, squat down, then explosively stand and throw ball up to a target on wall. Catch and repeat."
   },
   {
-    id: "sandbag-carry",
-    name: "Sandbag Carry",
-    muscleGroup: "functional",
-    equipment: ["none"],
-    sets: 3,
-    reps: 30,
-    restTime: 60,
-    description: "Carry a sandbag or heavy object in various positions (bear hug, shoulder) while walking. Builds grip and core strength."
-  },
-  {
-    id: "crawl-pattern",
-    name: "Crawling Patterns",
-    muscleGroup: "functional",
-    equipment: ["none"],
-    sets: 3,
-    reps: 20,
-    restTime: 45,
-    description: "Perform various crawling movements (forward, backward, lateral) staying low to ground. Improves mobility and coordination."
-  },
-  {
     id: "rotational-throw",
     name: "Rotational Throw",
     muscleGroup: "functional",
-    equipment: ["none"],
+    equipment: ["dumbbells", "kettlebell"],
     sets: 3,
     reps: 10,
     restTime: 45,
     description: "Stand sideways to wall, hold ball at hip, explosively rotate and throw to wall. Develops rotational power."
-  },
-  {
-    id: "loaded-carry-variations",
-    name: "Loaded Carry Variations",
-    muscleGroup: "functional",
-    equipment: ["dumbbells", "kettlebell"],
-    sets: 3,
-    reps: 30,
-    restTime: 60,
-    description: "Carry weights in different positions: overhead, rack position, or uneven loads. Improves stability and real-world strength."
   },
   {
     id: "balance-reach",
