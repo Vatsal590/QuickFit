@@ -2,17 +2,21 @@ import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
-import { Workout, WorkoutFormData } from '../types';
+import { Workout, WorkoutFormData, Exercise } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { generateWorkout } from '../data/workoutGenerator';
+import { getFilteredExercises } from '../data/exercises';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Lightbulb } from 'lucide-react';
 
 const InstantWorkout = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [recommendedExercises, setRecommendedExercises] = useState<Exercise[]>([]);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
@@ -31,6 +35,11 @@ const InstantWorkout = () => {
         formData.bodyPains
       );
       setCurrentWorkout(newWorkout);
+      
+      // Get functional exercises to recommend
+      const functionalExercises = getFilteredExercises(["functional"], formData.equipment, formData.intensity);
+      const numToRecommend = formData.time <= 20 ? 1 : 2;
+      setRecommendedExercises(functionalExercises.slice(0, numToRecommend));
       
       toast({
         title: "Workout generated",
@@ -66,16 +75,45 @@ const InstantWorkout = () => {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto space-y-6">
           {currentWorkout ? (
-            <WorkoutDisplay
-              workout={currentWorkout}
-              onBack={() => { 
-                setCurrentWorkout(null); 
-                activityTracker.trackButtonClick('back_from_workout', 'instant-workout');
-              }}
-              onComplete={handleCompleteWorkout}
-            />
+            <>
+              <WorkoutDisplay
+                workout={currentWorkout}
+                onBack={() => { 
+                  setCurrentWorkout(null);
+                  setRecommendedExercises([]);
+                  activityTracker.trackButtonClick('back_from_workout', 'instant-workout');
+                }}
+                onComplete={handleCompleteWorkout}
+              />
+              
+              {recommendedExercises.length > 0 && (
+                <Card className="bg-accent/10 border-accent">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Lightbulb className="w-5 h-5 text-accent" />
+                      Good to Add
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {recommendedExercises.map((exercise) => (
+                      <div key={exercise.id} className="p-4 bg-background rounded-lg border">
+                        <h4 className="font-semibold mb-1">{exercise.name}</h4>
+                        <p className="text-sm text-muted-foreground mb-2">{exercise.description}</p>
+                        <div className="flex gap-4 text-sm">
+                          <span>{exercise.sets} sets</span>
+                          <span>•</span>
+                          <span>{exercise.reps} reps</span>
+                          <span>•</span>
+                          <span>{exercise.restTime}s rest</span>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              )}
+            </>
           ) : (
             <WorkoutForm 
               onSubmit={handleCreateWorkout}
