@@ -4,11 +4,12 @@ export type MuscleGroup =
   | "back" 
   | "shoulders" 
   | "legs" 
-  | "biceps"
+  | "biceps" 
   | "triceps" 
   | "core" 
   | "full body" 
-  | "cardio";
+  | "cardio"
+  | "functional";
 
 export type Equipment = 
   | "none" 

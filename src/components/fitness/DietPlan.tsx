@@ -57,7 +57,35 @@ const DietPlan = () => {
     }
   }, [profile]);
 
-  const generateDietPlan = () => {
+  // Load existing diet plan on mount
+  useEffect(() => {
+    if (user) {
+      loadExistingPlan();
+    }
+  }, [user]);
+
+  const loadExistingPlan = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('diet_plans')
+        .select('*')
+        .eq('user_id', user?.id)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      
+      if (data && data.daily_meals) {
+        setDietPlan(data.daily_meals as unknown as MealPlan[]);
+      }
+    } catch (error) {
+      console.error('Error loading diet plan:', error);
+    }
+  };
+
+  const generateDietPlan = async () => {
     if (!profile) {
       toast({
         title: "Profile Required",
@@ -71,67 +99,101 @@ const DietPlan = () => {
 
     setIsGenerating(true);
 
-    const isBulking = profile.goal_weight ? profile.goal_weight > profile.weight : false;
-    const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
+    try {
+      const isBulking = profile.goal_weight ? profile.goal_weight > profile.weight : false;
+      const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
 
-    // Calculate target calories based on goal
-    let targetCalories = 2200; // Base maintenance
-    
-    if (isBulking) {
-      targetCalories = 2700; // Bulking surplus
-    } else if (isCutting) {
-      targetCalories = 1800; // Cutting deficit
-    }
-
-    const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
-    const isDietVegan = profile.diet_preferences?.includes('Vegan');
-    const tastePreferences = profile.taste_preferences || ['American'];
-    const allergies = profile.food_allergies || [];
-
-    // Generate 7-day meal plan
-    const plans: MealPlan[] = [];
-
-    for (let day = 1; day <= 7; day++) {
-      const dailyMeals = generateMealsForDay(
-        tastePreferences,
-        isDietVegetarian,
-        isDietVegan,
-        allergies,
-        targetCalories,
-        day
-      );
-
-      // Calculate totals
-      const allMeals = [
-        ...dailyMeals.breakfast,
-        ...dailyMeals.lunch,
-        ...dailyMeals.dinner,
-        ...dailyMeals.snacks
-      ];
+      // Calculate target calories based on goal
+      let targetCalories = 2200; // Base maintenance
       
-      const totalCalories = allMeals.reduce((sum, meal) => sum + meal.calories, 0);
-      const totalProtein = allMeals.reduce((sum, meal) => sum + meal.protein, 0);
-      const totalCarbs = allMeals.reduce((sum, meal) => sum + meal.carbs, 0);
-      const totalFats = allMeals.reduce((sum, meal) => sum + meal.fats, 0);
+      if (isBulking) {
+        targetCalories = 2700; // Bulking surplus
+      } else if (isCutting) {
+        targetCalories = 1800; // Cutting deficit
+      }
 
-      plans.push({
-        day,
-        meals: dailyMeals,
-        targetCalories,
-        totalCalories,
-        totalProtein,
-        totalCarbs,
-        totalFats
+      const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
+      const isDietVegan = profile.diet_preferences?.includes('Vegan');
+      const tastePreferences = profile.taste_preferences || ['American'];
+      const allergies = profile.food_allergies || [];
+
+      // Generate 7-day meal plan
+      const plans: MealPlan[] = [];
+
+      for (let day = 1; day <= 7; day++) {
+        const dailyMeals = generateMealsForDay(
+          tastePreferences,
+          isDietVegetarian,
+          isDietVegan,
+          allergies,
+          targetCalories,
+          day
+        );
+
+        // Calculate totals
+        const allMeals = [
+          ...dailyMeals.breakfast,
+          ...dailyMeals.lunch,
+          ...dailyMeals.dinner,
+          ...dailyMeals.snacks
+        ];
+        
+        let totalCalories = allMeals.reduce((sum, meal) => sum + meal.calories, 0);
+        let totalProtein = allMeals.reduce((sum, meal) => sum + meal.protein, 0);
+        let totalCarbs = allMeals.reduce((sum, meal) => sum + meal.carbs, 0);
+        let totalFats = allMeals.reduce((sum, meal) => sum + meal.fats, 0);
+
+        // Adjust to match target calories exactly
+        const calorieRatio = targetCalories / totalCalories;
+        totalCalories = Math.round(totalCalories * calorieRatio);
+        totalProtein = Math.round(totalProtein * calorieRatio);
+        totalCarbs = Math.round(totalCarbs * calorieRatio);
+        totalFats = Math.round(totalFats * calorieRatio);
+
+        plans.push({
+          day,
+          meals: dailyMeals,
+          targetCalories,
+          totalCalories,
+          totalProtein,
+          totalCarbs,
+          totalFats
+        });
+      }
+
+      setDietPlan(plans);
+
+      // Save to database
+      const { error } = await supabase
+        .from('diet_plans')
+        .insert([{
+          user_id: user!.id,
+          plan_name: `${isBulking ? 'Bulking' : isCutting ? 'Cutting' : 'Maintenance'} Diet Plan`,
+          target_calories: targetCalories,
+          target_protein: Math.round((targetCalories * 0.35) / 4),
+          target_carbs: Math.round((targetCalories * 0.40) / 4),
+          target_fats: Math.round((targetCalories * 0.25) / 9),
+          daily_meals: plans as any,
+          cuisine_preferences: tastePreferences,
+          is_active: true
+        }]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Diet Plan Generated!",
+        description: `Your ${isBulking ? 'bulking' : isCutting ? 'cutting' : 'maintenance'} plan is ready with accurate macros.`
       });
+    } catch (error) {
+      console.error('Error generating diet plan:', error);
+      toast({
+        title: "Error",
+        description: "Failed to generate diet plan. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
     }
-
-    setDietPlan(plans);
-    setIsGenerating(false);
-
-    toast({
-      title: "Diet Plan Generated!",
-      description: `Your ${isBulking ? 'bulking' : isCutting ? 'cutting' : 'maintenance'} plan is ready with accurate macros.`
-    });
   };
 
   const generateMealsForDay = (
@@ -170,6 +232,15 @@ const DietPlan = () => {
     lunchOptions = filterAllergies(lunchOptions, allergies);
     dinnerOptions = filterAllergies(dinnerOptions, allergies);
     snackOptions = filterAllergies(snackOptions, allergies);
+
+    // Sort by protein density (protein per calorie ratio) for healthier, protein-dense options
+    const sortByProteinDensity = (meals: MealData[]) => 
+      [...meals].sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories));
+
+    breakfastOptions = sortByProteinDensity(breakfastOptions);
+    lunchOptions = sortByProteinDensity(lunchOptions);
+    dinnerOptions = sortByProteinDensity(dinnerOptions);
+    snackOptions = sortByProteinDensity(snackOptions);
 
     // Select meals with variety (use day number as seed for rotation)
     const breakfast = selectMeals(breakfastOptions, 1, dayNumber);

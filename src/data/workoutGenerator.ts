@@ -150,6 +150,12 @@ export const generateWorkout = (
   console.log('Generating workout with:', { time, intensity, muscleGroups, equipment });
 
   let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+  
+  // Add functional exercises (max 2 per workout)
+  const functionalExercises = getFilteredExercises(["functional"], equipment, intensity);
+  const numFunctionalToAdd = Math.min(2, functionalExercises.length);
+  const selectedFunctional = functionalExercises.slice(0, numFunctionalToAdd);
+  selectedExercises = [...selectedExercises, ...selectedFunctional];
 
   // Respect "no equipment" — only use bodyweight exercises
   if (equipment.includes("none") && equipment.length === 1) {

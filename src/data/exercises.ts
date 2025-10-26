@@ -1037,6 +1037,158 @@ export const exercises: Exercise[] = [
     reps: 20,
     restTime: 45,
     description: "Perform jumping jacks while holding resistance band handles to add upper body resistance to the cardio movement."
+  },
+
+  // Functional exercises
+  {
+    id: "box-jump",
+    name: "Box Jump",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Explosively jump onto a box or elevated surface, landing softly with bent knees. Step down and repeat."
+  },
+  {
+    id: "bear-crawl",
+    name: "Bear Crawl",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 20,
+    restTime: 45,
+    description: "Start on hands and knees, lift knees slightly off ground. Crawl forward moving opposite hand and foot together."
+  },
+  {
+    id: "farmer-walk",
+    name: "Farmer's Walk",
+    muscleGroup: "functional",
+    equipment: ["dumbbells", "kettlebell"],
+    sets: 3,
+    reps: 30,
+    restTime: 60,
+    description: "Hold heavy weights at sides with straight arms. Walk forward maintaining upright posture and engaged core."
+  },
+  {
+    id: "sled-push",
+    name: "Sled Push",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 20,
+    restTime: 90,
+    description: "Push a weighted sled or simulate the movement with a wall push to build functional pushing strength."
+  },
+  {
+    id: "battle-rope",
+    name: "Battle Rope Waves",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 30,
+    restTime: 45,
+    description: "Hold ropes in each hand, create alternating waves by moving arms up and down explosively. Builds endurance and coordination."
+  },
+  {
+    id: "medicine-ball-slam",
+    name: "Medicine Ball Slam",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Lift ball overhead and explosively slam it to the ground, engaging entire body. Catch on bounce and repeat."
+  },
+  {
+    id: "single-leg-deadlift",
+    name: "Single-Leg Deadlift",
+    muscleGroup: "functional",
+    equipment: ["dumbbells", "kettlebell", "none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Stand on one leg, hinge at hip while extending other leg behind. Lower weight toward ground while maintaining balance."
+  },
+  {
+    id: "lateral-bound",
+    name: "Lateral Bound",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Jump laterally from one leg to the other, landing softly and sticking the landing before exploding to the other side."
+  },
+  {
+    id: "agility-ladder",
+    name: "Agility Ladder Drills",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 45,
+    description: "Perform quick footwork patterns through an agility ladder or simulated pattern. Improves coordination and foot speed."
+  },
+  {
+    id: "wall-ball",
+    name: "Wall Ball",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 15,
+    restTime: 60,
+    description: "Hold ball at chest, squat down, then explosively stand and throw ball up to a target on wall. Catch and repeat."
+  },
+  {
+    id: "sandbag-carry",
+    name: "Sandbag Carry",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 30,
+    restTime: 60,
+    description: "Carry a sandbag or heavy object in various positions (bear hug, shoulder) while walking. Builds grip and core strength."
+  },
+  {
+    id: "crawl-pattern",
+    name: "Crawling Patterns",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 20,
+    restTime: 45,
+    description: "Perform various crawling movements (forward, backward, lateral) staying low to ground. Improves mobility and coordination."
+  },
+  {
+    id: "rotational-throw",
+    name: "Rotational Throw",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 45,
+    description: "Stand sideways to wall, hold ball at hip, explosively rotate and throw to wall. Develops rotational power."
+  },
+  {
+    id: "loaded-carry-variations",
+    name: "Loaded Carry Variations",
+    muscleGroup: "functional",
+    equipment: ["dumbbells", "kettlebell"],
+    sets: 3,
+    reps: 30,
+    restTime: 60,
+    description: "Carry weights in different positions: overhead, rack position, or uneven loads. Improves stability and real-world strength."
+  },
+  {
+    id: "balance-reach",
+    name: "Single-Leg Balance Reach",
+    muscleGroup: "functional",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Stand on one leg, reach in multiple directions with opposite leg while maintaining balance. Improves stability and proprioception."
   }
 ];
 

@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      diet_plans: {
+        Row: {
+          created_at: string
+          cuisine_preferences: string[]
+          daily_meals: Json
+          id: string
+          is_active: boolean
+          plan_name: string
+          target_calories: number
+          target_carbs: number
+          target_fats: number
+          target_protein: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cuisine_preferences?: string[]
+          daily_meals?: Json
+          id?: string
+          is_active?: boolean
+          plan_name: string
+          target_calories: number
+          target_carbs: number
+          target_fats: number
+          target_protein: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cuisine_preferences?: string[]
+          daily_meals?: Json
+          id?: string
+          is_active?: boolean
+          plan_name?: string
+          target_calories?: number
+          target_carbs?: number
+          target_fats?: number
+          target_protein?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       Email: {
         Row: {
           created_at: string
