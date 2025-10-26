@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -123,7 +123,7 @@ const Landing = () => {
               </h2>
 
               <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in font-medium" style={{ animationDelay: '0.2s' }}>
-                Personalized workouts, nutrition plans, and AI coaching in one app.
+                Personalized workouts, nutrition plans, and AI coaching in one place.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12 animate-scale-in" style={{ animationDelay: '0.4s' }}>
@@ -199,7 +199,7 @@ const Landing = () => {
                 delay: '0.2s'
               },
               {
-                icon: Apple,
+                icon: Camera,
                 title: 'AI Food Tracker',
                 description: 'Log meals with photos and track nutrition automatically using AI.',
                 gradient: 'from-blue-500 to-indigo-600',
