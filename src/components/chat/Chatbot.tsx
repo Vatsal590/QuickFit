@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Bot, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 // Minimal Chatbot floating button that just redirects to your Zapier app
 export default function Chatbot() {
   const [showPopup, setShowPopup] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   useEffect(() => {
     // Check if user has previously closed the popup
@@ -17,8 +24,9 @@ export default function Chatbot() {
     }
   }, []);
 
-  function handleRedirect() {
-    window.open("https://quickfit.zapier.app", "_blank", "noopener noreferrer");
+  function handleOpenChat() {
+    setIsDialogOpen(true);
+    setShowPopup(false);
   }
 
   function handleClosePopup() {
@@ -50,7 +58,7 @@ export default function Chatbot() {
                 Ask questions to our QuickFit chatbot!
               </p>
               <button
-                onClick={handleRedirect}
+                onClick={handleOpenChat}
                 className="mt-3 text-xs font-medium text-fitness-primary hover:text-fitness-primary/80 underline"
               >
                 Open Chatbot →
@@ -64,10 +72,28 @@ export default function Chatbot() {
       <button
         className="fixed z-50 bottom-5 right-5 bg-fitness-primary text-white rounded-full p-4 shadow-lg flex items-center justify-center hover:bg-fitness-primary/90 transition-all hover:scale-110"
         aria-label="Open Chatbot"
-        onClick={handleRedirect}
+        onClick={handleOpenChat}
       >
         <Bot className="w-6 h-6" />
       </button>
+
+      {/* Chatbot Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl h-[80vh] p-0 gap-0">
+          <DialogHeader className="p-4 border-b">
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="w-5 h-5 text-fitness-primary" />
+              QuickFit Assistant
+            </DialogTitle>
+          </DialogHeader>
+          <iframe
+            src="https://quickfit.zapier.app"
+            className="w-full h-full rounded-b-lg"
+            title="QuickFit Chatbot"
+            allow="microphone; camera"
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
