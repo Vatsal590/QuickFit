@@ -10,7 +10,123 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Lightbulb } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Lightbulb, Dumbbell, Timer, Play } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import ExerciseTimer from '@/components/workout/ExerciseTimer';
+import { getExerciseAnimationUrl } from '@/utils/exerciseAnimations';
+
+interface FunctionalExerciseCardProps {
+  exercise: Exercise;
+  index: number;
+}
+
+const FunctionalExerciseCard = ({ exercise, index }: FunctionalExerciseCardProps) => {
+  const [showTimer, setShowTimer] = useState(false);
+  const animationUrl = getExerciseAnimationUrl(exercise.name);
+
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="p-4 bg-background rounded-lg border hover:border-accent hover:bg-accent/5 transition-all cursor-pointer group">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <Badge variant="outline" className="text-xs">
+                  Functional
+                </Badge>
+                <h4 className="font-semibold group-hover:text-accent transition-colors">
+                  {exercise.name}
+                </h4>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                {exercise.description}
+              </p>
+              <div className="flex gap-4 text-sm">
+                <span className="flex items-center gap-1">
+                  <Dumbbell className="w-4 h-4" />
+                  {exercise.sets} sets
+                </span>
+                <span>•</span>
+                <span>{exercise.reps} reps</span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <Timer className="w-4 h-4" />
+                  {exercise.restTime}s rest
+                </span>
+              </div>
+            </div>
+            <Play className="w-5 h-5 text-muted-foreground group-hover:text-accent transition-colors ml-2" />
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Badge variant="outline">Functional Exercise</Badge>
+            {exercise.name}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="rounded-lg overflow-hidden bg-muted">
+            <img
+              src={animationUrl}
+              alt={exercise.name}
+              className="w-full h-auto object-contain"
+              loading="lazy"
+            />
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary">{exercise.sets}</div>
+              <div className="text-sm text-muted-foreground">Sets</div>
+            </div>
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary">{exercise.reps}</div>
+              <div className="text-sm text-muted-foreground">Reps</div>
+            </div>
+            <div className="p-3 bg-muted rounded-lg">
+              <div className="text-2xl font-bold text-primary">{exercise.restTime}s</div>
+              <div className="text-sm text-muted-foreground">Rest</div>
+            </div>
+          </div>
+
+          <div className="p-4 bg-accent/10 rounded-lg border border-accent/20">
+            <h4 className="font-semibold mb-2 flex items-center gap-2">
+              <Lightbulb className="w-4 h-4 text-accent" />
+              Description
+            </h4>
+            <p className="text-sm text-muted-foreground">{exercise.description}</p>
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowTimer(!showTimer)}
+              variant="outline"
+              className="flex-1"
+            >
+              <Timer className="w-4 h-4 mr-2" />
+              {showTimer ? 'Hide Rest Timer' : 'Start Rest Timer'}
+            </Button>
+          </div>
+
+          {showTimer && (
+            <div className="p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground mb-3 text-center">
+                Rest timer between sets
+              </p>
+              <ExerciseTimer
+                duration={exercise.restTime}
+              />
+            </div>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
 
 const InstantWorkout = () => {
   const { toast } = useToast();
@@ -96,19 +212,13 @@ const InstantWorkout = () => {
                       Good to Add
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {recommendedExercises.map((exercise) => (
-                      <div key={exercise.id} className="p-4 bg-background rounded-lg border">
-                        <h4 className="font-semibold mb-1">{exercise.name}</h4>
-                        <p className="text-sm text-muted-foreground mb-2">{exercise.description}</p>
-                        <div className="flex gap-4 text-sm">
-                          <span>{exercise.sets} sets</span>
-                          <span>•</span>
-                          <span>{exercise.reps} reps</span>
-                          <span>•</span>
-                          <span>{exercise.restTime}s rest</span>
-                        </div>
-                      </div>
+                  <CardContent className="space-y-3">
+                    {recommendedExercises.map((exercise, index) => (
+                      <FunctionalExerciseCard 
+                        key={exercise.id} 
+                        exercise={exercise} 
+                        index={index}
+                      />
                     ))}
                   </CardContent>
                 </Card>
