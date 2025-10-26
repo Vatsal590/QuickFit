@@ -1130,16 +1130,7 @@ export const exercises: Exercise[] = [
     restTime: 45,
     description: "Stand sideways to wall, hold ball at hip, explosively rotate and throw to wall. Develops rotational power."
   },
-  {
-    id: "balance-reach",
-    name: "Single-Leg Balance Reach",
-    muscleGroup: "functional",
-    equipment: ["none"],
-    sets: 3,
-    reps: 12,
-    restTime: 45,
-    description: "Stand on one leg, reach in multiple directions with opposite leg while maintaining balance. Improves stability and proprioception."
-  }
+  
 ];
 
 export const getFilteredExercises = (
