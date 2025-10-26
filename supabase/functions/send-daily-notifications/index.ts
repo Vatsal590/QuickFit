@@ -1,11 +1,9 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.10';
 import webpush from 'npm:web-push@3.6.7';
-import { Resend } from 'npm:resend@4.0.0';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const resendApiKey = Deno.env.get('RESEND_API_KEY')!;
 
 // VAPID keys for Web Push
 const VAPID_PUBLIC_KEY = 'BJthRQ5myDjc7NvUpIAtvbsZVSXGPIsWQdGquzqP-rqyKxTpJMU5nHmJdIJDzgJC_mMuuHXhJEhpGg5u0UqxJlw';
@@ -19,7 +17,6 @@ webpush.setVapidDetails(
 );
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-const resend = new Resend(resendApiKey);
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -124,75 +121,9 @@ async function getUserContexts(): Promise<UserContext[]> {
 }
 
 async function sendEmailNotification(user: UserContext, message: string): Promise<void> {
-  try {
-    const emailHtml = `
-      <!DOCTYPE html>
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <style>
-            body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; background-color: #f5f5f5; }
-            .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
-            .header { background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); padding: 40px 20px; text-align: center; }
-            .logo { color: white; font-size: 32px; font-weight: bold; margin: 0; }
-            .content { padding: 40px 20px; }
-            .message { font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 30px; }
-            .cta-button { display: inline-block; background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%); color: white !important; text-decoration: none; padding: 15px 40px; border-radius: 8px; font-weight: bold; font-size: 16px; }
-            .footer { padding: 20px; text-align: center; color: #666; font-size: 14px; border-top: 1px solid #eee; }
-            .unsubscribe { font-size: 12px; color: #999; margin-top: 20px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1 class="logo">💪 QuickFit</h1>
-            </div>
-            <div class="content">
-              <p class="message">${message}</p>
-              <p style="text-align: center;">
-                <a href="https://quickfit.dev/home" class="cta-button">Start Your Workout</a>
-              </p>
-              <p style="color: #666; margin-top: 30px;">
-                Keep crushing your fitness goals! Every workout counts. 🔥
-              </p>
-            </div>
-            <div class="footer">
-              <p>QuickFit - Your Personal Fitness Companion</p>
-              <p>Stay strong, stay consistent! 💪</p>
-              <p class="unsubscribe">You're receiving this because you signed up for QuickFit. <a href="https://quickfit.dev" style="color: #666;">Visit our website</a></p>
-            </div>
-          </div>
-        </body>
-      </html>
-    `;
-
-    const { error } = await resend.emails.send({
-      from: 'QuickFit <notifications@quickfit.dev>',
-      to: [user.email],
-      subject: "Your Daily QuickFit Workout Reminder 💪",
-      html: emailHtml,
-      headers: {
-        'X-Entity-Ref-ID': user.id,
-      },
-      tags: [
-        {
-          name: 'category',
-          value: 'workout_reminder',
-        },
-      ],
-    });
-
-    if (error) {
-      console.error(`Failed to send email to ${user.email}:`, error);
-      throw error;
-    }
-
-    console.log(`Email sent successfully to ${user.email}`);
-  } catch (error) {
-    console.error(`Error sending email notification to ${user.email}:`, error);
-    throw error;
-  }
+  // Email notifications temporarily disabled
+  console.log(`Would send email to ${user.email}: ${message}`);
+  return;
 }
 
 async function sendPushNotification(user: UserContext, message: string): Promise<void> {

@@ -14,23 +14,21 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast as sonnerToast } from 'sonner';
-
-interface MealWithMacros {
-  name: string;
-  protein: number;
-  carbs: number;
-  fats: number;
-}
+import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
 
 interface MealPlan {
   day: number;
   meals: {
-    breakfast: MealWithMacros[];
-    lunch: MealWithMacros[];
-    dinner: MealWithMacros[];
-    snacks: MealWithMacros[];
+    breakfast: MealData[];
+    lunch: MealData[];
+    dinner: MealData[];
+    snacks: MealData[];
   };
-  calories: number;
+  targetCalories: number;
+  totalCalories: number;
+  totalProtein: number;
+  totalCarbs: number;
+  totalFats: number;
 }
 
 const DietPlan = () => {
@@ -66,7 +64,6 @@ const DietPlan = () => {
         description: "Please complete your fitness profile first to generate a diet plan.",
         variant: "destructive"
       });
-      // Trigger the fitness profile form
       const event = new CustomEvent('openFitnessProfileForm');
       window.dispatchEvent(event);
       return;
@@ -74,50 +71,57 @@ const DietPlan = () => {
 
     setIsGenerating(true);
 
-    // Determine if bulking or cutting based on goal weight
     const isBulking = profile.goal_weight ? profile.goal_weight > profile.weight : false;
     const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
 
-    // Calculate target calories
-    const baseCalories = 2000;
-    let targetCalories = baseCalories;
+    // Calculate target calories based on goal
+    let targetCalories = 2200; // Base maintenance
     
     if (isBulking) {
-      targetCalories += 500;
+      targetCalories = 2700; // Bulking surplus
     } else if (isCutting) {
-      targetCalories -= 500;
+      targetCalories = 1800; // Cutting deficit
     }
 
-    // Get dietary preferences
     const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
     const isDietVegan = profile.diet_preferences?.includes('Vegan');
-    const isLactoseIntolerant = profile.diet_preferences?.includes('Lactose Intolerant');
-    
-    // Get taste preferences for multi-cuisine support
     const tastePreferences = profile.taste_preferences || ['American'];
-
-    // Get food allergies to avoid
     const allergies = profile.food_allergies || [];
 
-    // Generate meal plans for 7 days
+    // Generate 7-day meal plan
     const plans: MealPlan[] = [];
 
     for (let day = 1; day <= 7; day++) {
-      const meals = generateMealsForDay(
+      const dailyMeals = generateMealsForDay(
         tastePreferences,
         isDietVegetarian,
         isDietVegan,
-        isLactoseIntolerant,
         allergies,
-        isBulking,
-        isCutting,
+        targetCalories,
         day
       );
 
+      // Calculate totals
+      const allMeals = [
+        ...dailyMeals.breakfast,
+        ...dailyMeals.lunch,
+        ...dailyMeals.dinner,
+        ...dailyMeals.snacks
+      ];
+      
+      const totalCalories = allMeals.reduce((sum, meal) => sum + meal.calories, 0);
+      const totalProtein = allMeals.reduce((sum, meal) => sum + meal.protein, 0);
+      const totalCarbs = allMeals.reduce((sum, meal) => sum + meal.carbs, 0);
+      const totalFats = allMeals.reduce((sum, meal) => sum + meal.fats, 0);
+
       plans.push({
         day,
-        meals,
-        calories: targetCalories
+        meals: dailyMeals,
+        targetCalories,
+        totalCalories,
+        totalProtein,
+        totalCarbs,
+        totalFats
       });
     }
 
@@ -126,7 +130,7 @@ const DietPlan = () => {
 
     toast({
       title: "Diet Plan Generated!",
-      description: `Your ${isBulking ? 'bulking' : isCutting ? 'cutting' : 'maintenance'} plan is ready.`
+      description: `Your ${isBulking ? 'bulking' : isCutting ? 'cutting' : 'maintenance'} plan is ready with accurate macros.`
     });
   };
 
@@ -134,694 +138,65 @@ const DietPlan = () => {
     cuisines: string[],
     isVegetarian: boolean,
     isVegan: boolean,
-    isLactoseIntolerant: boolean,
     allergies: string[],
-    isBulking: boolean,
-    isCutting: boolean,
-    dayNumber: number = 1
+    targetCalories: number,
+    dayNumber: number
   ) => {
-    // Define meal options by cuisine and dietary restrictions
-    const mealOptions = {
-      American: {
-        breakfast: isVegan ? [
-          'Oatmeal with banana and peanut butter',
-          'Whole wheat toast with avocado and tomatoes',
-          'Fruit smoothie with plant protein powder',
-          'Granola with soy milk and berries',
-          'Peanut butter banana sandwich on whole wheat',
-          'Rice cakes with almond butter and apple slices',
-          'Whole grain cereal with plant milk'
-        ] : isVegetarian ? [
-          'Scrambled eggs with whole wheat toast',
-          'Greek yogurt with fruit and granola',
-          'Egg and cheese sandwich on whole wheat',
-          'Cottage cheese with fruit',
-          'Oatmeal with milk and berries',
-          'Vegetable omelet with toast',
-          'Yogurt parfait with nuts'
-        ] : [
-          'Scrambled eggs with whole wheat toast and turkey bacon',
-          'Protein pancakes with Greek yogurt and berries',
-          'Egg white omelet with vegetables and turkey',
-          'Boiled eggs with whole wheat toast and fruit',
-          'Turkey sausage with eggs and vegetables',
-          'Egg and cheese breakfast wrap',
-          'Smoked salmon with whole wheat toast and eggs'
-        ],
-        lunch: isVegan ? [
-          'Lentil soup with whole wheat bread',
-          'Bean and rice burrito bowl',
-          'Chickpea salad with vegetables',
-          'Vegetable stir-fry with tofu and brown rice',
-          'Hummus wrap with mixed vegetables',
-          'Black bean pasta with tomato sauce',
-          'Peanut butter and banana wrap'
-        ] : isVegetarian ? [
-          'Cheese and vegetable sandwich',
-          'Egg salad with whole wheat bread',
-          'Vegetable pasta with cheese',
-          'Rice and beans with cheese',
-          'Grilled cheese with tomato soup',
-          'Greek salad with feta cheese'
-        ] : [
-          'Grilled chicken with rice and vegetables',
-          'Tuna sandwich on whole wheat bread',
-          'Turkey wrap with vegetables',
-          'Chicken salad with brown rice',
-          'Baked fish with sweet potato',
-          'Lean beef with quinoa and broccoli'
-        ],
-        dinner: isVegan ? [
-          'Bean chili with brown rice',
-          'Vegetable pasta with tomato sauce',
-          'Lentil curry with brown rice',
-          'Stir-fried vegetables with tofu',
-          'Black bean tacos with guacamole',
-          'Vegetable soup with whole wheat bread'
-        ] : isVegetarian ? [
-          'Cheese pizza with salad',
-          'Vegetable pasta with cheese',
-          'Egg fried rice with vegetables',
-          'Cheese quesadilla with beans',
-          'Vegetable stir-fry with eggs',
-          'Pasta with cheese and vegetables'
-        ] : [
-          'Grilled chicken with rice and vegetables',
-          'Baked fish with sweet potato',
-          'Turkey meatballs with pasta',
-          'Lean beef with brown rice',
-          'Chicken breast with quinoa',
-          'Salmon with vegetables and rice'
-        ],
-        snacks: isVegan ? [
-          'Mixed nuts and fruit',
-          'Apple slices with peanut butter',
-          'Banana with almond butter',
-          'Whole grain crackers with hummus',
-          'Trail mix',
-          'Fruit smoothie'
-        ] : [
-          'Greek yogurt with berries',
-          'Cottage cheese with fruit',
-          'Boiled eggs',
-          'Protein bar',
-          'Cheese and crackers',
-          'Milk with almonds'
-        ]
-      },
-      Italian: {
-        breakfast: isVegan ? [
-          'Oatmeal with fruit and nuts',
-          'Toast with tomatoes and olive oil',
-          'Fruit salad with granola',
-          'Whole wheat bread with jam and peanut butter',
-          'Smoothie with plant protein',
-          'Rice cakes with almond butter',
-          'Granola with plant milk and berries'
-        ] : [
-          'Scrambled eggs with toast and tomatoes',
-          'Greek yogurt with fruit and honey',
-          'Cheese omelet with whole wheat bread',
-          'Omelet with vegetables and toast',
-          'Ricotta with fruit and nuts',
-          'Eggs with cheese and vegetables',
-          'Yogurt parfait with granola'
-        ],
-        lunch: isVegan ? [
-          'Pasta with tomato sauce and vegetables',
-          'Vegetable soup with bread',
-          'Bean salad with olive oil',
-          'Pasta with lentils'
-        ] : isVegetarian ? [
-          'Pasta with cheese and vegetables',
-          'Cheese pizza with salad',
-          'Eggplant parmesan',
-          'Pasta with eggs'
-        ] : [
-          'Chicken with pasta and vegetables',
-          'Fish with rice and salad',
-          'Turkey sandwich',
-          'Grilled chicken salad'
-        ],
-        dinner: isVegan ? [
-          'Pasta with vegetables and beans',
-          'Vegetable soup with bread',
-          'Rice with lentils',
-          'Vegetable stir-fry'
-        ] : isVegetarian ? [
-          'Pasta with cheese',
-          'Pizza with vegetables',
-          'Risotto with vegetables',
-          'Vegetable lasagna'
-        ] : [
-          'Grilled fish with vegetables',
-          'Chicken with pasta',
-          'Turkey with rice',
-          'Fish with salad'
-        ],
-        snacks: [
-          'Mixed nuts',
-          'Fruit',
-          'Whole wheat crackers',
-          'Yogurt'
-        ]
-      },
-      Japanese: {
-        breakfast: isVegan ? [
-          'Oatmeal with soy milk and fruit',
-          'Tofu scramble with vegetables',
-          'Rice porridge with vegetables',
-          'Whole wheat toast with peanut butter and banana',
-          'Smoothie with plant protein and berries',
-          'Rice cakes with avocado',
-          'Fruit bowl with nuts'
-        ] : [
-          'Grilled fish with rice and miso soup',
-          'Egg rice bowl with vegetables',
-          'Fish with miso soup and rice',
-          'Omelet with rice and pickles',
-          'Salmon with rice and seaweed',
-          'Eggs with toast and fruit',
-          'Rice with egg and nori'
-        ],
-        lunch: isVegan ? [
-          'Vegetable rice bowl',
-          'Tofu with vegetables and rice',
-          'Vegetable soup with rice',
-          'Rice with beans'
-        ] : isVegetarian ? [
-          'Egg fried rice',
-          'Vegetable rice bowl with egg',
-          'Tofu with rice',
-          'Vegetable soup with egg'
-        ] : [
-          'Chicken with rice',
-          'Fish with rice and vegetables',
-          'Beef with rice',
-          'Grilled fish with vegetables'
-        ],
-        dinner: isVegan ? [
-          'Vegetable rice bowl',
-          'Tofu stir-fry with rice',
-          'Vegetable curry with rice',
-          'Rice with vegetables'
-        ] : isVegetarian ? [
-          'Egg fried rice',
-          'Tofu with vegetables',
-          'Vegetable rice bowl',
-          'Egg with rice'
-        ] : [
-          'Grilled fish with rice',
-          'Chicken with rice',
-          'Beef with vegetables',
-          'Fish with vegetables and rice'
-        ],
-        snacks: [
-          'Rice crackers',
-          'Fruit',
-          'Nuts',
-          'Boiled eggs'
-        ]
-      },
-      Thai: {
-        breakfast: isVegan ? [
-          'Fruit smoothie with plant protein',
-          'Rice porridge with fruit',
-          'Toast with peanut butter and banana',
-          'Oatmeal with coconut milk',
-          'Fruit salad with nuts',
-          'Rice cakes with almond butter',
-          'Smoothie bowl with granola'
-        ] : [
-          'Egg omelet with vegetables',
-          'Scrambled eggs with toast',
-          'Rice porridge with egg',
-          'Omelet with fruit',
-          'Eggs with rice and vegetables',
-          'Toast with eggs and fruit',
-          'Egg fried rice with vegetables'
-        ],
-        lunch: isVegan ? [
-          'Vegetable fried rice',
-          'Tofu with rice and vegetables',
-          'Vegetable soup with rice',
-          'Rice noodles with vegetables'
-        ] : isVegetarian ? [
-          'Egg fried rice',
-          'Vegetable curry with rice',
-          'Rice with vegetables and egg',
-          'Vegetable soup with rice'
-        ] : [
-          'Chicken with rice',
-          'Fish with rice and vegetables',
-          'Beef with rice',
-          'Chicken soup with rice'
-        ],
-        dinner: isVegan ? [
-          'Vegetable curry with rice',
-          'Stir-fried vegetables with rice',
-          'Rice with tofu',
-          'Vegetable rice bowl'
-        ] : isVegetarian ? [
-          'Vegetable curry with rice',
-          'Egg fried rice',
-          'Rice with vegetables and egg',
-          'Vegetable stir-fry'
-        ] : [
-          'Chicken curry with rice',
-          'Fish with rice',
-          'Beef with vegetables',
-          'Chicken with rice and vegetables'
-        ],
-        snacks: [
-          'Fresh fruit',
-          'Rice crackers',
-          'Nuts',
-          'Yogurt'
-        ]
-      },
-      Mediterranean: {
-        breakfast: isVegan ? [
-          'Whole wheat bread with tomatoes and olive oil',
-          'Oatmeal with dried fruit and nuts',
-          'Hummus with whole wheat pita and vegetables',
-          'Fruit smoothie with plant protein',
-          'Granola with plant milk',
-          'Toast with avocado and tomatoes',
-          'Fruit bowl with nuts and seeds'
-        ] : isVegetarian ? [
-          'Greek yogurt with honey and walnuts',
-          'Scrambled eggs with whole wheat bread',
-          'Feta cheese with tomatoes and olives',
-          'Vegetable omelet with herbs',
-          'Ricotta with fruit',
-          'Eggs with cheese and vegetables',
-          'Yogurt with granola and berries'
-        ] : [
-          'Greek yogurt with nuts and honey',
-          'Eggs with whole wheat bread and cheese',
-          'Omelet with vegetables and feta',
-          'Scrambled eggs with turkey',
-          'Fish with whole wheat toast',
-          'Eggs with smoked salmon',
-          'Greek yogurt with fruit and protein'
-        ],
-        lunch: isVegan ? [
-          'Chickpea salad with vegetables',
-          'Lentil soup with bread',
-          'Hummus with vegetables and rice',
-          'Bean and vegetable soup'
-        ] : isVegetarian ? [
-          'Greek salad with cheese',
-          'Vegetable pasta',
-          'Cheese sandwich',
-          'Egg salad'
-        ] : [
-          'Grilled chicken with vegetables',
-          'Fish with rice and salad',
-          'Turkey sandwich',
-          'Chicken salad'
-        ],
-        dinner: isVegan ? [
-          'Vegetable stew with bread',
-          'Lentils with rice',
-          'Vegetable soup',
-          'Bean curry with rice'
-        ] : isVegetarian ? [
-          'Vegetable pasta with cheese',
-          'Eggplant with cheese',
-          'Rice with vegetables and cheese',
-          'Vegetable rice bowl'
-        ] : [
-          'Grilled fish with vegetables',
-          'Chicken with rice',
-          'Fish with salad',
-          'Turkey with vegetables'
-        ],
-        snacks: [
-          'Mixed nuts',
-          'Hummus with vegetables',
-          'Greek yogurt',
-          'Fruit'
-        ]
-      },
-      Indian: {
-        breakfast: isVegan ? [
-          'Oats porridge with fruit',
-          'Whole wheat bread with peanut butter',
-          'Rice flakes with vegetables',
-          'Lentil pancakes with chutney',
-          'Oats with plant milk and banana',
-          'Whole wheat toast with avocado',
-          'Fruit smoothie with oats'
-        ] : isVegetarian ? [
-          'Whole wheat bread with butter and eggs',
-          'Vegetable sandwich with yogurt',
-          'Rice flakes with yogurt',
-          'Eggs with whole wheat bread',
-          'Pancakes with honey and fruit',
-          'Omelet with bread and vegetables',
-          'Yogurt with granola and fruit'
-        ] : [
-          'Eggs with whole wheat bread',
-          'Chicken sandwich with fruit',
-          'Egg curry with bread',
-          'Omelet with turkey and toast',
-          'Scrambled eggs with meat',
-          'Egg wrap with vegetables',
-          'Fish with whole wheat bread'
-        ],
-        lunch: isVegan ? [
-          'Lentils with rice',
-          'Chickpea curry with rice',
-          'Vegetable rice bowl',
-          'Bean curry with bread'
-        ] : isVegetarian ? [
-          'Vegetable curry with rice',
-          'Lentils with bread',
-          'Rice with yogurt',
-          'Vegetable rice'
-        ] : [
-          'Chicken curry with rice',
-          'Fish with rice',
-          'Meat curry with bread',
-          'Chicken with rice and vegetables'
-        ],
-        dinner: isVegan ? [
-          'Lentil curry with rice',
-          'Vegetable curry with rice',
-          'Bean curry with bread',
-          'Lentil soup with bread'
-        ] : isVegetarian ? [
-          'Vegetable curry with rice',
-          'Rice with yogurt',
-          'Vegetable rice bowl',
-          'Lentils with rice'
-        ] : [
-          'Chicken curry with rice',
-          'Meat curry with bread',
-          'Fish with rice',
-          'Chicken with rice'
-        ],
-        snacks: [
-          'Mixed nuts',
-          'Fruit',
-          'Yogurt',
-          'Whole wheat crackers'
-        ]
-      },
-      Mexican: {
-        breakfast: isVegan ? [
-          'Black bean breakfast burrito with vegetables',
-          'Tofu scramble with peppers and onions',
-          'Whole wheat tortilla with avocado and beans',
-          'Smoothie with plant protein and berries',
-          'Oatmeal with cinnamon and fruit',
-          'Bean and vegetable breakfast bowl',
-          'Whole wheat tortilla with peanut butter and banana'
-        ] : isVegetarian ? [
-          'Scrambled eggs with beans and tortilla',
-          'Cheese quesadilla with vegetables',
-          'Egg and cheese breakfast burrito',
-          'Eggs with rice and beans',
-          'Vegetable omelet with tortilla',
-          'Huevos rancheros',
-          'Egg and cheese breakfast wrap'
-        ] : [
-          'Eggs with black beans and turkey',
-          'Breakfast burrito with eggs and turkey',
-          'Chicken and egg breakfast bowl',
-          'Eggs with meat and beans',
-          'Turkey sausage with eggs and tortilla',
-          'Egg and chicken breakfast wrap',
-          'Scrambled eggs with turkey and vegetables'
-        ],
-        lunch: isVegan ? [
-          'Bean and rice bowl',
-          'Vegetable tacos',
-          'Bean burrito',
-          'Rice with vegetables'
-        ] : isVegetarian ? [
-          'Cheese quesadilla with beans',
-          'Vegetable tacos with cheese',
-          'Bean and cheese burrito',
-          'Rice with beans and cheese'
-        ] : [
-          'Chicken tacos',
-          'Beef burrito',
-          'Fish tacos',
-          'Turkey and bean bowl'
-        ],
-        dinner: isVegan ? [
-          'Bean and vegetable burrito',
-          'Rice with beans',
-          'Vegetable tacos',
-          'Bean bowl with vegetables'
-        ] : isVegetarian ? [
-          'Cheese burrito with beans',
-          'Vegetable quesadilla',
-          'Bean and cheese tacos',
-          'Rice with beans and cheese'
-        ] : [
-          'Chicken with rice and beans',
-          'Beef tacos',
-          'Fish with rice',
-          'Turkey burrito bowl'
-        ],
-        snacks: [
-          'Mixed nuts',
-          'Fruit',
-          'Yogurt',
-          'Whole wheat crackers'
-        ]
-      }
-    };
+    // Select primary cuisine for the day (rotate through preferences)
+    const activeCuisines = cuisines.filter(c => c !== 'French');
+    const primaryCuisine = activeCuisines[(dayNumber - 1) % activeCuisines.length] || 'American';
+    
+    // Get meals from the database
+    let breakfastOptions = mealDatabase[primaryCuisine]?.breakfast || mealDatabase.American.breakfast;
+    let lunchOptions = mealDatabase[primaryCuisine]?.lunch || mealDatabase.American.lunch;
+    let dinnerOptions = mealDatabase[primaryCuisine]?.dinner || mealDatabase.American.dinner;
+    let snackOptions = mealDatabase[primaryCuisine]?.snacks || mealDatabase.American.snacks;
 
-    // Filter out foods with allergies
-    const filterAllergies = (foods: string[]) => {
-      return foods.filter(food => {
-        return !allergies.some(allergy => 
-          food.toLowerCase().includes(allergy.toLowerCase())
-        );
-      });
-    };
+    // Apply dietary filters
+    if (isVegan) {
+      breakfastOptions = filterVegan(breakfastOptions);
+      lunchOptions = filterVegan(lunchOptions);
+      dinnerOptions = filterVegan(dinnerOptions);
+      snackOptions = filterVegan(snackOptions);
+    } else if (isVegetarian) {
+      breakfastOptions = filterVegetarian(breakfastOptions);
+      lunchOptions = filterVegetarian(lunchOptions);
+      dinnerOptions = filterVegetarian(dinnerOptions);
+      snackOptions = filterVegetarian(snackOptions);
+    }
 
-    // Function to estimate macros based on meal type and content - verified with USDA nutritional databases
-    const estimateMacros = (mealName: string, mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks'): { protein: number; carbs: number; fats: number } => {
-      const lower = mealName.toLowerCase();
-      
-      // Accurate macro database based on USDA and verified nutritional sources
-      
-      // Breakfast items (verified)
-      if (lower.includes('oatmeal') || lower.includes('oats')) {
-        return { protein: 8, carbs: 54, fats: 6 }; // Oatmeal with berries/nuts
-      }
-      if (lower.includes('greek yogurt') && lower.includes('granola')) {
-        return { protein: 18, carbs: 38, fats: 8 }; // Greek yogurt parfait
-      }
-      if (lower.includes('scrambled eggs') && lower.includes('toast')) {
-        return { protein: 20, carbs: 26, fats: 19 }; // Eggs with toast and avocado
-      }
-      if (lower.includes('cottage cheese') && lower.includes('pancakes')) {
-        return { protein: 22, carbs: 32, fats: 8 }; // Cottage cheese pancakes
-      }
-      if (lower.includes('smoothie') && lower.includes('protein')) {
-        return { protein: 25, carbs: 35, fats: 6 }; // Protein smoothie
-      }
-      if (lower.includes('frittata') || lower.includes('omelet')) {
-        return { protein: 24, carbs: 8, fats: 18 }; // Egg-based dishes
-      }
-      if (lower.includes('salmon') && (lower.includes('bagel') || lower.includes('smoked'))) {
-        return { protein: 28, carbs: 36, fats: 14 }; // Smoked salmon bagel
-      }
-      if (lower.includes('quinoa') && lower.includes('breakfast')) {
-        return { protein: 12, carbs: 42, fats: 8 }; // Quinoa breakfast bowl
-      }
-      if (lower.includes('chia') && lower.includes('pudding')) {
-        return { protein: 10, carbs: 28, fats: 12 }; // Chia seed pudding
-      }
-      if (lower.includes('tofu scramble')) {
-        return { protein: 18, carbs: 12, fats: 14 }; // Tofu scramble
-      }
-      
-      // Lunch items (verified)
-      if (lower.includes('chicken') && lower.includes('caesar salad')) {
-        return { protein: 32, carbs: 18, fats: 16 }; // Grilled chicken Caesar
-      }
-      if (lower.includes('turkey') && lower.includes('wrap')) {
-        return { protein: 28, carbs: 42, fats: 14 }; // Turkey avocado wrap
-      }
-      if (lower.includes('salmon') && lower.includes('salad')) {
-        return { protein: 36, carbs: 22, fats: 18 }; // Salmon salad
-      }
-      if (lower.includes('quinoa') && lower.includes('black bean') && lower.includes('wrap')) {
-        return { protein: 14, carbs: 48, fats: 10 }; // Veggie wrap with beans
-      }
-      if (lower.includes('lentil') && lower.includes('quinoa') && lower.includes('salad')) {
-        return { protein: 16, carbs: 52, fats: 8 }; // Lentil quinoa salad
-      }
-      if (lower.includes('chicken') && lower.includes('sweet potato')) {
-        return { protein: 38, carbs: 36, fats: 8 }; // Chicken with sweet potato
-      }
-      if (lower.includes('tuna') && lower.includes('salad')) {
-        return { protein: 32, carbs: 14, fats: 12 }; // Tuna salad
-      }
-      if (lower.includes('greek salad') && lower.includes('feta')) {
-        return { protein: 12, carbs: 18, fats: 22 }; // Greek salad
-      }
-      if (lower.includes('buddha bowl') || (lower.includes('protein bowl') && lower.includes('vegetarian'))) {
-        return { protein: 18, carbs: 46, fats: 16 }; // Buddha bowl
-      }
-      
-      // Dinner items (verified)
-      if (lower.includes('grilled salmon') && lower.includes('quinoa')) {
-        return { protein: 36, carbs: 34, fats: 18 }; // Salmon with quinoa and vegetables
-      }
-      if (lower.includes('chicken breast') && lower.includes('brown rice') && lower.includes('broccoli')) {
-        return { protein: 40, carbs: 38, fats: 8 }; // Classic meal prep
-      }
-      if (lower.includes('grilled chicken') && !lower.includes('salad') && lower.includes('rice')) {
-        return { protein: 42, carbs: 44, fats: 10 }; // Chicken with rice and veggies
-      }
-      if (lower.includes('lean beef') && lower.includes('steak')) {
-        return { protein: 46, carbs: 28, fats: 16 }; // Lean beef with vegetables
-      }
-      if (lower.includes('tofu stir-fry') || lower.includes('tofu stir fry')) {
-        return { protein: 22, carbs: 32, fats: 14 }; // Tofu stir-fry
-      }
-      if (lower.includes('chicken') && (lower.includes('tikka') || lower.includes('curry'))) {
-        return { protein: 38, carbs: 42, fats: 14 }; // Chicken curry/tikka
-      }
-      if (lower.includes('lamb') && lower.includes('curry')) {
-        return { protein: 34, carbs: 38, fats: 20 }; // Lamb curry
-      }
-      if (lower.includes('fish') && lower.includes('tandoori')) {
-        return { protein: 36, carbs: 24, fats: 10 }; // Fish tandoori
-      }
-      if (lower.includes('vegetable lasagna')) {
-        return { protein: 18, carbs: 46, fats: 16 }; // Vegetable lasagna
-      }
-      if (lower.includes('eggplant parmesan') || lower.includes('eggplant parmigiana')) {
-        return { protein: 16, carbs: 38, fats: 18 }; // Eggplant parmesan
-      }
-      if (lower.includes('tempeh') && lower.includes('stir-fry')) {
-        return { protein: 24, carbs: 34, fats: 16 }; // Tempeh stir-fry
-      }
-      if (lower.includes('black bean') && lower.includes('enchiladas')) {
-        return { protein: 16, carbs: 52, fats: 14 }; // Bean enchiladas
-      }
-      if (lower.includes('lentil') && (lower.includes('bolognese') || lower.includes('pasta'))) {
-        return { protein: 18, carbs: 58, fats: 10 }; // Lentil pasta
-      }
-      if (lower.includes('stuffed bell peppers')) {
-        return { protein: 14, carbs: 44, fats: 8 }; // Stuffed peppers
-      }
-      if (lower.includes('chickpea curry')) {
-        return { protein: 16, carbs: 48, fats: 12 }; // Chickpea curry
-      }
-      
-      // Snacks (verified)
-      if (lower.includes('greek yogurt') && !lower.includes('granola')) {
-        return { protein: 15, carbs: 12, fats: 4 }; // Plain Greek yogurt with berries
-      }
-      if (lower.includes('hard-boiled eggs') || lower.includes('hard boiled eggs')) {
-        return { protein: 12, carbs: 2, fats: 10 }; // 2 hard-boiled eggs
-      }
-      if (lower.includes('protein bar')) {
-        return { protein: 16, carbs: 24, fats: 8 }; // Typical protein bar
-      }
-      if (lower.includes('hummus') && lower.includes('vegetables')) {
-        return { protein: 6, carbs: 22, fats: 10 }; // Hummus with veggies
-      }
-      if (lower.includes('mixed nuts') || lower.includes('trail mix')) {
-        return { protein: 8, carbs: 18, fats: 16 }; // Nut mix
-      }
-      if (lower.includes('edamame')) {
-        return { protein: 12, carbs: 10, fats: 6 }; // Edamame
-      }
-      if (lower.includes('cottage cheese') && !lower.includes('pancakes')) {
-        return { protein: 14, carbs: 6, fats: 4 }; // Cottage cheese
-      }
-      if (lower.includes('almond butter') || lower.includes('peanut butter')) {
-        return { protein: 7, carbs: 16, fats: 16 }; // Nut butter with apple
-      }
-      
-      // Fallback estimates by meal type for items not in database
-      const baseMacros = {
-        breakfast: { protein: 22, carbs: 38, fats: 14 },
-        lunch: { protein: 32, carbs: 42, fats: 16 },
-        dinner: { protein: 36, carbs: 40, fats: 14 },
-        snacks: { protein: 10, carbs: 18, fats: 10 }
-      };
-      
-      return baseMacros[mealType];
-    };
+    // Apply allergy filters
+    breakfastOptions = filterAllergies(breakfastOptions, allergies);
+    lunchOptions = filterAllergies(lunchOptions, allergies);
+    dinnerOptions = filterAllergies(dinnerOptions, allergies);
+    snackOptions = filterAllergies(snackOptions, allergies);
 
-    // Get meals from multiple cuisines with variety across days
-    const getMealsFromMultipleCuisines = (mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks', count: number = 2, dayNumber: number = 1): MealWithMacros[] => {
-      const selected: string[] = [];
-      const usedMeals = new Set<string>();
-      
-      // Filter out French cuisine
-      const filteredCuisines = cuisines.filter(cuisine => cuisine !== 'French');
-      const activeCuisines = filteredCuisines.length > 0 ? filteredCuisines : ['American'];
-      
-      if (activeCuisines.length === 1) {
-        const cuisineName = activeCuisines[0];
-        const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
-        const meals = filterAllergies(cuisineMeals[mealType]);
-        
-        // Use day number to ensure variety across days
-        const startIndex = ((dayNumber - 1) * count) % meals.length;
-        
-        for (let i = 0; i < count && i < meals.length; i++) {
-          const mealIndex = (startIndex + i) % meals.length;
-          if (!usedMeals.has(meals[mealIndex])) {
-            selected.push(meals[mealIndex]);
-            usedMeals.add(meals[mealIndex]);
-          }
-        }
-      } else {
-        // Multiple cuisines - rotate through them for variety
-        const shuffledCuisines = [...activeCuisines];
-        
-        // Use day number to vary cuisine selection
-        for (let i = 0; i < count; i++) {
-          const cuisineIndex = ((dayNumber - 1) + i) % shuffledCuisines.length;
-          const cuisineName = shuffledCuisines[cuisineIndex];
-          const cuisineMeals = mealOptions[cuisineName as keyof typeof mealOptions] || mealOptions.American;
-          const meals = filterAllergies(cuisineMeals[mealType]);
-          
-          if (meals.length > 0) {
-            // Use day number to select different meals from the same cuisine
-            const mealIndex = ((dayNumber - 1) * 2 + i) % meals.length;
-            const selectedMeal = meals[mealIndex];
-            selected.push(selectedMeal);
-            usedMeals.add(selectedMeal);
-          }
-        }
-      }
-      
-      // Fill remaining slots if needed with fallback options
-      while (selected.length < count) {
-        const fallbackMeals = mealOptions.American[mealType];
-        const fallbackIndex = (selected.length + dayNumber) % fallbackMeals.length;
-        selected.push(fallbackMeals[fallbackIndex]);
-      }
-      
-      // Convert to MealWithMacros
-      return selected.map(mealName => ({
-        name: mealName,
-        ...estimateMacros(mealName, mealType)
-      }));
-    };
+    // Select meals with variety (use day number as seed for rotation)
+    const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
+    const lunch = selectMeals(lunchOptions, 1, dayNumber);
+    const dinner = selectMeals(dinnerOptions, 1, dayNumber);
+    const snacks = selectMeals(snackOptions, 2, dayNumber);
 
     return {
-      breakfast: getMealsFromMultipleCuisines('breakfast', 2, dayNumber),
-      lunch: getMealsFromMultipleCuisines('lunch', 2, dayNumber),
-      dinner: getMealsFromMultipleCuisines('dinner', 2, dayNumber),
-      snacks: getMealsFromMultipleCuisines('snacks', 2, dayNumber)
+      breakfast,
+      lunch,
+      dinner,
+      snacks
     };
+  };
+
+  const selectMeals = (options: MealData[], count: number, seed: number): MealData[] => {
+    if (options.length === 0) return [];
+    
+    const selected: MealData[] = [];
+    const startIndex = (seed - 1) * count;
+    
+    for (let i = 0; i < count; i++) {
+      const index = (startIndex + i) % options.length;
+      selected.push(options[index]);
+    }
+    
+    return selected;
   };
 
   const handleUpdateProfile = async () => {
@@ -829,7 +204,6 @@ const DietPlan = () => {
 
     try {
       await updateProfile({
-        ...profile,
         goal_weight: editFormData.goal_weight ? parseFloat(editFormData.goal_weight) : null,
         diet_preferences: editFormData.diet_preferences,
         food_allergies: editFormData.food_allergies,
@@ -838,10 +212,14 @@ const DietPlan = () => {
 
       toast({
         title: "Profile Updated",
-        description: "Your diet preferences have been updated successfully."
+        description: "Your dietary preferences have been saved."
       });
-
+      
       setIsEditingProfile(false);
+      
+      if (dietPlan.length > 0) {
+        generateDietPlan();
+      }
     } catch (error) {
       toast({
         title: "Error",
@@ -851,16 +229,12 @@ const DietPlan = () => {
     }
   };
 
-  const handleCheckboxChange = (
-    field: 'diet_preferences' | 'food_allergies' | 'taste_preferences', 
-    value: string, 
-    checked: boolean
-  ) => {
+  const handleCheckboxChange = (category: 'diet_preferences' | 'food_allergies' | 'taste_preferences', value: string) => {
     setEditFormData(prev => ({
       ...prev,
-      [field]: checked 
-        ? [...prev[field], value]
-        : prev[field].filter(item => item !== value)
+      [category]: prev[category].includes(value)
+        ? prev[category].filter(item => item !== value)
+        : [...prev[category], value]
     }));
   };
 
@@ -868,404 +242,457 @@ const DietPlan = () => {
     setDietPlan([]);
     toast({
       title: "Diet Plan Cleared",
-      description: "Your diet plan has been cleared successfully."
+      description: "Your diet plan has been removed."
     });
   };
 
   const getPlanType = () => {
-    if (!profile?.goal_weight) return 'Maintenance';
+    if (!profile || !profile.goal_weight) return 'Maintenance';
     if (profile.goal_weight > profile.weight) return 'Bulking';
     if (profile.goal_weight < profile.weight) return 'Cutting';
     return 'Maintenance';
   };
 
-  const syncMealToTracker = async (
-    meal: MealWithMacros,
-    mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack',
-    dayNumber: number,
-    mealIndex: number
-  ) => {
-    if (!user) {
-      sonnerToast.error('Please log in to sync meals');
-      return;
-    }
+  const syncMealToTracker = async (meal: MealData, mealType: string, day: number) => {
+    if (!user) return;
 
-    setSyncingMeal(`${dayNumber}-${mealType}-${mealIndex}`);
+    const mealKey = `${day}-${mealType}-${meal.name}`;
+    setSyncingMeal(mealKey);
 
     try {
-      // Calculate calories for the meal
-      const calories = Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9);
-
-      // Convert meal to the format expected by food_logs
-      const foods = [{
-        name: meal.name,
-        portion: '1 serving',
-        calories: calories,
-        protein: meal.protein,
-        carbs: meal.carbs,
-        fats: meal.fats,
-      }];
-
-      const { error } = await supabase.from('food_logs').insert({
-        user_id: user.id,
-        foods: foods,
-        total_calories: calories,
-        total_protein: Math.round(meal.protein),
-        total_carbs: Math.round(meal.carbs),
-        total_fats: Math.round(meal.fats),
-        meal_type: mealType,
-        notes: `Synced from Day ${dayNumber} diet plan`,
-      });
+      const { error } = await supabase
+        .from('food_logs')
+        .insert({
+          user_id: user.id,
+          foods: [{
+            name: meal.name,
+            protein: meal.protein,
+            carbs: meal.carbs,
+            fats: meal.fats,
+            calories: meal.calories
+          }],
+          total_protein: meal.protein,
+          total_carbs: meal.carbs,
+          total_fats: meal.fats,
+          total_calories: meal.calories,
+          meal_type: mealType,
+          notes: `From Day ${day} diet plan`
+        });
 
       if (error) throw error;
 
-      sonnerToast.success(`Meal synced to food tracker!`);
-    } catch (error: any) {
+      sonnerToast.success('Meal synced to food tracker!');
+    } catch (error) {
       console.error('Error syncing meal:', error);
-      sonnerToast.error('Failed to sync meal. Please try again.');
+      sonnerToast.error('Failed to sync meal');
     } finally {
       setSyncingMeal(null);
     }
   };
 
+  const dietPreferences = ['Vegetarian', 'Vegan', 'Lactose Intolerant'];
+  const allergyOptions = ['Peanuts', 'Tree Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Fish', 'Soy', 'Wheat'];
+  const cuisineOptions = ['American', 'Italian', 'Japanese', 'Indian', 'Mexican', 'Mediterranean', 'Thai'];
+
+  if (!profile) {
+    return (
+      <Card className="border-2 border-dashed">
+        <CardContent className="flex flex-col items-center justify-center py-12">
+          <ChefHat className="h-16 w-16 text-muted-foreground mb-4" />
+          <h3 className="text-xl font-semibold mb-2">Complete Your Profile</h3>
+          <p className="text-muted-foreground text-center mb-6">
+            Set up your fitness profile to get a personalized diet plan
+          </p>
+          <Button onClick={() => {
+            const event = new CustomEvent('openFitnessProfileForm');
+            window.dispatchEvent(event);
+          }}>
+            Complete Profile
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Profile Summary & Generate Button */}
+      {/* Profile Summary Card */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            Your Diet Goals
-          </CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5" />
+              Your Nutrition Plan
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              {getPlanType()} • {profile.taste_preferences?.join(', ') || 'American'} Cuisine
+            </p>
+          </div>
+          <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Edit Preferences
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit Diet Preferences</DialogTitle>
+                <DialogDescription>
+                  Update your dietary preferences and restrictions
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-6 py-4">
+                <div className="space-y-3">
+                  <Label>Goal Weight (lbs)</Label>
+                  <Input
+                    type="number"
+                    value={editFormData.goal_weight}
+                    onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
+                    placeholder="Enter goal weight"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Dietary Preferences</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {dietPreferences.map((pref) => (
+                      <div key={pref} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`diet-${pref}`}
+                          checked={editFormData.diet_preferences.includes(pref)}
+                          onCheckedChange={() => handleCheckboxChange('diet_preferences', pref)}
+                        />
+                        <label htmlFor={`diet-${pref}`} className="text-sm cursor-pointer">
+                          {pref}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Food Allergies</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {allergyOptions.map((allergy) => (
+                      <div key={allergy} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`allergy-${allergy}`}
+                          checked={editFormData.food_allergies.includes(allergy)}
+                          onCheckedChange={() => handleCheckboxChange('food_allergies', allergy)}
+                        />
+                        <label htmlFor={`allergy-${allergy}`} className="text-sm cursor-pointer">
+                          {allergy}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <Label>Cuisine Preferences</Label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {cuisineOptions.map((cuisine) => (
+                      <div key={cuisine} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`cuisine-${cuisine}`}
+                          checked={editFormData.taste_preferences.includes(cuisine)}
+                          onCheckedChange={() => handleCheckboxChange('taste_preferences', cuisine)}
+                        />
+                        <label htmlFor={`cuisine-${cuisine}`} className="text-sm cursor-pointer">
+                          {cuisine}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" onClick={() => setIsEditingProfile(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdateProfile}>
+                  Save Changes
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent>
-          {profile ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="font-medium">Current Weight:</span> {profile.weight}kg
-                </div>
-                <div>
-                  <span className="font-medium">Goal Weight:</span> {profile.goal_weight || 'Not set'}kg
-                </div>
-                <div>
-                  <span className="font-medium">Plan Type:</span>
-                  <Badge variant="secondary" className="ml-2">
-                    {getPlanType()}
-                  </Badge>
-                </div>
-                <div>
-                  <span className="font-medium">Fitness Goal:</span> {profile.fitness_goal}
-                </div>
+          <div className="flex flex-wrap gap-2">
+            {profile.diet_preferences && profile.diet_preferences.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {profile.diet_preferences.map(pref => (
+                  <Badge key={pref} variant="secondary">{pref}</Badge>
+                ))}
               </div>
-
-              <div className="flex gap-2">
-                <Button 
-                  onClick={generateDietPlan} 
-                  disabled={isGenerating}
-                  className="flex-1"
-                >
-                  {isGenerating ? 'Generating...' : 'Generate 7-Day Diet Plan'}
-                </Button>
-
-                <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="icon">
-                      <Settings className="h-4 w-4" />
-                    </Button>
-                  </DialogTrigger>
-                   <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                     <DialogHeader>
-                       <DialogTitle>Edit Diet Preferences</DialogTitle>
-                       <DialogDescription>
-                         Update your dietary preferences, allergies, and cuisine choices to get a personalized diet plan.
-                       </DialogDescription>
-                     </DialogHeader>
-                    <div className="space-y-6">
-                      <div>
-                        <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
-                        <Input
-                          id="goal_weight"
-                          type="number"
-                          value={editFormData.goal_weight}
-                          onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
-                          placeholder="Enter your goal weight"
-                        />
-                      </div>
-
-                      <div>
-                        <Label>Diet Preferences</Label>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                          {['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free', 'Lactose Intolerant'].map((pref) => (
-                            <div key={pref} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`diet-${pref}`}
-                                checked={editFormData.diet_preferences.includes(pref)}
-                                onCheckedChange={(checked) => handleCheckboxChange('diet_preferences', pref, checked as boolean)}
-                              />
-                              <Label htmlFor={`diet-${pref}`} className="text-sm">{pref}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Food Allergies</Label>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                          {['Nuts', 'Shellfish', 'Eggs', 'Fish', 'Soy', 'Wheat'].map((allergy) => (
-                            <div key={allergy} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`allergy-${allergy}`}
-                                checked={editFormData.food_allergies.includes(allergy)}
-                                onCheckedChange={(checked) => handleCheckboxChange('food_allergies', allergy, checked as boolean)}
-                              />
-                              <Label htmlFor={`allergy-${allergy}`} className="text-sm">{allergy}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label>Cuisine Preferences</Label>
-                        <div className="grid grid-cols-2 gap-2 mt-2">
-                         {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
-                            <div key={cuisine} className="flex items-center space-x-2">
-                              <Checkbox
-                                id={`cuisine-${cuisine}`}
-                                checked={editFormData.taste_preferences.includes(cuisine)}
-                                onCheckedChange={(checked) => handleCheckboxChange('taste_preferences', cuisine, checked as boolean)}
-                              />
-                              <Label htmlFor={`cuisine-${cuisine}`} className="text-sm">{cuisine}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Button onClick={handleUpdateProfile} className="w-full">
-                        Update Preferences
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-
-                {dietPlan.length > 0 && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Clear Diet Plan</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to clear your current diet plan? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={clearDietPlan}>Clear Plan</AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
+            )}
+            {profile.food_allergies && profile.food_allergies.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {profile.food_allergies.map(allergy => (
+                  <Badge key={allergy} variant="destructive">{allergy}</Badge>
+                ))}
               </div>
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <UtensilsCrossed className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-4">
-                Please complete your fitness profile first to generate a personalized diet plan.
-              </p>
-              <Button
-                onClick={() => {
-                  const event = new CustomEvent('openFitnessProfileForm');
-                  window.dispatchEvent(event);
-                }}
-                className="mx-auto"
-              >
-                Create Fitness Profile
-              </Button>
-            </div>
-          )}
+            )}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Generated Diet Plan */}
-      {dietPlan.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Your 7-Day Diet Plan
-              <Badge variant="outline" className="ml-2">
-                {dietPlan[0]?.calories} calories/day
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="day-1" className="w-full">
-              <TabsList className="grid w-full grid-cols-7">
-                {dietPlan.map((_, index) => (
-                  <TabsTrigger key={index} value={`day-${index + 1}`}>
-                    Day {index + 1}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
-              {dietPlan.map((plan, index) => (
-                <TabsContent key={index} value={`day-${index + 1}`} className="mt-6">
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <Card>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-lg flex items-center gap-2">
-                            <ChefHat className="h-4 w-4" />
-                            Breakfast
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {plan.meals.breakfast.map((meal, idx) => (
-                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="flex justify-between items-start gap-2 mb-2">
-                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-7 px-2 text-xs"
-                                    onClick={() => syncMealToTracker(meal, 'breakfast', plan.day, idx)}
-                                    disabled={syncingMeal === `${plan.day}-breakfast-${idx}`}
-                                  >
-                                    <Download className="h-3 w-3 mr-1" />
-                                    {syncingMeal === `${plan.day}-breakfast-${idx}` ? 'Syncing...' : 'Sync'}
-                                  </Button>
-                                </div>
-                                <div className="flex gap-3 text-xs text-muted-foreground">
-                                  <span>Protein: {meal.protein}g</span>
-                                  <span>Carbs: {meal.carbs}g</span>
-                                  <span>Fats: {meal.fats}g</span>
-                                  <span className="text-primary">
-                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-lg">Lunch</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {plan.meals.lunch.map((meal, idx) => (
-                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="flex justify-between items-start gap-2 mb-2">
-                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-7 px-2 text-xs"
-                                    onClick={() => syncMealToTracker(meal, 'lunch', plan.day, idx)}
-                                    disabled={syncingMeal === `${plan.day}-lunch-${idx}`}
-                                  >
-                                    <Download className="h-3 w-3 mr-1" />
-                                    {syncingMeal === `${plan.day}-lunch-${idx}` ? 'Syncing...' : 'Sync'}
-                                  </Button>
-                                </div>
-                                <div className="flex gap-3 text-xs text-muted-foreground">
-                                  <span>Protein: {meal.protein}g</span>
-                                  <span>Carbs: {meal.carbs}g</span>
-                                  <span>Fats: {meal.fats}g</span>
-                                  <span className="text-primary">
-                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-lg">Dinner</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {plan.meals.dinner.map((meal, idx) => (
-                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="flex justify-between items-start gap-2 mb-2">
-                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-7 px-2 text-xs"
-                                    onClick={() => syncMealToTracker(meal, 'dinner', plan.day, idx)}
-                                    disabled={syncingMeal === `${plan.day}-dinner-${idx}`}
-                                  >
-                                    <Download className="h-3 w-3 mr-1" />
-                                    {syncingMeal === `${plan.day}-dinner-${idx}` ? 'Syncing...' : 'Sync'}
-                                  </Button>
-                                </div>
-                                <div className="flex gap-3 text-xs text-muted-foreground">
-                                  <span>Protein: {meal.protein}g</span>
-                                  <span>Carbs: {meal.carbs}g</span>
-                                  <span>Fats: {meal.fats}g</span>
-                                  <span className="text-primary">
-                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-
-                      <Card>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-lg">Snacks</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="space-y-3">
-                            {plan.meals.snacks.map((meal, idx) => (
-                              <div key={idx} className="border-b last:border-0 pb-3 last:pb-0">
-                                <div className="flex justify-between items-start gap-2 mb-2">
-                                  <div className="text-sm font-medium flex-1">{meal.name}</div>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-7 px-2 text-xs"
-                                    onClick={() => syncMealToTracker(meal, 'snack', plan.day, idx)}
-                                    disabled={syncingMeal === `${plan.day}-snack-${idx}`}
-                                  >
-                                    <Download className="h-3 w-3 mr-1" />
-                                    {syncingMeal === `${plan.day}-snack-${idx}` ? 'Syncing...' : 'Sync'}
-                                  </Button>
-                                </div>
-                                <div className="flex gap-3 text-xs text-muted-foreground">
-                                  <span>Protein: {meal.protein}g</span>
-                                  <span>Carbs: {meal.carbs}g</span>
-                                  <span>Fats: {meal.fats}g</span>
-                                  <span className="text-primary">
-                                    {Math.round(meal.protein * 4 + meal.carbs * 4 + meal.fats * 9)} cal
-                                  </span>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </div>
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+      {/* Generate Plan Button */}
+      {dietPlan.length === 0 ? (
+        <Card className="border-2 border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-12">
+            <UtensilsCrossed className="h-16 w-16 text-muted-foreground mb-4" />
+            <h3 className="text-xl font-semibold mb-2">Generate Your Diet Plan</h3>
+            <p className="text-muted-foreground text-center mb-6 max-w-md">
+              Get a personalized 7-day meal plan with accurate macros based on your preferences
+            </p>
+            <Button 
+              size="lg" 
+              onClick={generateDietPlan}
+              disabled={isGenerating}
+              className="min-w-[200px]"
+            >
+              {isGenerating ? 'Generating...' : 'Generate 7-Day Plan'}
+            </Button>
           </CardContent>
         </Card>
+      ) : (
+        <>
+          {/* Diet Plan Display */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Your 7-Day {getPlanType()} Plan</h2>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={generateDietPlan}>
+                Regenerate Plan
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Clear Plan
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Clear Diet Plan?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will remove your current diet plan. You can always generate a new one.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={clearDietPlan}>
+                      Clear Plan
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+
+          <Tabs defaultValue="day1" className="w-full">
+            <TabsList className="grid grid-cols-7 w-full">
+              {dietPlan.map((plan) => (
+                <TabsTrigger key={plan.day} value={`day${plan.day}`}>
+                  Day {plan.day}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+
+            {dietPlan.map((plan) => (
+              <TabsContent key={plan.day} value={`day${plan.day}`} className="space-y-6">
+                {/* Daily Summary */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="h-5 w-5" />
+                      Day {plan.day} Summary
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Target</p>
+                        <p className="text-2xl font-bold">{plan.targetCalories}</p>
+                        <p className="text-xs text-muted-foreground">cal</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Total</p>
+                        <p className="text-2xl font-bold">{plan.totalCalories}</p>
+                        <p className="text-xs text-muted-foreground">cal</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Protein</p>
+                        <p className="text-2xl font-bold">{plan.totalProtein}g</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Carbs</p>
+                        <p className="text-2xl font-bold">{plan.totalCarbs}g</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Fats</p>
+                        <p className="text-2xl font-bold">{plan.totalFats}g</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Breakfast */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>🌅 Breakfast</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {plan.meals.breakfast.map((meal, idx) => (
+                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-2">{meal.name}</h4>
+                          <div className="flex flex-wrap gap-3 text-sm">
+                            <span className="text-muted-foreground">
+                              <strong>Protein:</strong> {meal.protein}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Carbs:</strong> {meal.carbs}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Fats:</strong> {meal.fats}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Calories:</strong> {meal.calories}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => syncMealToTracker(meal, 'breakfast', plan.day)}
+                          disabled={syncingMeal === `${plan.day}-breakfast-${meal.name}`}
+                        >
+                          {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Lunch */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>🌞 Lunch</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {plan.meals.lunch.map((meal, idx) => (
+                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-2">{meal.name}</h4>
+                          <div className="flex flex-wrap gap-3 text-sm">
+                            <span className="text-muted-foreground">
+                              <strong>Protein:</strong> {meal.protein}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Carbs:</strong> {meal.carbs}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Fats:</strong> {meal.fats}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Calories:</strong> {meal.calories}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => syncMealToTracker(meal, 'lunch', plan.day)}
+                          disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
+                        >
+                          {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Dinner */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>🌙 Dinner</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {plan.meals.dinner.map((meal, idx) => (
+                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-2">{meal.name}</h4>
+                          <div className="flex flex-wrap gap-3 text-sm">
+                            <span className="text-muted-foreground">
+                              <strong>Protein:</strong> {meal.protein}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Carbs:</strong> {meal.carbs}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Fats:</strong> {meal.fats}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Calories:</strong> {meal.calories}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => syncMealToTracker(meal, 'dinner', plan.day)}
+                          disabled={syncingMeal === `${plan.day}-dinner-${meal.name}`}
+                        >
+                          {syncingMeal === `${plan.day}-dinner-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Snacks */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>🍎 Snacks</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {plan.meals.snacks.map((meal, idx) => (
+                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-semibold mb-2">{meal.name}</h4>
+                          <div className="flex flex-wrap gap-3 text-sm">
+                            <span className="text-muted-foreground">
+                              <strong>Protein:</strong> {meal.protein}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Carbs:</strong> {meal.carbs}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Fats:</strong> {meal.fats}g
+                            </span>
+                            <span className="text-muted-foreground">
+                              <strong>Calories:</strong> {meal.calories}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => syncMealToTracker(meal, 'snacks', plan.day)}
+                          disabled={syncingMeal === `${plan.day}-snacks-${meal.name}`}
+                        >
+                          {syncingMeal === `${plan.day}-snacks-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                        </Button>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </>
       )}
     </div>
   );
