@@ -1074,7 +1074,7 @@ export const exercises: Exercise[] = [
     id: "medicine-ball-slam",
     name: "Medicine Ball Slam",
     muscleGroup: "functional",
-    equipment: ["dumbbell", "kettlebell"],
+    equipment: ["dumbbells", "kettlebell"],
     sets: 3,
     reps: 12,
     restTime: 45,

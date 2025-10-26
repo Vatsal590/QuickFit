@@ -396,8 +396,6 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'box jump': 'https://www.docteur-fitness.com/wp-content/uploads/2022/09/jump-box.gif',
       'farmer walk': 'https://barbend.com/wp-content/uploads/2024/02/farmers-carry-with-dumbbells-barbend-movement-gif-masters.gif',
       'farmers walk': 'https://barbend.com/wp-content/uploads/2024/02/farmers-carry-with-dumbbells-barbend-movement-gif-masters.gif',
-      'medicine ball slam': 'https://pelank.com/wp-content/uploads/2025/06/Medicine-ball-Overhead-Slam-exercise.gif',
-      'lateral bound': 'https://media1.popsugar-assets.com/files/thumbor/HfyLbibGeha6GRVN4Ko9MJiOTms=/fit-in/792x446/top/filters:format_auto():upscale()/2021/02/04/109/n/45061871/9b923286601ca14b1dd6d3.87823207_LATERAL_BOUN.gif',
       'agility ladder': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
       'agility ladder drills': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
       'agility ladder drill': 'https://s.yimg.com/cd/diminuendo/1.0/original/2840051dd03b58ed4d3214b015c01d4b22e75a25.gif',
