@@ -32,9 +32,9 @@ const AuthForm = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gradient-to-tr from-blue-50 via-white to-green-50 overflow-hidden">
       {/* Dynamic Background Blobs */}
-      <div className="absolute w-72 h-72 bg-fitness-primary/20 rounded-full animate-blob animation-delay-0 top-[-80px] left-[-50px]"></div>
-      <div className="absolute w-80 h-80 bg-green-400/20 rounded-full animate-blob animation-delay-3000 bottom-[-100px] right-[-50px]"></div>
-      <div className="absolute w-64 h-64 bg-blue-400/10 rounded-full animate-blob animation-delay-6000 top-1/3 right-[-60px]"></div>
+      <div className="absolute w-80 h-80 bg-fitness-primary/20 rounded-full animate-blob animation-delay-0 top-[-100px] left-[-80px] blur-3xl"></div>
+      <div className="absolute w-96 h-96 bg-green-400/20 rounded-full animate-blob animation-delay-3000 bottom-[-120px] right-[-80px] blur-3xl"></div>
+      <div className="absolute w-72 h-72 bg-blue-400/15 rounded-full animate-blob animation-delay-6000 top-1/3 right-[-80px] blur-3xl"></div>
 
       {/* Particle dots */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
@@ -59,25 +59,26 @@ const AuthForm = () => {
 
       {/* Login Card */}
       <div className="relative z-10 w-full max-w-sm">
-        <Card className="border-0 backdrop-blur-md bg-white/60 shadow-2xl rounded-3xl">
-          <CardHeader className="text-center py-8 bg-gradient-to-r from-fitness-primary to-green-400 text-white rounded-t-3xl">
-            <div className="inline-block mb-4 animate-bounce">
-              <Dumbbell className="h-12 w-12 mx-auto text-white" />
+        <Card className="border-0 backdrop-blur-lg bg-white/70 shadow-3xl rounded-3xl overflow-hidden hover:shadow-4xl transition-shadow duration-500">
+          <CardHeader className="text-center py-10 bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent text-white rounded-t-3xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+            <div className="inline-block mb-5 animate-bounce relative z-10">
+              <Dumbbell className="h-14 w-14 mx-auto text-white drop-shadow-lg" />
             </div>
-            <CardTitle className="text-3xl font-bold tracking-wide">Welcome to QuickFit</CardTitle>
-            <CardDescription className="mt-2 text-white/90">
+            <CardTitle className="text-4xl font-black font-display tracking-wide relative z-10 drop-shadow-md">Welcome to QuickFit</CardTitle>
+            <CardDescription className="mt-3 text-white/95 relative z-10 text-base font-semibold">
               Sign in with Google to continue
             </CardDescription>
           </CardHeader>
-          <CardContent className="p-8 flex flex-col gap-6">
+          <CardContent className="p-10 flex flex-col gap-7">
             <Button
               type="button"
-              className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 border-2 border-gray-300 shadow-lg hover:shadow-xl hover:bg-gray-50 transition-all py-3 rounded-xl font-semibold text-lg"
+              className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 border-2 border-gray-300 shadow-xl hover:shadow-2xl hover:bg-gray-50 transition-all py-4 rounded-xl font-bold text-lg hover:scale-105"
               onClick={handleGoogleSignIn}
               disabled={googleLoading}
             >
-              {googleLoading && <Loader2 className="h-5 w-5 animate-spin" />}
-              <svg className="h-5 w-5" viewBox="0 0 24 24">
+              {googleLoading && <Loader2 className="h-6 w-6 animate-spin" />}
+              <svg className="h-6 w-6" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
                 <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -85,11 +86,11 @@ const AuthForm = () => {
               </svg>
               Continue with Google
             </Button>
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-sm text-gray-600 font-medium">
               By signing in, you agree to our{' '}
-              <a href="/privacy-policy" className="text-fitness-primary underline">Privacy Policy</a>{' '}
+              <a href="/privacy-policy" className="text-fitness-primary font-bold underline hover:text-fitness-secondary transition-colors">Privacy Policy</a>{' '}
               and{' '}
-              <a href="/terms-of-conditions" className="text-fitness-primary underline">Terms & Conditions</a>.
+              <a href="/terms-of-conditions" className="text-fitness-primary font-bold underline hover:text-fitness-secondary transition-colors">Terms & Conditions</a>.
             </p>
           </CardContent>
         </Card>
