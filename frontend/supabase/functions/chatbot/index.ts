@@ -1,8 +1,4 @@
-
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -15,36 +11,58 @@ serve(async (req) => {
   }
 
   try {
-    const { prompt } = await req.json();
+    const { messages } = await req.json();
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+    
+    if (!LOVABLE_API_KEY) {
+      throw new Error('LOVABLE_API_KEY is not configured');
+    }
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'You are a helpful fitness and general assistant for QuickFit users. Keep responses concise.' },
-          { role: 'user', content: prompt }
+          { role: 'system', content: 'You are a helpful fitness assistant for QuickFit users. Provide clear, concise advice about workouts, nutrition, and general fitness. Be encouraging and supportive.' },
+          ...messages
         ],
-        max_tokens: 512,
-        temperature: 0.8,
+        stream: true,
       }),
     });
 
-    const data = await response.json();
-    const answer = data.choices?.[0]?.message?.content ?? "Sorry, I couldn't process that.";
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: 'Rate limits exceeded, please try again later.' }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: 'Payment required, please add funds to your Lovable AI workspace.' }), {
+          status: 402,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const errorText = await response.text();
+      console.error('AI gateway error:', response.status, errorText);
+      return new Response(JSON.stringify({ error: 'AI gateway error' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
-    return new Response(JSON.stringify({ answer }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return new Response(response.body, {
+      headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' },
     });
   } catch (e) {
-    console.error(e);
-    return new Response(JSON.stringify({ error: "Server error." }), {
+    console.error('Chatbot error:', e);
+    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : 'Unknown error' }), {
+      status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500
     });
   }
 });
