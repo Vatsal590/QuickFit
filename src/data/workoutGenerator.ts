@@ -76,8 +76,14 @@ const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[
     { id: uuidv4(), name: "Chest Stretch", muscleGroup: "chest", equipment: ["none"], sets: 1, reps: 30, restTime: 0, description: "Clasp hands behind back and lift slightly." }
   ];
 
-  let targetSpecific = cooldown.filter(ex => targetMuscleGroups.includes(ex.muscleGroup));
-  if (targetSpecific.length < 3) targetSpecific = [...targetSpecific, ...cooldown.filter(ex => !targetMuscleGroups.includes(ex.muscleGroup))];
+  let targetSpecific = cooldown.filter(ex => {
+    const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    return exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+  });
+  if (targetSpecific.length < 3) targetSpecific = [...targetSpecific, ...cooldown.filter(ex => {
+    const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    return !exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+  })];
   return targetSpecific.slice(0, 4);
 };
 

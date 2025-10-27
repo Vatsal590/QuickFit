@@ -40,7 +40,7 @@ export type Workout = {
 export type Exercise = {
   id: string;
   name: string;
-  muscleGroup: MuscleGroup;
+  muscleGroup: MuscleGroup | MuscleGroup[];
   equipment: Equipment[];
   sets: number;
   reps: number;

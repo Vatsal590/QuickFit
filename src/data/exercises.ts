@@ -351,7 +351,7 @@ export const exercises: Exercise[] = [
   {
     id: "barbell-deadlift",
     name: "Barbell Deadlift",
-    muscleGroup: "legs","back",
+    muscleGroup: ["legs", "back"],
     equipment: ["barbell"],
     sets: 3,
     reps: 6,
@@ -1146,7 +1146,8 @@ export const getFilteredExercises = (
   // Filter exercises that match the target muscle groups and available equipment
   const filteredByMuscleAndEquipment = exercises.filter(exercise => {
     // Check if the exercise targets one of the selected muscle groups
-    const matchesMuscleGroup = targetMuscleGroups.includes(exercise.muscleGroup);
+    const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
+    const matchesMuscleGroup = exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
     
     // If all equipment selected, exclude resistance band exercises
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {

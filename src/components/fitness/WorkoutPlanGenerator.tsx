@@ -329,7 +329,10 @@ const generateExercises = (
   };
 
   const targetGroups = focusMap[focusArea] || ['full body'];
-  let pool = exercises.filter(ex => targetGroups.includes(ex.muscleGroup));
+  let pool = exercises.filter(ex => {
+    const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    return exerciseMuscleGroups.some(mg => targetGroups.includes(mg));
+  });
 
   // Exclude pain-related exercises
   const painTriggers: Record<BodyPain, string[]> = {
