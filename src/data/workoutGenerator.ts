@@ -191,6 +191,44 @@ export const generateWorkout = (
     });
   }
 
+  // Special case: Back & Biceps with dumbbells and barbells for 60 mins
+  if (
+    time === 60 &&
+    muscleGroups.includes("back") &&
+    muscleGroups.includes("biceps") &&
+    equipment.includes("dumbbells") &&
+    equipment.includes("barbell")
+  ) {
+    // Get back exercises with barbell
+    const backExercisesBarbell = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("back") && ex.equipment.includes("barbell");
+    });
+    
+    // Get back exercises with dumbbell
+    const backExercisesDumbbell = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("back") && 
+             ex.equipment.includes("dumbbells") && 
+             !ex.equipment.includes("barbell");
+    });
+    
+    // Get bicep exercises
+    const bicepExercises = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("biceps");
+    });
+    
+    // Select 2 barbell back, 1 dumbbell back, 2 bicep
+    const selected = [
+      ...backExercisesBarbell.slice(0, 2),
+      ...backExercisesDumbbell.slice(0, 1),
+      ...bicepExercises.slice(0, 2)
+    ];
+    
+    selectedExercises = selected;
+  }
+
   // Ensure at least 3 exercises
   if (selectedExercises.length < 3) {
     const supplementary = getFilteredExercises(["cardio","core"], equipment, intensity);
