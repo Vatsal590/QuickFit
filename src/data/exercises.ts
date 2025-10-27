@@ -1138,10 +1138,20 @@ export const getFilteredExercises = (
   availableEquipment: Equipment[],
   intensity: string
 ): Exercise[] => {
+  // Check if user selected all equipment (5+ equipment types, excluding "none")
+  const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
+  const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
+  const isAllEquipmentSelected = selectedEquipmentCount >= 5;
+  
   // Filter exercises that match the target muscle groups and available equipment
   const filteredByMuscleAndEquipment = exercises.filter(exercise => {
     // Check if the exercise targets one of the selected muscle groups
     const matchesMuscleGroup = targetMuscleGroups.includes(exercise.muscleGroup);
+    
+    // If all equipment selected, exclude resistance band exercises
+    if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
+      return false;
+    }
     
     // Check if the exercise can be performed with the available equipment
     const hasRequiredEquipment = exercise.equipment.some(eq => 
