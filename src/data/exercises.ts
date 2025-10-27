@@ -351,7 +351,7 @@ export const exercises: Exercise[] = [
   {
     id: "barbell-deadlift",
     name: "Barbell Deadlift",
-    muscleGroup: "legs",
+    muscleGroup: "legs","back",
     equipment: ["barbell"],
     sets: 3,
     reps: 6,
