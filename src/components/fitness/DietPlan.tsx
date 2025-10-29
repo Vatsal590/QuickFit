@@ -606,7 +606,7 @@ const DietPlan = () => {
     <div className="space-y-6">
       {/* Profile Summary Card */}
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
           <div>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
@@ -616,14 +616,15 @@ const DietPlan = () => {
               {getPlanType()} • {profile.taste_preferences?.join(', ') || 'American'} Cuisine
             </p>
           </div>
+          <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <Dialog open={isEditingProfile} onOpenChange={setIsEditingProfile}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                 <Settings className="h-4 w-4 mr-2" />
                 Edit Preferences
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-full">
               <DialogHeader>
                 <DialogTitle>Edit Diet Preferences</DialogTitle>
                 <DialogDescription>
@@ -713,12 +714,12 @@ const DietPlan = () => {
             }
           }}>
             <DialogTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                 <Settings className="h-4 w-4 mr-2" />
                 Calories & Macros
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-md">
+            <DialogContent className="max-w-md w-[95vw] md:w-full">
               <DialogHeader>
                 <DialogTitle>Edit Calories & Macros</DialogTitle>
                 <DialogDescription>
@@ -728,6 +729,7 @@ const DietPlan = () => {
               <NutritionGoals />
             </DialogContent>
           </Dialog>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
@@ -771,15 +773,15 @@ const DietPlan = () => {
       ) : (
         <>
           {/* Diet Plan Display */}
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
             <h2 className="text-2xl font-bold">Your 7-Day {getPlanType()} Plan</h2>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={generateDietPlan}>
+            <div className="flex gap-2 w-full md:w-auto">
+              <Button variant="outline" size="sm" onClick={generateDietPlan} className="flex-1 md:flex-none">
                 Regenerate Plan
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
+                  <Button variant="destructive" size="sm" className="flex-1 md:flex-none">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Clear Plan
                   </Button>
@@ -803,13 +805,15 @@ const DietPlan = () => {
           </div>
 
           <Tabs defaultValue="day1" className="w-full">
-            <TabsList className="grid grid-cols-7 w-full">
-              {dietPlan.map((plan) => (
-                <TabsTrigger key={plan.day} value={`day${plan.day}`}>
-                  Day {plan.day}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+            <div className="overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0">
+              <TabsList className="inline-flex md:grid md:grid-cols-7 w-auto md:w-full min-w-max">
+                {dietPlan.map((plan) => (
+                  <TabsTrigger key={plan.day} value={`day${plan.day}`} className="flex-shrink-0">
+                    Day {plan.day}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </div>
 
             {dietPlan.map((plan) => (
               <TabsContent key={plan.day} value={`day${plan.day}`} className="space-y-6">
@@ -822,28 +826,28 @@ const DietPlan = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Target</p>
-                        <p className="text-2xl font-bold">{plan.targetCalories}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Target</p>
+                        <p className="text-xl md:text-2xl font-bold">{plan.targetCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Total</p>
-                        <p className="text-2xl font-bold">{plan.totalCalories}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Total</p>
+                        <p className="text-xl md:text-2xl font-bold">{plan.totalCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Protein</p>
-                        <p className="text-2xl font-bold">{plan.totalProtein}g</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Protein</p>
+                        <p className="text-xl md:text-2xl font-bold">{plan.totalProtein}g</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Carbs</p>
-                        <p className="text-2xl font-bold">{plan.totalCarbs}g</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Carbs</p>
+                        <p className="text-xl md:text-2xl font-bold">{plan.totalCarbs}g</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Fats</p>
-                        <p className="text-2xl font-bold">{plan.totalFats}g</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">Fats</p>
+                        <p className="text-xl md:text-2xl font-bold">{plan.totalFats}g</p>
                       </div>
                     </div>
                   </CardContent>
@@ -856,10 +860,10 @@ const DietPlan = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.breakfast.map((meal, idx) => (
-                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-1">
+                      <div key={idx} className="flex flex-col sm:flex-row justify-between items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1 w-full sm:w-auto">
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
-                          <div className="flex flex-wrap gap-3 text-sm">
+                          <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
                               <strong>Protein:</strong> {meal.protein}g
                             </span>
@@ -879,6 +883,7 @@ const DietPlan = () => {
                           variant="outline"
                           onClick={() => syncMealToTracker(meal, 'breakfast', plan.day)}
                           disabled={syncingMeal === `${plan.day}-breakfast-${meal.name}`}
+                          className="w-full sm:w-auto whitespace-nowrap"
                         >
                           {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
                         </Button>
@@ -894,10 +899,10 @@ const DietPlan = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.lunch.map((meal, idx) => (
-                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-1">
+                      <div key={idx} className="flex flex-col sm:flex-row justify-between items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1 w-full sm:w-auto">
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
-                          <div className="flex flex-wrap gap-3 text-sm">
+                          <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
                               <strong>Protein:</strong> {meal.protein}g
                             </span>
@@ -917,6 +922,7 @@ const DietPlan = () => {
                           variant="outline"
                           onClick={() => syncMealToTracker(meal, 'lunch', plan.day)}
                           disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
+                          className="w-full sm:w-auto whitespace-nowrap"
                         >
                           {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
                         </Button>
@@ -932,10 +938,10 @@ const DietPlan = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.dinner.map((meal, idx) => (
-                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-1">
+                      <div key={idx} className="flex flex-col sm:flex-row justify-between items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1 w-full sm:w-auto">
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
-                          <div className="flex flex-wrap gap-3 text-sm">
+                          <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
                               <strong>Protein:</strong> {meal.protein}g
                             </span>
@@ -955,6 +961,7 @@ const DietPlan = () => {
                           variant="outline"
                           onClick={() => syncMealToTracker(meal, 'dinner', plan.day)}
                           disabled={syncingMeal === `${plan.day}-dinner-${meal.name}`}
+                          className="w-full sm:w-auto whitespace-nowrap"
                         >
                           {syncingMeal === `${plan.day}-dinner-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
                         </Button>
@@ -970,10 +977,10 @@ const DietPlan = () => {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.snacks.map((meal, idx) => (
-                      <div key={idx} className="flex justify-between items-start p-4 bg-muted/50 rounded-lg">
-                        <div className="flex-1">
+                      <div key={idx} className="flex flex-col sm:flex-row justify-between items-start gap-3 p-4 bg-muted/50 rounded-lg">
+                        <div className="flex-1 w-full sm:w-auto">
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
-                          <div className="flex flex-wrap gap-3 text-sm">
+                          <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
                               <strong>Protein:</strong> {meal.protein}g
                             </span>
@@ -993,6 +1000,7 @@ const DietPlan = () => {
                           variant="outline"
                           onClick={() => syncMealToTracker(meal, 'snacks', plan.day)}
                           disabled={syncingMeal === `${plan.day}-snacks-${meal.name}`}
+                          className="w-full sm:w-auto whitespace-nowrap"
                         >
                           {syncingMeal === `${plan.day}-snacks-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
                         </Button>
