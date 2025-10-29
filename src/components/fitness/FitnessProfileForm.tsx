@@ -15,6 +15,8 @@ import ectomorphImage from '@/assets/ectomorph-body-type.jpg';
 import mesomorphImage from '@/assets/mesomorph-body-type.jpg';
 import endomorphImage from '@/assets/endomorph-body-type.jpg';
 
+import FitnessProfileSummary from './FitnessProfileSummary';
+
 interface FitnessProfileFormProps {
   isOpen: boolean;
   onClose: () => void;
@@ -25,6 +27,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
   const { toast } = useToast();
   const { profile, createProfile, updateProfile } = useFitnessProfile();
   const [showPlanGenerator, setShowPlanGenerator] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
   const [updatedProfile, setUpdatedProfile] = useState<any>(null);
   
   const [formData, setFormData] = useState({
@@ -156,9 +159,9 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
         taste_preferences: savedProfileRecord?.taste_preferences ?? profileData.taste_preferences ?? []
       };
       
-      // Set the updated profile and show plan generator
+      // Set the updated profile and show summary page
       setUpdatedProfile(normalizedProfile);
-      setShowPlanGenerator(true);
+      setShowSummary(true);
       
     } catch (error) {
       console.error('Error saving profile:', error);
@@ -170,8 +173,18 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
     }
   };
 
+  const handleSummaryEdit = () => {
+    setShowSummary(false);
+  };
+
+  const handleSummaryContinue = () => {
+    setShowSummary(false);
+    setShowPlanGenerator(true);
+  };
+
   const handlePlanGeneratorClose = () => {
     setShowPlanGenerator(false);
+    setShowSummary(false);
     onClose();
   };
 
@@ -180,12 +193,14 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
       onPlanGenerated(plan);
     }
     setShowPlanGenerator(false);
+    setShowSummary(false);
     onClose();
   };
 
   return (
     <>
-      <Dialog open={isOpen && !showPlanGenerator} onOpenChange={onClose}>
+      {/* Fitness Profile Form */}
+      <Dialog open={isOpen && !showSummary && !showPlanGenerator} onOpenChange={onClose}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{profile ? 'Update' : 'Create'} Your Fitness Profile</DialogTitle>
@@ -468,6 +483,19 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
         </DialogContent>
       </Dialog>
 
+      {/* Profile Summary Page */}
+      <Dialog open={showSummary} onOpenChange={() => setShowSummary(false)}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {updatedProfile && (
+            <FitnessProfileSummary
+              profile={updatedProfile}
+              onEdit={handleSummaryEdit}
+              onContinue={handleSummaryContinue}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Workout Plan Generator Dialog */}
       {updatedProfile && (
         <WorkoutPlanGenerator
@@ -482,3 +510,4 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
 };
 
 export default FitnessProfileForm;
+
