@@ -128,17 +128,21 @@ const DietPlan = () => {
       const tastePreferences = profile.taste_preferences || ['American'];
       const allergies = profile.food_allergies || [];
 
-      // Generate 7-day meal plan
+      // Generate 9-day meal plan
       const plans: MealPlan[] = [];
 
-      for (let day = 1; day <= 7; day++) {
+      // Build comprehensive snack pool from all cuisines for variety
+      const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies);
+
+      for (let day = 1; day <= 9; day++) {
         const dailyMeals = generateMealsForDay(
           tastePreferences,
           isDietVegetarian,
           isDietVegan,
           allergies,
           targetCalories,
-          day
+          day,
+          allSnacks
         );
 
         // Calculate totals for selected meals
@@ -207,13 +211,47 @@ const DietPlan = () => {
     }
   };
 
+  // Build comprehensive snack pool from all selected cuisines for maximum variety
+  const buildComprehensiveSnackPool = (
+    cuisines: string[],
+    isVegetarian: boolean,
+    isVegan: boolean,
+    allergies: string[]
+  ): MealData[] => {
+    const activeCuisines = cuisines.filter(c => c !== 'French');
+    const allSnacks: MealData[] = [];
+
+    // Collect snacks from all selected cuisines
+    activeCuisines.forEach(cuisine => {
+      let snacks = mealDatabase[cuisine]?.snacks || [];
+      if (isVegan) snacks = filterVegan(snacks);
+      else if (isVegetarian) snacks = filterVegetarian(snacks);
+      snacks = filterAllergies(snacks, allergies);
+      allSnacks.push(...snacks);
+    });
+
+    // If no cuisines selected or no snacks found, use American
+    if (allSnacks.length === 0) {
+      let snacks = mealDatabase.American.snacks;
+      if (isVegan) snacks = filterVegan(snacks);
+      else if (isVegetarian) snacks = filterVegetarian(snacks);
+      snacks = filterAllergies(snacks, allergies);
+      allSnacks.push(...snacks);
+    }
+
+    // Sort by protein density and return all unique snacks
+    const uniqueSnacks = Array.from(new Map(allSnacks.map(s => [s.name, s])).values());
+    return uniqueSnacks.sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories));
+  };
+
   const generateMealsForDay = (
     cuisines: string[],
     isVegetarian: boolean,
     isVegan: boolean,
     allergies: string[],
     targetCalories: number,
-    dayNumber: number
+    dayNumber: number,
+    comprehensiveSnackPool: MealData[]
   ) => {
     // Select primary cuisine for the day (rotate through preferences)
     const activeCuisines = cuisines.filter(c => c !== 'French');
@@ -261,7 +299,8 @@ const DietPlan = () => {
     const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
     const lunch = selectMeals(lunchOptions, 1, dayNumber);
     const dinner = selectMeals(dinnerOptions, 1, dayNumber);
-    const snacks = selectMeals(snackOptions, 2, dayNumber);
+    // Use comprehensive snack pool for variety across all days
+    const snacks = selectMeals(comprehensiveSnackPool, 2, dayNumber);
 
     return {
       breakfast,

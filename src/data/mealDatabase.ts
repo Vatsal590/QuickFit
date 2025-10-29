@@ -51,7 +51,11 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Protein Bar and Banana', protein: 18, carbs: 32, fats: 8, calories: 280 },
       { name: 'Mixed Nuts and Dried Fruit Trail Mix', protein: 8, carbs: 26, fats: 16, calories: 280 },
       { name: 'Cottage Cheese with Pineapple Chunks', protein: 16, carbs: 18, fats: 4, calories: 180 },
-      { name: 'Hard-Boiled Eggs with Whole Grain Crackers', protein: 14, carbs: 16, fats: 12, calories: 230 }
+      { name: 'Hard-Boiled Eggs with Whole Grain Crackers', protein: 14, carbs: 16, fats: 12, calories: 230 },
+      { name: 'Roasted Chickpeas with Herbs', protein: 12, carbs: 24, fats: 6, calories: 200 },
+      { name: 'String Cheese with Cherry Tomatoes', protein: 14, carbs: 8, fats: 12, calories: 200 },
+      { name: 'Turkey Roll-Ups with Hummus', protein: 16, carbs: 10, fats: 8, calories: 180 },
+      { name: 'Pumpkin Seeds with Dark Chocolate', protein: 10, carbs: 18, fats: 14, calories: 240 }
     ]
   },
   
@@ -84,7 +88,11 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Prosciutto with Melon and Mozzarella', protein: 12, carbs: 16, fats: 10, calories: 200 },
       { name: 'Bruschetta with Tomato and Basil', protein: 6, carbs: 22, fats: 6, calories: 170 },
       { name: 'Italian Cheese Plate with Grapes', protein: 14, carbs: 20, fats: 16, calories: 280 },
-      { name: 'Antipasto Skewers with Olives and Cheese', protein: 10, carbs: 8, fats: 14, calories: 190 }
+      { name: 'Antipasto Skewers with Olives and Cheese', protein: 10, carbs: 8, fats: 14, calories: 190 },
+      { name: 'Ricotta with Berries and Pistachios', protein: 14, carbs: 16, fats: 12, calories: 230 },
+      { name: 'Parmesan Crisps with Almonds', protein: 12, carbs: 6, fats: 14, calories: 190 },
+      { name: 'Caprese Skewers with Balsamic', protein: 10, carbs: 8, fats: 10, calories: 160 },
+      { name: 'Italian Tuna with White Beans', protein: 18, carbs: 14, fats: 6, calories: 180 }
     ]
   },
   
@@ -117,7 +125,11 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Edamame with Sea Salt', protein: 14, carbs: 12, fats: 6, calories: 160 },
       { name: 'Rice Crackers with Seaweed', protein: 4, carbs: 24, fats: 2, calories: 130 },
       { name: 'Miso Soup with Tofu', protein: 8, carbs: 10, fats: 4, calories: 100 },
-      { name: 'Green Tea and Rice Crackers', protein: 2, carbs: 20, fats: 1, calories: 95 }
+      { name: 'Green Tea and Rice Crackers', protein: 2, carbs: 20, fats: 1, calories: 95 },
+      { name: 'Nori Rolls with Tuna', protein: 16, carbs: 8, fats: 4, calories: 130 },
+      { name: 'Japanese Tofu Cubes with Soy Sauce', protein: 10, carbs: 6, fats: 6, calories: 110 },
+      { name: 'Dried Seaweed Snack with Almonds', protein: 8, carbs: 10, fats: 12, calories: 170 },
+      { name: 'Steamed Soybeans with Sesame', protein: 14, carbs: 14, fats: 8, calories: 180 }
     ]
   },
   
@@ -147,10 +159,14 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Vegetable Jalfrezi with Whole Wheat Roti and Dal', protein: 16, carbs: 56, fats: 12, calories: 410 }
     ],
     snacks: [
-      { name: 'Samosa with Mint Chutney', protein: 6, carbs: 32, fats: 12, calories: 260 },
-      { name: 'Pakora (Vegetable Fritters) with Chutney', protein: 8, carbs: 28, fats: 14, calories: 270 },
+      { name: 'Roasted Makhana (Fox Nuts) with Spices', protein: 10, carbs: 18, fats: 2, calories: 130 },
       { name: 'Roasted Chickpeas with Spices', protein: 12, carbs: 26, fats: 6, calories: 210 },
-      { name: 'Masala Chai with Biscuits', protein: 4, carbs: 24, fats: 6, calories: 170 }
+      { name: 'Masala Chai with Biscuits', protein: 4, carbs: 24, fats: 6, calories: 170 },
+      { name: 'Paneer Cubes with Mint Chutney', protein: 16, carbs: 6, fats: 12, calories: 200 },
+      { name: 'Roasted Peanuts with Chaat Masala', protein: 14, carbs: 16, fats: 14, calories: 250 },
+      { name: 'Sprouted Moong with Spices', protein: 12, carbs: 20, fats: 4, calories: 160 },
+      { name: 'Yogurt with Cucumber and Cumin', protein: 10, carbs: 12, fats: 6, calories: 140 },
+      { name: 'Roasted Pumpkin Seeds (Pepitas)', protein: 12, carbs: 10, fats: 14, calories: 220 }
     ]
   },
   
@@ -180,10 +196,13 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Chicken Tinga Tostadas with Beans and Lettuce', protein: 32, carbs: 44, fats: 18, calories: 480 }
     ],
     snacks: [
-      { name: 'Guacamole with Tortilla Chips', protein: 4, carbs: 28, fats: 16, calories: 270 },
-      { name: 'Quesadilla with Cheese and Salsa', protein: 18, carbs: 32, fats: 16, calories: 350 },
-      { name: 'Elote (Mexican Street Corn)', protein: 6, carbs: 24, fats: 12, calories: 220 },
-      { name: 'Mexican Hot Chocolate with Pan Dulce', protein: 6, carbs: 36, fats: 10, calories: 260 }
+      { name: 'Guacamole with Vegetable Sticks', protein: 4, carbs: 16, fats: 14, calories: 200 },
+      { name: 'Cheese Quesadilla with Greek Yogurt', protein: 18, carbs: 28, fats: 14, calories: 320 },
+      { name: 'Jicama Sticks with Lime and Chili', protein: 2, carbs: 12, fats: 1, calories: 60 },
+      { name: 'Black Bean Dip with Bell Peppers', protein: 10, carbs: 20, fats: 6, calories: 170 },
+      { name: 'Roasted Pumpkin Seeds with Lime', protein: 12, carbs: 10, fats: 14, calories: 220 },
+      { name: 'Turkey and Cheese Roll with Salsa', protein: 16, carbs: 8, fats: 10, calories: 190 },
+      { name: 'Cottage Cheese with Mango Salsa', protein: 14, carbs: 16, fats: 4, calories: 160 }
     ]
   },
   
@@ -216,7 +235,11 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Hummus with Vegetable Sticks and Pita', protein: 8, carbs: 28, fats: 12, calories: 250 },
       { name: 'Greek Yogurt with Cucumber and Mint', protein: 14, carbs: 12, fats: 6, calories: 160 },
       { name: 'Marinated Olives and Feta Cheese', protein: 8, carbs: 6, fats: 18, calories: 210 },
-      { name: 'Dates Stuffed with Almonds', protein: 4, carbs: 30, fats: 8, calories: 210 }
+      { name: 'Dates Stuffed with Almonds', protein: 4, carbs: 30, fats: 8, calories: 210 },
+      { name: 'Labneh with Za\'atar and Olive Oil', protein: 12, carbs: 8, fats: 10, calories: 170 },
+      { name: 'Roasted Chickpeas with Sumac', protein: 12, carbs: 24, fats: 6, calories: 200 },
+      { name: 'Feta Stuffed Mini Peppers', protein: 10, carbs: 10, fats: 12, calories: 180 },
+      { name: 'Tahini Energy Balls', protein: 8, carbs: 20, fats: 12, calories: 220 }
     ]
   },
   
@@ -247,9 +270,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
     ],
     snacks: [
       { name: 'Fresh Spring Rolls with Peanut Sauce', protein: 8, carbs: 26, fats: 10, calories: 220 },
-      { name: 'Thai Iced Tea with Coconut Pudding', protein: 4, carbs: 34, fats: 8, calories: 220 },
-      { name: 'Grilled Pork Skewers with Sticky Rice', protein: 16, carbs: 28, fats: 10, calories: 280 },
-      { name: 'Fresh Mango with Sticky Rice', protein: 4, carbs: 40, fats: 6, calories: 230 }
+      { name: 'Grilled Chicken Skewers with Herbs', protein: 18, carbs: 4, fats: 8, calories: 160 },
+      { name: 'Roasted Cashews with Lime', protein: 10, carbs: 16, fats: 16, calories: 250 },
+      { name: 'Cucumber Salad with Peanuts', protein: 6, carbs: 12, fats: 10, calories: 150 },
+      { name: 'Thai Basil Chicken Lettuce Wraps', protein: 16, carbs: 8, fats: 8, calories: 170 },
+      { name: 'Coconut Yogurt with Dragon Fruit', protein: 6, carbs: 20, fats: 8, calories: 180 },
+      { name: 'Roasted Peanuts with Chili Flakes', protein: 14, carbs: 14, fats: 16, calories: 260 }
     ]
   }
 };
