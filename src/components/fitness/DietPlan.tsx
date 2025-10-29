@@ -244,16 +244,20 @@ const DietPlan = () => {
     dinnerOptions = filterAllergies(dinnerOptions, allergies);
     snackOptions = filterAllergies(snackOptions, allergies);
 
-    // Sort by protein density (protein per calorie ratio) for healthier, protein-dense options
-    const sortByProteinDensity = (meals: MealData[]) => 
-      [...meals].sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories));
+    // Sort by absolute protein content first, then by protein density
+    const sortByProteinAmount = (meals: MealData[]) => 
+      [...meals].sort((a, b) => {
+        const proteinDiff = b.protein - a.protein;
+        if (Math.abs(proteinDiff) > 5) return proteinDiff; // Prioritize high protein
+        return (b.protein / b.calories) - (a.protein / a.calories); // Then density
+      });
 
-    breakfastOptions = sortByProteinDensity(breakfastOptions);
-    lunchOptions = sortByProteinDensity(lunchOptions);
-    dinnerOptions = sortByProteinDensity(dinnerOptions);
-    snackOptions = sortByProteinDensity(snackOptions);
+    breakfastOptions = sortByProteinAmount(breakfastOptions);
+    lunchOptions = sortByProteinAmount(lunchOptions);
+    dinnerOptions = sortByProteinAmount(dinnerOptions);
+    snackOptions = sortByProteinAmount(snackOptions);
 
-    // Select meals with variety (use day number as seed for rotation)
+    // Select high-protein meals with variety (use day number as seed for rotation)
     const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
     const lunch = selectMeals(lunchOptions, 1, dayNumber);
     const dinner = selectMeals(dinnerOptions, 1, dayNumber);
@@ -300,7 +304,7 @@ const DietPlan = () => {
     return [...snacks].sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories)).slice(0, 10);
   };
 
-  // Add or reduce snacks to approach target calories; return adjusted meals and recalculated totals
+  // Add or reduce snacks to approach target calories and ensure protein goals; return adjusted meals and recalculated totals
   const adjustMealsToTarget = (
     meals: { breakfast: MealData[]; lunch: MealData[]; dinner: MealData[]; snacks: MealData[] },
     targetCalories: number,
@@ -325,19 +329,44 @@ const DietPlan = () => {
     };
 
     let totals = calcTotals();
+    
+    // Calculate target protein (35% of calories from protein, 1g = 4 cal)
+    const targetProtein = Math.round((targetCalories * 0.35) / 4);
 
-    // If under target, add snacks (up to 3 extra)
+    // Priority 1: Add high-protein snacks if protein is low (even if over calorie budget slightly)
     let addIndex = 0;
-    while (totals.calories < targetCalories - tolerance && adjusted.snacks.length < 5 && addIndex < snackPool.length) {
+    while (totals.protein < targetProtein && adjusted.snacks.length < 6 && addIndex < snackPool.length) {
       adjusted.snacks.push(snackPool[addIndex % snackPool.length]);
       addIndex++;
       totals = calcTotals();
     }
 
-    // If over target, remove snacks first
-    while (totals.calories > targetCalories + tolerance && adjusted.snacks.length > 0) {
-      adjusted.snacks.pop();
+    // Priority 2: If under calorie target after meeting protein, add more snacks
+    addIndex = 0;
+    while (totals.calories < targetCalories - tolerance && adjusted.snacks.length < 6 && addIndex < snackPool.length) {
+      adjusted.snacks.push(snackPool[addIndex % snackPool.length]);
+      addIndex++;
       totals = calcTotals();
+    }
+
+    // Priority 3: If over calorie target but protein is still met, remove lowest-protein snacks
+    while (totals.calories > targetCalories + tolerance && adjusted.snacks.length > 0) {
+      // Sort snacks by protein (ascending) and remove the lowest protein snack
+      const sortedByProtein = [...adjusted.snacks].sort((a, b) => a.protein - b.protein);
+      const toRemove = sortedByProtein[0];
+      const removeIndex = adjusted.snacks.findIndex(s => s.name === toRemove.name);
+      if (removeIndex !== -1) {
+        adjusted.snacks.splice(removeIndex, 1);
+      }
+      totals = calcTotals();
+      
+      // Stop removing if we'll drop below protein target
+      if (totals.protein < targetProtein) {
+        // Add it back
+        adjusted.snacks.push(toRemove);
+        totals = calcTotals();
+        break;
+      }
     }
 
     return { adjustedMeals: adjusted, totals };

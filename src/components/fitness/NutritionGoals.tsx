@@ -29,7 +29,7 @@ const NutritionGoals = () => {
         .from('user_nutrition_goals')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       
@@ -55,8 +55,13 @@ const NutritionGoals = () => {
         .from('user_nutrition_goals')
         .upsert({
           user_id: user.id,
-          ...goals,
+          daily_calories: goals.daily_calories,
+          daily_protein: goals.daily_protein,
+          daily_carbs: goals.daily_carbs,
+          daily_fats: goals.daily_fats,
           updated_at: new Date().toISOString(),
+        }, {
+          onConflict: 'user_id'
         });
 
       if (error) throw error;
