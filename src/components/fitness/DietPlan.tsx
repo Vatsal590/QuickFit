@@ -128,13 +128,13 @@ const DietPlan = () => {
       const tastePreferences = profile.taste_preferences || ['American'];
       const allergies = profile.food_allergies || [];
 
-      // Generate 9-day meal plan
+      // Generate 7-day meal plan
       const plans: MealPlan[] = [];
 
       // Build comprehensive snack pool from all cuisines for variety
       const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies);
 
-      for (let day = 1; day <= 9; day++) {
+      for (let day = 1; day <= 7; day++) {
         const dailyMeals = generateMealsForDay(
           tastePreferences,
           isDietVegetarian,

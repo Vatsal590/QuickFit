@@ -65,7 +65,7 @@ const PrivacyPolicyContent = () => {
 
       <section>
         <h3 className="text-lg font-semibold mb-2">8. Contact Information</h3>
-        <p>If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us - info@quickfit.dev .</p>
+        <p>If you have any questions about this Privacy Policy or wish to exercise your rights, please contact us - quickfit06@gmail.com .</p>
       </section>
 
       <section>

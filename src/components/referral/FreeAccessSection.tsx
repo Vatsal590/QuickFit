@@ -274,7 +274,7 @@ export function FreeAccessSection() {
               {referralCount >= 3 ? (
                 <p>
                   Congratulations! Kindly contact -{' '}
-                  <span className="font-semibold">info@quickfit.dev</span> to receive your award!
+                  <span className="font-semibold">quickfit06@gmail.com</span> to receive your award!
                 </p>
               ) : (
                 <>
