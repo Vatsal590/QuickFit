@@ -184,14 +184,14 @@ const DietPlan = () => {
           ...dailyMeals.dinner,
           ...dailyMeals.snacks
         ];
-        let totalCalories = allMeals.reduce((sum, meal) => sum + meal.calories, 0);
-        let totalProtein = allMeals.reduce((sum, meal) => sum + meal.protein, 0);
-        let totalCarbs = allMeals.reduce((sum, meal) => sum + meal.carbs, 0);
-        let totalFats = allMeals.reduce((sum, meal) => sum + meal.fats, 0);
 
-        // Adjust foods (add/remove snacks) to get close to target calories
+        // Adjust foods (add/remove snacks) to match macro targets
         const snackPool = getSnackPool(tastePreferences, !!isDietVegetarian, !!isDietVegan, allergies);
-        const { adjustedMeals, totals } = adjustMealsToTarget(dailyMeals, targetCalories, snackPool);
+        const { adjustedMeals, totals } = adjustMealsToTarget(
+          dailyMeals, 
+          { calories: targetCalories, protein: targetProtein, carbs: targetCarbs, fats: targetFats },
+          snackPool
+        );
 
         plans.push({
           day,
@@ -327,8 +327,8 @@ const DietPlan = () => {
     const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
     const lunch = selectMeals(lunchOptions, 1, dayNumber);
     const dinner = selectMeals(dinnerOptions, 1, dayNumber);
-    // Use comprehensive snack pool for variety across all days
-    const snacks = selectMeals(comprehensiveSnackPool, 2, dayNumber);
+    // Start with 1 snack - more will be added if needed to hit macros
+    const snacks = selectMeals(comprehensiveSnackPool, 1, dayNumber);
 
     return {
       breakfast,
@@ -371,13 +371,13 @@ const DietPlan = () => {
     return [...snacks].sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories)).slice(0, 10);
   };
 
-  // Add or reduce snacks to approach target calories and ensure protein goals; return adjusted meals and recalculated totals
+  // Intelligently adjust meals to match ALL macro targets (calories, protein, carbs, fats)
   const adjustMealsToTarget = (
     meals: { breakfast: MealData[]; lunch: MealData[]; dinner: MealData[]; snacks: MealData[] },
-    targetCalories: number,
+    targets: { calories: number; protein: number; carbs: number; fats: number },
     snackPool: MealData[]
   ) => {
-    const tolerance = 100; // +/- calories tolerance
+    const tolerance = 50; // +/- tolerance for each macro
     const adjusted = {
       breakfast: [...meals.breakfast],
       lunch: [...meals.lunch],
@@ -397,43 +397,92 @@ const DietPlan = () => {
 
     let totals = calcTotals();
     
-    // Calculate target protein (35% of calories from protein, 1g = 4 cal)
-    const targetProtein = Math.round((targetCalories * 0.35) / 4);
+    // Calculate what macros we're missing
+    const getMacroDeficit = () => ({
+      protein: Math.max(0, targets.protein - totals.protein),
+      carbs: Math.max(0, targets.carbs - totals.carbs),
+      fats: Math.max(0, targets.fats - totals.fats),
+      calories: Math.max(0, targets.calories - totals.calories)
+    });
 
-    // Priority 1: Add high-protein snacks if protein is low (even if over calorie budget slightly)
-    let addIndex = 0;
-    while (totals.protein < targetProtein && adjusted.snacks.length < 6 && addIndex < snackPool.length) {
-      adjusted.snacks.push(snackPool[addIndex % snackPool.length]);
-      addIndex++;
-      totals = calcTotals();
-    }
-
-    // Priority 2: If under calorie target after meeting protein, add more snacks
-    addIndex = 0;
-    while (totals.calories < targetCalories - tolerance && adjusted.snacks.length < 6 && addIndex < snackPool.length) {
-      adjusted.snacks.push(snackPool[addIndex % snackPool.length]);
-      addIndex++;
-      totals = calcTotals();
-    }
-
-    // Priority 3: If over calorie target but protein is still met, remove lowest-protein snacks
-    while (totals.calories > targetCalories + tolerance && adjusted.snacks.length > 0) {
-      // Sort snacks by protein (ascending) and remove the lowest protein snack
-      const sortedByProtein = [...adjusted.snacks].sort((a, b) => a.protein - b.protein);
-      const toRemove = sortedByProtein[0];
-      const removeIndex = adjusted.snacks.findIndex(s => s.name === toRemove.name);
-      if (removeIndex !== -1) {
-        adjusted.snacks.splice(removeIndex, 1);
-      }
-      totals = calcTotals();
+    // Find best snack to add based on current macro deficits
+    const findBestSnack = (deficit: ReturnType<typeof getMacroDeficit>) => {
+      if (snackPool.length === 0) return null;
       
-      // Stop removing if we'll drop below protein target
-      if (totals.protein < targetProtein) {
-        // Add it back
-        adjusted.snacks.push(toRemove);
-        totals = calcTotals();
+      // Score each snack based on how well it fills the deficit
+      const scored = snackPool.map(snack => {
+        let score = 0;
+        
+        // Prioritize the macro we need most
+        if (deficit.protein > 20) score += snack.protein * 2; // Need protein most
+        else if (deficit.carbs > 30) score += snack.carbs * 1.5; // Need carbs
+        else if (deficit.fats > 15) score += snack.fats * 1.5; // Need fats
+        
+        // General contribution to calories
+        if (deficit.calories > 100) score += snack.calories * 0.5;
+        
+        // Penalize if snack has too much of what we don't need
+        if (totals.protein >= targets.protein) score -= snack.protein;
+        if (totals.carbs >= targets.carbs) score -= snack.carbs * 0.5;
+        if (totals.fats >= targets.fats) score -= snack.fats;
+        
+        return { snack, score };
+      });
+      
+      scored.sort((a, b) => b.score - a.score);
+      return scored[0].snack;
+    };
+
+    // Add snacks intelligently to meet macro targets (max 3 snacks per day)
+    let addAttempts = 0;
+    const maxAttempts = 10;
+    while (adjusted.snacks.length < 3 && addAttempts < maxAttempts) {
+      const deficit = getMacroDeficit();
+      
+      // Stop if we're within tolerance for all macros
+      if (deficit.protein <= tolerance && 
+          deficit.carbs <= tolerance && 
+          deficit.fats <= tolerance &&
+          deficit.calories <= tolerance) {
         break;
       }
+      
+      const bestSnack = findBestSnack(deficit);
+      if (!bestSnack) break;
+      
+      adjusted.snacks.push(bestSnack);
+      totals = calcTotals();
+      addAttempts++;
+    }
+
+    // If we're significantly over on calories, try removing snacks
+    while (totals.calories > targets.calories + 100 && adjusted.snacks.length > 0) {
+      // Remove the snack with the most calories that doesn't hurt our macro targets
+      const sortedByCalories = [...adjusted.snacks].sort((a, b) => b.calories - a.calories);
+      
+      for (const snack of sortedByCalories) {
+        const tempTotals = {
+          protein: totals.protein - snack.protein,
+          carbs: totals.carbs - snack.carbs,
+          fats: totals.fats - snack.fats,
+          calories: totals.calories - snack.calories
+        };
+        
+        // Only remove if we stay above minimum macro thresholds
+        if (tempTotals.protein >= targets.protein - tolerance &&
+            tempTotals.carbs >= targets.carbs - tolerance &&
+            tempTotals.fats >= targets.fats - tolerance) {
+          const removeIndex = adjusted.snacks.findIndex(s => s.name === snack.name);
+          if (removeIndex !== -1) {
+            adjusted.snacks.splice(removeIndex, 1);
+            totals = calcTotals();
+            break;
+          }
+        }
+      }
+      
+      // Prevent infinite loop
+      break;
     }
 
     return { adjustedMeals: adjusted, totals };
