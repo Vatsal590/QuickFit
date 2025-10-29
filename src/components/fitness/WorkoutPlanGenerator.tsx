@@ -142,7 +142,8 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
               <Button
                 onClick={() => {
                   onClose();
-                  window.location.href = '/profile';
+                  const event = new CustomEvent('openFitnessProfileForm');
+                  window.dispatchEvent(event);
                 }}
                 className="bg-fitness-primary hover:bg-fitness-primary/90"
               >

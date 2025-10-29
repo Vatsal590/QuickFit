@@ -68,9 +68,17 @@ const Plans = () => {
       loadWorkoutPlans();
     };
 
+    const handleOpenCustomizeEvent = () => {
+      activityTracker.trackButtonClick('open_customize', 'plans');
+      setShowPlanGenerator(true);
+    };
+
     window.addEventListener('planGenerated', handlePlanGeneratedEvent);
+    window.addEventListener('openCustomize', handleOpenCustomizeEvent);
+    
     return () => {
       window.removeEventListener('planGenerated', handlePlanGeneratedEvent);
+      window.removeEventListener('openCustomize', handleOpenCustomizeEvent);
     };
   }, [loadWorkoutPlans]);
 
