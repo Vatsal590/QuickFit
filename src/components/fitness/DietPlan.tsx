@@ -17,6 +17,8 @@ import { toast as sonnerToast } from 'sonner';
 import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
 import NutritionGoals from '@/components/fitness/NutritionGoals';
 
+import { calculateNutritionTargets } from '@/utils/nutritionCalculations';
+
 interface MealPlan {
   day: number;
   meals: {
@@ -110,17 +112,47 @@ const DietPlan = () => {
         .maybeSingle();
       if (goalsError && goalsError.code !== 'PGRST116') throw goalsError;
 
-      const isBulking = profile.goal_weight ? profile.goal_weight > profile.weight : false;
-      const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
+      // Calculate scientifically accurate nutrition targets based on user profile
+      const nutritionTargets = calculateNutritionTargets({
+        weight: profile.weight,
+        height: profile.height,
+        goalWeight: profile.goal_weight || undefined,
+        bodyType: Array.isArray(profile.body_type) ? profile.body_type[0] : profile.body_type,
+        workoutDaysPerWeek: profile.workout_days_per_week,
+        age: 30, // Default age if not in profile
+        gender: 'male' // Default gender if not in profile
+      });
 
-      // Determine target calories
-      let targetCalories = goalsData?.daily_calories ? Number(goalsData.daily_calories) : 2200; // Base maintenance
-      if (!goalsData?.daily_calories) {
-        if (isBulking) {
-          targetCalories = 2700; // Bulking surplus
-        } else if (isCutting) {
-          targetCalories = 1800; // Cutting deficit
-        }
+      // Use custom goals if set in Food Tracker, otherwise use calculated targets
+      const targetCalories = goalsData?.daily_calories 
+        ? Number(goalsData.daily_calories) 
+        : nutritionTargets.calories;
+      
+      const targetProtein = goalsData?.daily_protein 
+        ? Number(goalsData.daily_protein) 
+        : nutritionTargets.protein;
+      
+      const targetCarbs = goalsData?.daily_carbs 
+        ? Number(goalsData.daily_carbs) 
+        : nutritionTargets.carbs;
+      
+      const targetFats = goalsData?.daily_fats 
+        ? Number(goalsData.daily_fats) 
+        : nutritionTargets.fats;
+
+      // If no custom goals exist, save the calculated targets to sync with Food Tracker
+      if (!goalsData) {
+        await supabase
+          .from('user_nutrition_goals')
+          .upsert({
+            user_id: user!.id,
+            daily_calories: targetCalories,
+            daily_protein: targetProtein,
+            daily_carbs: targetCarbs,
+            daily_fats: targetFats
+          }, {
+            onConflict: 'user_id'
+          });
       }
 
       const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
@@ -174,16 +206,12 @@ const DietPlan = () => {
 
       setDietPlan(plans);
 
-      // Save to database
-      const targetProtein = (goalsData?.daily_protein && Number(goalsData.daily_protein)) || Math.round((targetCalories * 0.35) / 4);
-      const targetCarbs = (goalsData?.daily_carbs && Number(goalsData.daily_carbs)) || Math.round((targetCalories * 0.40) / 4);
-      const targetFats = (goalsData?.daily_fats && Number(goalsData.daily_fats)) || Math.round((targetCalories * 0.25) / 9);
-
+      // Save to database with calculated nutrition targets
       const { error } = await supabase
         .from('diet_plans')
         .insert([{
           user_id: user!.id,
-          plan_name: `${isBulking ? 'Bulking' : isCutting ? 'Cutting' : 'Maintenance'} Diet Plan`,
+          plan_name: `${nutritionTargets.goalType.charAt(0).toUpperCase() + nutritionTargets.goalType.slice(1)} Diet Plan`,
           target_calories: targetCalories,
           target_protein: targetProtein,
           target_carbs: targetCarbs,
@@ -197,7 +225,7 @@ const DietPlan = () => {
 
       toast({
         title: "Diet Plan Generated!",
-        description: `Your ${isBulking ? 'bulking' : isCutting ? 'cutting' : 'maintenance'} plan is ready with accurate macros.`
+        description: `Your scientifically calculated ${nutritionTargets.goalType} plan is ready with ${targetCalories} calories (P: ${targetProtein}g, C: ${targetCarbs}g, F: ${targetFats}g).`
       });
     } catch (error) {
       console.error('Error generating diet plan:', error);
