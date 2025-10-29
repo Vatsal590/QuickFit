@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import UserWorkoutPlans from '../components/fitness/UserWorkoutPlans';
 import WorkoutPlanViewer from '../components/fitness/WorkoutPlanViewer';
-import WorkoutPlanGenerator from '../components/fitness/WorkoutPlanGenerator';
+import FitnessProfileForm from '../components/fitness/FitnessProfileForm';
 import { WorkoutPlan } from '../types';
 import { useWorkoutPlans } from '../hooks/useWorkoutPlans';
 import { useToast } from '@/hooks/use-toast';
@@ -15,7 +15,7 @@ const Plans = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<WorkoutPlan | null>(null);
-  const [showPlanGenerator, setShowPlanGenerator] = useState(false);
+  const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
   const { profile, isLoading: profileLoading } = useFitnessProfile();
   const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans, addWorkoutPlan } = useWorkoutPlans();
 
@@ -70,7 +70,7 @@ const Plans = () => {
 
     const handleOpenCustomizeEvent = () => {
       activityTracker.trackButtonClick('open_customize', 'plans');
-      setShowPlanGenerator(true);
+      setIsProfileFormOpen(true);
     };
 
     window.addEventListener('planGenerated', handlePlanGeneratedEvent);
@@ -128,10 +128,9 @@ const Plans = () => {
           />
         )}
 
-        <WorkoutPlanGenerator
-          isOpen={showPlanGenerator}
-          onClose={() => setShowPlanGenerator(false)}
-          profile={profile}
+        <FitnessProfileForm
+          isOpen={isProfileFormOpen}
+          onClose={() => setIsProfileFormOpen(false)}
           onPlanGenerated={handlePlanGenerated}
         />
       </div>
