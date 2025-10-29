@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast as sonnerToast } from 'sonner';
 import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
+import NutritionGoals from '@/components/fitness/NutritionGoals';
 
 interface MealPlan {
   day: number;
@@ -39,6 +40,7 @@ const DietPlan = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [syncingMeal, setSyncingMeal] = useState<string | null>(null);
+  const [isEditingGoals, setIsEditingGoals] = useState(false);
   const [editFormData, setEditFormData] = useState({
     goal_weight: '',
     diet_preferences: [] as string[],
@@ -73,7 +75,7 @@ const DietPlan = () => {
         .eq('is_active', true)
         .order('created_at', { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') throw error;
       
@@ -100,16 +102,25 @@ const DietPlan = () => {
     setIsGenerating(true);
 
     try {
+      // Fetch latest nutrition goals to sync with Food Tracker
+      const { data: goalsData, error: goalsError } = await supabase
+        .from('user_nutrition_goals')
+        .select('*')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+      if (goalsError && goalsError.code !== 'PGRST116') throw goalsError;
+
       const isBulking = profile.goal_weight ? profile.goal_weight > profile.weight : false;
       const isCutting = profile.goal_weight ? profile.goal_weight < profile.weight : false;
 
-      // Calculate target calories based on goal
-      let targetCalories = 2200; // Base maintenance
-      
-      if (isBulking) {
-        targetCalories = 2700; // Bulking surplus
-      } else if (isCutting) {
-        targetCalories = 1800; // Cutting deficit
+      // Determine target calories
+      let targetCalories = goalsData?.daily_calories ? Number(goalsData.daily_calories) : 2200; // Base maintenance
+      if (!goalsData?.daily_calories) {
+        if (isBulking) {
+          targetCalories = 2700; // Bulking surplus
+        } else if (isCutting) {
+          targetCalories = 1800; // Cutting deficit
+        }
       }
 
       const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
@@ -130,49 +141,49 @@ const DietPlan = () => {
           day
         );
 
-        // Calculate totals
+        // Calculate totals for selected meals
         const allMeals = [
           ...dailyMeals.breakfast,
           ...dailyMeals.lunch,
           ...dailyMeals.dinner,
           ...dailyMeals.snacks
         ];
-        
         let totalCalories = allMeals.reduce((sum, meal) => sum + meal.calories, 0);
         let totalProtein = allMeals.reduce((sum, meal) => sum + meal.protein, 0);
         let totalCarbs = allMeals.reduce((sum, meal) => sum + meal.carbs, 0);
         let totalFats = allMeals.reduce((sum, meal) => sum + meal.fats, 0);
 
-        // Adjust to match target calories exactly
-        const calorieRatio = targetCalories / totalCalories;
-        totalCalories = Math.round(totalCalories * calorieRatio);
-        totalProtein = Math.round(totalProtein * calorieRatio);
-        totalCarbs = Math.round(totalCarbs * calorieRatio);
-        totalFats = Math.round(totalFats * calorieRatio);
+        // Adjust foods (add/remove snacks) to get close to target calories
+        const snackPool = getSnackPool(tastePreferences, !!isDietVegetarian, !!isDietVegan, allergies);
+        const { adjustedMeals, totals } = adjustMealsToTarget(dailyMeals, targetCalories, snackPool);
 
         plans.push({
           day,
-          meals: dailyMeals,
+          meals: adjustedMeals,
           targetCalories,
-          totalCalories,
-          totalProtein,
-          totalCarbs,
-          totalFats
+          totalCalories: totals.calories,
+          totalProtein: totals.protein,
+          totalCarbs: totals.carbs,
+          totalFats: totals.fats
         });
       }
 
       setDietPlan(plans);
 
       // Save to database
+      const targetProtein = (goalsData?.daily_protein && Number(goalsData.daily_protein)) || Math.round((targetCalories * 0.35) / 4);
+      const targetCarbs = (goalsData?.daily_carbs && Number(goalsData.daily_carbs)) || Math.round((targetCalories * 0.40) / 4);
+      const targetFats = (goalsData?.daily_fats && Number(goalsData.daily_fats)) || Math.round((targetCalories * 0.25) / 9);
+
       const { error } = await supabase
         .from('diet_plans')
         .insert([{
           user_id: user!.id,
           plan_name: `${isBulking ? 'Bulking' : isCutting ? 'Cutting' : 'Maintenance'} Diet Plan`,
           target_calories: targetCalories,
-          target_protein: Math.round((targetCalories * 0.35) / 4),
-          target_carbs: Math.round((targetCalories * 0.40) / 4),
-          target_fats: Math.round((targetCalories * 0.25) / 9),
+          target_protein: targetProtein,
+          target_carbs: targetCarbs,
+          target_fats: targetFats,
           daily_meals: plans as any,
           cuisine_preferences: tastePreferences,
           is_active: true
@@ -270,6 +281,67 @@ const DietPlan = () => {
     return selected;
   };
 
+  // Build a protein-dense snack pool based on preferences and restrictions
+  const getSnackPool = (
+    cuisines: string[],
+    isVegetarian: boolean,
+    isVegan: boolean,
+    allergies: string[]
+  ): MealData[] => {
+    const activeCuisines = cuisines.filter(c => c !== 'French');
+    const cuisine = activeCuisines[0] || 'American';
+    let snacks = mealDatabase[cuisine]?.snacks || mealDatabase.American.snacks;
+
+    if (isVegan) snacks = filterVegan(snacks);
+    else if (isVegetarian) snacks = filterVegetarian(snacks);
+    snacks = filterAllergies(snacks, allergies);
+
+    // Sort by protein density
+    return [...snacks].sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories)).slice(0, 10);
+  };
+
+  // Add or reduce snacks to approach target calories; return adjusted meals and recalculated totals
+  const adjustMealsToTarget = (
+    meals: { breakfast: MealData[]; lunch: MealData[]; dinner: MealData[]; snacks: MealData[] },
+    targetCalories: number,
+    snackPool: MealData[]
+  ) => {
+    const tolerance = 100; // +/- calories tolerance
+    const adjusted = {
+      breakfast: [...meals.breakfast],
+      lunch: [...meals.lunch],
+      dinner: [...meals.dinner],
+      snacks: [...meals.snacks],
+    };
+
+    const calcTotals = () => {
+      const all = [...adjusted.breakfast, ...adjusted.lunch, ...adjusted.dinner, ...adjusted.snacks];
+      return {
+        calories: all.reduce((s, m) => s + m.calories, 0),
+        protein: all.reduce((s, m) => s + m.protein, 0),
+        carbs: all.reduce((s, m) => s + m.carbs, 0),
+        fats: all.reduce((s, m) => s + m.fats, 0),
+      };
+    };
+
+    let totals = calcTotals();
+
+    // If under target, add snacks (up to 3 extra)
+    let addIndex = 0;
+    while (totals.calories < targetCalories - tolerance && adjusted.snacks.length < 5 && addIndex < snackPool.length) {
+      adjusted.snacks.push(snackPool[addIndex % snackPool.length]);
+      addIndex++;
+      totals = calcTotals();
+    }
+
+    // If over target, remove snacks first
+    while (totals.calories > targetCalories + tolerance && adjusted.snacks.length > 0) {
+      adjusted.snacks.pop();
+      totals = calcTotals();
+    }
+
+    return { adjustedMeals: adjusted, totals };
+  };
   const handleUpdateProfile = async () => {
     if (!profile) return;
 
@@ -486,6 +558,29 @@ const DietPlan = () => {
                   Save Changes
                 </Button>
               </div>
+            </DialogContent>
+          </Dialog>
+        <Dialog open={isEditingGoals} onOpenChange={(open) => {
+            setIsEditingGoals(open);
+            if (!open && dietPlan.length > 0) {
+              // Regenerate plan to reflect any updated goals
+              generateDietPlan();
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Settings className="h-4 w-4 mr-2" />
+                Calories & Macros
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Edit Calories & Macros</DialogTitle>
+                <DialogDescription>
+                  These sync with your AI Food Tracker goals.
+                </DialogDescription>
+              </DialogHeader>
+              <NutritionGoals />
             </DialogContent>
           </Dialog>
         </CardHeader>
