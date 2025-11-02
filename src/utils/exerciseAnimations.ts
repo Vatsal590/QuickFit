@@ -32,6 +32,16 @@ export const getExerciseAnimationUrl = (exerciseName: string): string => {
     'thruster': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/dumbbell-thruster.gif',
     'thrusters': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/dumbbell-thruster.gif',
     
+    // Shoulders
+    'pike push-up': 'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/pikepushup-1456956895.gif',
+    'pike push-ups': 'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/pikepushup-1456956895.gif',
+    'pike pushup': 'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/pikepushup-1456956895.gif',
+    'pike pushups': 'https://hips.hearstapps.com/hmg-prod/images/workouts/2016/03/pikepushup-1456956895.gif',
+    'hindu push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
+    'hindu push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
+    'hindu pushup': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
+    'hindu pushups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
+    
     // Push-ups
     'push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
     'push ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',

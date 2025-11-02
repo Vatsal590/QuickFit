@@ -336,6 +336,26 @@ export const exercises: Exercise[] = [
     restTime: 90,
     description: "Hold kettlebell overhead with one arm. Slowly bend at waist toward the opposite side while keeping the kettlebell stable overhead."
   },
+  {
+    id: "pike-push-up",
+    name: "Pike Push-up",
+    muscleGroup: "shoulders",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Start in a downward dog position with hips high and hands on the ground. Bend elbows to lower head toward the floor, then press back up to starting position."
+  },
+  {
+    id: "hindu-push-up",
+    name: "Hindu Push-up",
+    muscleGroup: "shoulders",
+    equipment: ["none"],
+    sets: 3,
+    reps: 10,
+    restTime: 60,
+    description: "Start in downward dog position. Dive forward in a swooping motion, bringing chest close to ground, then push up into upward dog. Reverse the motion to return to start."
+  },
 
   // Legs exercises
   {
