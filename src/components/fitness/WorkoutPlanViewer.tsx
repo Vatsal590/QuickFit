@@ -60,6 +60,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
     const exerciseMap: { [key: string]: string } = {
       // Chest exercises - various naming patterns
       'push-ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
+      'hindu push up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
       'push ups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
       'pushups': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif',
       'standard push-ups': 'https://www.inspireusafoundation.org/file/2023/04/incline-push-up-bench.gif',
