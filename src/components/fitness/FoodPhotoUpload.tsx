@@ -53,6 +53,31 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       if (error) throw error;
 
       setAnalyzedFoods(data.foods || []);
+      
+      // Save scanned food to database immediately (even if not logged)
+      if (user && data.foods && data.foods.length > 0) {
+        const totalsData = data.foods.reduce(
+          (acc: any, food: any) => ({
+            calories: acc.calories + (parseFloat(food.calories) || 0),
+            protein: acc.protein + (parseFloat(food.protein) || 0),
+            carbs: acc.carbs + (parseFloat(food.carbs) || 0),
+            fats: acc.fats + (parseFloat(food.fats) || 0),
+          }),
+          { calories: 0, protein: 0, carbs: 0, fats: 0 }
+        );
+
+        await supabase.from('scanned_foods').insert({
+          user_id: user.id,
+          image_url: imageData,
+          foods: data.foods,
+          total_calories: totalsData.calories,
+          total_protein: totalsData.protein,
+          total_carbs: totalsData.carbs,
+          total_fats: totalsData.fats,
+          logged: false
+        });
+      }
+      
       toast.success('Food analyzed successfully!');
     } catch (error: any) {
       console.error('Error analyzing food:', error);
@@ -93,7 +118,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
     if (!user || analyzedFoods.length === 0) return;
 
     try {
-      const { error } = await supabase.from('food_logs').insert({
+      const { data: logData, error } = await supabase.from('food_logs').insert({
         user_id: user.id,
         image_url: selectedImage,
         foods: analyzedFoods,
@@ -103,9 +128,17 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         total_fats: totals?.fats || 0,
         meal_type: mealType,
         notes: notes
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Update scanned_foods to mark as logged
+      await supabase.from('scanned_foods')
+        .update({ logged: true, food_log_id: logData.id })
+        .eq('user_id', user.id)
+        .eq('logged', false)
+        .order('created_at', { ascending: false })
+        .limit(1);
 
       toast.success('Meal logged successfully!');
       resetForm();

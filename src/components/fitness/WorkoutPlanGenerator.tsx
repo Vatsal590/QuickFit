@@ -11,6 +11,7 @@ import { exercises } from '@/data/exercises';
 import { Loader2, Sparkles, AlertTriangle } from 'lucide-react';
 import { BodyPain } from '@/types';
 import { v4 as uuidv4 } from 'uuid';
+import { activityTracker } from '@/utils/activityTracker';
 
 interface WorkoutPlanGeneratorProps {
   isOpen: boolean;
@@ -96,6 +97,14 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
       };
 
       onPlanGenerated?.(newPlan);
+
+      // Track activity
+      await activityTracker.trackActivity('workout_plan_created', 'plans', {
+        planName,
+        goal: profile.fitness_goal,
+        duration: 30,
+        painAvoidance: selectedPains
+      });
 
       toast({
         title: "Plan generated successfully!",

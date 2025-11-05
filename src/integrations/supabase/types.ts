@@ -281,6 +281,75 @@ export type Database = {
           },
         ]
       }
+      scanned_foods: {
+        Row: {
+          created_at: string
+          food_log_id: string | null
+          foods: Json
+          id: string
+          image_url: string | null
+          logged: boolean | null
+          total_calories: number | null
+          total_carbs: number | null
+          total_fats: number | null
+          total_protein: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          food_log_id?: string | null
+          foods?: Json
+          id?: string
+          image_url?: string | null
+          logged?: boolean | null
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fats?: number | null
+          total_protein?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          food_log_id?: string | null
+          foods?: Json
+          id?: string
+          image_url?: string | null
+          logged?: boolean | null
+          total_calories?: number | null
+          total_carbs?: number | null
+          total_fats?: number | null
+          total_protein?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_activities: {
+        Row: {
+          action: string
+          created_at: string
+          details: Json | null
+          id: string
+          page: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          page?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+          page?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_nutrition_goals: {
         Row: {
           created_at: string

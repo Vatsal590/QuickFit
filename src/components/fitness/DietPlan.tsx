@@ -16,6 +16,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { toast as sonnerToast } from 'sonner';
 import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
 import NutritionGoals from '@/components/fitness/NutritionGoals';
+import { activityTracker } from '@/utils/activityTracker';
 
 import { calculateNutritionTargets } from '@/utils/nutritionCalculations';
 
@@ -222,6 +223,16 @@ const DietPlan = () => {
         }]);
 
       if (error) throw error;
+
+      // Track activity
+      await activityTracker.trackActivity('diet_plan_created', 'diet-plan', {
+        planName: `${nutritionTargets.goalType} Diet Plan`,
+        targetCalories,
+        targetProtein,
+        targetCarbs,
+        targetFats,
+        cuisines: tastePreferences
+      });
 
       toast({
         title: "Diet Plan Generated!",

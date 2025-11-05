@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { WorkoutPlan } from '@/types';
+import { activityTracker } from '@/utils/activityTracker';
 
 export const useWorkoutPlans = () => {
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
@@ -102,6 +103,14 @@ export const useWorkoutPlans = () => {
       if (error) {
         console.error('Error updating workout plan:', error);
       } else {
+        // Track activity
+        await activityTracker.trackActivity('workout_plan_day_completed', 'plans', {
+          planId,
+          dayNumber,
+          planName: currentPlan.title,
+          daysRemaining: newDaysLeft
+        });
+
         // Update local state
         setWorkoutPlans(prev => prev.map(plan => 
           plan.id === planId 

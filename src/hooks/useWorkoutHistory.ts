@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Workout, WorkoutHistoryItem, TimeFrame, MuscleGroup, Equipment, IntensityLevel, Exercise } from '../types';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { activityTracker } from '@/utils/activityTracker';
 
 export const useWorkoutHistory = () => {
   const [history, setHistory] = useState<WorkoutHistoryItem[]>([]);
@@ -83,6 +84,14 @@ export const useWorkoutHistory = () => {
         });
 
       if (error) throw error;
+
+      // Track activity
+      await activityTracker.trackActivity('instant_workout_created', 'instant-workout', {
+        title: workout.title,
+        duration: workout.duration,
+        intensity: workout.intensity,
+        muscleGroups: workout.targetMuscleGroups
+      });
 
       // Reload history to get the latest data
       await loadWorkoutHistory();

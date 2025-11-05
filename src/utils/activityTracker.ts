@@ -43,6 +43,16 @@ export class ActivityTracker {
         return;
       }
 
+      // Insert into user_activities table
+      await supabase
+        .from('user_activities')
+        .insert({
+          user_id: this.userId,
+          action,
+          page,
+          details
+        });
+
       // Update profiles table with last activity
       await supabase
         .from('profiles')
