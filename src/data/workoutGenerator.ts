@@ -191,10 +191,74 @@ export const generateWorkout = (
     });
   }
 
-  // Special case: Cable machine workouts for 45 and 60 mins
+  // Special case: Cable machine + Back + Biceps
   if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("back") &&
+    muscleGroups.includes("biceps")
+  ) {
+    const targetExerciseNames = [
+      "lat pulldown",
+      "cable pulldown",
+      "face pull",
+      "cable hammer curl",
+      "cable bicep curl"
+    ];
+    
+    const targetExercises = selectedExercises.filter(ex =>
+      targetExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have all exercises, find them from the main exercises pool
+    const needed = targetExerciseNames.filter(name =>
+      !targetExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      targetExercises.push(...additional);
+    }
+    
+    selectedExercises = targetExercises.slice(0, 5);
+  }
+  // Special case: Cable machine + Biceps only
+  else if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("biceps") &&
+    !muscleGroups.includes("back")
+  ) {
+    const bicepExerciseNames = [
+      "cable hammer curl",
+      "cable bicep curl"
+    ];
+    
+    const bicepExercises = selectedExercises.filter(ex =>
+      bicepExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have both, find them from the main exercises pool
+    const needed = bicepExerciseNames.filter(name =>
+      !bicepExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      bicepExercises.push(...additional);
+    }
+    
+    selectedExercises = bicepExercises.slice(0, 2);
+  }
+  // Special case: Cable machine workouts for 45 and 60 mins (full body)
+  else if (
     (time === 45 || time === 60) &&
-    equipment.includes("cable machine")
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("full body")
   ) {
     const cableExerciseNames = [
       "cable crossover",
