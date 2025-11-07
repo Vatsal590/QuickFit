@@ -199,8 +199,8 @@ export const generateWorkout = (
     const cableExerciseNames = [
       "cable crossover",
       "cable wood chop",
-      "cable face pull",
-      "tricep extension"
+      "face pull",
+      "tricep pushdown"
     ];
     
     const cableExercises = selectedExercises.filter(ex =>

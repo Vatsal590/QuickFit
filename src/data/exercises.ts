@@ -701,6 +701,36 @@ export const exercises: Exercise[] = [
     description: "Hold kettlebell by the handle with underhand grip. Curl up toward shoulder while keeping elbow stationary."
   },
   {
+    id: "cable-bicep-curl",
+    name: "Cable Bicep Curl",
+    muscleGroup: "biceps",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Stand at cable machine with low pulley attachment. Curl the cable handle up toward shoulders while keeping elbows stationary, then lower back down."
+  },
+  {
+    id: "cable-hammer-curl",
+    name: "Cable Hammer Curl",
+    muscleGroup: "biceps",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Stand at cable machine with rope attachment on low pulley. Curl the rope up toward shoulders with palms facing each other, then lower back down."
+  },
+  {
+    id: "cable-pulldown",
+    name: "Cable Pulldown",
+    muscleGroup: "biceps",
+    equipment: ["cable machine"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Stand at cable machine with high pulley. Pull the cable down using arms and engage biceps throughout the movement."
+  },
+  {
     id: "kettlebell-bottoms-up-press",
     name: "Kettlebell Bottoms-Up Press",
     muscleGroup: "biceps",

@@ -77,6 +77,18 @@ export const getExerciseAnimationUrl = (exerciseName: string): string => {
     'bag curl': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
     'backpack curls': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
     'backpack curl': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
+    
+    // Cable machine exercises
+    'cable bicep curl': 'https://gymvisual.com/img/p/2/8/1/2/0/28120.gif',
+    'cable bicep curls': 'https://gymvisual.com/img/p/2/8/1/2/0/28120.gif',
+    'cable machine bicep curl': 'https://gymvisual.com/img/p/2/8/1/2/0/28120.gif',
+    'cable machine bicep curls': 'https://gymvisual.com/img/p/2/8/1/2/0/28120.gif',
+    'cable hammer curl': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
+    'cable hammer curls': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
+    'cable bicep hammer curl': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
+    'cable bicep hammer curls': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
+    'cable pulldown': 'https://i.pinimg.com/originals/74/68/5a/74685a8a1b44b902c9d3ac1404844e88.gif',
+    'cable pulldowns': 'https://i.pinimg.com/originals/74/68/5a/74685a8a1b44b902c9d3ac1404844e88.gif',
   };
 
   return exerciseMap[normalizedName] || 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif';
