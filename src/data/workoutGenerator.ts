@@ -329,14 +329,7 @@ export const generateWorkout = (
     selectedExercises = selected;
   }
 
-  // Ensure at least 3 exercises
-  if (selectedExercises.length < 3) {
-    const supplementary = getFilteredExercises(["cardio","core"], equipment, intensity);
-    const existing = new Set(selectedExercises.map(ex => ex.name));
-    selectedExercises.push(...supplementary.filter(ex => !existing.has(ex.name)));
-  }
-
-  // Limit exercises based on time
+  // Determine max exercises based on time
   let maxExercises: number;
   if (time === 10) maxExercises = 1;
   else if (time === 20) maxExercises = 2;
@@ -344,6 +337,55 @@ export const generateWorkout = (
   else if (time === 45) maxExercises = 4;
   else if (time === 60) maxExercises = 5;
   else maxExercises = 3;
+
+  // Ensure at least 1 exercise per selected muscle group (respecting max limit)
+  if (muscleGroups.length > 1 && !muscleGroups.includes("full body")) {
+    const exercisesByMuscleGroup = new Map<MuscleGroup, Exercise[]>();
+    const finalExercises: Exercise[] = [];
+    
+    // Group exercises by muscle group
+    selectedExercises.forEach(ex => {
+      const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      exMuscleGroups.forEach(mg => {
+        if (muscleGroups.includes(mg)) {
+          if (!exercisesByMuscleGroup.has(mg)) {
+            exercisesByMuscleGroup.set(mg, []);
+          }
+          exercisesByMuscleGroup.get(mg)!.push(ex);
+        }
+      });
+    });
+    
+    // Add at least 1 exercise per muscle group
+    const added = new Set<string>();
+    muscleGroups.forEach(mg => {
+      const mgExercises = exercisesByMuscleGroup.get(mg) || [];
+      if (mgExercises.length > 0 && finalExercises.length < maxExercises) {
+        const ex = mgExercises[0];
+        if (!added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+        }
+      }
+    });
+    
+    // Fill remaining slots with other exercises
+    selectedExercises.forEach(ex => {
+      if (finalExercises.length < maxExercises && !added.has(ex.name)) {
+        finalExercises.push(ex);
+        added.add(ex.name);
+      }
+    });
+    
+    selectedExercises = finalExercises;
+  }
+  
+  // Ensure at least minimum exercises
+  if (selectedExercises.length < Math.min(3, maxExercises)) {
+    const supplementary = getFilteredExercises(["cardio","core"], equipment, intensity);
+    const existing = new Set(selectedExercises.map(ex => ex.name));
+    selectedExercises.push(...supplementary.filter(ex => !existing.has(ex.name)));
+  }
 
   const adjustedExercises = selectedExercises.slice(0, maxExercises).map(ex => adjustExerciseForIntensity(ex, intensity, time));
   const warmup = generateWarmupExercises(equipment).slice(0,3);
