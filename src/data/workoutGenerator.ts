@@ -292,6 +292,57 @@ export const generateWorkout = (
       sets
     }));
   }
+  // Special case: Barbell full body for any time frame
+  else if (
+    equipment.includes("barbell") &&
+    muscleGroups.includes("full body")
+  ) {
+    const targetCount = time === 60 ? 5 : time === 45 ? 4 : time === 30 ? 3 : time === 20 ? 2 : 1;
+
+    const barbellFromSelected = selectedExercises.filter(ex => ex.equipment.includes("barbell"));
+    let barbellExercises = [...barbellFromSelected];
+
+    if (barbellExercises.length < targetCount) {
+      const additional = exercises.filter(ex => ex.equipment.includes("barbell"));
+      const existing = new Set(barbellExercises.map(ex => ex.name.toLowerCase()));
+      additional.forEach(ex => {
+        if (!existing.has(ex.name.toLowerCase())) {
+          barbellExercises.push(ex);
+          existing.add(ex.name.toLowerCase());
+        }
+      });
+    }
+
+    const priorityGroups: MuscleGroup[] = ["legs","chest","back","shoulders","core"];
+    const diversified: Exercise[] = [];
+    const used = new Set<string>();
+    const byGroup = new Map<MuscleGroup, Exercise[]>();
+    barbellExercises.forEach(ex => {
+      const groups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      groups.forEach(g => {
+        if (!byGroup.has(g)) byGroup.set(g, []);
+        byGroup.get(g)!.push(ex);
+      });
+    });
+    priorityGroups.forEach(g => {
+      if (diversified.length < targetCount) {
+        const list = byGroup.get(g) || [];
+        const ex = list.find(e => !used.has(e.name.toLowerCase()));
+        if (ex) {
+          diversified.push(ex);
+          used.add(ex.name.toLowerCase());
+        }
+      }
+    });
+    barbellExercises.forEach(ex => {
+      if (diversified.length < targetCount && !used.has(ex.name.toLowerCase())) {
+        diversified.push(ex);
+        used.add(ex.name.toLowerCase());
+      }
+    });
+
+    selectedExercises = diversified.slice(0, targetCount);
+  }
   // Special case: Back & Biceps with dumbbells and barbells for 60 mins
   else if (
     time === 60 &&
