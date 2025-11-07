@@ -1089,16 +1089,6 @@ export const exercises: Exercise[] = [
     description: "Perform a bodyweight squat, then explode up into a jump. Land softly with bent knees, immediately lowering back into the next squat."
   },
   {
-    id: "kettlebell-swing-cardio",
-    name: "Kettlebell Swing (Cardio)",
-    muscleGroup: "cardio",
-    equipment: ["kettlebell"],
-    sets: 4,
-    reps: 20,
-    restTime: 30,
-    description: "Perform kettlebell swings at a faster pace for cardiovascular benefits. Focus on explosive hip drive and breathing rhythm."
-  },
-  {
     id: "resistance-band-jumping-jacks",
     name: "Resistance Band Jumping Jacks",
     muscleGroup: "cardio",
