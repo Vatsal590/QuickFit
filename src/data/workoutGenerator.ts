@@ -254,11 +254,12 @@ export const generateWorkout = (
     
     selectedExercises = bicepExercises.slice(0, 2);
   }
-  // Special case: Cable machine workouts for 45 and 60 mins (full body)
+  // Special case: Cable machine workouts for 45 and 60 mins (full body) - only when cable machine is primary equipment
   else if (
     (time === 45 || time === 60) &&
     equipment.includes("cable machine") &&
-    muscleGroups.includes("full body")
+    muscleGroups.includes("full body") &&
+    (equipment.length === 1 || (equipment.length === 2 && equipment.includes("none")))
   ) {
     const cableExerciseNames = [
       "cable crossover",
