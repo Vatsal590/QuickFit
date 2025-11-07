@@ -127,8 +127,8 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-fitness-primary" />
             Generate Workout Plan
@@ -161,7 +161,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
             </CardContent>
           </Card>
         ) : (
-          <ScrollArea className="flex-1 pr-4 h-[60vh]">
+          <div className="flex-1 overflow-y-auto min-h-0 pr-2">
             <div className="space-y-4">
               <Card>
                 <CardHeader>
@@ -205,11 +205,11 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
                 </CardContent>
               </Card>
             </div>
-          </ScrollArea>
+          </div>
         )}
 
         {profile && (
-          <div className="flex gap-3 mt-4 pt-4 border-t">
+          <div className="flex gap-3 mt-4 pt-4 border-t flex-shrink-0">
             <Button variant="outline" onClick={onClose} className="flex-1">
               Cancel
             </Button>
