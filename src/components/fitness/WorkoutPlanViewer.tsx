@@ -134,6 +134,8 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'cable face-pull': 'https://www.inspireusafoundation.org/file/2022/03/cable-face-pull.gif',
       'lower back extension': 'https://www.inspireusafoundation.org/file/2022/05/back-extension.gif',
       'lower-back extension': 'https://www.inspireusafoundation.org/file/2022/05/back-extension.gif',
+      'cable crossover': 'https://www.inspireusafoundation.org/file/2024/02/cable-standing-crossover.gif',
+      'cable wood chop': 'https://i0.wp.com/www.strengthlog.com/wp-content/uploads/2025/03/cable-high-to-low-woodchop.gif?fit=600%2C600&ssl=1',
 
       // Shoulder exercises
       'overhead press': 'https://www.inspireusafoundation.org/file/2022/10/dumbbell-shoulder-press.gif',
