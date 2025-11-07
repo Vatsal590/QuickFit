@@ -608,6 +608,26 @@ export const exercises: Exercise[] = [
     restTime: 30,
     description: "Bicep curls without weights"
   },
+  {
+    id: "sitting-bicep-curls",
+    name: "Sitting Bicep Curls",
+    muscleGroup: "biceps",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 30,
+    description: "Sit on a chair and curl your leg up toward your chest, engaging the biceps as if curling a weight"
+  },
+  {
+    id: "bag-curls",
+    name: "Bag Curls",
+    muscleGroup: "biceps",
+    equipment: ["none"],
+    sets: 3,
+    reps: 12,
+    restTime: 45,
+    description: "Get a backpack, fill it with water bottles, books etc and curl it like a dumbbell"
+  },
 
   // Biceps exercises
   {

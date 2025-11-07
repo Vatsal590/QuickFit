@@ -158,6 +158,14 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'resistance band curls': 'https://gymvisual.com/img/p/2/1/8/2/5/21825.gif',
       'barbell reverse curl' : 'https://burnfit.io/wp-content/uploads/2023/11/REV_BB_CURL.gif',
       'bodyweight bicep curls': 'https://www.inspireusafoundation.org/file/2024/02/bodyweight-bicep-curl.gif',
+      'sitting bicep curls': 'https://fitliferegime.com/wp-content/uploads/2023/06/Bodyweight-Bicep-Curl.gif',
+      'sitting bicep curl': 'https://fitliferegime.com/wp-content/uploads/2023/06/Bodyweight-Bicep-Curl.gif',
+      'sitting-bicep-curls': 'https://fitliferegime.com/wp-content/uploads/2023/06/Bodyweight-Bicep-Curl.gif',
+      'sitting-bicep-curl': 'https://fitliferegime.com/wp-content/uploads/2023/06/Bodyweight-Bicep-Curl.gif',
+      'bag curls': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
+      'bag curl': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
+      'backpack curls': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
+      'backpack curl': 'https://i0.wp.com/post.healthline.com/wp-content/uploads/2021/07/400x400_Biceps_Workouts_At_Home_Backpack_Curls.gif?h=840',
 
       
       // Leg exercises
