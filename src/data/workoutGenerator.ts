@@ -191,8 +191,44 @@ export const generateWorkout = (
     });
   }
 
-  // Special case: Back & Biceps with dumbbells and barbells for 60 mins
+  // Special case: Cable machine workouts for 45 and 60 mins
   if (
+    (time === 45 || time === 60) &&
+    equipment.includes("cable machine")
+  ) {
+    const cableExerciseNames = [
+      "cable crossover",
+      "cable wood chop",
+      "cable face pull",
+      "tricep extension"
+    ];
+    
+    const cableExercises = selectedExercises.filter(ex =>
+      cableExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have all 4, find them from the main exercises pool
+    const needed = cableExerciseNames.filter(name =>
+      !cableExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      cableExercises.push(...additional);
+    }
+    
+    // Set correct number of sets based on duration
+    const sets = time === 60 ? 4 : 3;
+    selectedExercises = cableExercises.slice(0, 4).map(ex => ({
+      ...ex,
+      sets
+    }));
+  }
+  // Special case: Back & Biceps with dumbbells and barbells for 60 mins
+  else if (
     time === 60 &&
     muscleGroups.includes("back") &&
     muscleGroups.includes("biceps") &&
