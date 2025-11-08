@@ -450,8 +450,9 @@ export const generateWorkout = (
     }
   }
 
-  // Ensure at least 1 exercise per selected muscle group (respecting max limit)
+  // Ensure at least 1 exercise per selected muscle group with 65:35 split (major:minor)
   if (muscleGroups.length > 1 && !muscleGroups.includes("full body")) {
+    const majorMuscles: MuscleGroup[] = ["back", "chest", "legs"];
     const exercisesByMuscleGroup = new Map<MuscleGroup, Exercise[]>();
     const finalExercises: Exercise[] = [];
     
@@ -468,7 +469,7 @@ export const generateWorkout = (
       });
     });
     
-    // Add at least 1 exercise per muscle group
+    // Step 1: Add at least 1 exercise per selected muscle group
     const added = new Set<string>();
     muscleGroups.forEach(mg => {
       const mgExercises = exercisesByMuscleGroup.get(mg) || [];
@@ -481,13 +482,55 @@ export const generateWorkout = (
       }
     });
     
-    // Fill remaining slots with other exercises
-    selectedExercises.forEach(ex => {
-      if (finalExercises.length < maxExercises && !added.has(ex.name)) {
-        finalExercises.push(ex);
-        added.add(ex.name);
-      }
-    });
+    // Step 2: Calculate how many more exercises we can add
+    const remainingSlots = maxExercises - finalExercises.length;
+    
+    if (remainingSlots > 0) {
+      // Calculate split: 65% major, 35% minor
+      const majorSlotsNeeded = Math.round(remainingSlots * 0.65);
+      const minorSlotsNeeded = remainingSlots - majorSlotsNeeded;
+      
+      // Get available exercises for major and minor muscles
+      const majorExercises = selectedExercises.filter(ex => {
+        if (added.has(ex.name)) return false;
+        const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+        return exMuscleGroups.some(mg => majorMuscles.includes(mg));
+      });
+      
+      const minorExercises = selectedExercises.filter(ex => {
+        if (added.has(ex.name)) return false;
+        const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+        return !exMuscleGroups.some(mg => majorMuscles.includes(mg));
+      });
+      
+      // Add major muscle exercises
+      let majorAdded = 0;
+      majorExercises.forEach(ex => {
+        if (majorAdded < majorSlotsNeeded && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+          majorAdded++;
+        }
+      });
+      
+      // Add minor muscle exercises
+      let minorAdded = 0;
+      minorExercises.forEach(ex => {
+        if (minorAdded < minorSlotsNeeded && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+          minorAdded++;
+        }
+      });
+      
+      // If we still have slots and didn't fill them, add any remaining exercises
+      selectedExercises.forEach(ex => {
+        if (finalExercises.length < maxExercises && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+        }
+      });
+    }
     
     selectedExercises = finalExercises;
   }
