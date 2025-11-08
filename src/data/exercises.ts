@@ -980,7 +980,7 @@ export const exercises: Exercise[] = [
     id: "turkish-get-up",
     name: "Turkish Get-Up",
     muscleGroup: "full body",
-    equipment: ["kettlebell", "dumbbells"],
+    equipment: ["kettlebell",],
     sets: 3,
     reps: 5,
     restTime: 60,
