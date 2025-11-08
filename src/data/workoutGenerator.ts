@@ -263,6 +263,27 @@ export const generateWorkout = (
     
     selectedExercises = bicepExercises.slice(0, 2);
   }
+  // Special case: Cable machine + back (include cable wood chop and other back exercises)
+  else if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("back")
+  ) {
+    const cableBackExercises = ["cable wood chop", "lat pulldown", "face pull"];
+    
+    const targetExercises = exercises.filter(ex =>
+      ex.equipment.includes("cable machine") &&
+      cableBackExercises.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // Supplement with other back exercises from selected exercises
+    const otherBackExercises = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return (exerciseMuscleGroups.includes("back") || exerciseMuscleGroups.includes("full body")) &&
+             !targetExercises.some(te => te.name === ex.name);
+    });
+    
+    selectedExercises = [...targetExercises, ...otherBackExercises];
+  }
   // Special case: Cable machine workouts for 45 and 60 mins (full body) - only when cable machine is primary equipment
   else if (
     (time === 45 || time === 60) &&
@@ -413,9 +434,14 @@ export const generateWorkout = (
     
     const exercisesByEquipment = new Map<Equipment, Exercise[]>();
     
-    // Group available exercises by equipment
+    // Group available exercises by equipment - check all exercises, not just selectedExercises
+    const allFilteredExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+    
     activeEquipment.forEach(eq => {
-      const eqExercises = selectedExercises.filter(ex => ex.equipment.includes(eq));
+      const eqExercises = allFilteredExercises.filter(ex => 
+        ex.equipment.includes(eq) && 
+        ex.equipment.filter(e => e !== "none").every(e => equipment.includes(e))
+      );
       exercisesByEquipment.set(eq, eqExercises);
     });
     
@@ -423,19 +449,22 @@ export const generateWorkout = (
     const orderedExercises: Exercise[] = [];
     const added = new Set<string>();
     
-    // First pass: Add 1 exercise from each equipment
+    // First pass: Add at least 1 exercise from each equipment
     activeEquipment.forEach(eq => {
       const eqExercises = exercisesByEquipment.get(eq) || [];
       const ex = eqExercises.find(e => !added.has(e.name));
-      if (ex && orderedExercises.length < maxExercises) {
+      if (ex) {
         orderedExercises.push(ex);
         added.add(ex.name);
+        console.log(`Added from ${eq}:`, ex.name);
+      } else {
+        console.warn(`No exercises found for equipment: ${eq}`);
       }
     });
     
     // Second pass: Fill remaining slots, rotating through equipment
     let equipmentIndex = 0;
-    while (orderedExercises.length < maxExercises) {
+    while (orderedExercises.length < maxExercises && equipmentIndex < activeEquipment.length * 10) {
       const eq = activeEquipment[equipmentIndex % activeEquipment.length];
       const eqExercises = exercisesByEquipment.get(eq) || [];
       const ex = eqExercises.find(e => !added.has(e.name));
@@ -443,12 +472,10 @@ export const generateWorkout = (
       if (ex) {
         orderedExercises.push(ex);
         added.add(ex.name);
+        console.log(`Added additional from ${eq}:`, ex.name);
       }
       
       equipmentIndex++;
-      
-      // Break if we can't find any more unique exercises
-      if (equipmentIndex > activeEquipment.length * 10) break;
     }
     
     selectedExercises = orderedExercises;
