@@ -163,7 +163,7 @@ async function sendPushNotification(user: UserContext, message: string): Promise
         console.error(`Failed to send push notification to subscription ${subscription.id}:`, error);
         
         // If subscription is invalid (410 error), remove it from database
-        if (error.statusCode === 410) {
+        if (error && typeof error === 'object' && 'statusCode' in error && error.statusCode === 410) {
           await supabase
             .from('push_subscriptions')
             .delete()
@@ -220,7 +220,7 @@ const handler = async (req: Request): Promise<Response> => {
           email: user.email,
           message,
           status: 'failed',
-          error: error.message
+          error: error instanceof Error ? error.message : String(error)
         });
       }
     }
@@ -247,7 +247,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error) {
     console.error('Error in daily notifications:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : String(error) }),
       {
         status: 500,
         headers: { 'Content-Type': 'application/json', ...corsHeaders },

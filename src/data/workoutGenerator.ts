@@ -401,114 +401,58 @@ export const generateWorkout = (
   else if (time === 60) maxExercises = Math.max(3, 5 - painReliefCount);
   else maxExercises = Math.max(1, 3 - painReliefCount);
 
-  // Equipment-based splitting logic (only for multi-equipment selections)
-  const hasMultipleEquipment = equipment.length > 1 && !equipment.every(e => e === "none");
-  
-  if (hasMultipleEquipment && !equipment.includes("none")) {
-    const equipmentRatios: Record<string, Partial<Record<Equipment, number>>> = {
-      "dumbbell,cable machine": { "dumbbells": 0.5, "cable machine": 0.5 },
-      "cable machine,dumbbell": { "dumbbells": 0.5, "cable machine": 0.5 },
-      "barbell,dumbbell,cable machine": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "barbell,cable machine,dumbbell": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "dumbbell,barbell,cable machine": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "dumbbell,cable machine,barbell": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "cable machine,barbell,dumbbell": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "cable machine,dumbbell,barbell": { "barbell": 0.4, "dumbbells": 0.3, "cable machine": 0.3 },
-      "kettlebell,dumbbell,cable machine": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "kettlebell,cable machine,dumbbell": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "dumbbell,kettlebell,cable machine": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "dumbbell,cable machine,kettlebell": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "cable machine,kettlebell,dumbbell": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "cable machine,dumbbell,kettlebell": { "kettlebell": 0.33, "dumbbells": 0.33, "cable machine": 0.34 },
-      "kettlebell,barbell,cable machine": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-      "kettlebell,cable machine,barbell": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-      "barbell,kettlebell,cable machine": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-      "barbell,cable machine,kettlebell": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-      "cable machine,kettlebell,barbell": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-      "cable machine,barbell,kettlebell": { "kettlebell": 0.3, "barbell": 0.4, "cable machine": 0.3 },
-    };
+  console.log('Max exercises before equipment distribution:', maxExercises, 'Pain relief exercises:', painReliefCount);
 
-    const equipmentKey = equipment.filter(e => e !== "none").sort().join(",");
-    const ratios = equipmentRatios[equipmentKey];
-
-    if (ratios) {
-      const splitExercises: Exercise[] = [];
-      const equipmentList = Object.keys(ratios) as Equipment[];
-      
-      equipmentList.forEach(eq => {
-        const targetCount = Math.round(maxExercises * ratios[eq]);
-        const eqExercises = selectedExercises.filter(ex => ex.equipment.includes(eq));
-        splitExercises.push(...eqExercises.slice(0, targetCount));
-      });
-
-      // Remove duplicates while preserving order
-      const seen = new Set<string>();
-      selectedExercises = splitExercises.filter(ex => {
-        if (seen.has(ex.name)) return false;
-        seen.add(ex.name);
-        return true;
-      });
-
-      // Fill remaining slots if needed
-      if (selectedExercises.length < maxExercises) {
-        const remaining = maxExercises - selectedExercises.length;
-        const allExercises = getFilteredExercises(muscleGroups, equipment, intensity);
-        const existingNames = new Set(selectedExercises.map(ex => ex.name));
-        
-        allExercises.forEach(ex => {
-          if (selectedExercises.length < maxExercises && !existingNames.has(ex.name)) {
-            selectedExercises.push(ex);
-            existingNames.add(ex.name);
-          }
-        });
-      }
-    }
-  }
-
-  // Ensure at least 1 exercise from each selected equipment (ordered: pullup bar, barbell, dumbbell, kettlebell, cable machine)
-  // Ignore resistance bands
+  // Ensure at least 1 exercise from each selected equipment
   const equipmentOrder: Equipment[] = ["pull-up bar", "barbell", "dumbbells", "kettlebell", "cable machine"];
   const activeEquipment = equipmentOrder.filter(eq => equipment.includes(eq));
   
   if (activeEquipment.length > 1) {
-    const exercisesByEquipment = new Map<Equipment, Exercise[]>();
-    const orderedExercises: Exercise[] = [];
+    // Ensure we have at least as many exercises as equipment types
+    maxExercises = Math.max(maxExercises, activeEquipment.length);
     
-    // Group exercises by equipment
-    selectedExercises.forEach(ex => {
-      ex.equipment.forEach(eq => {
-        if (activeEquipment.includes(eq)) {
-          if (!exercisesByEquipment.has(eq)) {
-            exercisesByEquipment.set(eq, []);
-          }
-          exercisesByEquipment.get(eq)!.push(ex);
-        }
-      });
+    const exercisesByEquipment = new Map<Equipment, Exercise[]>();
+    
+    // Group available exercises by equipment
+    activeEquipment.forEach(eq => {
+      const eqExercises = selectedExercises.filter(ex => ex.equipment.includes(eq));
+      exercisesByEquipment.set(eq, eqExercises);
     });
     
-    // Add at least 1 exercise per equipment in order
+    // Build final exercise list ensuring diversity
+    const orderedExercises: Exercise[] = [];
     const added = new Set<string>();
+    
+    // First pass: Add 1 exercise from each equipment
     activeEquipment.forEach(eq => {
       const eqExercises = exercisesByEquipment.get(eq) || [];
-      if (eqExercises.length > 0 && orderedExercises.length < maxExercises) {
-        // Find first exercise not already added
-        const ex = eqExercises.find(e => !added.has(e.name));
-        if (ex) {
-          orderedExercises.push(ex);
-          added.add(ex.name);
-        }
-      }
-    });
-    
-    // Fill remaining slots with other exercises
-    selectedExercises.forEach(ex => {
-      if (orderedExercises.length < maxExercises && !added.has(ex.name)) {
+      const ex = eqExercises.find(e => !added.has(e.name));
+      if (ex && orderedExercises.length < maxExercises) {
         orderedExercises.push(ex);
         added.add(ex.name);
       }
     });
     
+    // Second pass: Fill remaining slots, rotating through equipment
+    let equipmentIndex = 0;
+    while (orderedExercises.length < maxExercises) {
+      const eq = activeEquipment[equipmentIndex % activeEquipment.length];
+      const eqExercises = exercisesByEquipment.get(eq) || [];
+      const ex = eqExercises.find(e => !added.has(e.name));
+      
+      if (ex) {
+        orderedExercises.push(ex);
+        added.add(ex.name);
+      }
+      
+      equipmentIndex++;
+      
+      // Break if we can't find any more unique exercises
+      if (equipmentIndex > activeEquipment.length * 10) break;
+    }
+    
     selectedExercises = orderedExercises;
+    console.log('After equipment distribution:', selectedExercises.map(e => `${e.name} (${e.equipment.join(', ')})`));
   }
 
   // Ensure at least 1 exercise per selected muscle group with 65:35 split (major:minor)
