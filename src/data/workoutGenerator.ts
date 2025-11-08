@@ -301,10 +301,11 @@ export const generateWorkout = (
       sets
     }));
   }
-  // Special case: Barbell full body for any time frame
+  // Special case: Barbell full body for any time frame (only when barbell is primary/sole equipment)
   else if (
     equipment.includes("barbell") &&
-    muscleGroups.includes("full body")
+    muscleGroups.includes("full body") &&
+    (equipment.length === 1 || (equipment.length === 2 && equipment.includes("none")))
   ) {
     const targetCount = time === 60 ? 5 : time === 45 ? 4 : time === 30 ? 3 : time === 20 ? 2 : 1;
 
