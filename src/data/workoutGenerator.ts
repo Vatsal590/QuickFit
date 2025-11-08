@@ -186,6 +186,20 @@ export const generateWorkout = (
     painReliefExercises = alternatives.slice(0, 2); // Take up to 2 pain relief exercises
   }
 
+  // Special case: Pullup bar + Back - ALWAYS include pull-ups
+  let mandatoryPullups: Exercise[] = [];
+  if (equipment.includes("pull-up bar") && muscleGroups.includes("back")) {
+    const pullupExercises = exercises.filter(ex => 
+      ex.equipment.includes("pull-up bar") && 
+      ex.name.toLowerCase().includes("pull-up")
+    );
+    if (pullupExercises.length > 0) {
+      mandatoryPullups = [pullupExercises[0]];
+      // Remove pull-ups from selectedExercises to avoid duplicates
+      selectedExercises = selectedExercises.filter(ex => !ex.name.toLowerCase().includes("pull-up"));
+    }
+  }
+
   // Special case: Cable machine + Back + Biceps
   if (
     equipment.includes("cable machine") &&
@@ -450,6 +464,52 @@ export const generateWorkout = (
     }
   }
 
+  // Ensure at least 1 exercise from each selected equipment (ordered: pullup bar, barbell, dumbbell, kettlebell, cable machine)
+  // Ignore resistance bands
+  const equipmentOrder: Equipment[] = ["pull-up bar", "barbell", "dumbbells", "kettlebell", "cable machine"];
+  const activeEquipment = equipmentOrder.filter(eq => equipment.includes(eq));
+  
+  if (activeEquipment.length > 1) {
+    const exercisesByEquipment = new Map<Equipment, Exercise[]>();
+    const orderedExercises: Exercise[] = [];
+    
+    // Group exercises by equipment
+    selectedExercises.forEach(ex => {
+      ex.equipment.forEach(eq => {
+        if (activeEquipment.includes(eq)) {
+          if (!exercisesByEquipment.has(eq)) {
+            exercisesByEquipment.set(eq, []);
+          }
+          exercisesByEquipment.get(eq)!.push(ex);
+        }
+      });
+    });
+    
+    // Add at least 1 exercise per equipment in order
+    const added = new Set<string>();
+    activeEquipment.forEach(eq => {
+      const eqExercises = exercisesByEquipment.get(eq) || [];
+      if (eqExercises.length > 0 && orderedExercises.length < maxExercises) {
+        // Find first exercise not already added
+        const ex = eqExercises.find(e => !added.has(e.name));
+        if (ex) {
+          orderedExercises.push(ex);
+          added.add(ex.name);
+        }
+      }
+    });
+    
+    // Fill remaining slots with other exercises
+    selectedExercises.forEach(ex => {
+      if (orderedExercises.length < maxExercises && !added.has(ex.name)) {
+        orderedExercises.push(ex);
+        added.add(ex.name);
+      }
+    });
+    
+    selectedExercises = orderedExercises;
+  }
+
   // Ensure at least 1 exercise per selected muscle group with 65:35 split (major:minor)
   if (muscleGroups.length > 1 && !muscleGroups.includes("full body")) {
     const majorMuscles: MuscleGroup[] = ["back", "chest", "legs"];
@@ -542,8 +602,9 @@ export const generateWorkout = (
     selectedExercises.push(...supplementary.filter(ex => !existing.has(ex.name)));
   }
 
-  // Add pain relief exercises FIRST (they always get priority)
-  const finalExerciseList = [...painReliefExercises, ...selectedExercises.slice(0, maxExercises)];
+  // Add mandatory exercises FIRST (pull-ups if applicable), then pain relief, then selected exercises
+  const mandatoryExercises = [...mandatoryPullups];
+  const finalExerciseList = [...mandatoryExercises, ...painReliefExercises, ...selectedExercises.slice(0, maxExercises - mandatoryExercises.length)];
   const adjustedExercises = finalExerciseList.map(ex => adjustExerciseForIntensity(ex, intensity, time));
   const warmup = generateWarmupExercises(equipment).slice(0,3);
   const cooldown = generateCooldownExercises(muscleGroups).slice(0,3);
