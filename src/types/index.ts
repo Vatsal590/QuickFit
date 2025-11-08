@@ -18,6 +18,7 @@ export type Equipment =
   | "kettlebell" 
   | "resistance bands" 
   | "cable machine" 
+  | "bench" 
   | "pull-up bar";
 
 export type IntensityLevel = "light" | "moderate" | "intense";
