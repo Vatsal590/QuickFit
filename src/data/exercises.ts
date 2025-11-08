@@ -1207,7 +1207,10 @@ export const getFilteredExercises = (
   const filteredByMuscleAndEquipment = exercises.filter(exercise => {
     // Check if the exercise targets one of the selected muscle groups
     const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
-    const matchesMuscleGroup = exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+    const targetIncludesFullBody = targetMuscleGroups.includes("full body");
+    const matchesMuscleGroup = targetIncludesFullBody
+      ? true // Treat "full body" selection as matching any muscle group
+      : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
     
     // If all equipment selected, exclude resistance band exercises
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
@@ -1215,9 +1218,10 @@ export const getFilteredExercises = (
     }
     
     // Check if the exercise can be performed with the available equipment
-    const hasRequiredEquipment = exercise.equipment.some(eq => 
-      availableEquipment.includes(eq)
-    );
+    // Require that ALL non-"none" equipment listed for the exercise is available
+    const hasRequiredEquipment = exercise.equipment
+      .filter(eq => eq !== "none")
+      .every(eq => availableEquipment.includes(eq));
     
     return matchesMuscleGroup && hasRequiredEquipment;
   });

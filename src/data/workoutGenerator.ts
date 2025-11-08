@@ -398,7 +398,7 @@ export const generateWorkout = (
   else if (time === 20) maxExercises = Math.max(1, 2 - painReliefCount);
   else if (time === 30) maxExercises = Math.max(1, 3 - painReliefCount);
   else if (time === 45) maxExercises = Math.max(2, 4 - painReliefCount);
-  else if (time === 60) maxExercises = Math.max(3, 5 - painReliefCount);
+  else if (time === 60) maxExercises = 5;
   else maxExercises = Math.max(1, 3 - painReliefCount);
 
   console.log('Max exercises before equipment distribution:', maxExercises, 'Pain relief exercises:', painReliefCount);
