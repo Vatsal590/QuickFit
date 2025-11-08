@@ -26,7 +26,7 @@ export const exercises: Exercise[] = [
     id: "dumbbell-chest-press",
     name: "Dumbbell Chest Press",
     muscleGroup: "chest",
-    equipment: ["dumbbells", "bench"],
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 10,
     restTime: 90,
@@ -36,7 +36,7 @@ export const exercises: Exercise[] = [
     id: "dumbbell-chest-fly",
     name: "Dumbbell Chest Fly",
     muscleGroup: "chest",
-    equipment: ["dumbbells", "bench"],
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 12,
     restTime: 60,
@@ -46,7 +46,7 @@ export const exercises: Exercise[] = [
     id: "barbell-bench-press",
     name: "Barbell Bench Press",
     muscleGroup: "chest",
-    equipment: ["barbell", "bench"],
+    equipment: ["barbell"],
     sets: 3,
     reps: 8,
     restTime: 120,
@@ -56,7 +56,7 @@ export const exercises: Exercise[] = [
     id: "incline-barbell-press",
     name: "Incline Barbell Press",
     muscleGroup: "chest",
-    equipment: ["barbell", "bench"],
+    equipment: ["barbell"],
     sets: 3,
     reps: 8,
     restTime: 120,
@@ -66,7 +66,7 @@ export const exercises: Exercise[] = [
     id: "incline-dumbbell-press",
     name: "Incline Dumbbell Press",
     muscleGroup: "chest",
-    equipment: ["dumbbells", "bench"],
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 10,
     restTime: 90,
@@ -178,7 +178,7 @@ export const exercises: Exercise[] = [
     id: "single-arm-dumbbell-row",
     name: "Single-Arm Dumbbell Row",
     muscleGroup: "back",
-    equipment: ["dumbbells", "bench"],
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 10,
     restTime: 45,
@@ -188,7 +188,7 @@ export const exercises: Exercise[] = [
     id: "lower back extension",
     name: "Lower-Back Extension",
     muscleGroup: "back",
-    equipment: ["bench"],
+    equipment: ["none"],
     sets: 3,
     reps: 8,
     restTime: 45,
@@ -432,7 +432,7 @@ export const exercises: Exercise[] = [
     id: "dumbbell-step-up",
     name: "Dumbbell Step-Up",
     muscleGroup: "legs",
-    equipment: ["dumbbells", "bench"],
+    equipment: ["dumbbells"],
     sets: 3,
     reps: 10,
     restTime: 60,
@@ -746,7 +746,7 @@ export const exercises: Exercise[] = [
     id: "barbell-close-grip-press",
     name: "Close-Grip Barbell Press",
     muscleGroup: "triceps",
-    equipment: ["barbell", "bench"],
+    equipment: ["barbell"],
     sets: 3,
     reps: 10,
     restTime: 90,
@@ -756,7 +756,7 @@ export const exercises: Exercise[] = [
     id: "tricep-dips",
     name: "Tricep Dips",
     muscleGroup: "triceps",
-    equipment: ["bench"],
+    equipment: ["none"],
     sets: 3,
     reps: 12,
     restTime: 45,
@@ -1199,7 +1199,7 @@ export const getFilteredExercises = (
   intensity: string
 ): Exercise[] => {
   // Check if user selected all equipment (5+ equipment types, excluding "none")
-  const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
+  const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "pull-up bar"];
   const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
   const isAllEquipmentSelected = selectedEquipmentCount >= 5;
   

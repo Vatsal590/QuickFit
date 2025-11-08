@@ -32,7 +32,6 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     { value: "kettlebell", label: "Kettlebell" },
     { value: "resistance bands", label: "Resistance Bands" },
     { value: "cable machine", label: "Cable Machine" },
-    { value: "bench", label: "Bench" },
     { value: "pull-up bar", label: "Pull-up Bar" }
   ];
   

@@ -67,7 +67,6 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
     'kettlebell',
     'resistance bands',
     'cable machine',
-    'bench',
     'pull-up bar'
   ];
 
