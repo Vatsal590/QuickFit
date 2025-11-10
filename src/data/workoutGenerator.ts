@@ -161,6 +161,14 @@ export const generateWorkout = (
   if (equipment.includes("none") && equipment.length === 1) {
     selectedExercises = selectedExercises.filter(ex => ex.equipment.includes("none"));
   }
+  
+  // If specific equipment is selected (not just "none"), ensure exercises use that equipment
+  const hasSpecificEquipment = equipment.some(eq => eq !== "none");
+  if (hasSpecificEquipment) {
+    selectedExercises = selectedExercises.filter(ex => 
+      ex.equipment.some(exEq => equipment.includes(exEq))
+    );
+  }
 
   // Store pain relief exercises separately - they will ALWAYS be included
   let painReliefExercises: Exercise[] = [];
@@ -526,13 +534,14 @@ export const generateWorkout = (
       const majorExercises = selectedExercises.filter(ex => {
         if (added.has(ex.name)) return false;
         const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
-        return exMuscleGroups.some(mg => majorMuscles.includes(mg));
+        return exMuscleGroups.some(mg => majorMuscles.includes(mg) && muscleGroups.includes(mg));
       });
       
       const minorExercises = selectedExercises.filter(ex => {
         if (added.has(ex.name)) return false;
         const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
-        return !exMuscleGroups.some(mg => majorMuscles.includes(mg));
+        return exMuscleGroups.some(mg => muscleGroups.includes(mg)) && 
+               !exMuscleGroups.some(mg => majorMuscles.includes(mg));
       });
       
       // Add major muscle exercises
@@ -555,11 +564,14 @@ export const generateWorkout = (
         }
       });
       
-      // If we still have slots and didn't fill them, add any remaining exercises
+      // If we still have slots and didn't fill them, add any remaining exercises that match selected muscles
       selectedExercises.forEach(ex => {
         if (finalExercises.length < maxExercises && !added.has(ex.name)) {
-          finalExercises.push(ex);
-          added.add(ex.name);
+          const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+          if (exMuscleGroups.some(mg => muscleGroups.includes(mg))) {
+            finalExercises.push(ex);
+            added.add(ex.name);
+          }
         }
       });
     }
