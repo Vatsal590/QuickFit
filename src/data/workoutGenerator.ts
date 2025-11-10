@@ -8,6 +8,17 @@ const getExerciseCount = (time: TimeFrame): number => {
   return counts[time] || 3;
 };
 
+const isCompoundExercise = (exercise: Exercise): boolean => {
+  const compoundKeywords = [
+    'squat', 'deadlift', 'press', 'row', 'pull-up', 'chin-up', 'dip',
+    'lunge', 'push-up', 'clean', 'snatch', 'thruster', 'burpee'
+  ];
+  
+  const exerciseName = exercise.name.toLowerCase();
+  return compoundKeywords.some(keyword => exerciseName.includes(keyword)) ||
+         Array.isArray(exercise.muscleGroup) && exercise.muscleGroup.length > 1;
+};
+
 export const generateWorkout = (
   time: TimeFrame,
   intensity: IntensityLevel,
@@ -53,9 +64,20 @@ export const generateWorkout = (
     }
   }
 
-  // Select main exercises
+  // Select main exercises - prioritize compound exercises first
+  const compoundExercises = filtered.filter(isCompoundExercise);
+  const isolationExercises = filtered.filter(ex => !isCompoundExercise(ex));
+  
   const exerciseCount = painExercise ? maxExercises - 1 : maxExercises;
-  const selectedExercises = shuffle(filtered).slice(0, exerciseCount);
+  
+  // Get compound exercises first, then isolation to fill remaining slots
+  const selectedCompound = shuffle(compoundExercises).slice(0, exerciseCount);
+  const remainingSlots = exerciseCount - selectedCompound.length;
+  const selectedIsolation = remainingSlots > 0 
+    ? shuffle(isolationExercises).slice(0, remainingSlots) 
+    : [];
+  
+  const selectedExercises = [...selectedCompound, ...selectedIsolation];
   
   // Build final exercise list
   const finalExercises = painExercise 
