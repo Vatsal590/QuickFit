@@ -183,7 +183,7 @@ export const generateWorkout = (
 
     // Get pain relief exercises - equipment doesn't matter for these
     const alternatives = bodyPains.flatMap(pain => getAlternativeExercises(pain, equipment));
-    painReliefExercises = alternatives.slice(0, 2); // Take up to 2 pain relief exercises
+    painReliefExercises = alternatives.slice(0, 1); // Take only 1 pain relief exercise
   }
 
   // Special case: Pullup bar + Back - ALWAYS include pull-ups
@@ -412,15 +412,15 @@ export const generateWorkout = (
     selectedExercises = selected;
   }
 
-  // Determine max exercises based on time (accounting for pain relief exercises)
+  // Determine max exercises based on time (not accounting for pain relief - we want normal count + pain relief)
   let maxExercises: number;
   const painReliefCount = painReliefExercises.length;
-  if (time === 10) maxExercises = Math.max(1, 1 - painReliefCount);
-  else if (time === 20) maxExercises = Math.max(1, 2 - painReliefCount);
-  else if (time === 30) maxExercises = Math.max(1, 3 - painReliefCount);
-  else if (time === 45) maxExercises = Math.max(2, 4 - painReliefCount);
+  if (time === 10) maxExercises = 1; // 1 normal + 1 pain = 2 total when body pain selected
+  else if (time === 20) maxExercises = 2;
+  else if (time === 30) maxExercises = 3;
+  else if (time === 45) maxExercises = 4;
   else if (time === 60) maxExercises = 5;
-  else maxExercises = Math.max(1, 3 - painReliefCount);
+  else maxExercises = 3;
 
   console.log('Max exercises before equipment distribution:', maxExercises, 'Pain relief exercises:', painReliefCount);
 
@@ -576,7 +576,8 @@ export const generateWorkout = (
 
   // Add mandatory exercises FIRST (pull-ups if applicable), then pain relief, then selected exercises
   const mandatoryExercises = [...mandatoryPullups];
-  const finalExerciseList = [...mandatoryExercises, ...painReliefExercises, ...selectedExercises.slice(0, maxExercises - mandatoryExercises.length)];
+  const remainingSlots = maxExercises - mandatoryExercises.length - painReliefCount;
+  const finalExerciseList = [...mandatoryExercises, ...painReliefExercises, ...selectedExercises.slice(0, Math.max(0, remainingSlots))];
   const adjustedExercises = finalExerciseList.map(ex => adjustExerciseForIntensity(ex, intensity, time));
   const warmup = generateWarmupExercises(equipment).slice(0,3);
   const cooldown = generateCooldownExercises(muscleGroups).slice(0,3);
