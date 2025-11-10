@@ -1194,21 +1194,15 @@ export const exercises: Exercise[] = [
 ];
 
 
-
-import { Exercise, MuscleGroup, Equipment } from "./types";
-import { exercises } from "./exercises";
-
-// Utility: Shuffle array
 const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
+// --- getFilteredExercises ---
 export const getFilteredExercises = (
   targetMuscleGroups: MuscleGroup[],
   availableEquipment: Equipment[],
-  intensity: string // for future use
+  intensity: string
 ): Exercise[] => {
-  const selectedEquipment = availableEquipment
-    .filter(eq => eq.toLowerCase() !== "none")
-    .map(eq => eq.toLowerCase());
+  const selectedEquipment = availableEquipment.filter(eq => eq.toLowerCase() !== "none");
 
   const isAllEquipmentSelected = selectedEquipment.length >= 5;
 
@@ -1224,22 +1218,21 @@ export const getFilteredExercises = (
 
     const hasEquipment = eqsLower.some(eq =>
       eq === "none" ||
-      selectedEquipment.includes(eq) ||
-      (["dumbbells","barbell","kettlebell"].includes(eq) &&
-        selectedEquipment.some(se => ["dumbbells","barbell","kettlebell"].includes(se)))
+      selectedEquipment.map(e => e.toLowerCase()).includes(eq) ||
+      // interchange dumbbells/barbell/kettlebell
+      (["dumbbells", "barbell", "kettlebell"].includes(eq) &&
+       selectedEquipment.some(se => ["dumbbells","barbell","kettlebell"].includes(se.toLowerCase())))
     );
 
     return hasEquipment;
   });
 
-  // fallback to bodyweight
+  // Fallback to bodyweight exercises if empty
   if (filtered.length === 0) {
-    filtered = exercises.filter(ex => {
-      const muscles = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
-      const matchesMuscle = muscles.some(mg => targetMuscleGroups.includes(mg));
-      const eqs = Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment];
-      return matchesMuscle && eqs.includes("none");
-    });
+    filtered = exercises.filter(ex =>
+      (Array.isArray(ex.muscleGroup) ? ex.muscleGroup.some(mg => targetMuscleGroups.includes(mg)) : targetMuscleGroups.includes(ex.muscleGroup)) &&
+      (Array.isArray(ex.equipment) ? ex.equipment.includes("none") : ex.equipment === "none")
+    );
   }
 
   return shuffle(filtered).slice(0, 15);
