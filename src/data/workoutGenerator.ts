@@ -567,12 +567,7 @@ export const generateWorkout = (
     selectedExercises = finalExercises;
   }
   
-  // Ensure at least minimum exercises
-  if (selectedExercises.length < Math.min(3, maxExercises)) {
-    const supplementary = getFilteredExercises(["cardio","core"], equipment, intensity);
-    const existing = new Set(selectedExercises.map(ex => ex.name));
-    selectedExercises.push(...supplementary.filter(ex => !existing.has(ex.name)));
-  }
+  // Remove fallback logic that adds unrelated exercises - only use exercises that match selected muscles
 
   // Add mandatory exercises FIRST (pull-ups if applicable), then pain relief, then selected exercises
   const mandatoryExercises = [...mandatoryPullups];
