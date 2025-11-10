@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from "uuid";
 import { Exercise, Equipment, MuscleGroup, IntensityLevel, TimeFrame, Workout } from "../types";
-import { exercises, getFilteredExercises } from "./getFilteredExercises";
+import { exercises, getFilteredExercises } from "./exercises";
 
 // Helper: capitalize first letter
 const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
