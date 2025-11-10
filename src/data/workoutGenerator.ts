@@ -1,45 +1,54 @@
+// src/data/workoutGenerator.ts
+import { Exercise, MuscleGroup, Equipment } from "./types";
+import { exercises } from "./exercises";
 import { getFilteredExercises } from "./exercises";
-import { MuscleGroup, Equipment, Exercise } from "./types";
 
-/**
- * Generates a workout based on selected muscle groups, available equipment, intensity, and pain areas.
- * @param targetMuscleGroups - Array of muscle groups user wants to target (e.g., ["chest", "legs"])
- * @param availableEquipment - Array of available equipment (e.g., ["dumbbells", "barbell"])
- * @param intensity - Workout intensity (e.g., "low", "medium", "high")
- * @param painAreas - Optional array of user's pain areas (e.g., ["lower back", "shoulder"])
- * @returns Array of Exercise objects, with a pain-relief exercise at the start if applicable
- */
+// Main function to generate a workout
 export const generateWorkout = (
-  targetMuscleGroups: MuscleGroup[],
-  availableEquipment: Equipment[],
-  intensity: string,
-  painAreas: string[] = []
+  targetMuscleGroups: MuscleGroup[], 
+  availableEquipment: Equipment[], 
+  intensity: string, 
+  painAreas: string[] = [] // optional array of pain areas
 ): Exercise[] => {
-  // 1. Get all filtered exercises based on muscle groups, equipment, and intensity
-  const filteredExercises = getFilteredExercises(targetMuscleGroups, availableEquipment, intensity);
+  
+  const workout: Exercise[] = [];
 
-  // 2. Get a single pain-relief exercise (equipment-free) if any pain areas are selected
-  let painReliefExercise: Exercise | null = null;
+  // 1️⃣ Select ONE pain-relief exercise if user has any pain areas
   if (painAreas.length > 0) {
-    const painExercises = filteredExercises.filter(
-      (ex) => ex.isPainRelief && ex.equipment.includes("none") && !painAreas.includes(ex.muscleGroup as string)
+    const painExercises = exercises.filter(ex => 
+      ex.isPainRelief && ex.painArea && painAreas.includes(ex.painArea)
     );
 
     if (painExercises.length > 0) {
-      // Pick a random one
-      painReliefExercise = painExercises[Math.floor(Math.random() * painExercises.length)];
+      const selectedPainExercise = painExercises[
+        Math.floor(Math.random() * painExercises.length)
+      ];
+      workout.push(selectedPainExercise);
     }
   }
 
-  // 3. Remove the selected pain-relief exercise from the main list to avoid duplicates
-  const finalExercises = painReliefExercise
-    ? filteredExercises.filter((ex) => ex.id !== painReliefExercise!.id)
-    : filteredExercises;
+  // 2️⃣ Get normal exercises filtered by muscle group, equipment, intensity
+  const filteredExercises = getFilteredExercises(
+    targetMuscleGroups, 
+    availableEquipment, 
+    intensity
+  );
 
-  // 4. Add the pain-relief exercise at the start if it exists
-  if (painReliefExercise) {
-    finalExercises.unshift(painReliefExercise);
+  // 3️⃣ Remove any exercises that are pain-relief from the normal list
+  const normalExercises = filteredExercises.filter(ex => !ex.isPainRelief);
+
+  // 4️⃣ Shuffle and add exercises to workout
+  const remainingSlots = 15 - workout.length; // total target = 15
+  const shuffledNormal = [...normalExercises].sort(() => 0.5 - Math.random());
+  workout.push(...shuffledNormal.slice(0, remainingSlots));
+
+  // 5️⃣ Final safety: if workout is empty, fallback to any exercise
+  if (workout.length === 0) {
+    const fallback = exercises.filter(ex => !ex.isPainRelief);
+    if (fallback.length > 0) {
+      workout.push(fallback[Math.floor(Math.random() * fallback.length)]);
+    }
   }
 
-  return finalExercises;
+  return workout;
 };
