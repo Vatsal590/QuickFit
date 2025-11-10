@@ -1193,72 +1193,71 @@ export const exercises: Exercise[] = [
   
 ];
 
+
 export const getFilteredExercises = (
-  targetMuscleGroups: MuscleGroup[], 
+  targetMuscleGroups: MuscleGroup[],
   availableEquipment: Equipment[],
-  intensity: string,
-  painAreas: string[] = []
+  intensity: string
 ): Exercise[] => {
-  // --- STEP 1: Select one equipment-free pain-relief exercise ---
-  const painReliefExercise = exercises.find(exercise => {
-    if (!exercise.isPainRelief) return false;
+  // Check if user selected all equipment (5+ types excluding "none")
+  const allEquipmentTypes: Equipment[] = [
+    "dumbbells",
+    "barbell",
+    "kettlebell",
+    "resistance bands",
+    "cable machine",
+    "bench",
+    "pull-up bar",
+  ];
+  const selectedEquipmentCount = availableEquipment.filter((eq) => eq !== "none").length;
+  const isAllEquipmentSelected = selectedEquipmentCount >= 5;
 
-    // Must be equipment-free
-    const usesEquipment = exercise.equipment.some(eq => eq !== "none");
-    if (usesEquipment) return false;
+  // Filter exercises by muscle groups and equipment
+  const filteredByMuscleAndEquipment = exercises.filter((exercise) => {
+    // Exercise muscle groups can be single or array
+    const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup)
+      ? exercise.muscleGroup
+      : [exercise.muscleGroup];
 
-    // Must NOT target any selected pain areas
-    if (exercise.painType?.some(pt => painAreas.includes(pt))) return false;
-
-    return true;
-  });
-
-  // --- STEP 2: Filter normal exercises (excluding pain-relief) ---
-  const filteredByMuscleAndEquipment = exercises.filter(exercise => {
-    if (exercise.isPainRelief) return false; // exclude pain relief from normal pool
-
-    // --- Muscle group filtering ---
-    const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
     const targetIncludesFullBody = targetMuscleGroups.includes("full body");
-    const matchesMuscleGroup = targetIncludesFullBody 
-      ? true 
-      : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
 
-    if (!matchesMuscleGroup) return false;
+    // Match exercises based on muscle group selection
+    const matchesMuscleGroup = targetIncludesFullBody
+      ? true
+      : exerciseMuscleGroups.some((mg) => targetMuscleGroups.includes(mg));
 
-    // --- Equipment filtering ---
-    const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
-    const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
-    const isAllEquipmentSelected = selectedEquipmentCount >= 5;
-
+    // Exclude resistance bands if all equipment is selected
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
-      return false; // exclude resistance bands if all equipment is selected
+      return false;
     }
 
-    // Require ALL non-"none" equipment of the exercise to be in availableEquipment
+    // Ensure exercise can be performed with available equipment
     const hasRequiredEquipment = exercise.equipment
-      .filter(eq => eq !== "none")
-      .every(eq => availableEquipment.includes(eq));
+      .filter((eq) => eq !== "none")
+      .every((eq) => availableEquipment.includes(eq));
 
-    return hasRequiredEquipment;
+    // Check intensity if defined (optional)
+    const matchesIntensity = intensity ? exercise.intensity === intensity : true;
+
+    return matchesMuscleGroup && hasRequiredEquipment && matchesIntensity;
   });
 
-  // --- STEP 3: Balance exercises across multiple equipment ---
-  let finalExercises: Exercise[] = [];
-
+  // If multiple equipment, balance exercises per equipment type
   if (availableEquipment.length > 1) {
     const exercisesByEquipment: { [key: string]: Exercise[] } = {};
-    availableEquipment.forEach(equipment => {
-      exercisesByEquipment[equipment] = filteredByMuscleAndEquipment.filter(ex => ex.equipment.includes(equipment));
+    availableEquipment.forEach((equipment) => {
+      exercisesByEquipment[equipment] = filteredByMuscleAndEquipment.filter((ex) =>
+        ex.equipment.includes(equipment)
+      );
     });
 
     const balancedExercises: Exercise[] = [];
-    const totalSlots = 15; 
+    const totalSlots = 15;
     const slotsPerEquipment = Math.floor(totalSlots / availableEquipment.length);
     const remainingSlots = totalSlots % availableEquipment.length;
 
     let slotIndex = 0;
-    availableEquipment.forEach(equipment => {
+    availableEquipment.forEach((equipment) => {
       const equipmentExercises = exercisesByEquipment[equipment] || [];
       if (equipmentExercises.length > 0) {
         const slots = slotsPerEquipment + (slotIndex < remainingSlots ? 1 : 0);
@@ -1268,23 +1267,18 @@ export const getFilteredExercises = (
       slotIndex++;
     });
 
-    // Fill remaining slots with any exercises not already included
+    // Fill remaining slots if needed
     if (balancedExercises.length < totalSlots) {
-      const remaining = filteredByMuscleAndEquipment.filter(ex => !balancedExercises.some(e => e.id === ex.id));
+      const remaining = filteredByMuscleAndEquipment.filter(
+        (ex) => !balancedExercises.some((inc) => inc.id === ex.id)
+      );
       const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
       balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
     }
 
-    finalExercises = balancedExercises.sort(() => 0.5 - Math.random());
-  } else {
-    // Single equipment or none
-    finalExercises = [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
+    return [...balancedExercises].sort(() => 0.5 - Math.random());
   }
 
-  // --- STEP 4: Add pain relief exercise at the start if available ---
-  if (painReliefExercise) {
-    finalExercises.unshift(painReliefExercise);
-  }
-
-  return finalExercises;
+  // Single equipment or no equipment – return all matching exercises
+  return [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
 };
