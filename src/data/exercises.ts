@@ -1194,55 +1194,87 @@ export const exercises: Exercise[] = [
 ];
 
 export const getFilteredExercises = (
-  targetMuscleGroups: MuscleGroup[], 
+  targetMuscleGroups: MuscleGroup[],
   availableEquipment: Equipment[],
-  intensity: string
+  intensity: "beginner" | "intermediate" | "advanced",
+  injuryAreas: MuscleGroup[] = []
 ): Exercise[] => {
   const allEquipmentTypes: Equipment[] = [
-    "dumbbells", "barbell", "kettlebell", "resistance bands",
-    "cable machine", "bench", "pull-up bar"
+    "dumbbells",
+    "barbell",
+    "kettlebell",
+    "resistance bands",
+    "cable machine",
+    "bench",
+    "pull-up bar",
   ];
 
   const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
   const isAllEquipmentSelected = selectedEquipmentCount >= 5;
 
-  // --- Filter by muscle + equipment ---
-  const filteredByMuscleAndEquipment = exercises.filter(exercise => {
+  // Filter exercises matching criteria
+  let filtered = exercises.filter(exercise => {
     const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup)
       ? exercise.muscleGroup
       : [exercise.muscleGroup];
 
     const targetIncludesFullBody = targetMuscleGroups.includes("full body");
-
     const matchesMuscleGroup = targetIncludesFullBody
       ? true
       : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
 
-    if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
+    if (!matchesMuscleGroup) return false;
+
+    if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands"))
       return false;
+
+    const userWantsWeighted =
+      availableEquipment.some(eq =>
+        ["dumbbells", "barbell", "kettlebell", "cable machine"].includes(eq)
+      ) && !injuryAreas.some(area => exerciseMuscleGroups.includes(area));
+
+    const exerciseIsWeighted = exercise.equipment.some(eq =>
+      ["dumbbells", "barbell", "kettlebell", "cable machine"].includes(eq)
+    );
+
+    // Bodyweight-only if injured
+    if (injuryAreas.some(area => exerciseMuscleGroups.includes(area))) {
+      return exercise.equipment.includes("none");
     }
 
-    // FIXED: match ANY available equipment instead of requiring ALL
-    const hasRequiredEquipment = exercise.equipment.some(eq => availableEquipment.includes(eq) || eq === "none");
+    // Weighted-only if user has weights and no injuries for that muscle
+    if (userWantsWeighted && !exerciseIsWeighted) return false;
 
-    return matchesMuscleGroup && hasRequiredEquipment;
+    const hasRequiredEquipment = exercise.equipment
+      .filter(eq => eq !== "none")
+      .every(eq => availableEquipment.includes(eq));
+
+    return hasRequiredEquipment;
   });
 
-  // --- Equipment balancing (unchanged) ---
+  // Fallback if empty
+  if (filtered.length === 0) {
+    filtered = exercises.filter(ex => ex.equipment.includes("none"));
+  }
+
+  // Balance exercises by equipment
   if (availableEquipment.length > 1) {
     const exercisesByEquipment: { [key: string]: Exercise[] } = {};
-    availableEquipment.forEach(eq => {
-      exercisesByEquipment[eq] = filteredByMuscleAndEquipment.filter(ex => ex.equipment.includes(eq));
+    availableEquipment.forEach(equipment => {
+      exercisesByEquipment[equipment] = filtered.filter(ex =>
+        ex.equipment.includes(equipment)
+      );
     });
 
-    const balancedExercises: Exercise[] = [];
     const totalSlots = 15;
     const slotsPerEquipment = Math.floor(totalSlots / availableEquipment.length);
     const remainingSlots = totalSlots % availableEquipment.length;
 
+    const balancedExercises: Exercise[] = [];
     let slotIndex = 0;
-    availableEquipment.forEach(eq => {
-      const equipmentExercises = exercisesByEquipment[eq] || [];
+
+    availableEquipment.forEach(equipment => {
+      const equipmentExercises = exercisesByEquipment[equipment] || [];
       if (equipmentExercises.length > 0) {
         const slots = slotsPerEquipment + (slotIndex < remainingSlots ? 1 : 0);
         const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
@@ -1252,36 +1284,40 @@ export const getFilteredExercises = (
     });
 
     if (balancedExercises.length < totalSlots) {
-      const remaining = filteredByMuscleAndEquipment.filter(ex =>
-        !balancedExercises.some(included => included.id === ex.id)
+      const remaining = filtered.filter(
+        ex => !balancedExercises.some(included => included.id === ex.id)
       );
-      const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
-      balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
+      const shuffledRemaining = [...remaining].sort(() => 0.5 - Math.random());
+      balancedExercises.push(
+        ...shuffledRemaining.slice(0, totalSlots - balancedExercises.length)
+      );
     }
 
-    return [...balancedExercises].sort(() => 0.5 - Math.random());
+    filtered = balancedExercises;
   }
 
-  // --- Muscle group balance (NEW) ---
-  const bicepsSelected = targetMuscleGroups.includes("biceps");
-  const tricepsSelected = targetMuscleGroups.includes("triceps");
-  if (bicepsSelected && tricepsSelected) {
-    const bicepsEx = filteredByMuscleAndEquipment.filter(ex => 
-      Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("biceps") : ex.muscleGroup === "biceps"
-    );
-    const tricepsEx = filteredByMuscleAndEquipment.filter(ex => 
-      Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("triceps") : ex.muscleGroup === "triceps"
-    );
+  // Intensity scaling
+  const intensityPresets = {
+    beginner: { sets: [2, 3], reps: [10, 15], rest: "45-60 sec" },
+    intermediate: { sets: [3, 4], reps: [8, 12], rest: "30-45 sec" },
+    advanced: { sets: [4, 5], reps: [6, 10], rest: "20-30 sec" },
+  };
 
-    const half = Math.floor(15 / 2);
-    const selected = [
-      ...bicepsEx.sort(() => 0.5 - Math.random()).slice(0, half),
-      ...tricepsEx.sort(() => 0.5 - Math.random()).slice(0, 15 - half)
-    ];
+  const preset = intensityPresets[intensity];
 
-    return selected.sort(() => 0.5 - Math.random());
-  }
+  // Assign sets, reps, and rest dynamically
+  const finalExercises = filtered.map(ex => {
+    const sets =
+      preset.sets[0] + Math.floor(Math.random() * (preset.sets[1] - preset.sets[0] + 1));
+    const reps =
+      preset.reps[0] + Math.floor(Math.random() * (preset.reps[1] - preset.reps[0] + 1));
+    return {
+      ...ex,
+      sets,
+      reps,
+      rest: preset.rest,
+    };
+  });
 
-  // --- Default case ---
-  return [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
+  return [...finalExercises].sort(() => 0.5 - Math.random());
 };
