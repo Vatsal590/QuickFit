@@ -1196,82 +1196,90 @@ export const exercises: Exercise[] = [
 export const getFilteredExercises = (
   targetMuscleGroups: MuscleGroup[], 
   availableEquipment: Equipment[],
-  intensity: string
+  intensity: string,
+  painAreas: string[] = [] // Added to handle pain relief selection
 ): Exercise[] => {
-  // Check if user selected all equipment (5+ equipment types, excluding "none")
+  // Select one equipment-free pain relief exercise first
+  const painReliefExercise = exercises.find(exercise => {
+    if (!exercise.isPainRelief) return false;
+
+    // Exercise must be equipment-free
+    const hasEquipment = exercise.equipment.some(eq => eq !== "none");
+    if (hasEquipment) return false;
+
+    // Must not target any of the user's pain areas
+    if (exercise.painType?.some(pt => painAreas.includes(pt))) return false;
+
+    return true;
+  });
+
+  // Standard filtering logic
   const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
   const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
   const isAllEquipmentSelected = selectedEquipmentCount >= 5;
-  
-  // Filter exercises that match the target muscle groups and available equipment
+
   const filteredByMuscleAndEquipment = exercises.filter(exercise => {
-    // Check if the exercise targets one of the selected muscle groups
+    // Skip pain relief exercise if already included
+    if (painReliefExercise && exercise.id === painReliefExercise.id) return false;
+
     const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
     const targetIncludesFullBody = targetMuscleGroups.includes("full body");
-    
-    // Match exercises based on muscle group selection:
-    // - If "full body" selected: include all exercises
-    // - Otherwise: only include exercises that match the specific selected muscle groups
+
     const matchesMuscleGroup = targetIncludesFullBody 
       ? true 
       : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
-    
-    // If all equipment selected, exclude resistance band exercises
+
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
       return false;
     }
-    
-    // Check if the exercise can be performed with the available equipment
-    // Require that ALL non-"none" equipment listed for the exercise is available
+
     const hasRequiredEquipment = exercise.equipment
       .filter(eq => eq !== "none")
       .every(eq => availableEquipment.includes(eq));
-    
+
     return matchesMuscleGroup && hasRequiredEquipment;
   });
-  
-  // For multiple equipment selections, ensure balanced distribution
+
+  // Handle multiple equipment selection
+  let finalExercises: Exercise[] = [];
+
   if (availableEquipment.length > 1) {
     const exercisesByEquipment: { [key: string]: Exercise[] } = {};
-    
-    // Group exercises by equipment type
     availableEquipment.forEach(equipment => {
-      exercisesByEquipment[equipment] = filteredByMuscleAndEquipment.filter(ex => 
-        ex.equipment.includes(equipment)
-      );
+      exercisesByEquipment[equipment] = filteredByMuscleAndEquipment.filter(ex => ex.equipment.includes(equipment));
     });
-    
-    // Ensure each equipment type is represented proportionally
+
     const balancedExercises: Exercise[] = [];
-    const totalSlots = 15; // Target number of exercises
+    const totalSlots = 15; 
     const slotsPerEquipment = Math.floor(totalSlots / availableEquipment.length);
     const remainingSlots = totalSlots % availableEquipment.length;
-    
+
     let slotIndex = 0;
     availableEquipment.forEach(equipment => {
       const equipmentExercises = exercisesByEquipment[equipment] || [];
       if (equipmentExercises.length > 0) {
-        // Give extra slot to first few equipment types for remainder
         const slots = slotsPerEquipment + (slotIndex < remainingSlots ? 1 : 0);
         const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
         balancedExercises.push(...shuffled.slice(0, Math.min(slots, shuffled.length)));
       }
       slotIndex++;
     });
-    
-    // Fill any remaining slots with any matching exercises not already included
+
     if (balancedExercises.length < totalSlots) {
-      const remaining = filteredByMuscleAndEquipment.filter(ex => 
-        !balancedExercises.some(included => included.id === ex.id)
-      );
+      const remaining = filteredByMuscleAndEquipment.filter(ex => !balancedExercises.some(included => included.id === ex.id));
       const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
       balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
     }
-    
-    return [...balancedExercises].sort(() => 0.5 - Math.random());
+
+    finalExercises = balancedExercises.sort(() => 0.5 - Math.random());
+  } else {
+    finalExercises = [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
   }
-  
-  // Single equipment or no equipment - return all matching exercises
-  const shuffled = [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
-  return shuffled;
+
+  // Add the pain relief exercise at the start if found
+  if (painReliefExercise) {
+    finalExercises.unshift(painReliefExercise);
+  }
+
+  return finalExercises;
 };
