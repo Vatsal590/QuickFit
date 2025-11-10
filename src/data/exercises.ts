@@ -1194,94 +1194,46 @@ export const exercises: Exercise[] = [
 ];
 
 export const getFilteredExercises = (
-  targetMuscleGroups: MuscleGroup[], 
+  targetMuscleGroups: MuscleGroup[],
   availableEquipment: Equipment[],
   intensity: string
 ): Exercise[] => {
-  const allEquipmentTypes: Equipment[] = [
-    "dumbbells", "barbell", "kettlebell", "resistance bands",
-    "cable machine", "bench", "pull-up bar"
-  ];
+  const selectedEquipment = availableEquipment.filter(eq => eq !== "none");
 
-  const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
-  const isAllEquipmentSelected = selectedEquipmentCount >= 5;
+  let filtered = exercises.filter(ex => {
+    const muscles = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    const matchesMuscle = targetMuscleGroups.includes("full body") || muscles.some(mg => targetMuscleGroups.includes(mg));
+    if (!matchesMuscle) return false;
 
-  // --- Filter by muscle + equipment ---
-  const filteredByMuscleAndEquipment = exercises.filter(exercise => {
-    const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup)
-      ? exercise.muscleGroup
-      : [exercise.muscleGroup];
+    const eqs = Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment];
 
-    const targetIncludesFullBody = targetMuscleGroups.includes("full body");
+    // Ignore "bench" in exercises entirely, because user can't select it
+    const relevantEquipment = eqs.filter(eq => eq !== "bench");
 
-    const matchesMuscleGroup = targetIncludesFullBody
-      ? true
-      : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+    // Require at least one of the selected equipment for the exercise
+    const hasEquipment = relevantEquipment.some(eq => {
+      if (eq === "none") return true;
 
-    if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
-      return false;
-    }
+      // Treat any weights interchangeable
+      if (["dumbbells", "barbell", "kettlebell"].includes(eq)) {
+        return selectedEquipment.some(se => ["dumbbells", "barbell", "kettlebell"].includes(se));
+      }
 
-    // FIXED: match ANY available equipment instead of requiring ALL
-    const hasRequiredEquipment = exercise.equipment.some(eq => availableEquipment.includes(eq) || eq === "none");
+      return selectedEquipment.includes(eq);
+    });
 
-    return matchesMuscleGroup && hasRequiredEquipment;
+    return hasEquipment;
   });
 
-  // --- Equipment balancing (unchanged) ---
-  if (availableEquipment.length > 1) {
-    const exercisesByEquipment: { [key: string]: Exercise[] } = {};
-    availableEquipment.forEach(eq => {
-      exercisesByEquipment[eq] = filteredByMuscleAndEquipment.filter(ex => ex.equipment.includes(eq));
-    });
-
-    const balancedExercises: Exercise[] = [];
-    const totalSlots = 15;
-    const slotsPerEquipment = Math.floor(totalSlots / availableEquipment.length);
-    const remainingSlots = totalSlots % availableEquipment.length;
-
-    let slotIndex = 0;
-    availableEquipment.forEach(eq => {
-      const equipmentExercises = exercisesByEquipment[eq] || [];
-      if (equipmentExercises.length > 0) {
-        const slots = slotsPerEquipment + (slotIndex < remainingSlots ? 1 : 0);
-        const shuffled = [...equipmentExercises].sort(() => 0.5 - Math.random());
-        balancedExercises.push(...shuffled.slice(0, Math.min(slots, shuffled.length)));
-      }
-      slotIndex++;
-    });
-
-    if (balancedExercises.length < totalSlots) {
-      const remaining = filteredByMuscleAndEquipment.filter(ex =>
-        !balancedExercises.some(included => included.id === ex.id)
-      );
-      const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
-      balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
-    }
-
-    return [...balancedExercises].sort(() => 0.5 - Math.random());
+  // Fallback to bodyweight if no matches
+  if (filtered.length === 0) {
+    filtered = exercises.filter(ex =>
+      (Array.isArray(ex.muscleGroup)
+        ? ex.muscleGroup.some(mg => targetMuscleGroups.includes(mg))
+        : targetMuscleGroups.includes(ex.muscleGroup)) &&
+      (Array.isArray(ex.equipment) ? ex.equipment.includes("none") : ex.equipment === "none")
+    );
   }
 
-  // --- Muscle group balance (NEW) ---
-  const bicepsSelected = targetMuscleGroups.includes("biceps");
-  const tricepsSelected = targetMuscleGroups.includes("triceps");
-  if (bicepsSelected && tricepsSelected) {
-    const bicepsEx = filteredByMuscleAndEquipment.filter(ex => 
-      Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("biceps") : ex.muscleGroup === "biceps"
-    );
-    const tricepsEx = filteredByMuscleAndEquipment.filter(ex => 
-      Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("triceps") : ex.muscleGroup === "triceps"
-    );
-
-    const half = Math.floor(15 / 2);
-    const selected = [
-      ...bicepsEx.sort(() => 0.5 - Math.random()).slice(0, half),
-      ...tricepsEx.sort(() => 0.5 - Math.random()).slice(0, 15 - half)
-    ];
-
-    return selected.sort(() => 0.5 - Math.random());
-  }
-
-  // --- Default case ---
-  return [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
+  return filtered.slice(0, 15);
 };
