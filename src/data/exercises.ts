@@ -1208,10 +1208,13 @@ export const getFilteredExercises = (
     // Check if the exercise targets one of the selected muscle groups
     const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
     const targetIncludesFullBody = targetMuscleGroups.includes("full body");
-    const exerciseIsFullBody = exerciseMuscleGroups.includes("full body");
     
-    // Match if: user selected "full body", OR exercise is "full body", OR exercise matches target muscle groups
-    const matchesMuscleGroup = targetIncludesFullBody || exerciseIsFullBody || exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+    // Match exercises based on muscle group selection:
+    // - If "full body" selected: include all exercises
+    // - Otherwise: only include exercises that match the specific selected muscle groups
+    const matchesMuscleGroup = targetIncludesFullBody 
+      ? true 
+      : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
     
     // If all equipment selected, exclude resistance band exercises
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {

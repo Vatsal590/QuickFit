@@ -263,12 +263,12 @@ export const generateWorkout = (
     
     selectedExercises = bicepExercises.slice(0, 2);
   }
-  // Special case: Cable machine + back (include cable wood chop and other back exercises)
+  // Special case: Cable machine + back (include specific cable back exercises)
   else if (
     equipment.includes("cable machine") &&
     muscleGroups.includes("back")
   ) {
-    const cableBackExercises = ["cable wood chop", "lat pulldown", "face pull"];
+    const cableBackExercises = ["lat pulldown", "face pull", "cable row"];
     
     const targetExercises = exercises.filter(ex =>
       ex.equipment.includes("cable machine") &&
@@ -278,7 +278,7 @@ export const generateWorkout = (
     // Supplement with other back exercises from selected exercises
     const otherBackExercises = selectedExercises.filter(ex => {
       const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
-      return (exerciseMuscleGroups.includes("back") || exerciseMuscleGroups.includes("full body")) &&
+      return exerciseMuscleGroups.includes("back") &&
              !targetExercises.some(te => te.name === ex.name);
     });
     
