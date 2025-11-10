@@ -1199,66 +1199,42 @@ export const getFilteredExercises = (
   availableEquipment: Equipment[],
   intensity: string
 ): Exercise[] => {
-  const allEquipmentTypes: Equipment[] = [
-    "dumbbells", "barbell", "kettlebell", "resistance bands",
-    "cable machine", "bench", "pull-up bar"
-  ];
+  const selectedEquipment = availableEquipment.filter(eq => eq !== "none");
 
-  const selectedEquipment = availableEquipment.filter(eq => eq.toLowerCase() !== "none");
-  const isAllEquipmentSelected = selectedEquipment.length >= 5;
-
-  // Filter exercises based on muscle group and equipment
   let filtered = exercises.filter(ex => {
     const muscles = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
     const matchesMuscle = targetMuscleGroups.includes("full body") || muscles.some(mg => targetMuscleGroups.includes(mg));
-
     if (!matchesMuscle) return false;
-    if (isAllEquipmentSelected && ex.equipment.includes("resistance bands")) return false;
 
-    // Equipment check: allow ANY match with selected equipment or bodyweight/none
     const eqs = Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment];
-    const hasEquipment = eqs.some(eq =>
-      eq.toLowerCase() === "none" ||
-      selectedEquipment.includes(eq) ||
-      (["dumbbells","barbell","kettlebell"].includes(eq) &&
-       selectedEquipment.some(se => ["dumbbells","barbell","kettlebell"].includes(se))) ||
-      (eq === "bench" && selectedEquipment.some(se => ["bench","barbell","dumbbells"].includes(se)))
-    );
+
+    // Ignore "bench" in exercises entirely, because user can't select it
+    const relevantEquipment = eqs.filter(eq => eq !== "bench");
+
+    // Require at least one of the selected equipment for the exercise
+    const hasEquipment = relevantEquipment.some(eq => {
+      if (eq === "none") return true;
+
+      // Treat any weights interchangeable
+      if (["dumbbells", "barbell", "kettlebell"].includes(eq)) {
+        return selectedEquipment.some(se => ["dumbbells", "barbell", "kettlebell"].includes(se));
+      }
+
+      return selectedEquipment.includes(eq);
+    });
 
     return hasEquipment;
   });
 
-  // Limit to 15 exercises, balance equipment if multiple selected
-  if (selectedEquipment.length > 1) {
-    const exercisesByEquipment: { [key: string]: Exercise[] } = {};
-    selectedEquipment.forEach(eq => {
-      exercisesByEquipment[eq] = filtered.filter(ex => 
-        (Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment]).includes(eq)
-      );
-    });
-
-    const balanced: Exercise[] = [];
-    const totalSlots = 15;
-    const slotsPerEquipment = Math.floor(totalSlots / selectedEquipment.length);
-    const remainder = totalSlots % selectedEquipment.length;
-
-    selectedEquipment.forEach((eq, idx) => {
-      const group = exercisesByEquipment[eq] || [];
-      const slots = slotsPerEquipment + (idx < remainder ? 1 : 0);
-      const shuffled = [...group].sort(() => 0.5 - Math.random());
-      balanced.push(...shuffled.slice(0, slots));
-    });
-
-    // Fill remaining slots if less than total
-    if (balanced.length < totalSlots) {
-      const remaining = filtered.filter(ex => !balanced.includes(ex));
-      balanced.push(...[...remaining].sort(() => 0.5 - Math.random()).slice(0, totalSlots - balanced.length));
-    }
-
-    return balanced.sort(() => 0.5 - Math.random());
+  // Fallback to bodyweight if no matches
+  if (filtered.length === 0) {
+    filtered = exercises.filter(ex =>
+      (Array.isArray(ex.muscleGroup)
+        ? ex.muscleGroup.some(mg => targetMuscleGroups.includes(mg))
+        : targetMuscleGroups.includes(ex.muscleGroup)) &&
+      (Array.isArray(ex.equipment) ? ex.equipment.includes("none") : ex.equipment === "none")
+    );
   }
 
-  // Default return
-  return filtered.sort(() => 0.5 - Math.random()).slice(0, 15);
+  return filtered.slice(0, 15);
 };
-
