@@ -1,54 +1,595 @@
-// src/data/workoutGenerator.ts
-import { Exercise, MuscleGroup, Equipment } from "./types";
-import { exercises } from "./exercises";
-import { getFilteredExercises } from "./exercises";
+import { v4 as uuidv4 } from 'uuid';
+import { Exercise, Equipment, MuscleGroup, IntensityLevel, TimeFrame, Workout } from "../types";
+import { exercises, getFilteredExercises } from "./exercises";
 
-// Main function to generate a workout
+// Helper: capitalize first letter
+const capitalizeFirstLetter = (string: string) => string.charAt(0).toUpperCase() + string.slice(1);
+
+// Generate workout title
+const generateWorkoutTitle = (muscleGroups: MuscleGroup[], intensity: IntensityLevel): string => {
+  const intensityWords = {
+    light: ["Quick", "Gentle", "Basic", "Starter", "Light"],
+    moderate: ["Solid", "Standard", "Classic", "Balanced", "Core"],
+    intense: ["Ultimate", "Power", "Intense", "Extreme", "Crusher"]
+  };
+  const word = intensityWords[intensity][Math.floor(Math.random() * intensityWords[intensity].length)];
+
+  if (muscleGroups.length === 1) return `${word} ${capitalizeFirstLetter(muscleGroups[0])} Workout`;
+  if (muscleGroups.includes("full body")) return `${word} Full Body Experience`;
+  if (muscleGroups.length > 1) return `${word} ${capitalizeFirstLetter(muscleGroups[0])} & More Combo`;
+  return `${word} Fitness Session`;
+};
+
+// Adjust sets, reps, rest based on intensity and time
+const adjustExerciseForIntensity = (exercise: Exercise, intensity: IntensityLevel, timeAvailable: TimeFrame): Exercise => {
+  const adjusted = { ...exercise };
+
+  switch (intensity) {
+    case "light":
+      adjusted.sets = Math.max(2, exercise.sets - 1);
+      adjusted.restTime = Math.max(60, exercise.restTime + 15);
+      break;
+    case "moderate": break;
+    case "intense":
+      adjusted.sets = exercise.sets + 1;
+      adjusted.reps = Math.min(20, exercise.reps + 2);
+      adjusted.restTime = Math.max(30, exercise.restTime - 15);
+      break;
+  }
+
+  if (timeAvailable <= 20) {
+    adjusted.sets = Math.min(adjusted.sets, 3);
+    adjusted.restTime = Math.min(adjusted.restTime, 45);
+  } else if (timeAvailable >= 45) {
+    adjusted.sets = Math.max(adjusted.sets, 3);
+  }
+
+  return adjusted;
+};
+
+// Warmup exercises
+const generateWarmupExercises = (equipment: Equipment[]): Exercise[] => {
+  const warmup: Exercise[] = [
+    { id: uuidv4(), name: "Light Jogging in Place", muscleGroup: "cardio", equipment: ["none"], sets: 1, reps: 60, restTime: 0, description: "Jog lightly in place for 60 seconds." },
+    { id: uuidv4(), name: "Arm Circles", muscleGroup: "shoulders", equipment: ["none"], sets: 1, reps: 20, restTime: 0, description: "Small arm circles." },
+    { id: uuidv4(), name: "Hip Rotations", muscleGroup: "core", equipment: ["none"], sets: 1, reps: 10, restTime: 0, description: "Rotate hips gently." },
+    { id: uuidv4(), name: "Bodyweight Squats", muscleGroup: "legs", equipment: ["none"], sets: 1, reps: 15, restTime: 0, description: "Light squats to warm up legs." },
+    { id: uuidv4(), name: "Shoulder Stretches", muscleGroup: "shoulders", equipment: ["none"], sets: 1, reps: 10, restTime: 0, description: "Cross one arm across chest and hold." }
+  ];
+
+  // If only "no equipment" selected, return bodyweight warm-ups only
+  if (equipment.includes("none") && equipment.length === 1) {
+    return warmup.filter(ex => ex.equipment.includes("none")).slice(0, 4);
+  }
+
+  return warmup.slice(0, 4);
+};
+
+// Cooldown exercises
+const generateCooldownExercises = (targetMuscleGroups: MuscleGroup[]): Exercise[] => {
+  const cooldown: Exercise[] = [
+    { id: uuidv4(), name: "Deep Breathing", muscleGroup: "core", equipment: ["none"], sets: 1, reps: 10, restTime: 0, description: "Deep breaths to lower heart rate." },
+    { id: uuidv4(), name: "Quad Stretch", muscleGroup: "legs", equipment: ["none"], sets: 1, reps: 30, restTime: 0, description: "Grab ankle, pull heel to glutes." },
+    { id: uuidv4(), name: "Hamstring Stretch", muscleGroup: "legs", equipment: ["none"], sets: 1, reps: 30, restTime: 0, description: "Reach for toes and hold." },
+    { id: uuidv4(), name: "Child's Pose", muscleGroup: "back", equipment: ["none"], sets: 1, reps: 60, restTime: 0, description: "Stretch your back." },
+    { id: uuidv4(), name: "Shoulder Stretch", muscleGroup: "shoulders", equipment: ["none"], sets: 1, reps: 30, restTime: 0, description: "Pull arm across chest and hold." },
+    { id: uuidv4(), name: "Chest Stretch", muscleGroup: "chest", equipment: ["none"], sets: 1, reps: 30, restTime: 0, description: "Clasp hands behind back and lift slightly." }
+  ];
+
+  let targetSpecific = cooldown.filter(ex => {
+    const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    return exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+  });
+  if (targetSpecific.length < 3) targetSpecific = [...targetSpecific, ...cooldown.filter(ex => {
+    const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+    return !exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
+  })];
+  return targetSpecific.slice(0, 4);
+};
+
+// Alternative exercises for body pains (fixed to respect equipment)
+const getAlternativeExercises = (pain: import('@/types').BodyPain, equipment: Equipment[]): Exercise[] => {
+  const hasEquipment = !equipment.includes("none");
+
+  const alternatives: Record<string, Exercise[]> = {
+    "knee pain": [
+      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Lie on back, lift hips." },
+      { id: uuidv4(), name: "Clamshells", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 12, restTime: 45, description: "Side-lying hip exercise." },
+      { id: uuidv4(), name: "Deadbugs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Core stability on back." }
+    ],
+    "ankle pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Seated Upper Body Press", muscleGroup: "shoulders", equipment: ["dumbbells"], sets: 3, reps: 12, restTime: 60, description: "Seated shoulder press." },
+          { id: uuidv4(), name: "Lying Hamstring Curls", muscleGroup: "legs", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Hamstring exercise lying down." }
+        ]
+      : [
+          { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "No-equipment hamstring work." },
+          { id: uuidv4(), name: "Wall March", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Drive knees up while leaning on wall." }
+        ],
+    "hip pain": [
+      { id: uuidv4(), name: "Glute Bridges", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 15, restTime: 60, description: "Hip-safe glute strengthening." },
+      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Core stability on hands and knees." }
+    ],
+    "shoulder pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Resistance Band Rows", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 60, description: "Low anchor rowing motion." },
+          { id: uuidv4(), name: "Supported Bicep Curls", muscleGroup: "biceps", equipment: ["dumbbells"], sets: 3, reps: 12, restTime: 45, description: "Bicep curls with support." }
+        ]
+      : [
+          { id: uuidv4(), name: "Scapular Retractions", muscleGroup: "back", equipment: ["none"], sets: 3, reps: 15, restTime: 45, description: "Squeeze shoulder blades together." },
+          { id: uuidv4(), name: "Wall Angels", muscleGroup: "shoulders", equipment: ["none"], sets: 3, reps: 10, restTime: 45, description: "Improve shoulder mobility." }
+        ],
+    "lower back pain": [
+      { id: uuidv4(), name: "Bird-Dogs", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 8, restTime: 45, description: "Safe core strengthening." },
+      { id: uuidv4(), name: "Modified Planks", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Plank with knees down." }
+    ],
+    "elbow pain": hasEquipment
+      ? [
+          { id: uuidv4(), name: "Straight Arm Band Pulls", muscleGroup: "back", equipment: ["resistance bands"], sets: 3, reps: 15, restTime: 45, description: "Resistance band exercise." },
+          { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." }
+        ]
+      : [
+          { id: uuidv4(), name: "Wall Sits", muscleGroup: "legs", equipment: ["none"], sets: 3, reps: 30, restTime: 60, description: "Isometric leg exercise." },
+          { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core", equipment: ["none"], sets: 3, reps: 20, restTime: 45, description: "Core exercise without arm strain." }
+        ],
+    "wrist pain": [
+      { id: uuidv4(), name: "Standing Core Twists", muscleGroup: "core" as MuscleGroup, equipment: ["none"] as Equipment[], sets: 3, reps: 20, restTime: 45, description: "Core exercise without wrist stress." },
+      ...(hasEquipment
+        ? [
+            { id: uuidv4(), name: "Neutral Grip Band Rows", muscleGroup: "back" as MuscleGroup, equipment: ["resistance bands"] as Equipment[], sets: 3, reps: 15, restTime: 60, description: "Neutral wrist resistance band work." }
+          ]
+        : [])
+    ]
+  };
+
+  return alternatives[pain] || [];
+};
+
+// Main workout generator
 export const generateWorkout = (
-  targetMuscleGroups: MuscleGroup[], 
-  availableEquipment: Equipment[], 
-  intensity: string, 
-  painAreas: string[] = [] // optional array of pain areas
-): Exercise[] => {
-  
-  const workout: Exercise[] = [];
+  time: TimeFrame,
+  intensity: IntensityLevel,
+  muscleGroups: MuscleGroup[],
+  equipment: Equipment[],
+  bodyPains?: import('@/types').BodyPain[]
+): Workout => {
+  console.log('Generating workout with:', { time, intensity, muscleGroups, equipment });
 
-  // 1️⃣ Select ONE pain-relief exercise if user has any pain areas
-  if (painAreas.length > 0) {
-    const painExercises = exercises.filter(ex => 
-      ex.isPainRelief && ex.painArea && painAreas.includes(ex.painArea)
+  let selectedExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+
+  // Respect "no equipment" — only use bodyweight exercises
+  if (equipment.includes("none") && equipment.length === 1) {
+    selectedExercises = selectedExercises.filter(ex => ex.equipment.includes("none"));
+  }
+
+  // Store pain relief exercises separately - they will ALWAYS be included
+  let painReliefExercises: Exercise[] = [];
+  if (bodyPains?.length) {
+    const painKeywords: Record<string, string[]> = {
+      "knee pain": ["squat","lunge","jump","step-up","knee bend","run","box jump"],
+      "ankle pain": ["jump","run","lunge","calf raise","burpee","step-up"],
+      "hip pain": ["lunge","high knee","leg raise","jump","deep squat","hip thrust"],
+      "shoulder pain": ["overhead","push-up","plank","dip","lateral raise","front raise","press"],
+      "lower back pain": ["deadlift","toe touch","sit-up","twist","crunch","bend"],
+      "elbow pain": ["pull-up","chin-up","push-up","curl","extension","tricep"],
+      "wrist pain": ["plank","push-up","bear crawl","curl","press"]
+    };
+
+    selectedExercises = selectedExercises.filter(ex =>
+      !bodyPains.some(pain =>
+        (painKeywords[pain] || []).some(word => ex.name.toLowerCase().includes(word))
+      )
     );
 
-    if (painExercises.length > 0) {
-      const selectedPainExercise = painExercises[
-        Math.floor(Math.random() * painExercises.length)
-      ];
-      workout.push(selectedPainExercise);
+    // Get pain relief exercises - equipment doesn't matter for these
+    const alternatives = bodyPains.flatMap(pain => getAlternativeExercises(pain, equipment));
+    painReliefExercises = alternatives.slice(0, 1); // Take only 1 pain relief exercise
+  }
+
+  // Special case: Pullup bar + Back - ALWAYS include pull-ups
+  let mandatoryPullups: Exercise[] = [];
+  if (equipment.includes("pull-up bar") && muscleGroups.includes("back")) {
+    const pullupExercises = exercises.filter(ex => 
+      ex.equipment.includes("pull-up bar") && 
+      ex.name.toLowerCase().includes("pull-up")
+    );
+    if (pullupExercises.length > 0) {
+      mandatoryPullups = [pullupExercises[0]];
+      // Remove pull-ups from selectedExercises to avoid duplicates
+      selectedExercises = selectedExercises.filter(ex => !ex.name.toLowerCase().includes("pull-up"));
     }
   }
 
-  // 2️⃣ Get normal exercises filtered by muscle group, equipment, intensity
-  const filteredExercises = getFilteredExercises(
-    targetMuscleGroups, 
-    availableEquipment, 
-    intensity
-  );
-
-  // 3️⃣ Remove any exercises that are pain-relief from the normal list
-  const normalExercises = filteredExercises.filter(ex => !ex.isPainRelief);
-
-  // 4️⃣ Shuffle and add exercises to workout
-  const remainingSlots = 15 - workout.length; // total target = 15
-  const shuffledNormal = [...normalExercises].sort(() => 0.5 - Math.random());
-  workout.push(...shuffledNormal.slice(0, remainingSlots));
-
-  // 5️⃣ Final safety: if workout is empty, fallback to any exercise
-  if (workout.length === 0) {
-    const fallback = exercises.filter(ex => !ex.isPainRelief);
-    if (fallback.length > 0) {
-      workout.push(fallback[Math.floor(Math.random() * fallback.length)]);
+  // Special case: Cable machine + Back + Biceps
+  if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("back") &&
+    muscleGroups.includes("biceps")
+  ) {
+    const targetExerciseNames = [
+      "lat pulldown",
+      "cable pulldown",
+      "face pull",
+      "cable hammer curl",
+      "cable bicep curl"
+    ];
+    
+    const targetExercises = selectedExercises.filter(ex =>
+      targetExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have all exercises, find them from the main exercises pool
+    const needed = targetExerciseNames.filter(name =>
+      !targetExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      targetExercises.push(...additional);
     }
+    
+    selectedExercises = targetExercises.slice(0, 5);
+  }
+  // Special case: Cable machine + Biceps only
+  else if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("biceps") &&
+    !muscleGroups.includes("back")
+  ) {
+    const bicepExerciseNames = [
+      "cable hammer curl",
+      "cable bicep curl"
+    ];
+    
+    const bicepExercises = selectedExercises.filter(ex =>
+      bicepExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have both, find them from the main exercises pool
+    const needed = bicepExerciseNames.filter(name =>
+      !bicepExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      bicepExercises.push(...additional);
+    }
+    
+    selectedExercises = bicepExercises.slice(0, 2);
+  }
+  // Special case: Cable machine + back (include specific cable back exercises)
+  else if (
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("back")
+  ) {
+    const cableBackExercises = ["lat pulldown", "face pull", "cable row"];
+    
+    const targetExercises = exercises.filter(ex =>
+      ex.equipment.includes("cable machine") &&
+      cableBackExercises.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // Supplement with other back exercises from selected exercises
+    const otherBackExercises = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("back") &&
+             !targetExercises.some(te => te.name === ex.name);
+    });
+    
+    selectedExercises = [...targetExercises, ...otherBackExercises];
+  }
+  // Special case: Cable machine workouts for 45 and 60 mins (full body) - only when cable machine is primary equipment
+  else if (
+    (time === 45 || time === 60) &&
+    equipment.includes("cable machine") &&
+    muscleGroups.includes("full body") &&
+    (equipment.length === 1 || (equipment.length === 2 && equipment.includes("none")))
+  ) {
+    const cableExerciseNames = [
+      "cable crossover",
+      "cable wood chop",
+      "face pull",
+      "tricep pushdown"
+    ];
+    
+    const cableExercises = selectedExercises.filter(ex =>
+      cableExerciseNames.some(name => ex.name.toLowerCase().includes(name))
+    );
+    
+    // If we don't have all 4, find them from the main exercises pool
+    const needed = cableExerciseNames.filter(name =>
+      !cableExercises.some(ex => ex.name.toLowerCase().includes(name))
+    );
+    
+    if (needed.length > 0) {
+      const additional = exercises.filter(ex =>
+        needed.some(name => ex.name.toLowerCase().includes(name)) &&
+        ex.equipment.includes("cable machine")
+      );
+      cableExercises.push(...additional);
+    }
+    
+    // Set correct number of sets based on duration
+    const sets = time === 60 ? 4 : 3;
+    selectedExercises = cableExercises.slice(0, 4).map(ex => ({
+      ...ex,
+      sets
+    }));
+  }
+  // Special case: Barbell full body for any time frame (only when barbell is primary/sole equipment)
+  else if (
+    equipment.includes("barbell") &&
+    muscleGroups.includes("full body") &&
+    (equipment.length === 1 || (equipment.length === 2 && equipment.includes("none")))
+  ) {
+    const targetCount = time === 60 ? 5 : time === 45 ? 4 : time === 30 ? 3 : time === 20 ? 2 : 1;
+
+    const barbellFromSelected = selectedExercises.filter(ex => ex.equipment.includes("barbell"));
+    let barbellExercises = [...barbellFromSelected];
+
+    if (barbellExercises.length < targetCount) {
+      const additional = exercises.filter(ex => ex.equipment.includes("barbell"));
+      const existing = new Set(barbellExercises.map(ex => ex.name.toLowerCase()));
+      additional.forEach(ex => {
+        if (!existing.has(ex.name.toLowerCase())) {
+          barbellExercises.push(ex);
+          existing.add(ex.name.toLowerCase());
+        }
+      });
+    }
+
+    const priorityGroups: MuscleGroup[] = ["legs","chest","back","shoulders","core"];
+    const diversified: Exercise[] = [];
+    const used = new Set<string>();
+    const byGroup = new Map<MuscleGroup, Exercise[]>();
+    barbellExercises.forEach(ex => {
+      const groups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      groups.forEach(g => {
+        if (!byGroup.has(g)) byGroup.set(g, []);
+        byGroup.get(g)!.push(ex);
+      });
+    });
+    priorityGroups.forEach(g => {
+      if (diversified.length < targetCount) {
+        const list = byGroup.get(g) || [];
+        const ex = list.find(e => !used.has(e.name.toLowerCase()));
+        if (ex) {
+          diversified.push(ex);
+          used.add(ex.name.toLowerCase());
+        }
+      }
+    });
+    barbellExercises.forEach(ex => {
+      if (diversified.length < targetCount && !used.has(ex.name.toLowerCase())) {
+        diversified.push(ex);
+        used.add(ex.name.toLowerCase());
+      }
+    });
+
+    selectedExercises = diversified.slice(0, targetCount);
+  }
+  // Special case: Back & Biceps with dumbbells and barbells for 60 mins
+  else if (
+    time === 60 &&
+    muscleGroups.includes("back") &&
+    muscleGroups.includes("biceps") &&
+    equipment.includes("dumbbells") &&
+    equipment.includes("barbell")
+  ) {
+    // Get back exercises with barbell
+    const backExercisesBarbell = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("back") && ex.equipment.includes("barbell");
+    });
+    
+    // Get back exercises with dumbbell
+    const backExercisesDumbbell = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("back") && 
+             ex.equipment.includes("dumbbells") && 
+             !ex.equipment.includes("barbell");
+    });
+    
+    // Get bicep exercises
+    const bicepExercises = selectedExercises.filter(ex => {
+      const exerciseMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      return exerciseMuscleGroups.includes("biceps");
+    });
+    
+    // Select 2 barbell back, 1 dumbbell back, 2 bicep
+    const selected = [
+      ...backExercisesBarbell.slice(0, 2),
+      ...backExercisesDumbbell.slice(0, 1),
+      ...bicepExercises.slice(0, 2)
+    ];
+    
+    selectedExercises = selected;
   }
 
+  // Determine max exercises based on time (not accounting for pain relief - we want normal count + pain relief)
+  let maxExercises: number;
+  const painReliefCount = painReliefExercises.length;
+  if (time === 10) maxExercises = 1; // 1 normal + 1 pain = 2 total when body pain selected
+  else if (time === 20) maxExercises = 2;
+  else if (time === 30) maxExercises = 3;
+  else if (time === 45) maxExercises = 4;
+  else if (time === 60) maxExercises = 5;
+  else maxExercises = 3;
+
+  console.log('Max exercises before equipment distribution:', maxExercises, 'Pain relief exercises:', painReliefCount);
+
+  // Ensure at least 1 exercise from each selected equipment
+  const equipmentOrder: Equipment[] = ["pull-up bar", "barbell", "dumbbells", "kettlebell", "cable machine"];
+  const activeEquipment = equipmentOrder.filter(eq => equipment.includes(eq));
+  
+  if (activeEquipment.length > 1) {
+    // Ensure we have at least as many exercises as equipment types
+    maxExercises = Math.max(maxExercises, activeEquipment.length);
+    
+    const exercisesByEquipment = new Map<Equipment, Exercise[]>();
+    
+    // Group available exercises by equipment - check all exercises, not just selectedExercises
+    const allFilteredExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+    
+    activeEquipment.forEach(eq => {
+      const eqExercises = allFilteredExercises.filter(ex => 
+        ex.equipment.includes(eq) && 
+        ex.equipment.filter(e => e !== "none").every(e => equipment.includes(e))
+      );
+      exercisesByEquipment.set(eq, eqExercises);
+    });
+    
+    // Build final exercise list ensuring diversity
+    const orderedExercises: Exercise[] = [];
+    const added = new Set<string>();
+    
+    // First pass: Add at least 1 exercise from each equipment
+    activeEquipment.forEach(eq => {
+      const eqExercises = exercisesByEquipment.get(eq) || [];
+      const ex = eqExercises.find(e => !added.has(e.name));
+      if (ex) {
+        orderedExercises.push(ex);
+        added.add(ex.name);
+        console.log(`Added from ${eq}:`, ex.name);
+      } else {
+        console.warn(`No exercises found for equipment: ${eq}`);
+      }
+    });
+    
+    // Second pass: Fill remaining slots, rotating through equipment
+    let equipmentIndex = 0;
+    while (orderedExercises.length < maxExercises && equipmentIndex < activeEquipment.length * 10) {
+      const eq = activeEquipment[equipmentIndex % activeEquipment.length];
+      const eqExercises = exercisesByEquipment.get(eq) || [];
+      const ex = eqExercises.find(e => !added.has(e.name));
+      
+      if (ex) {
+        orderedExercises.push(ex);
+        added.add(ex.name);
+        console.log(`Added additional from ${eq}:`, ex.name);
+      }
+      
+      equipmentIndex++;
+    }
+    
+    selectedExercises = orderedExercises;
+    console.log('After equipment distribution:', selectedExercises.map(e => `${e.name} (${e.equipment.join(', ')})`));
+  }
+
+  // Ensure at least 1 exercise per selected muscle group with 65:35 split (major:minor)
+  if (muscleGroups.length > 1 && !muscleGroups.includes("full body")) {
+    const majorMuscles: MuscleGroup[] = ["back", "chest", "legs"];
+    const exercisesByMuscleGroup = new Map<MuscleGroup, Exercise[]>();
+    const finalExercises: Exercise[] = [];
+    
+    // Group exercises by muscle group
+    selectedExercises.forEach(ex => {
+      const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+      exMuscleGroups.forEach(mg => {
+        if (muscleGroups.includes(mg)) {
+          if (!exercisesByMuscleGroup.has(mg)) {
+            exercisesByMuscleGroup.set(mg, []);
+          }
+          exercisesByMuscleGroup.get(mg)!.push(ex);
+        }
+      });
+    });
+    
+    // Step 1: Add at least 1 exercise per selected muscle group
+    const added = new Set<string>();
+    muscleGroups.forEach(mg => {
+      const mgExercises = exercisesByMuscleGroup.get(mg) || [];
+      if (mgExercises.length > 0 && finalExercises.length < maxExercises) {
+        const ex = mgExercises[0];
+        if (!added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+        }
+      }
+    });
+    
+    // Step 2: Calculate how many more exercises we can add
+    const remainingSlots = maxExercises - finalExercises.length;
+    
+    if (remainingSlots > 0) {
+      // Calculate split: 65% major, 35% minor
+      const majorSlotsNeeded = Math.round(remainingSlots * 0.65);
+      const minorSlotsNeeded = remainingSlots - majorSlotsNeeded;
+      
+      // Get available exercises for major and minor muscles
+      const majorExercises = selectedExercises.filter(ex => {
+        if (added.has(ex.name)) return false;
+        const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+        return exMuscleGroups.some(mg => majorMuscles.includes(mg));
+      });
+      
+      const minorExercises = selectedExercises.filter(ex => {
+        if (added.has(ex.name)) return false;
+        const exMuscleGroups = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
+        return !exMuscleGroups.some(mg => majorMuscles.includes(mg));
+      });
+      
+      // Add major muscle exercises
+      let majorAdded = 0;
+      majorExercises.forEach(ex => {
+        if (majorAdded < majorSlotsNeeded && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+          majorAdded++;
+        }
+      });
+      
+      // Add minor muscle exercises
+      let minorAdded = 0;
+      minorExercises.forEach(ex => {
+        if (minorAdded < minorSlotsNeeded && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+          minorAdded++;
+        }
+      });
+      
+      // If we still have slots and didn't fill them, add any remaining exercises
+      selectedExercises.forEach(ex => {
+        if (finalExercises.length < maxExercises && !added.has(ex.name)) {
+          finalExercises.push(ex);
+          added.add(ex.name);
+        }
+      });
+    }
+    
+    selectedExercises = finalExercises;
+  }
+  
+  // Remove fallback logic that adds unrelated exercises - only use exercises that match selected muscles
+
+  // Add mandatory exercises FIRST (pull-ups if applicable), then pain relief, then selected exercises
+  const mandatoryExercises = [...mandatoryPullups];
+  const remainingSlots = maxExercises - mandatoryExercises.length - painReliefCount;
+  const finalExerciseList = [...mandatoryExercises, ...painReliefExercises, ...selectedExercises.slice(0, Math.max(0, remainingSlots))];
+  const adjustedExercises = finalExerciseList.map(ex => adjustExerciseForIntensity(ex, intensity, time));
+  const warmup = generateWarmupExercises(equipment).slice(0,3);
+  const cooldown = generateCooldownExercises(muscleGroups).slice(0,3);
+  const title = generateWorkoutTitle(muscleGroups, intensity);
+
+  const workout: Workout = {
+    id: uuidv4(),
+    title,
+    duration: time,
+    intensity,
+    targetMuscleGroups: muscleGroups,
+    equipment,
+    warmupExercises: warmup,
+    exercises: adjustedExercises,
+    cooldownExercises: cooldown
+  };
+
+  console.log('Generated workout:', workout);
   return workout;
 };
