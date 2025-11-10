@@ -1197,50 +1197,53 @@ export const getFilteredExercises = (
   targetMuscleGroups: MuscleGroup[], 
   availableEquipment: Equipment[],
   intensity: string,
-  painAreas: string[] = [] // Added to handle pain relief selection
+  painAreas: string[] = []
 ): Exercise[] => {
-  // Select one equipment-free pain relief exercise first
+  // --- STEP 1: Select one equipment-free pain-relief exercise ---
   const painReliefExercise = exercises.find(exercise => {
     if (!exercise.isPainRelief) return false;
 
-    // Exercise must be equipment-free
-    const hasEquipment = exercise.equipment.some(eq => eq !== "none");
-    if (hasEquipment) return false;
+    // Must be equipment-free
+    const usesEquipment = exercise.equipment.some(eq => eq !== "none");
+    if (usesEquipment) return false;
 
-    // Must not target any of the user's pain areas
+    // Must NOT target any selected pain areas
     if (exercise.painType?.some(pt => painAreas.includes(pt))) return false;
 
     return true;
   });
 
-  // Standard filtering logic
-  const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
-  const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
-  const isAllEquipmentSelected = selectedEquipmentCount >= 5;
-
+  // --- STEP 2: Filter normal exercises (excluding pain-relief) ---
   const filteredByMuscleAndEquipment = exercises.filter(exercise => {
-    // Skip pain relief exercise if already included
-    if (painReliefExercise && exercise.id === painReliefExercise.id) return false;
+    if (exercise.isPainRelief) return false; // exclude pain relief from normal pool
 
+    // --- Muscle group filtering ---
     const exerciseMuscleGroups = Array.isArray(exercise.muscleGroup) ? exercise.muscleGroup : [exercise.muscleGroup];
     const targetIncludesFullBody = targetMuscleGroups.includes("full body");
-
     const matchesMuscleGroup = targetIncludesFullBody 
       ? true 
       : exerciseMuscleGroups.some(mg => targetMuscleGroups.includes(mg));
 
+    if (!matchesMuscleGroup) return false;
+
+    // --- Equipment filtering ---
+    const allEquipmentTypes: Equipment[] = ["dumbbells", "barbell", "kettlebell", "resistance bands", "cable machine", "bench", "pull-up bar"];
+    const selectedEquipmentCount = availableEquipment.filter(eq => eq !== "none").length;
+    const isAllEquipmentSelected = selectedEquipmentCount >= 5;
+
     if (isAllEquipmentSelected && exercise.equipment.includes("resistance bands")) {
-      return false;
+      return false; // exclude resistance bands if all equipment is selected
     }
 
+    // Require ALL non-"none" equipment of the exercise to be in availableEquipment
     const hasRequiredEquipment = exercise.equipment
       .filter(eq => eq !== "none")
       .every(eq => availableEquipment.includes(eq));
 
-    return matchesMuscleGroup && hasRequiredEquipment;
+    return hasRequiredEquipment;
   });
 
-  // Handle multiple equipment selection
+  // --- STEP 3: Balance exercises across multiple equipment ---
   let finalExercises: Exercise[] = [];
 
   if (availableEquipment.length > 1) {
@@ -1265,18 +1268,20 @@ export const getFilteredExercises = (
       slotIndex++;
     });
 
+    // Fill remaining slots with any exercises not already included
     if (balancedExercises.length < totalSlots) {
-      const remaining = filteredByMuscleAndEquipment.filter(ex => !balancedExercises.some(included => included.id === ex.id));
+      const remaining = filteredByMuscleAndEquipment.filter(ex => !balancedExercises.some(e => e.id === ex.id));
       const remainingShuffled = [...remaining].sort(() => 0.5 - Math.random());
       balancedExercises.push(...remainingShuffled.slice(0, totalSlots - balancedExercises.length));
     }
 
     finalExercises = balancedExercises.sort(() => 0.5 - Math.random());
   } else {
+    // Single equipment or none
     finalExercises = [...filteredByMuscleAndEquipment].sort(() => 0.5 - Math.random());
   }
 
-  // Add the pain relief exercise at the start if found
+  // --- STEP 4: Add pain relief exercise at the start if available ---
   if (painReliefExercise) {
     finalExercises.unshift(painReliefExercise);
   }
