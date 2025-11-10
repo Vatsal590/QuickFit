@@ -1222,13 +1222,17 @@ export const getFilteredExercises = (
     if (!matchesMuscle) return false;
 
     const eqs = normalizeEquipment(ex.equipment);
+
+    // bodyweight exercises always allowed
     if (eqs.includes("none")) return true;
 
-    if (eqs.every(eq => ["dumbbells","barbell","kettlebell"].includes(eq))) {
+    // exercises with any weight
+    if (eqs.some(eq => ["dumbbells", "barbell", "kettlebell"].includes(eq))) {
       return isWeightsSelected;
     }
 
-    return eqs.every(eq => selectedEquipment.includes(eq));
+    // other equipment: allow if any eq matches
+    return eqs.some(eq => selectedEquipment.includes(eq));
   });
 
   // fallback to bodyweight if empty
@@ -1241,7 +1245,7 @@ export const getFilteredExercises = (
     });
   }
 
-  // biceps/triceps split
+  // biceps/triceps 50/50 split
   if (targetMuscleGroups.includes("biceps") && targetMuscleGroups.includes("triceps")) {
     const bicepsEx = filtered.filter(ex =>
       (Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("biceps") : ex.muscleGroup === "biceps")
@@ -1263,8 +1267,8 @@ export const getFilteredExercises = (
       exercisesByEquipment[eq] = filtered.filter(ex => {
         const eqs = normalizeEquipment(ex.equipment);
         if (eqs.includes("none")) return true;
-        if (["dumbbells","barbell","kettlebell"].includes(eq)) {
-          return eqs.every(e => ["dumbbells","barbell","kettlebell"].includes(e));
+        if (["dumbbells", "barbell", "kettlebell"].includes(eq)) {
+          return eqs.some(e => ["dumbbells", "barbell", "kettlebell"].includes(e));
         }
         return eqs.includes(eq);
       });
