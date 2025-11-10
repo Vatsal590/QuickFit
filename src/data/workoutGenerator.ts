@@ -4,8 +4,8 @@ import { getFilteredExercises } from "./exercises";
 const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
 const getExerciseCount = (time: TimeFrame): number => {
-  const counts = { 10: 3, 20: 5, 30: 8, 45: 12, 60: 15 };
-  return counts[time] || 8;
+  const counts = { 10: 2, 20: 2, 30: 3, 45: 4, 60: 5 };
+  return counts[time] || 3;
 };
 
 export const generateWorkout = (
