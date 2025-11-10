@@ -1,7 +1,10 @@
-// src/data/workoutGenerator.ts
 import { Exercise, MuscleGroup, Equipment } from "./types";
-import { getFilteredExercises } from "./exercises"; // NO exercises import here
+import { getFilteredExercises } from "./exercises"; // import the function only
 
+// --- Utility: shuffle ---
+const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
+
+// --- generateWorkout ---
 export const generateWorkout = (
   targetMuscleGroups: MuscleGroup[],
   availableEquipment: Equipment[],
@@ -9,7 +12,7 @@ export const generateWorkout = (
 ): Exercise[] => {
   let filtered = getFilteredExercises(targetMuscleGroups, availableEquipment, intensity);
 
-  // --- Handle biceps/triceps split ---
+  // --- Handle biceps/triceps 50/50 split ---
   if (targetMuscleGroups.includes("biceps") && targetMuscleGroups.includes("triceps")) {
     const bicepsEx = filtered.filter(ex => (Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("biceps") : ex.muscleGroup === "biceps"));
     const tricepsEx = filtered.filter(ex => (Array.isArray(ex.muscleGroup) ? ex.muscleGroup.includes("triceps") : ex.muscleGroup === "triceps"));
@@ -21,7 +24,7 @@ export const generateWorkout = (
     ]);
   }
 
-  // --- Handle multiple equipment balancing ---
+  // --- Equipment balancing for multiple equipment ---
   const selectedEquipment = availableEquipment.filter(eq => eq.toLowerCase() !== "none").map(eq => eq.toLowerCase());
   if (selectedEquipment.length > 1) {
     const exercisesByEquipment: { [key: string]: Exercise[] } = {};
@@ -54,8 +57,6 @@ export const generateWorkout = (
     return shuffle(balanced);
   }
 
+  // --- Default ---
   return shuffle(filtered).slice(0, 15);
 };
-
-// Utility function: shuffle
-const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
