@@ -1,6 +1,6 @@
 // src/data/workoutGenerator.ts
 import { Exercise, MuscleGroup, Equipment } from "./types";
-import { getFilteredExercises } from "./getFilteredExercises"; // NO exercises import here
+import { getFilteredExercises } from "./exercises"; // NO exercises import here
 
 export const generateWorkout = (
   targetMuscleGroups: MuscleGroup[],
