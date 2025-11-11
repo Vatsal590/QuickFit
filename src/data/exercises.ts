@@ -1218,10 +1218,7 @@ export const getFilteredExercises = (
 
     const hasEquipment = eqsLower.some(eq =>
       eq === "none" ||
-      selectedEquipment.map(e => e.toLowerCase()).includes(eq) ||
-      // interchange dumbbells/barbell/kettlebell
-      (["dumbbells", "barbell", "kettlebell"].includes(eq) &&
-       selectedEquipment.some(se => ["dumbbells","barbell","kettlebell"].includes(se.toLowerCase())))
+      selectedEquipment.map(e => e.toLowerCase()).includes(eq)
     );
 
     return hasEquipment;
