@@ -1180,17 +1180,6 @@ export const exercises: Exercise[] = [
     restTime: 60,
     description: "Hold ball at chest, squat down, then explosively stand and throw ball up to a target on wall. Catch and repeat."
   },
-  {
-    id: "rotational-throw",
-    name: "Rotational Throw",
-    muscleGroup: "functional",
-    equipment: ["dumbbells", "kettlebell"],
-    sets: 3,
-    reps: 10,
-    restTime: 45,
-    description: "Stand sideways to wall, hold ball at hip, explosively rotate and throw to wall. Develops rotational power."
-  },
-  
 ];
 
 
@@ -1215,6 +1204,12 @@ export const getFilteredExercises = (
 
     const eqs = Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment];
     const eqsLower = eqs.map(e => e.toLowerCase());
+
+    // If equipment is selected, avoid bodyweight exercises
+    if (selectedEquipment.length > 0) {
+      const isBodyweight = eqsLower.length === 1 && eqsLower[0] === "none";
+      if (isBodyweight) return false;
+    }
 
     const hasEquipment = eqsLower.some(eq =>
       eq === "none" ||
