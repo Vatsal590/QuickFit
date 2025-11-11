@@ -54,13 +54,16 @@ export const generateWorkout = (
   // Add exactly 1 pain relief exercise if bodyPains selected
   let painExercise: Exercise | null = null;
   if (bodyPains && bodyPains.length > 0) {
-    const painReliefExercises = filtered.filter(ex => 
+    // Get all exercises (not just filtered) to find stretch/mobility exercises
+    const allExercises = getFilteredExercises(muscleGroups, equipment, intensity);
+    const painReliefExercises = allExercises.filter(ex => 
       ex.name.toLowerCase().includes("stretch") || 
       ex.name.toLowerCase().includes("mobility") ||
       ex.description.toLowerCase().includes("relief")
     );
     if (painReliefExercises.length > 0) {
-      painExercise = painReliefExercises[0];
+      // Pick a random pain relief exercise
+      painExercise = shuffle(painReliefExercises)[0];
     }
   }
 

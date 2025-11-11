@@ -1180,6 +1180,76 @@ export const exercises: Exercise[] = [
     restTime: 60,
     description: "Hold ball at chest, squat down, then explosively stand and throw ball up to a target on wall. Catch and repeat."
   },
+  {
+    id: "lower-back-stretch",
+    name: "Lower Back Stretch",
+    muscleGroup: "core",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Gentle stretches to relieve lower back tension and improve mobility. Hold each stretch for 20-30 seconds."
+  },
+  {
+    id: "shoulder-mobility",
+    name: "Shoulder Mobility Exercise",
+    muscleGroup: "shoulders",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Dynamic shoulder circles and stretches to improve shoulder mobility and reduce pain."
+  },
+  {
+    id: "hip-flexor-stretch",
+    name: "Hip Flexor Stretch",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Stretches to release tight hip flexors and improve hip mobility. Hold each side for 30 seconds."
+  },
+  {
+    id: "knee-mobility",
+    name: "Knee Mobility Exercise",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Gentle knee circles and stretches to improve knee mobility and reduce discomfort."
+  },
+  {
+    id: "wrist-mobility",
+    name: "Wrist Mobility Exercise",
+    muscleGroup: "full body",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Wrist circles and stretches to improve wrist flexibility and reduce strain."
+  },
+  {
+    id: "ankle-mobility",
+    name: "Ankle Mobility Exercise",
+    muscleGroup: "legs",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Ankle circles and stretches to improve ankle mobility and reduce pain."
+  },
+  {
+    id: "elbow-stretch",
+    name: "Elbow Stretch",
+    muscleGroup: "biceps",
+    equipment: ["none"],
+    sets: 2,
+    reps: 10,
+    restTime: 30,
+    description: "Gentle elbow stretches to reduce tension and improve flexibility. Hold each stretch for 20 seconds."
+  },
 ];
 
 
