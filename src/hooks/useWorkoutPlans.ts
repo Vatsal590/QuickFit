@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { WorkoutPlan } from '@/types';
 import { activityTracker } from '@/utils/activityTracker';
-import { toast } from 'sonner';
 
 export const useWorkoutPlans = () => {
   const [workoutPlans, setWorkoutPlans] = useState<WorkoutPlan[]>([]);
@@ -76,7 +75,7 @@ export const useWorkoutPlans = () => {
     }
   };
 
-  const markDayComplete = async (planId: string, dayNumber: number, awardPoints?: () => Promise<boolean>) => {
+  const markDayComplete = async (planId: string, dayNumber: number) => {
     if (!user) return;
 
     try {
@@ -122,14 +121,6 @@ export const useWorkoutPlans = () => {
               }
             : plan
         ));
-
-        // Award points if function provided
-        if (awardPoints) {
-          const awarded = await awardPoints();
-          if (awarded) {
-            toast.success('🎉 +10 points! Keep up the great work!');
-          }
-        }
       }
     } catch (error) {
       console.error('Error marking day complete:', error);

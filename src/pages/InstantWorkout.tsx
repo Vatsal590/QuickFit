@@ -8,14 +8,12 @@ import { generateWorkout } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
-import { useRewardPoints } from '@/hooks/useRewardPoints';
 
 const InstantWorkout = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
-  const { awardPoints } = useRewardPoints();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
     activityTracker.trackWorkoutAction('create', { 
@@ -52,7 +50,7 @@ const InstantWorkout = () => {
   
   const handleCompleteWorkout = (workout: Workout) => {
     activityTracker.trackWorkoutAction('complete', { workoutId: workout.id, title: workout.title });
-    markWorkoutCompleted(workout.id, awardPoints);
+    markWorkoutCompleted(workout.id);
   };
 
   return (

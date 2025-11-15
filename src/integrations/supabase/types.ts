@@ -383,33 +383,6 @@ export type Database = {
         }
         Relationships: []
       }
-      user_points: {
-        Row: {
-          created_at: string
-          id: string
-          last_workout_date: string | null
-          total_points: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          last_workout_date?: string | null
-          total_points?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          last_workout_date?: string | null
-          total_points?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       weight_entries: {
         Row: {
           created_at: string

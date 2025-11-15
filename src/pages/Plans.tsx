@@ -10,7 +10,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../hooks/useFitnessProfile';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
-import { useRewardPoints } from '@/hooks/useRewardPoints';
 
 const Plans = () => {
   const { toast } = useToast();
@@ -19,7 +18,6 @@ const Plans = () => {
   const [isProfileFormOpen, setIsProfileFormOpen] = useState(false);
   const { profile, isLoading: profileLoading } = useFitnessProfile();
   const { workoutPlans, loading: plansLoading, deleteWorkoutPlan, markDayComplete, loadWorkoutPlans, addWorkoutPlan } = useWorkoutPlans();
-  const { awardPoints } = useRewardPoints();
 
   const handleSelectPlan = (plan: WorkoutPlan) => {
     activityTracker.trackButtonClick('select_plan', 'plans', { planId: plan.id, planName: plan.title });
@@ -46,7 +44,7 @@ const Plans = () => {
   const handleMarkDayComplete = async (planId: string, dayNumber: number) => {
     activityTracker.trackButtonClick('mark_day_complete', 'plans', { planId, dayNumber });
     try {
-      await markDayComplete(planId, dayNumber, awardPoints);
+      await markDayComplete(planId, dayNumber);
       toast({
         title: "Day completed!",
         description: "Great job! Your progress has been saved.",
