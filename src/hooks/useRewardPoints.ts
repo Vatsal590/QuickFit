@@ -78,7 +78,10 @@ export const useRewardPoints = () => {
   };
 
   const awardPoints = async () => {
-    if (!user) return false;
+    if (!user) {
+      console.log('No user found for awarding points');
+      return false;
+    }
 
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -97,10 +100,12 @@ export const useRewardPoints = () => {
 
       // Check if already earned points today
       if (currentData?.last_workout_date === today) {
+        console.log('Points already awarded today');
         return false;
       }
 
       const newPoints = (currentData?.total_points || 0) + 10;
+      console.log('Awarding points:', { currentPoints: currentData?.total_points, newPoints });
 
       if (currentData) {
         // Update existing record
@@ -132,13 +137,18 @@ export const useRewardPoints = () => {
         }
       }
 
+      // Update local state
       setPoints(newPoints);
+      
+      // Trigger event to notify all components
+      window.dispatchEvent(new CustomEvent('pointsUpdated', { detail: { points: newPoints } }));
 
       // Check if reached 500 points
       if (currentData && currentData.total_points < 500 && newPoints >= 500) {
         setShowCongrats(true);
       }
 
+      console.log('Points awarded successfully:', newPoints);
       return true;
     } catch (error) {
       console.error('Error awarding points:', error);
@@ -148,6 +158,17 @@ export const useRewardPoints = () => {
 
   useEffect(() => {
     loadPoints();
+    
+    // Listen for points updates from other components
+    const handlePointsUpdate = (event: CustomEvent) => {
+      setPoints(event.detail.points);
+    };
+    
+    window.addEventListener('pointsUpdated', handlePointsUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('pointsUpdated', handlePointsUpdate as EventListener);
+    };
   }, [user]);
 
   return {
