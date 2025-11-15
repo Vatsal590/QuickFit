@@ -45,6 +45,8 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
 
   const analyzeImage = async (imageData: string) => {
     setIsAnalyzing(true);
+    toast.loading('Analyzing your food... This may take a moment', { id: 'analyzing' });
+    
     try {
       const { data, error } = await supabase.functions.invoke('analyze-food-image', {
         body: { imageData }
@@ -78,9 +80,11 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         });
       }
       
+      toast.dismiss('analyzing');
       toast.success('Food analyzed successfully!');
     } catch (error: any) {
       console.error('Error analyzing food:', error);
+      toast.dismiss('analyzing');
       toast.error('Hmm...Maybe try uploading a different picture?');
     } finally {
       setIsAnalyzing(false);
@@ -230,13 +234,26 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 className="w-full h-48 object-cover rounded-lg"
               />
               {isAnalyzing && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                <div className="absolute inset-0 glass rounded-lg flex flex-col items-center justify-center gap-3">
+                  <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                  <div className="text-center space-y-1">
+                    <p className="font-semibold text-foreground">Analyzing your food...</p>
+                    <p className="text-sm text-muted-foreground">This may take a moment</p>
+                  </div>
                 </div>
               )}
             </div>
 
-            {analyzedFoods.length > 0 && (
+            {isAnalyzing ? (
+              <div className="space-y-3 animate-pulse">
+                <div className="h-4 bg-muted rounded w-1/3"></div>
+                <div className="space-y-2">
+                  <div className="h-24 bg-muted rounded-lg"></div>
+                  <div className="h-24 bg-muted rounded-lg"></div>
+                </div>
+                <div className="h-32 bg-muted rounded-lg"></div>
+              </div>
+            ) : analyzedFoods.length > 0 && (
               <>
                 <div className="space-y-2">
                   <h3 className="font-semibold">Detected Foods (Edit as needed):</h3>
