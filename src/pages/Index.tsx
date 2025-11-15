@@ -40,10 +40,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate('/plans')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 p-3 shadow-md">
                     <Calendar className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -57,10 +57,10 @@ const Index = () => {
 
               <button
                 onClick={() => navigate('/instant-workout')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 p-3 shadow-md">
                     <Zap className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -83,10 +83,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate('/diet-plan')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-green-500 to-emerald-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 p-3 shadow-md">
                     <UtensilsCrossed className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -100,10 +100,10 @@ const Index = () => {
 
               <button
                 onClick={() => navigate('/food-tracker')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 p-3 shadow-md">
                     <Camera className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -126,10 +126,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate('/weight-tracker')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-indigo-500 to-blue-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-indigo-500 to-blue-500 p-3 shadow-md">
                     <Scale className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -143,10 +143,10 @@ const Index = () => {
 
               <button
                 onClick={() => navigate('/history')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-violet-500 to-purple-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-violet-500 to-purple-500 p-3 shadow-md">
                     <History className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -169,10 +169,10 @@ const Index = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
                 onClick={() => navigate('/free-access')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-pink-500 to-rose-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 p-3 shadow-md">
                     <Gift className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
@@ -186,10 +186,10 @@ const Index = () => {
 
               <button
                 onClick={() => navigate('/blogs')}
-                className="group relative overflow-hidden rounded-xl border-2 border-border bg-card p-6 text-left transition-all hover:border-fitness-primary hover:shadow-lg"
+                className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-lg bg-gradient-to-br from-teal-500 to-cyan-500 p-3">
+                  <div className="rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 p-3 shadow-md">
                     <BookOpen className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">

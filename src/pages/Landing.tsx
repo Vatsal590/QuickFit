@@ -70,16 +70,16 @@ const Landing = () => {
   }, [searchParams, navigate, toast]);
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-green-50">
-      {/* Animated Background Elements */}
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
+      {/* Apple-style Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-fitness-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
-      {/* Header with Glassmorphism */}
-      <header className="relative bg-white/70 backdrop-blur-md shadow-sm border-b border-white/20 sticky top-0 z-50">
+      {/* Header with Apple Glass Effect */}
+      <header className="relative glass sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center space-x-3 group">
