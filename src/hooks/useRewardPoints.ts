@@ -8,6 +8,34 @@ export const useRewardPoints = () => {
   const [loading, setLoading] = useState(true);
   const [showCongrats, setShowCongrats] = useState(false);
 
+  const checkAndResetPoints = async (lastWorkoutDate: string | null, currentPoints: number) => {
+    if (!lastWorkoutDate || !user) return currentPoints;
+
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const lastWorkout = new Date(lastWorkoutDate);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const lastWorkoutStr = lastWorkout.toISOString().split('T')[0];
+
+    // If last workout was not yesterday or today, reset points
+    const todayStr = today.toISOString().split('T')[0];
+    if (lastWorkoutStr !== yesterdayStr && lastWorkoutStr !== todayStr) {
+      // Reset points to 0
+      const { error } = await supabase
+        .from('user_points')
+        .update({ total_points: 0 })
+        .eq('user_id', user.id);
+
+      if (!error) {
+        return 0;
+      }
+    }
+
+    return currentPoints;
+  };
+
   const loadPoints = async () => {
     if (!user) {
       setLoading(false);
@@ -27,7 +55,9 @@ export const useRewardPoints = () => {
       }
 
       if (data) {
-        setPoints(data.total_points);
+        // Check if points should be reset due to missed day
+        const checkedPoints = await checkAndResetPoints(data.last_workout_date, data.total_points);
+        setPoints(checkedPoints);
       } else {
         // Create initial points record
         const { data: newData, error: insertError } = await supabase

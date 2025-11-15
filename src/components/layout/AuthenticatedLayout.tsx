@@ -33,11 +33,12 @@ import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
+import { LogOut, Trash2, User, Shield, FileText, Trophy } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
 import { MenuIcon } from '@/components/ui/menu-icon';
 import { ReferralCongrats } from '@/components/referral/ReferralCongrats';
 import { RewardCongrats } from '@/components/referral/RewardCongrats';
+import { RewardInfoDialog } from '@/components/referral/RewardInfoDialog';
 import { useRewardPoints } from '@/hooks/useRewardPoints';
 
 interface AuthenticatedLayoutProps {
@@ -62,7 +63,8 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { showCongrats, setShowCongrats } = useRewardPoints();
+  const [showRewardInfo, setShowRewardInfo] = useState(false);
+  const { points, showCongrats, setShowCongrats } = useRewardPoints();
 
   const getDisplayName = () => {
     if (user?.user_metadata?.full_name) {
@@ -179,6 +181,15 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowRewardInfo(true)}>
+                  <Trophy className="mr-2 h-4 w-4" />
+                  <div className="flex items-center justify-between flex-1">
+                    <span>Rewards</span>
+                    <span className="text-xs font-semibold text-primary ml-2">
+                      {points}/500
+                    </span>
+                  </div>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
                   <Shield className="mr-2 h-4 w-4" />
@@ -268,6 +279,9 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       
       {/* Reward Congrats */}
       <RewardCongrats open={showCongrats} onOpenChange={setShowCongrats} />
+      
+      {/* Reward Info Dialog */}
+      <RewardInfoDialog open={showRewardInfo} onOpenChange={setShowRewardInfo} currentPoints={points} />
     </div>
   );
 };
