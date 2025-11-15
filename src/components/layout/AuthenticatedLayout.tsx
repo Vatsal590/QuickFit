@@ -37,6 +37,8 @@ import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
 import { MenuIcon } from '@/components/ui/menu-icon';
 import { ReferralCongrats } from '@/components/referral/ReferralCongrats';
+import { RewardCongrats } from '@/components/referral/RewardCongrats';
+import { useRewardPoints } from '@/hooks/useRewardPoints';
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
@@ -60,6 +62,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { showCongrats, setShowCongrats } = useRewardPoints();
 
   const getDisplayName = () => {
     if (user?.user_metadata?.full_name) {
@@ -262,6 +265,9 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       
       {/* Referral Congrats */}
       <ReferralCongrats />
+      
+      {/* Reward Congrats */}
+      <RewardCongrats open={showCongrats} onOpenChange={setShowCongrats} />
     </div>
   );
 };

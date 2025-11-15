@@ -4,6 +4,7 @@ import { Workout, WorkoutHistoryItem, TimeFrame, MuscleGroup, Equipment, Intensi
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { activityTracker } from '@/utils/activityTracker';
+import { toast } from 'sonner';
 
 export const useWorkoutHistory = () => {
   const [history, setHistory] = useState<WorkoutHistoryItem[]>([]);
@@ -101,7 +102,7 @@ export const useWorkoutHistory = () => {
   };
 
   // Mark a workout as completed
-  const markWorkoutCompleted = async (historyItemId: string) => {
+  const markWorkoutCompleted = async (historyItemId: string, awardPoints?: () => Promise<boolean>) => {
     if (!user) return;
 
     try {
@@ -123,6 +124,14 @@ export const useWorkoutHistory = () => {
             : item
         )
       );
+
+      // Award points if function provided
+      if (awardPoints) {
+        const awarded = await awardPoints();
+        if (awarded) {
+          toast.success('🎉 +10 points! Keep up the great work!');
+        }
+      }
     } catch (error) {
       console.error('Error marking workout as completed:', error);
     }
