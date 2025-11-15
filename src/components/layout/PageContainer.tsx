@@ -9,12 +9,12 @@ interface PageContainerProps {
 const PageContainer = ({ children }: PageContainerProps) => {
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 bg-gradient-to-br from-slate-50 via-blue-50 to-green-50 -z-10"></div>
+      {/* Apple-style Animated Background */}
+      <div className="fixed inset-0 bg-gradient-to-br from-background via-accent/20 to-background -z-10"></div>
       
       {/* Floating orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-fitness-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
         <div className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
