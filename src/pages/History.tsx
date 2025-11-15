@@ -7,9 +7,11 @@ import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
 import { Workout } from '../types';
 import { Button } from '@/components/ui/button';
 import { Clock } from 'lucide-react';
+import { useRewardPoints } from '@/hooks/useRewardPoints';
 
 const History = () => {
   const { history, recentWorkouts, markWorkoutCompleted } = useWorkoutHistory();
+  const { awardPoints } = useRewardPoints();
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
 
   const handleViewWorkout = (workout: Workout) => {
@@ -27,7 +29,7 @@ const History = () => {
             workout={selectedWorkout}
             onBack={() => setSelectedWorkout(null)}
             onComplete={() => {
-              markWorkoutCompleted(selectedWorkout.id);
+              markWorkoutCompleted(selectedWorkout.id, awardPoints);
               setSelectedWorkout(null);
             }}
           />
