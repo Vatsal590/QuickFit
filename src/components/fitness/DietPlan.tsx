@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFitnessProfile } from '@/hooks/useFitnessProfile';
-import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download } from 'lucide-react';
+import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download, BookOpen } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -17,6 +17,7 @@ import { toast as sonnerToast } from 'sonner';
 import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
 import NutritionGoals from '@/components/fitness/NutritionGoals';
 import { activityTracker } from '@/utils/activityTracker';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 import { calculateNutritionTargets } from '@/utils/nutritionCalculations';
 
@@ -44,6 +45,12 @@ const DietPlan = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [syncingMeal, setSyncingMeal] = useState<string | null>(null);
   const [isEditingGoals, setIsEditingGoals] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState<{
+    mealName: string;
+    ingredients: string[];
+    instructions: string[];
+  } | null>(null);
+  const [loadingRecipe, setLoadingRecipe] = useState(false);
   const [editFormData, setEditFormData] = useState({
     goal_weight: '',
     diet_preferences: [] as string[],
@@ -589,6 +596,28 @@ const DietPlan = () => {
     }
   };
 
+  const fetchRecipe = async (mealName: string) => {
+    setLoadingRecipe(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('get-recipe', {
+        body: { mealName }
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        setSelectedRecipe(data.recipe);
+      } else {
+        throw new Error(data.error || 'Failed to fetch recipe');
+      }
+    } catch (error) {
+      console.error('Error fetching recipe:', error);
+      sonnerToast.error('Failed to load recipe. Please try again.');
+    } finally {
+      setLoadingRecipe(false);
+    }
+  };
+
   const dietPreferences = ['Vegetarian', 'Vegan', 'Lactose Intolerant'];
   const allergyOptions = ['Peanuts', 'Tree Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Fish', 'Soy', 'Wheat'];
   const cuisineOptions = ['American', 'Italian', 'Japanese', 'Indian', 'Mexican', 'Mediterranean', 'Thai'];
@@ -889,15 +918,26 @@ const DietPlan = () => {
                             </span>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => syncMealToTracker(meal, 'breakfast', plan.day)}
-                          disabled={syncingMeal === `${plan.day}-breakfast-${meal.name}`}
-                          className="w-full sm:w-auto whitespace-nowrap"
-                        >
-                          {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => fetchRecipe(meal.name)}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Recipe
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => syncMealToTracker(meal, 'breakfast', plan.day)}
+                            disabled={syncingMeal === `${plan.day}-breakfast-${meal.name}`}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -928,15 +968,26 @@ const DietPlan = () => {
                             </span>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => syncMealToTracker(meal, 'lunch', plan.day)}
-                          disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
-                          className="w-full sm:w-auto whitespace-nowrap"
-                        >
-                          {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => fetchRecipe(meal.name)}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Recipe
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => syncMealToTracker(meal, 'lunch', plan.day)}
+                            disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -967,15 +1018,26 @@ const DietPlan = () => {
                             </span>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => syncMealToTracker(meal, 'dinner', plan.day)}
-                          disabled={syncingMeal === `${plan.day}-dinner-${meal.name}`}
-                          className="w-full sm:w-auto whitespace-nowrap"
-                        >
-                          {syncingMeal === `${plan.day}-dinner-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => fetchRecipe(meal.name)}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Recipe
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => syncMealToTracker(meal, 'dinner', plan.day)}
+                            disabled={syncingMeal === `${plan.day}-dinner-${meal.name}`}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            {syncingMeal === `${plan.day}-dinner-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -1006,15 +1068,26 @@ const DietPlan = () => {
                             </span>
                           </div>
                         </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => syncMealToTracker(meal, 'snacks', plan.day)}
-                          disabled={syncingMeal === `${plan.day}-snacks-${meal.name}`}
-                          className="w-full sm:w-auto whitespace-nowrap"
-                        >
-                          {syncingMeal === `${plan.day}-snacks-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => fetchRecipe(meal.name)}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            <BookOpen className="h-4 w-4 mr-2" />
+                            Recipe
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => syncMealToTracker(meal, 'snacks', plan.day)}
+                            disabled={syncingMeal === `${plan.day}-snacks-${meal.name}`}
+                            className="w-full sm:w-auto whitespace-nowrap"
+                          >
+                            {syncingMeal === `${plan.day}-snacks-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </CardContent>
@@ -1024,6 +1097,65 @@ const DietPlan = () => {
           </Tabs>
         </>
       )}
+
+      {/* Recipe Dialog */}
+      <Dialog open={!!selectedRecipe} onOpenChange={(open) => !open && setSelectedRecipe(null)}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden w-[95vw] md:w-full">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ChefHat className="h-5 w-5" />
+              {selectedRecipe?.mealName}
+            </DialogTitle>
+            <DialogDescription>
+              Recipe for 1 portion
+            </DialogDescription>
+          </DialogHeader>
+          
+          {loadingRecipe ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+            </div>
+          ) : selectedRecipe ? (
+            <ScrollArea className="h-[calc(90vh-12rem)] pr-4">
+              <div className="space-y-6">
+                {/* Ingredients */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <UtensilsCrossed className="h-5 w-5" />
+                    Ingredients
+                  </h3>
+                  <ul className="space-y-2">
+                    {selectedRecipe.ingredients.map((ingredient, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-primary mt-1">•</span>
+                        <span className="flex-1">{ingredient}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Instructions */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                    <BookOpen className="h-5 w-5" />
+                    Instructions
+                  </h3>
+                  <ol className="space-y-3">
+                    {selectedRecipe.instructions.map((instruction, idx) => (
+                      <li key={idx} className="flex gap-3">
+                        <span className="font-semibold text-primary min-w-[2rem]">
+                          {idx + 1}.
+                        </span>
+                        <span className="flex-1">{instruction}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </ScrollArea>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
