@@ -314,8 +314,24 @@ export function filterVegan(meals: MealData[]): MealData[] {
 export function filterAllergies(meals: MealData[], allergies: string[]): MealData[] {
   if (allergies.length === 0) return meals;
   
+  // Map allergy categories to specific ingredient keywords
+  const allergyKeywords: Record<string, string[]> = {
+    'Nuts': ['nut', 'almond', 'cashew', 'walnut', 'pecan', 'peanut', 'pistachio', 'hazelnut', 'macadamia'],
+    'Dairy': ['milk', 'cheese', 'yogurt', 'cream', 'butter', 'ghee', 'paneer', 'ricotta', 'feta', 'mozzarella', 'cheddar', 'parmesan', 'whey', 'casein'],
+    'Eggs': ['egg', 'omelette', 'omelet', 'scrambled', 'frittata', 'quiche'],
+    'Shellfish': ['shrimp', 'crab', 'lobster', 'prawn', 'crawfish', 'crayfish', 'oyster', 'clam', 'mussel', 'scallop'],
+    'Soy': ['soy', 'tofu', 'tempeh', 'edamame', 'miso'],
+    'Wheat': ['wheat', 'bread', 'pasta', 'noodle', 'flour', 'tortilla', 'pita', 'bagel', 'croissant', 'pancake', 'waffle'],
+    'Fish': ['fish', 'salmon', 'tuna', 'cod', 'tilapia', 'trout', 'halibut', 'mackerel', 'sardine', 'anchovy'],
+    'Sesame': ['sesame', 'tahini']
+  };
+  
   return meals.filter(meal => {
     const lower = meal.name.toLowerCase();
-    return !allergies.some(allergy => lower.includes(allergy.toLowerCase()));
+    // Check if meal contains any keyword from selected allergies
+    return !allergies.some(allergy => {
+      const keywords = allergyKeywords[allergy] || [allergy.toLowerCase()];
+      return keywords.some(keyword => lower.includes(keyword));
+    });
   });
 }
