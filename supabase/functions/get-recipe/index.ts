@@ -17,22 +17,22 @@ serve(async (req) => {
       throw new Error('Meal name is required');
     }
 
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openaiApiKey) {
-      throw new Error('OpenAI API key not configured');
+    const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+    if (!lovableApiKey) {
+      throw new Error('LOVABLE_API_KEY not configured');
     }
 
     console.log('Fetching recipe for:', mealName);
 
-    // Use OpenAI to get accurate recipe based on real recipes
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Use Lovable AI to get accurate recipe based on real recipes
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'Authorization': `Bearer ${lovableApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
+        model: 'google/gemini-2.5-flash',
         messages: [
           {
             role: 'system',
@@ -43,15 +43,13 @@ serve(async (req) => {
             content: `Provide a detailed recipe for "${mealName}" for 1 portion. Include:\n1. Exact ingredient measurements for 1 serving\n2. Step-by-step cooking instructions\n3. Cooking time and temperature if applicable\n\nFormat as JSON: {"ingredients": ["ingredient with measurement", ...], "instructions": ["step 1", "step 2", ...]}`
           }
         ],
-        temperature: 0.3,
-        max_tokens: 1000,
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('OpenAI API error:', error);
-      throw new Error('Failed to fetch recipe from OpenAI');
+      console.error('Lovable AI Gateway error:', error);
+      throw new Error('Failed to fetch recipe from AI');
     }
 
     const data = await response.json();
