@@ -598,7 +598,10 @@ const DietPlan = () => {
   };
 
   const fetchRecipe = async (mealName: string) => {
+    // Open dialog immediately with loading state
+    setSelectedRecipe({ mealName, ingredients: [], instructions: [] });
     setLoadingRecipe(true);
+    
     try {
       const { data, error } = await supabase.functions.invoke('get-recipe', {
         body: { mealName }
@@ -614,6 +617,7 @@ const DietPlan = () => {
     } catch (error) {
       console.error('Error fetching recipe:', error);
       sonnerToast.error('Failed to load recipe. Please try again.');
+      setSelectedRecipe(null); // Close dialog on error
     } finally {
       setLoadingRecipe(false);
     }
