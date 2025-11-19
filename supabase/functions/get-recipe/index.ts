@@ -36,11 +36,11 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a professional chef and recipe expert. Provide accurate, tested recipes with precise measurements for 1 portion. Format your response as JSON with "ingredients" (array of strings with exact measurements) and "instructions" (array of step-by-step strings). Be specific with measurements, cooking times, and temperatures.'
+            content: 'You are a chef. Provide recipes with measurements for 1 portion in JSON format: {"ingredients": ["item with amount"], "instructions": ["step"]}. Be concise and precise.'
           },
           {
             role: 'user',
-            content: `Provide a detailed recipe for "${mealName}" for 1 portion. Include:\n1. Exact ingredient measurements for 1 serving\n2. Step-by-step cooking instructions\n3. Cooking time and temperature if applicable\n\nFormat as JSON: {"ingredients": ["ingredient with measurement", ...], "instructions": ["step 1", "step 2", ...]}`
+            content: `Recipe for "${mealName}" (1 portion). JSON only: {"ingredients": ["..."], "instructions": ["..."]}`
           }
         ],
       }),
