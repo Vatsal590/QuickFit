@@ -30,7 +30,6 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
     { value: "knee pain", label: "Knee Pain" },
     { value: "shoulder pain", label: "Shoulder Pain" },
     { value: "hip pain", label: "Hip Pain" },
-    { value: "elbow pain", label: "Elbow Pain" },
     { value: "lower back pain", label: "Lower Back Pain" },
     { value: "wrist pain", label: "Wrist Pain" },
     { value: "ankle pain", label: "Ankle Pain" }
@@ -351,7 +350,6 @@ const generateExercises = (
     "hip pain": ["lunge", "thrust", "deep squat"],
     "shoulder pain": ["overhead", "press", "dip", "push-up"],
     "lower back pain": ["deadlift", "crunch", "twist", "bend"],
-    "elbow pain": ["curl", "extension", "push-up"],
     "wrist pain": ["plank", "push-up", "press"]
   };
 

@@ -69,7 +69,6 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     { value: "knee pain", label: "Knee Pain" },
     { value: "shoulder pain", label: "Shoulder Pain" },
     { value: "hip pain", label: "Hip Pain" },
-    { value: "elbow pain", label: "Elbow Pain" },
     { value: "lower back pain", label: "Lower Back Pain" },
     { value: "wrist pain", label: "Wrist Pain" },
     { value: "ankle pain", label: "Ankle Pain" }
