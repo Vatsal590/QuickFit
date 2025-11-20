@@ -743,16 +743,6 @@ export const exercises: Exercise[] = [
 
   // Triceps exercises
   {
-    id: "barbell-close-grip-press",
-    name: "Close-Grip Barbell Press",
-    muscleGroup: "triceps",
-    equipment: ["barbell", "bench"],
-    sets: 3,
-    reps: 10,
-    restTime: 90,
-    description: "Lie on bench with narrow grip on barbell. Lower bar to chest, then press up focusing on triceps."
-  },
-  {
     id: "tricep-dips",
     name: "Tricep Dips",
     muscleGroup: "triceps",
