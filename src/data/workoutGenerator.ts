@@ -8,6 +8,11 @@ const getExerciseCount = (time: TimeFrame): number => {
   return counts[time] || 3;
 };
 
+// Preferred order for exercises
+const MUSCLE_GROUP_ORDER: MuscleGroup[] = [
+  "chest", "back", "legs", "shoulders", "biceps", "triceps", "core", "cardio"
+];
+
 const isCompoundExercise = (exercise: Exercise): boolean => {
   const compoundKeywords = [
     'squat', 'deadlift', 'press', 'row', 'pull-up', 'chin-up', 'dip',
@@ -17,6 +22,16 @@ const isCompoundExercise = (exercise: Exercise): boolean => {
   const exerciseName = exercise.name.toLowerCase();
   return compoundKeywords.some(keyword => exerciseName.includes(keyword)) ||
          Array.isArray(exercise.muscleGroup) && exercise.muscleGroup.length > 1;
+};
+
+// Check if exercise targets a specific muscle group (not compound)
+const targetsSpecificMuscle = (exercise: Exercise, targetMuscle: MuscleGroup): boolean => {
+  return exercise.muscleGroup === targetMuscle;
+};
+
+// Check if exercise uses specific equipment
+const usesEquipment = (exercise: Exercise, equipment: Equipment): boolean => {
+  return exercise.equipment.includes(equipment);
 };
 
 export const generateWorkout = (
@@ -67,20 +82,60 @@ export const generateWorkout = (
     }
   }
 
-  // Select main exercises - prioritize compound exercises first
-  const compoundExercises = filtered.filter(isCompoundExercise);
-  const isolationExercises = filtered.filter(ex => !isCompoundExercise(ex));
-  
+  // Select exercises in the preferred muscle group order
   const exerciseCount = painExercise ? maxExercises - 1 : maxExercises;
+  const selectedExercises: Exercise[] = [];
+  const usedEquipment = new Set<Equipment>();
   
-  // Get compound exercises first, then isolation to fill remaining slots
-  const selectedCompound = shuffle(compoundExercises).slice(0, exerciseCount);
-  const remainingSlots = exerciseCount - selectedCompound.length;
-  const selectedIsolation = remainingSlots > 0 
-    ? shuffle(isolationExercises).slice(0, remainingSlots) 
-    : [];
+  // Order muscle groups according to preference
+  const orderedMuscleGroups = muscleGroups.sort((a, b) => {
+    const indexA = MUSCLE_GROUP_ORDER.indexOf(a);
+    const indexB = MUSCLE_GROUP_ORDER.indexOf(b);
+    return indexA - indexB;
+  });
   
-  const selectedExercises = [...selectedCompound, ...selectedIsolation];
+  // For each muscle group, find an exercise that specifically targets it
+  for (const muscleGroup of orderedMuscleGroups) {
+    if (selectedExercises.length >= exerciseCount) break;
+    
+    // Find exercises that specifically target this muscle group
+    const specificExercises = filtered.filter(ex => targetsSpecificMuscle(ex, muscleGroup));
+    
+    if (specificExercises.length === 0) continue;
+    
+    // Try to use different equipment for variety
+    let selectedExercise: Exercise | null = null;
+    
+    // First, try to find an exercise with unused equipment
+    for (const eq of equipment) {
+      if (!usedEquipment.has(eq)) {
+        const exercisesWithEquipment = specificExercises.filter(ex => usesEquipment(ex, eq));
+        if (exercisesWithEquipment.length > 0) {
+          selectedExercise = shuffle(exercisesWithEquipment)[0];
+          usedEquipment.add(eq);
+          break;
+        }
+      }
+    }
+    
+    // If no unused equipment found, just pick any exercise for this muscle group
+    if (!selectedExercise) {
+      selectedExercise = shuffle(specificExercises)[0];
+      // Track equipment usage
+      selectedExercise.equipment.forEach(eq => usedEquipment.add(eq));
+    }
+    
+    selectedExercises.push(selectedExercise);
+  }
+  
+  // If we still need more exercises, add compound exercises
+  if (selectedExercises.length < exerciseCount) {
+    const compoundExercises = filtered.filter(ex => 
+      isCompoundExercise(ex) && !selectedExercises.includes(ex)
+    );
+    const remaining = exerciseCount - selectedExercises.length;
+    selectedExercises.push(...shuffle(compoundExercises).slice(0, remaining));
+  }
   
   // Build final exercise list
   const finalExercises = painExercise 
