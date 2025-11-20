@@ -46,45 +46,116 @@ export const generateWorkout = (
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let filtered = getFilteredExercises(muscleGroups, equipment, intensity);
 
-  // Remove exercises that aggravate body pains
+  // Remove exercises that use affected body parts completely
   if (bodyPains && bodyPains.length > 0) {
-    const painKeywords: { [key: string]: string[] } = {
-      "knee pain": ["squat", "lunge", "jump", "leg press", "leg extension"],
-      "shoulder pain": ["overhead press", "shoulder press", "lateral raise", "upright row"],
-      "lower back pain": ["deadlift", "bent over row", "good morning"],
-      "wrist pain": ["push-up", "plank", "handstand", "wrist curl"],
-      "elbow pain": ["tricep extension", "skull crusher", "dip"],
-      "hip pain": ["squat", "lunge", "leg press"],
-      "ankle pain": ["calf raise", "jump", "running"]
+    const painBodyParts: { [key: string]: string[] } = {
+      "knee pain": ["squat", "lunge", "jump", "leg", "knee", "quad", "hamstring", "calf"],
+      "shoulder pain": ["shoulder", "overhead", "press", "raise", "row", "pull", "push"],
+      "lower back pain": ["deadlift", "row", "back", "lower back", "good morning"],
+      "wrist pain": ["push-up", "plank", "handstand", "wrist", "press", "curl"],
+      "elbow pain": ["tricep", "bicep", "curl", "extension", "skull crusher", "dip"],
+      "hip pain": ["squat", "lunge", "leg", "hip", "glute"],
+      "ankle pain": ["calf", "jump", "running", "ankle", "leg"]
     };
     
     bodyPains.forEach(pain => {
-      const keywords = painKeywords[pain] || [];
+      const bodyParts = painBodyParts[pain] || [];
       filtered = filtered.filter(ex => 
-        !keywords.some(keyword => ex.name.toLowerCase().includes(keyword))
+        !bodyParts.some(part => 
+          ex.name.toLowerCase().includes(part) || 
+          ex.description.toLowerCase().includes(part)
+        )
       );
     });
   }
 
-  // Add exactly 1 pain relief exercise if bodyPains selected
-  let painExercise: Exercise | null = null;
+  // Add one bodyweight pain relief exercise for EACH pain
+  const painExercises: Exercise[] = [];
   if (bodyPains && bodyPains.length > 0) {
-    // Get all exercises (not just filtered) to find stretch/mobility exercises
-    const allExercises = getFilteredExercises(muscleGroups, equipment, intensity);
-    const painReliefExercises = allExercises.filter(ex => 
-      ex.name.toLowerCase().includes("stretch") || 
-      ex.name.toLowerCase().includes("mobility") ||
-      ex.description.toLowerCase().includes("relief")
-    );
-    if (painReliefExercises.length > 0) {
-      // Pick a random pain relief exercise
-      painExercise = shuffle(painReliefExercises)[0];
-    }
+    const painReliefMap: { [key: string]: Exercise } = {
+      "knee pain": {
+        id: "knee-stretch",
+        name: "Knee Mobility Stretch",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Gentle knee circles and flexion exercises for pain relief"
+      },
+      "shoulder pain": {
+        id: "shoulder-stretch",
+        name: "Shoulder Mobility Stretch",
+        muscleGroup: "shoulders",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Arm circles and shoulder rolls for pain relief"
+      },
+      "lower back pain": {
+        id: "back-stretch",
+        name: "Lower Back Stretch",
+        muscleGroup: "back",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Cat-cow and gentle spinal twists for lower back relief"
+      },
+      "wrist pain": {
+        id: "wrist-stretch",
+        name: "Wrist Mobility Stretch",
+        muscleGroup: "full body",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Wrist circles and gentle flexion/extension movements"
+      },
+      "elbow pain": {
+        id: "elbow-stretch",
+        name: "Elbow Mobility Stretch",
+        muscleGroup: "full body",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Gentle elbow flexion and extension with arm rotations"
+      },
+      "hip pain": {
+        id: "hip-stretch",
+        name: "Hip Mobility Stretch",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Hip circles and gentle leg swings for hip relief"
+      },
+      "ankle pain": {
+        id: "ankle-stretch",
+        name: "Ankle Mobility Stretch",
+        muscleGroup: "legs",
+        equipment: ["none"],
+        sets: 2,
+        reps: 10,
+        restTime: 30,
+        description: "Ankle circles and gentle flexion/extension movements"
+      }
+    };
+    
+    bodyPains.forEach(pain => {
+      const painExercise = painReliefMap[pain];
+      if (painExercise) {
+        painExercises.push(painExercise);
+      }
+    });
   }
 
   // Select exercises in the preferred muscle group order
   // First pass: compound exercises, Second pass: isolation exercises
-  const exerciseCount = painExercise ? maxExercises - 1 : maxExercises;
+  const exerciseCount = maxExercises - painExercises.length;
   const selectedExercises: Exercise[] = [];
   const usedEquipment = new Set<Equipment>();
   
@@ -177,10 +248,8 @@ export const generateWorkout = (
     selectedExercises.push(...shuffle(remainingExercises).slice(0, remaining));
   }
   
-  // Build final exercise list
-  const finalExercises = painExercise 
-    ? [...selectedExercises, painExercise]
-    : selectedExercises;
+  // Build final exercise list - add pain exercises at the end
+  const finalExercises = [...selectedExercises, ...painExercises];
 
   // Generate warmup and cooldown
   const warmupExercises: Exercise[] = [
