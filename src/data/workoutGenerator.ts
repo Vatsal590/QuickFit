@@ -83,6 +83,7 @@ export const generateWorkout = (
   }
 
   // Select exercises in the preferred muscle group order
+  // First pass: compound exercises, Second pass: isolation exercises
   const exerciseCount = painExercise ? maxExercises - 1 : maxExercises;
   const selectedExercises: Exercise[] = [];
   const usedEquipment = new Set<Equipment>();
@@ -94,14 +95,19 @@ export const generateWorkout = (
     return indexA - indexB;
   });
   
-  // For each muscle group, find an exercise that specifically targets it
+  // FIRST PASS: Add compound exercises for each muscle group
   for (const muscleGroup of orderedMuscleGroups) {
     if (selectedExercises.length >= exerciseCount) break;
     
-    // Find exercises that specifically target this muscle group
-    const specificExercises = filtered.filter(ex => targetsSpecificMuscle(ex, muscleGroup));
+    // Find compound exercises that target this muscle group (primary or secondary)
+    const compoundExercises = filtered.filter(ex => {
+      const isCompound = isCompoundExercise(ex);
+      const targetsMuscle = ex.muscleGroup === muscleGroup || 
+                           (Array.isArray(ex.muscleGroup) && ex.muscleGroup.includes(muscleGroup));
+      return isCompound && targetsMuscle;
+    });
     
-    if (specificExercises.length === 0) continue;
+    if (compoundExercises.length === 0) continue;
     
     // Try to use different equipment for variety
     let selectedExercise: Exercise | null = null;
@@ -109,7 +115,7 @@ export const generateWorkout = (
     // First, try to find an exercise with unused equipment
     for (const eq of equipment) {
       if (!usedEquipment.has(eq)) {
-        const exercisesWithEquipment = specificExercises.filter(ex => usesEquipment(ex, eq));
+        const exercisesWithEquipment = compoundExercises.filter(ex => usesEquipment(ex, eq));
         if (exercisesWithEquipment.length > 0) {
           selectedExercise = shuffle(exercisesWithEquipment)[0];
           usedEquipment.add(eq);
@@ -118,23 +124,57 @@ export const generateWorkout = (
       }
     }
     
-    // If no unused equipment found, just pick any exercise for this muscle group
+    // If no unused equipment found, just pick any compound exercise for this muscle group
     if (!selectedExercise) {
-      selectedExercise = shuffle(specificExercises)[0];
-      // Track equipment usage
+      selectedExercise = shuffle(compoundExercises)[0];
       selectedExercise.equipment.forEach(eq => usedEquipment.add(eq));
     }
     
     selectedExercises.push(selectedExercise);
   }
   
-  // If we still need more exercises, add compound exercises
+  // SECOND PASS: Add isolation exercises for each muscle group if we need more
+  for (const muscleGroup of orderedMuscleGroups) {
+    if (selectedExercises.length >= exerciseCount) break;
+    
+    // Find isolation exercises that specifically target this muscle group
+    const isolationExercises = filtered.filter(ex => {
+      const isIsolation = !isCompoundExercise(ex);
+      const targetsMuscle = targetsSpecificMuscle(ex, muscleGroup);
+      return isIsolation && targetsMuscle && !selectedExercises.includes(ex);
+    });
+    
+    if (isolationExercises.length === 0) continue;
+    
+    // Try to use different equipment for variety
+    let selectedExercise: Exercise | null = null;
+    
+    // First, try to find an exercise with unused equipment
+    for (const eq of equipment) {
+      if (!usedEquipment.has(eq)) {
+        const exercisesWithEquipment = isolationExercises.filter(ex => usesEquipment(ex, eq));
+        if (exercisesWithEquipment.length > 0) {
+          selectedExercise = shuffle(exercisesWithEquipment)[0];
+          usedEquipment.add(eq);
+          break;
+        }
+      }
+    }
+    
+    // If no unused equipment found, just pick any isolation exercise for this muscle group
+    if (!selectedExercise) {
+      selectedExercise = shuffle(isolationExercises)[0];
+      selectedExercise.equipment.forEach(eq => usedEquipment.add(eq));
+    }
+    
+    selectedExercises.push(selectedExercise);
+  }
+  
+  // If we still need more exercises, add any remaining filtered exercises
   if (selectedExercises.length < exerciseCount) {
-    const compoundExercises = filtered.filter(ex => 
-      isCompoundExercise(ex) && !selectedExercises.includes(ex)
-    );
+    const remainingExercises = filtered.filter(ex => !selectedExercises.includes(ex));
     const remaining = exerciseCount - selectedExercises.length;
-    selectedExercises.push(...shuffle(compoundExercises).slice(0, remaining));
+    selectedExercises.push(...shuffle(remainingExercises).slice(0, remaining));
   }
   
   // Build final exercise list
