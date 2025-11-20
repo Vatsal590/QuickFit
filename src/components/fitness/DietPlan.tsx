@@ -396,7 +396,7 @@ const DietPlan = () => {
     targets: { calories: number; protein: number; carbs: number; fats: number },
     snackPool: MealData[]
   ) => {
-    const tolerance = 50; // +/- tolerance for each macro
+    const tolerance = 25; // +/- tolerance for each macro
     const adjusted = {
       breakfast: [...meals.breakfast],
       lunch: [...meals.lunch],

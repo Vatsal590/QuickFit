@@ -60,7 +60,6 @@ export type BodyPain =
   | "knee pain"
   | "shoulder pain"
   | "hip pain"
-  | "elbow pain"
   | "lower back pain"
   | "wrist pain"
   | "ankle pain";

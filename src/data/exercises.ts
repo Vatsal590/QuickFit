@@ -1121,16 +1121,6 @@ export const exercises: Exercise[] = [
     description: "Hold heavy weights at sides with straight arms. Walk forward maintaining upright posture and engaged core."
   },
   {
-    id: "medicine-ball-slam",
-    name: "Medicine Ball Slam",
-    muscleGroup: "functional",
-    equipment: ["dumbbells", "kettlebell"],
-    sets: 3,
-    reps: 12,
-    restTime: 45,
-    description: "Lift ball overhead and explosively slam it to the ground, engaging entire body. Catch on bounce and repeat."
-  },
-  {
     id: "single-leg-deadlift",
     name: "Single-Leg Deadlift",
     muscleGroup: "functional",
@@ -1229,17 +1219,7 @@ export const exercises: Exercise[] = [
     reps: 10,
     restTime: 30,
     description: "Ankle circles and stretches to improve ankle mobility and reduce pain."
-  },
-  {
-    id: "elbow-stretch",
-    name: "Elbow Stretch",
-    muscleGroup: "biceps",
-    equipment: ["none"],
-    sets: 2,
-    reps: 10,
-    restTime: 30,
-    description: "Gentle elbow stretches to reduce tension and improve flexibility. Hold each stretch for 20 seconds."
-  },
+  }
 ];
 
 

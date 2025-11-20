@@ -53,7 +53,6 @@ export const generateWorkout = (
       "shoulder pain": ["shoulder", "overhead", "press", "raise", "row", "pull", "push"],
       "lower back pain": ["deadlift", "row", "back", "lower back", "good morning"],
       "wrist pain": ["push-up", "plank", "handstand", "wrist", "press", "curl"],
-      "elbow pain": ["tricep", "bicep", "curl", "extension", "skull crusher", "dip"],
       "hip pain": ["squat", "lunge", "leg", "hip", "glute"],
       "ankle pain": ["calf", "jump", "running", "ankle", "leg"]
     };
@@ -112,16 +111,6 @@ export const generateWorkout = (
         reps: 10,
         restTime: 30,
         description: "Wrist circles and gentle flexion/extension movements"
-      },
-      "elbow pain": {
-        id: "elbow-stretch",
-        name: "Elbow Mobility Stretch",
-        muscleGroup: "full body",
-        equipment: ["none"],
-        sets: 2,
-        reps: 10,
-        restTime: 30,
-        description: "Gentle elbow flexion and extension with arm rotations"
       },
       "hip pain": {
         id: "hip-stretch",

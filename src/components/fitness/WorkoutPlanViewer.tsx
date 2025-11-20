@@ -553,9 +553,20 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                 </Button>
               )}
               {selectedDayData.completed && (
-                <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
-                  Completed ✓
-                </Badge>
+                <div className="flex items-center gap-2">
+                  <Badge className="bg-green-100 text-green-700 hover:bg-green-100">
+                    Completed ✓
+                  </Badge>
+                  {selectedDayData.day < dailyWorkouts.length && (
+                    <Button
+                      onClick={() => setSelectedDay(selectedDayData.day + 1)}
+                      size="sm"
+                      className="bg-fitness-primary hover:bg-fitness-primary/90"
+                    >
+                      Next Day
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
           </CardHeader>
