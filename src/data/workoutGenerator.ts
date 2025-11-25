@@ -68,7 +68,7 @@ export const generateWorkout = (
     });
   }
 
-  // Add one bodyweight pain relief exercise for EACH pain
+  // Add bodyweight pain relief exercises ONLY if pains are selected
   const painExercises: Exercise[] = [];
   if (bodyPains && bodyPains.length > 0) {
     const painReliefMap: { [key: string]: Exercise } = {
@@ -144,7 +144,10 @@ export const generateWorkout = (
 
   // Select exercises in the preferred muscle group order
   // First pass: compound exercises, Second pass: isolation exercises
-  const exerciseCount = maxExercises - painExercises.length;
+  // Only reduce exercise count if we actually have pain exercises to add
+  const exerciseCount = (bodyPains && bodyPains.length > 0) 
+    ? maxExercises - painExercises.length 
+    : maxExercises;
   const selectedExercises: Exercise[] = [];
   const usedEquipment = new Set<Equipment>();
   
