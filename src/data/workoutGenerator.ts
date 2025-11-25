@@ -46,6 +46,17 @@ export const generateWorkout = (
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let filtered = getFilteredExercises(muscleGroups, equipment, intensity);
 
+  // If no body pains selected, filter out all stretching/mobility exercises
+  if (!bodyPains || bodyPains.length === 0) {
+    const stretchingKeywords = ['stretch', 'mobility', 'relief', 'circles', 'rolls', 'twists'];
+    filtered = filtered.filter(ex => 
+      !stretchingKeywords.some(keyword => 
+        ex.name.toLowerCase().includes(keyword) || 
+        ex.description.toLowerCase().includes(keyword)
+      )
+    );
+  }
+
   // Remove exercises that use affected body parts completely
   if (bodyPains && bodyPains.length > 0) {
     const painBodyParts: { [key: string]: string[] } = {
