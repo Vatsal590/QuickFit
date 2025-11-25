@@ -1151,16 +1151,6 @@ export const exercises: Exercise[] = [
     description: "Perform quick footwork patterns through an agility ladder or simulated pattern. Improves coordination and foot speed."
   },
   {
-    id: "wall-ball",
-    name: "Wall Ball",
-    muscleGroup: "functional",
-    equipment: ["dumbbells", "kettlebell"],
-    sets: 3,
-    reps: 15,
-    restTime: 60,
-    description: "Hold ball at chest, squat down, then explosively stand and throw ball up to a target on wall. Catch and repeat."
-  },
-  {
     id: "lower-back-stretch",
     name: "Lower Back Stretch",
     muscleGroup: "core",
