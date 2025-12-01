@@ -723,7 +723,7 @@ export const exercises: Exercise[] = [
   {
     id: "cable-pulldown",
     name: "Cable Pulldown",
-    muscleGroup: "biceps",
+    muscleGroup: "back",
     equipment: ["cable machine"],
     sets: 3,
     reps: 12,
@@ -733,7 +733,7 @@ export const exercises: Exercise[] = [
   {
     id: "kettlebell-bottoms-up-press",
     name: "Kettlebell Bottoms-Up Press",
-    muscleGroup: "biceps",
+    muscleGroup: "shoulders",
     equipment: ["kettlebell"],
     sets: 3,
     reps: 6,
