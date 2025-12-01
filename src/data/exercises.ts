@@ -815,7 +815,7 @@ export const exercises: Exercise[] = [
   {
     id: "kettlebell-floor-press",
     name: "Kettlebell Floor Press",
-    muscleGroup: "triceps",
+    muscleGroup: "chest",
     equipment: ["kettlebell"],
     sets: 3,
     reps: 8,
