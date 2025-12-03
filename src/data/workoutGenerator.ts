@@ -162,6 +162,20 @@ export const generateWorkout = (
   const selectedExercises: Exercise[] = [];
   const usedEquipment = new Set<Equipment>();
   
+  // PRIORITY: Add pull-up if pull-up bar is selected AND back/biceps/full body is targeted
+  const hasPullUpBar = equipment.includes("pull-up bar");
+  const targetsPullUpMuscles = muscleGroups.some(mg => 
+    mg === "back" || mg === "biceps" || mg === "full body"
+  );
+  
+  if (hasPullUpBar && targetsPullUpMuscles) {
+    const pullUpExercise = filtered.find(ex => ex.id === "pull-up");
+    if (pullUpExercise && !selectedExercises.includes(pullUpExercise)) {
+      selectedExercises.push(pullUpExercise);
+      usedEquipment.add("pull-up bar");
+    }
+  }
+  
   // Order muscle groups according to preference
   const orderedMuscleGroups = muscleGroups.sort((a, b) => {
     const indexA = MUSCLE_GROUP_ORDER.indexOf(a);
