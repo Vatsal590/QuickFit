@@ -1,0 +1,7 @@
+-- Add micronutrient columns to user_nutrition_goals table
+ALTER TABLE public.user_nutrition_goals
+ADD COLUMN IF NOT EXISTS daily_sodium INTEGER DEFAULT 2300,
+ADD COLUMN IF NOT EXISTS daily_calcium INTEGER DEFAULT 1000,
+ADD COLUMN IF NOT EXISTS daily_iron NUMERIC DEFAULT 18,
+ADD COLUMN IF NOT EXISTS daily_fiber INTEGER DEFAULT 25,
+ADD COLUMN IF NOT EXISTS daily_sugar INTEGER DEFAULT 25;
