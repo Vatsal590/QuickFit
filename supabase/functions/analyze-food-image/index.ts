@@ -29,14 +29,34 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a nutrition expert. Analyze food images and identify all food items with their estimated portions and nutritional values. Return a JSON array of foods with name, portion, calories, protein, carbs, and fats for each item."
+            content: `You are a nutrition expert. Analyze food images and:
+1. Identify all food items with their estimated portions and nutritional values
+2. Provide practical, personalized suggestions to make this meal healthier
+
+Return a JSON object with:
+- "foods": array of foods with name, portion, calories, protein, carbs, and fats
+- "healthSuggestions": array of 2-4 specific, actionable suggestions based on the actual foods detected
+
+For healthSuggestions, be specific and relevant to the foods shown. Examples:
+- If fried food: suggest air-frying or baking alternatives
+- If white rice: suggest brown rice or quinoa
+- If sugary drink: suggest water or unsweetened alternatives
+- If lacking vegetables: suggest adding specific veggies that pair well
+- If high sodium: suggest herbs/spices instead of salt
+- If processed meat: suggest lean protein alternatives`
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: "Analyze this food image and identify all items. For each food, provide: name, estimated portion size, calories, protein (g), carbs (g), and fats (g). Return ONLY valid JSON array format like: [{\"name\":\"...\",\"portion\":\"...\",\"calories\":...,\"protein\":...,\"carbs\":...,\"fats\":...}]"
+                text: `Analyze this food image. For each food, provide: name, estimated portion size, calories, protein (g), carbs (g), and fats (g). Also provide 2-4 specific health suggestions based on these exact foods to make the meal healthier.
+
+Return ONLY valid JSON in this exact format:
+{
+  "foods": [{"name":"...", "portion":"...", "calories":..., "protein":..., "carbs":..., "fats":...}],
+  "healthSuggestions": ["specific suggestion 1", "specific suggestion 2"]
+}`
               },
               {
                 type: "image_url",
@@ -78,13 +98,21 @@ serve(async (req) => {
     
     // Parse the JSON response
     let foods = [];
+    let healthSuggestions: string[] = [];
+    
     try {
       // Try to extract JSON from the response
-      const jsonMatch = content.match(/\[[\s\S]*\]/);
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        foods = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]);
+        foods = parsed.foods || [];
+        healthSuggestions = parsed.healthSuggestions || [];
       } else {
-        foods = JSON.parse(content);
+        // Fallback: try to extract just the foods array
+        const arrayMatch = content.match(/\[[\s\S]*\]/);
+        if (arrayMatch) {
+          foods = JSON.parse(arrayMatch[0]);
+        }
       }
     } catch (parseError) {
       console.error("Error parsing AI response:", parseError);
@@ -102,7 +130,7 @@ serve(async (req) => {
       fats: acc.fats + (food.fats || 0),
     }), { calories: 0, protein: 0, carbs: 0, fats: 0 });
 
-    return new Response(JSON.stringify({ foods, totals }), {
+    return new Response(JSON.stringify({ foods, totals, healthSuggestions }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
