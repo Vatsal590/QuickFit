@@ -353,30 +353,45 @@ export type Database = {
       user_nutrition_goals: {
         Row: {
           created_at: string
+          daily_calcium: number | null
           daily_calories: number | null
           daily_carbs: number | null
           daily_fats: number | null
+          daily_fiber: number | null
+          daily_iron: number | null
           daily_protein: number | null
+          daily_sodium: number | null
+          daily_sugar: number | null
           id: string
           updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
+          daily_calcium?: number | null
           daily_calories?: number | null
           daily_carbs?: number | null
           daily_fats?: number | null
+          daily_fiber?: number | null
+          daily_iron?: number | null
           daily_protein?: number | null
+          daily_sodium?: number | null
+          daily_sugar?: number | null
           id?: string
           updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
+          daily_calcium?: number | null
           daily_calories?: number | null
           daily_carbs?: number | null
           daily_fats?: number | null
+          daily_fiber?: number | null
+          daily_iron?: number | null
           daily_protein?: number | null
+          daily_sodium?: number | null
+          daily_sugar?: number | null
           id?: string
           updated_at?: string
           user_id?: string
