@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, Upload, Loader2, Trash2 } from 'lucide-react';
+import { Camera, Upload, Loader2, Trash2, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzedFoods, setAnalyzedFoods] = useState<any[]>([]);
   const [totals, setTotals] = useState<any>(null);
+  const [healthSuggestions, setHealthSuggestions] = useState<string[]>([]);
   const [mealType, setMealType] = useState<string>('');
   const [notes, setNotes] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +56,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       if (error) throw error;
 
       setAnalyzedFoods(data.foods || []);
+      setHealthSuggestions(data.healthSuggestions || []);
       
       // Save scanned food to database immediately (even if not logged)
       if (user && data.foods && data.foods.length > 0) {
@@ -157,6 +159,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
     setSelectedImage(null);
     setAnalyzedFoods([]);
     setTotals(null);
+    setHealthSuggestions([]);
     setMealType('');
     setNotes('');
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -353,6 +356,23 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                         <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
                       </div>
                     </div>
+                  </div>
+                )}
+
+                {healthSuggestions.length > 0 && (
+                  <div className="p-4 bg-accent/20 border border-accent/30 rounded-lg">
+                    <h3 className="font-semibold mb-3 flex items-center gap-2 text-accent-foreground">
+                      <Lightbulb className="h-5 w-5 text-yellow-500" />
+                      Make It Healthier
+                    </h3>
+                    <ul className="space-y-2">
+                      {healthSuggestions.map((suggestion, index) => (
+                        <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                          <span className="text-primary font-medium">•</span>
+                          <span>{suggestion}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 )}
 
