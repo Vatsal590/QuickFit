@@ -101,8 +101,13 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
           protein: acc.protein + (parseFloat(food.protein) || 0),
           carbs: acc.carbs + (parseFloat(food.carbs) || 0),
           fats: acc.fats + (parseFloat(food.fats) || 0),
+          sodium: acc.sodium + (parseFloat(food.sodium) || 0),
+          calcium: acc.calcium + (parseFloat(food.calcium) || 0),
+          iron: acc.iron + (parseFloat(food.iron) || 0),
+          fiber: acc.fiber + (parseFloat(food.fiber) || 0),
+          sugar: acc.sugar + (parseFloat(food.sugar) || 0),
         }),
-        { calories: 0, protein: 0, carbs: 0, fats: 0 }
+        { calories: 0, protein: 0, carbs: 0, fats: 0, sodium: 0, calcium: 0, iron: 0, fiber: 0, sugar: 0 }
       );
       setTotals(newTotals);
     }
@@ -336,24 +341,51 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 </div>
 
                 {totals && (
-                  <div className="p-4 bg-primary/10 rounded-lg">
-                    <h3 className="font-semibold mb-2">Total Nutrition:</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                      <div>
-                        <div className="text-muted-foreground">Calories</div>
-                        <div className="text-lg font-bold">{Math.round(totals.calories)}</div>
+                  <div className="p-4 bg-primary/10 rounded-lg space-y-4">
+                    <div>
+                      <h3 className="font-semibold mb-2">Macronutrients:</h3>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                        <div>
+                          <div className="text-muted-foreground">Calories</div>
+                          <div className="text-lg font-bold">{Math.round(totals.calories)}</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Protein</div>
+                          <div className="text-lg font-bold">{Math.round(totals.protein)}g</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Carbs</div>
+                          <div className="text-lg font-bold">{Math.round(totals.carbs)}g</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Fats</div>
+                          <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="text-muted-foreground">Protein</div>
-                        <div className="text-lg font-bold">{Math.round(totals.protein)}g</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Carbs</div>
-                        <div className="text-lg font-bold">{Math.round(totals.carbs)}g</div>
-                      </div>
-                      <div>
-                        <div className="text-muted-foreground">Fats</div>
-                        <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold mb-2">Micronutrients:</h3>
+                      <div className="grid grid-cols-3 md:grid-cols-5 gap-3 text-sm">
+                        <div>
+                          <div className="text-muted-foreground">Sodium</div>
+                          <div className="text-lg font-bold">{Math.round(totals.sodium)}mg</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Calcium</div>
+                          <div className="text-lg font-bold">{Math.round(totals.calcium)}mg</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Iron</div>
+                          <div className="text-lg font-bold">{Math.round(totals.iron * 10) / 10}mg</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Fiber</div>
+                          <div className="text-lg font-bold">{Math.round(totals.fiber)}g</div>
+                        </div>
+                        <div>
+                          <div className="text-muted-foreground">Sugar</div>
+                          <div className="text-lg font-bold">{Math.round(totals.sugar)}g</div>
+                        </div>
                       </div>
                     </div>
                   </div>

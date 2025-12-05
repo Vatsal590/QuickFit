@@ -30,11 +30,11 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are a nutrition expert. Analyze food images and:
-1. Identify all food items with their estimated portions and nutritional values
+1. Identify all food items with their estimated portions and nutritional values including micronutrients
 2. Provide practical, personalized suggestions to make this meal healthier
 
 Return a JSON object with:
-- "foods": array of foods with name, portion, calories, protein, carbs, and fats
+- "foods": array of foods with name, portion, calories, protein, carbs, fats, sodium (mg), calcium (mg), iron (mg), fiber (g), sugar (g)
 - "healthSuggestions": array of 2-4 specific, actionable suggestions based on the actual foods detected
 
 For healthSuggestions, be specific and relevant to the foods shown. Examples:
@@ -50,11 +50,11 @@ For healthSuggestions, be specific and relevant to the foods shown. Examples:
             content: [
               {
                 type: "text",
-                text: `Analyze this food image. For each food, provide: name, estimated portion size, calories, protein (g), carbs (g), and fats (g). Also provide 2-4 specific health suggestions based on these exact foods to make the meal healthier.
+                text: `Analyze this food image. For each food, provide: name, estimated portion size, calories, protein (g), carbs (g), fats (g), sodium (mg), calcium (mg), iron (mg), fiber (g), and sugar (g). Also provide 2-4 specific health suggestions based on these exact foods to make the meal healthier.
 
 Return ONLY valid JSON in this exact format:
 {
-  "foods": [{"name":"...", "portion":"...", "calories":..., "protein":..., "carbs":..., "fats":...}],
+  "foods": [{"name":"...", "portion":"...", "calories":..., "protein":..., "carbs":..., "fats":..., "sodium":..., "calcium":..., "iron":..., "fiber":..., "sugar":...}],
   "healthSuggestions": ["specific suggestion 1", "specific suggestion 2"]
 }`
               },
@@ -128,7 +128,12 @@ Return ONLY valid JSON in this exact format:
       protein: acc.protein + (food.protein || 0),
       carbs: acc.carbs + (food.carbs || 0),
       fats: acc.fats + (food.fats || 0),
-    }), { calories: 0, protein: 0, carbs: 0, fats: 0 });
+      sodium: acc.sodium + (food.sodium || 0),
+      calcium: acc.calcium + (food.calcium || 0),
+      iron: acc.iron + (food.iron || 0),
+      fiber: acc.fiber + (food.fiber || 0),
+      sugar: acc.sugar + (food.sugar || 0),
+    }), { calories: 0, protein: 0, carbs: 0, fats: 0, sodium: 0, calcium: 0, iron: 0, fiber: 0, sugar: 0 });
 
     return new Response(JSON.stringify({ foods, totals, healthSuggestions }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
