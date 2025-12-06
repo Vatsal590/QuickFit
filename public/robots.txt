@@ -1,5 +1,5 @@
 # QuickFit Robots.txt
-# https://quickfit.lovable.app
+# https://quickfit.dev
 
 User-agent: Googlebot
 Allow: /
@@ -35,7 +35,7 @@ Allow: /
 Crawl-delay: 2
 
 # Sitemap
-Sitemap: https://quickfit.lovable.app/sitemap.xml
+Sitemap: https://quickfit.dev/sitemap.xml
 
 # Disallow admin/private paths
 Disallow: /api/
