@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import PageContainer from '../components/layout/PageContainer';
 import WorkoutForm from '../components/workout/WorkoutForm';
 import WorkoutDisplay from '../components/workout/WorkoutDisplay';
-import { Workout, WorkoutFormData } from '../types';
+import ExcludedExercisesDialog from '../components/workout/ExcludedExercisesDialog';
+import { Workout, WorkoutFormData, BodyPain } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
-import { generateWorkout } from '../data/workoutGenerator';
+import { generateWorkout, ExcludedExerciseInfo } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
@@ -13,6 +14,9 @@ const InstantWorkout = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [excludedExercises, setExcludedExercises] = useState<ExcludedExerciseInfo[]>([]);
+  const [selectedPains, setSelectedPains] = useState<BodyPain[]>([]);
+  const [showExcludedDialog, setShowExcludedDialog] = useState(false);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
 
   const handleCreateWorkout = (formData: WorkoutFormData) => {
@@ -23,21 +27,29 @@ const InstantWorkout = () => {
       equipment: formData.equipment 
     });
     try {
-      const newWorkout = generateWorkout(
+      const result = generateWorkout(
         formData.time,
         formData.intensity,
         formData.muscleGroups,
         formData.equipment,
         formData.bodyPains
       );
-      setCurrentWorkout(newWorkout);
+      
+      setCurrentWorkout(result.workout);
+      setExcludedExercises(result.excludedExercises);
+      setSelectedPains(formData.bodyPains || []);
+      
+      // Show dialog if exercises were excluded due to pain
+      if (formData.bodyPains && formData.bodyPains.length > 0 && result.excludedExercises.length > 0) {
+        setShowExcludedDialog(true);
+      }
       
       toast({
         title: "Workout generated",
-        description: `Your ${newWorkout.duration} minute workout is ready with 5-min warmup and cooldown!`,
+        description: `Your ${result.workout.duration} minute workout is ready with 5-min warmup and cooldown!`,
       });
       
-      addWorkoutToHistory(newWorkout);
+      addWorkoutToHistory(result.workout);
     } catch (error) {
       console.error("Failed to generate workout:", error);
       toast({
@@ -72,6 +84,8 @@ const InstantWorkout = () => {
               workout={currentWorkout}
               onBack={() => { 
                 setCurrentWorkout(null);
+                setExcludedExercises([]);
+                setSelectedPains([]);
                 activityTracker.trackButtonClick('back_from_workout', 'instant-workout');
               }}
               onComplete={handleCompleteWorkout}
@@ -83,6 +97,13 @@ const InstantWorkout = () => {
           )}
         </div>
       </div>
+      
+      <ExcludedExercisesDialog
+        open={showExcludedDialog}
+        onClose={() => setShowExcludedDialog(false)}
+        excludedExercises={excludedExercises}
+        selectedPains={selectedPains}
+      />
     </PageContainer>
   );
 };
