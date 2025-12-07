@@ -154,27 +154,13 @@ export const generateWorkout = (
   }
 
   // Select exercises in the preferred muscle group order
-  // First pass: compound exercises, Second pass: isolation exercises
   // Only reduce exercise count if we actually have pain exercises to add
   const exerciseCount = (bodyPains && bodyPains.length > 0) 
     ? maxExercises - painExercises.length 
     : maxExercises;
   const selectedExercises: Exercise[] = [];
   const usedEquipment = new Set<Equipment>();
-  
-  // PRIORITY: Add pull-up if pull-up bar is selected AND back/biceps/full body is targeted
-  const hasPullUpBar = equipment.includes("pull-up bar");
-  const targetsPullUpMuscles = muscleGroups.some(mg => 
-    mg === "back" || mg === "biceps" || mg === "full body"
-  );
-  
-  if (hasPullUpBar && targetsPullUpMuscles) {
-    const pullUpExercise = filtered.find(ex => ex.id === "pull-up");
-    if (pullUpExercise && !selectedExercises.includes(pullUpExercise)) {
-      selectedExercises.push(pullUpExercise);
-      usedEquipment.add("pull-up bar");
-    }
-  }
+  const coveredMuscles = new Set<MuscleGroup>();
   
   // Order muscle groups according to preference
   const orderedMuscleGroups = muscleGroups.sort((a, b) => {
@@ -182,28 +168,48 @@ export const generateWorkout = (
     const indexB = MUSCLE_GROUP_ORDER.indexOf(b);
     return indexA - indexB;
   });
+
+  // PRIORITY: Add pull-up if pull-up bar is selected AND back/biceps/full body is targeted
+  const hasPullUpBar = equipment.includes("pull-up bar");
+  const targetsPullUpMuscles = muscleGroups.some(mg => 
+    mg === "back" || mg === "biceps" || mg === "full body"
+  );
   
-  // FIRST PASS: Add compound exercises for each muscle group
+  if (hasPullUpBar && targetsPullUpMuscles && selectedExercises.length < exerciseCount) {
+    const pullUpExercise = filtered.find(ex => ex.id === "pull-up");
+    if (pullUpExercise) {
+      selectedExercises.push(pullUpExercise);
+      usedEquipment.add("pull-up bar");
+      coveredMuscles.add("back");
+      if (muscleGroups.includes("biceps")) coveredMuscles.add("biceps");
+    }
+  }
+
+  // FIRST PASS: Ensure each selected muscle group gets ONE exercise with selected equipment
   for (const muscleGroup of orderedMuscleGroups) {
     if (selectedExercises.length >= exerciseCount) break;
+    if (coveredMuscles.has(muscleGroup)) continue;
     
-    // Find compound exercises that target this muscle group (primary or secondary)
-    const compoundExercises = filtered.filter(ex => {
-      const isCompound = isCompoundExercise(ex);
+    // Find exercises that target this specific muscle group
+    const muscleExercises = filtered.filter(ex => {
       const targetsMuscle = ex.muscleGroup === muscleGroup || 
                            (Array.isArray(ex.muscleGroup) && ex.muscleGroup.includes(muscleGroup));
-      return isCompound && targetsMuscle;
+      return targetsMuscle && !selectedExercises.includes(ex);
     });
     
-    if (compoundExercises.length === 0) continue;
+    if (muscleExercises.length === 0) continue;
     
-    // Try to use different equipment for variety
+    // Prioritize compound exercises first
+    const compounds = muscleExercises.filter(ex => isCompoundExercise(ex));
+    const isolations = muscleExercises.filter(ex => !isCompoundExercise(ex));
+    const prioritizedExercises = [...compounds, ...isolations];
+    
     let selectedExercise: Exercise | null = null;
     
-    // First, try to find an exercise with unused equipment
+    // Try to find an exercise with unused equipment for variety
     for (const eq of equipment) {
       if (!usedEquipment.has(eq)) {
-        const exercisesWithEquipment = compoundExercises.filter(ex => usesEquipment(ex, eq));
+        const exercisesWithEquipment = prioritizedExercises.filter(ex => usesEquipment(ex, eq));
         if (exercisesWithEquipment.length > 0) {
           selectedExercise = shuffle(exercisesWithEquipment)[0];
           usedEquipment.add(eq);
@@ -212,53 +218,52 @@ export const generateWorkout = (
       }
     }
     
-    // If no unused equipment found, just pick any compound exercise for this muscle group
+    // If no unused equipment found, pick any exercise for this muscle
     if (!selectedExercise) {
-      selectedExercise = shuffle(compoundExercises)[0];
+      selectedExercise = shuffle(prioritizedExercises)[0];
       selectedExercise.equipment.forEach(eq => usedEquipment.add(eq));
     }
     
     selectedExercises.push(selectedExercise);
+    coveredMuscles.add(muscleGroup);
   }
   
-  // SECOND PASS: Add isolation exercises for each muscle group if we need more
-  for (const muscleGroup of orderedMuscleGroups) {
-    if (selectedExercises.length >= exerciseCount) break;
-    
-    // Find isolation exercises that specifically target this muscle group
-    const isolationExercises = filtered.filter(ex => {
-      const isIsolation = !isCompoundExercise(ex);
-      const targetsMuscle = targetsSpecificMuscle(ex, muscleGroup);
-      return isIsolation && targetsMuscle && !selectedExercises.includes(ex);
-    });
-    
-    if (isolationExercises.length === 0) continue;
-    
-    // Try to use different equipment for variety
-    let selectedExercise: Exercise | null = null;
-    
-    // First, try to find an exercise with unused equipment
-    for (const eq of equipment) {
-      if (!usedEquipment.has(eq)) {
-        const exercisesWithEquipment = isolationExercises.filter(ex => usesEquipment(ex, eq));
-        if (exercisesWithEquipment.length > 0) {
-          selectedExercise = shuffle(exercisesWithEquipment)[0];
-          usedEquipment.add(eq);
-          break;
+  // SECOND PASS: Fill remaining slots with additional exercises for covered muscles
+  if (selectedExercises.length < exerciseCount) {
+    for (const muscleGroup of orderedMuscleGroups) {
+      if (selectedExercises.length >= exerciseCount) break;
+      
+      const additionalExercises = filtered.filter(ex => {
+        const targetsMuscle = ex.muscleGroup === muscleGroup || 
+                             (Array.isArray(ex.muscleGroup) && ex.muscleGroup.includes(muscleGroup));
+        return targetsMuscle && !selectedExercises.includes(ex);
+      });
+      
+      if (additionalExercises.length === 0) continue;
+      
+      let selectedExercise: Exercise | null = null;
+      
+      // Try to use different equipment
+      for (const eq of equipment) {
+        if (!usedEquipment.has(eq)) {
+          const exercisesWithEquipment = additionalExercises.filter(ex => usesEquipment(ex, eq));
+          if (exercisesWithEquipment.length > 0) {
+            selectedExercise = shuffle(exercisesWithEquipment)[0];
+            usedEquipment.add(eq);
+            break;
+          }
         }
       }
+      
+      if (!selectedExercise) {
+        selectedExercise = shuffle(additionalExercises)[0];
+      }
+      
+      selectedExercises.push(selectedExercise);
     }
-    
-    // If no unused equipment found, just pick any isolation exercise for this muscle group
-    if (!selectedExercise) {
-      selectedExercise = shuffle(isolationExercises)[0];
-      selectedExercise.equipment.forEach(eq => usedEquipment.add(eq));
-    }
-    
-    selectedExercises.push(selectedExercise);
   }
   
-  // If we still need more exercises, add any remaining filtered exercises
+  // THIRD PASS: If still need more, add any remaining exercises
   if (selectedExercises.length < exerciseCount) {
     const remainingExercises = filtered.filter(ex => !selectedExercises.includes(ex));
     const remaining = exerciseCount - selectedExercises.length;
