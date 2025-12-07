@@ -8,6 +8,17 @@ const getExerciseCount = (time: TimeFrame): number => {
   return counts[time] || 3;
 };
 
+export interface ExcludedExerciseInfo {
+  exerciseName: string;
+  reason: string;
+  painType: BodyPain;
+}
+
+export interface WorkoutResult {
+  workout: Workout;
+  excludedExercises: ExcludedExerciseInfo[];
+}
+
 // Preferred order for exercises
 const MUSCLE_GROUP_ORDER: MuscleGroup[] = [
   "chest", "back", "legs", "shoulders", "biceps", "triceps", "core", "cardio"
@@ -40,8 +51,9 @@ export const generateWorkout = (
   muscleGroups: MuscleGroup[],
   equipment: Equipment[],
   bodyPains?: BodyPain[]
-): Workout => {
+): WorkoutResult => {
   const maxExercises = getExerciseCount(time);
+  const excludedExercises: ExcludedExerciseInfo[] = [];
   
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let filtered = getFilteredExercises(muscleGroups, equipment, intensity);
@@ -57,25 +69,55 @@ export const generateWorkout = (
     );
   }
 
-  // Remove exercises that use affected body parts completely
+  // Remove exercises that use affected body parts and track excluded ones
   if (bodyPains && bodyPains.length > 0) {
-    const painBodyParts: { [key: string]: string[] } = {
-      "knee pain": ["squat", "lunge", "jump", "leg", "knee", "quad", "hamstring", "calf"],
-      "shoulder pain": ["shoulder", "overhead", "press", "raise", "row", "pull", "push"],
-      "lower back pain": ["deadlift", "row", "back", "lower back", "good morning"],
-      "wrist pain": ["push-up", "plank", "handstand", "wrist", "press", "curl"],
-      "hip pain": ["squat", "lunge", "leg", "hip", "glute"],
-      "ankle pain": ["calf", "jump", "running", "ankle", "leg"]
+    const painBodyParts: { [key: string]: { keywords: string[]; reason: string } } = {
+      "knee pain": {
+        keywords: ["squat", "lunge", "jump", "leg", "knee", "quad", "hamstring", "calf"],
+        reason: "This exercise puts stress on your knees and could aggravate your knee pain"
+      },
+      "shoulder pain": {
+        keywords: ["shoulder", "overhead", "press", "raise", "row", "pull", "push"],
+        reason: "This exercise involves shoulder movement that could worsen your shoulder pain"
+      },
+      "lower back pain": {
+        keywords: ["deadlift", "row", "back", "lower back", "good morning"],
+        reason: "This exercise loads your lower back and could intensify your back pain"
+      },
+      "wrist pain": {
+        keywords: ["push-up", "plank", "handstand", "wrist", "press", "curl"],
+        reason: "This exercise requires wrist support that could aggravate your wrist pain"
+      },
+      "hip pain": {
+        keywords: ["squat", "lunge", "leg", "hip", "glute"],
+        reason: "This exercise involves hip movement that could worsen your hip pain"
+      },
+      "ankle pain": {
+        keywords: ["calf", "jump", "running", "ankle", "leg"],
+        reason: "This exercise puts pressure on your ankles and could aggravate your ankle pain"
+      }
     };
     
     bodyPains.forEach(pain => {
-      const bodyParts = painBodyParts[pain] || [];
-      filtered = filtered.filter(ex => 
-        !bodyParts.some(part => 
-          ex.name.toLowerCase().includes(part) || 
-          ex.description.toLowerCase().includes(part)
-        )
-      );
+      const painInfo = painBodyParts[pain];
+      if (!painInfo) return;
+      
+      filtered = filtered.filter(ex => {
+        const shouldExclude = painInfo.keywords.some(keyword => 
+          ex.name.toLowerCase().includes(keyword) || 
+          ex.description.toLowerCase().includes(keyword)
+        );
+        
+        if (shouldExclude) {
+          excludedExercises.push({
+            exerciseName: ex.name,
+            reason: painInfo.reason,
+            painType: pain
+          });
+        }
+        
+        return !shouldExclude;
+      });
     });
   }
 
@@ -301,14 +343,17 @@ export const generateWorkout = (
   ];
 
   return {
-    id: `workout-${Date.now()}`,
-    title: `${intensity.charAt(0).toUpperCase() + intensity.slice(1)} ${time}min Workout`,
-    duration: time,
-    intensity,
-    targetMuscleGroups: muscleGroups,
-    equipment,
-    warmupExercises,
-    exercises: finalExercises,
-    cooldownExercises
+    workout: {
+      id: `workout-${Date.now()}`,
+      title: `${intensity.charAt(0).toUpperCase() + intensity.slice(1)} ${time}min Workout`,
+      duration: time,
+      intensity,
+      targetMuscleGroups: muscleGroups,
+      equipment,
+      warmupExercises,
+      exercises: finalExercises,
+      cooldownExercises
+    },
+    excludedExercises
   };
 };
