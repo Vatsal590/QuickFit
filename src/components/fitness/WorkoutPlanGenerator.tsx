@@ -343,6 +343,39 @@ const generateExercises = (
     return exerciseMuscleGroups.some(mg => targetGroups.includes(mg));
   });
 
+  // Map of mobility exercises to their required pain selection
+  const mobilityExerciseToPain: Record<string, BodyPain> = {
+    "wrist": "wrist pain",
+    "knee": "knee pain",
+    "ankle": "ankle pain",
+    "shoulder": "shoulder pain",
+    "hip": "hip pain",
+    "back": "lower back pain"
+  };
+
+  // Filter out mobility/stretching exercises unless corresponding pain is selected
+  const stretchingKeywords = ['stretch', 'mobility', 'relief', 'circles', 'rolls', 'twists'];
+  pool = pool.filter(ex => {
+    const nameLower = ex.name.toLowerCase();
+    const descLower = ex.description.toLowerCase();
+    
+    const isMobilityExercise = stretchingKeywords.some(keyword => 
+      nameLower.includes(keyword) || descLower.includes(keyword)
+    );
+    
+    if (!isMobilityExercise) return true;
+    
+    // If it's a mobility exercise, only include if the corresponding pain is selected
+    for (const [bodyPart, requiredPain] of Object.entries(mobilityExerciseToPain)) {
+      if (nameLower.includes(bodyPart) || descLower.includes(bodyPart)) {
+        return bodyPains.includes(requiredPain);
+      }
+    }
+    
+    // Generic mobility exercise - exclude unless any pain selected
+    return bodyPains.length > 0;
+  });
+
   // Exclude pain-related exercises
   const painTriggers: Record<BodyPain, string[]> = {
     "knee pain": ["squat", "lunge", "jump", "step-up", "run"],
