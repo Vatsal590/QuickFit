@@ -1,4 +1,4 @@
-import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Gift, BookOpen, Camera, Zap } from "lucide-react";
+import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Gift, BookOpen, Camera, Zap, Heart } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
 import {
@@ -23,6 +23,7 @@ const mainItems = [
   { title: "History", url: "/history", icon: History },
   { title: "Free Access", url: "/free-access", icon: Gift },
   { title: "Fitness Blogs", url: "/blogs", icon: BookOpen },
+  { title: "Support", url: "/support", icon: Heart },
 ];
 
 export function AppSidebar() {
