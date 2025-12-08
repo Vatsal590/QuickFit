@@ -20,6 +20,7 @@ import DietPlan from "./pages/DietPlan";
 import FoodTracker from "./pages/FoodTracker";
 import FreeAccess from "./pages/FreeAccess";
 import Blogs from "./pages/Blogs";
+import Support from "./pages/Support";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -170,6 +171,14 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Blogs />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/support" 
+        element={
+          <ProtectedRoute>
+            <Support />
           </ProtectedRoute>
         } 
       />
