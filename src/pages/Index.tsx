@@ -64,7 +64,7 @@ const Index = () => {
           </DialogHeader>
           
           <div className="flex flex-col items-center text-center space-y-4 py-4">
-            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
               <img 
                 src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
                 alt="Vatsal Agarwala - Founder" 
@@ -78,11 +78,7 @@ const Index = () => {
             </div>
             
             <p className="text-foreground leading-relaxed">
-              Get access to <span className="font-bold text-primary">my personal workout AND diet plans</span> completely <span className="font-bold text-amber-500">FREE</span>!
-            </p>
-            
-            <p className="text-sm text-muted-foreground">
-              Just refer 3 friends to unlock. It's that simple!
+              Get access to <span className="font-bold text-primary">Vatsal's personal workout AND diet plans</span> completely <span className="font-bold text-amber-500">FREE</span>!
             </p>
             
             <Button 
