@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Zap, Users, Crown, Sparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -29,7 +29,7 @@ export function FreeAccessSection() {
   const [referrerName, setReferrerName] = useState<string>('');
   const [pendingReferrer, setPendingReferrer] = useState<{ id: string; name: string } | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState<'refer' | 'skip'>('refer');
+  const [activeTab, setActiveTab] = useState<'refer' | 'instant'>('instant');
 
   useEffect(() => {
     if (!user) return;
@@ -194,35 +194,166 @@ export function FreeAccessSection() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Unlock Vatsal&apos;s plans! (his physique below)</CardTitle>
-        <div className="flex gap-2 mt-4">
-          <Button
-            variant="outline"
-            onClick={() => setActiveTab('refer')}
-            className={`flex-1 border border-gray-300 bg-white text-gray-900 hover:bg-gray-50 ${
-              activeTab === 'refer' ? 'ring-2 ring-orange-400' : ''
-            }`}
-          >
-            Refer
-          </Button>
-          <Button
-            onClick={() => setActiveTab('skip')}
-            className={`flex-1 transition-all duration-300 text-white ${
-              activeTab === 'skip'
-                ? 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 shadow-lg shadow-orange-400/40'
-                : 'bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 opacity-100 hover:opacity-90'
-            }`}
-          >
-            INSTANT ACCESS
-          </Button>
-        </div>
-      </CardHeader>
+    <div className="space-y-6">
+      {/* Header Section */}
+      <div className="text-center">
+        <h2 className="text-2xl font-bold mb-2">Choose Your Path to Access</h2>
+        <p className="text-muted-foreground">Select one of the two options below</p>
+      </div>
 
-      <CardContent className="space-y-6">
-        {activeTab === 'refer' && (
-          <>
+      {/* Option Selection Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Refer Option */}
+        <button
+          onClick={() => setActiveTab('refer')}
+          className={`relative p-6 rounded-xl border-2 text-left transition-all ${
+            activeTab === 'refer'
+              ? 'border-muted-foreground/50 bg-muted/30'
+              : 'border-border hover:border-muted-foreground/30 hover:bg-muted/10'
+          }`}
+        >
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-muted">
+              <Users className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <span className="font-semibold text-lg">Refer Friends</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Refer 3 friends to unlock access for free
+          </p>
+        </button>
+
+        {/* Instant Access Option - HIGHLIGHTED */}
+        <button
+          onClick={() => setActiveTab('instant')}
+          className={`relative p-6 rounded-xl border-2 text-left transition-all ${
+            activeTab === 'instant'
+              ? 'border-amber-500 bg-gradient-to-br from-amber-500/20 to-orange-500/20 shadow-lg shadow-amber-500/20'
+              : 'border-amber-500/50 bg-gradient-to-br from-amber-500/10 to-orange-500/10 hover:from-amber-500/15 hover:to-orange-500/15'
+          }`}
+        >
+          <div className="absolute -top-3 right-4">
+            <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              RECOMMENDED
+            </span>
+          </div>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-2 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500">
+              <Zap className="h-5 w-5 text-white" />
+            </div>
+            <span className="font-semibold text-lg">Instant Access</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Get immediate access with a one-time payment
+          </p>
+        </button>
+      </div>
+
+      {/* Content Based on Selection */}
+      {activeTab === 'instant' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* QuickFit Lite */}
+            <Card className="relative overflow-hidden border-2 border-border">
+              <CardHeader className="pb-4">
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-amber-500" />
+                  QuickFit Lite
+                </CardTitle>
+                <div className="flex items-baseline gap-1 mt-2">
+                  <span className="text-3xl font-bold">€4.99</span>
+                  <span className="text-muted-foreground text-sm">one-time</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    Vatsal's complete workout plan
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    Vatsal's complete diet plan
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    Lifetime access
+                  </li>
+                </ul>
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90 shadow-lg"
+                >
+                  <a
+                    href="https://buy.stripe.com/5kQfZi4pD2LH8ay94Zds403"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Instant Access
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* QuickFit Pro - MOST POPULAR */}
+            <Card className="relative overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/10">
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-center text-xs font-bold py-1">
+                <Crown className="h-3 w-3 inline mr-1" />
+                MOST POPULAR
+              </div>
+              <CardHeader className="pb-4 pt-8">
+                <CardTitle className="flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-amber-500" />
+                  QuickFit Pro
+                </CardTitle>
+                <div className="flex items-baseline gap-1 mt-2">
+                  <span className="text-3xl font-bold">€6.99</span>
+                  <span className="text-muted-foreground text-sm">one-time</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    Everything in Lite
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    1-on-1 call with Vatsal
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-500" />
+                    Personalized plan review
+                  </li>
+                </ul>
+                <Button
+                  asChild
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90 shadow-lg"
+                >
+                  <a
+                    href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Get Pro Access
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'refer' && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Referral Program</CardTitle>
+            <CardDescription>Share your code with friends to unlock free access</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
             <div>
               <p className="text-sm font-medium mb-2">Your Referral Code</p>
               <div className="flex items-center gap-2">
@@ -269,75 +400,22 @@ export function FreeAccessSection() {
               )}
             </div>
 
-            {/* Referral goal section (only once, at bottom) */}
-            <div className="text-center text-sm text-muted-foreground space-y-1 pt-4">
+            <div className="text-center text-sm text-muted-foreground space-y-1 pt-4 border-t">
               {referralCount >= 3 ? (
                 <p>
-                  Congratulations! Kindly contact -{' '}
-                  <span className="font-semibold">quickfit06@gmail.com</span> to receive your award!
+                  Congratulations! Contact{' '}
+                  <span className="font-semibold">quickfit06@gmail.com</span> to receive your reward!
                 </p>
               ) : (
                 <>
-                  <p>Refer 3 people to see Vatsal&apos;s workout and diet plan.</p>
-                  <p>Refer 6 people for access AND a call with him!</p>
+                  <p>Refer <span className="font-semibold text-primary">3 people</span> to see Vatsal's workout and diet plan.</p>
+                  <p>Refer <span className="font-semibold text-primary">6 people</span> for access AND a call with him!</p>
                 </>
               )}
             </div>
-          </>
-        )}
-
-        {activeTab === 'skip' && (
-          <div className="flex flex-col md:flex-row gap-6 py-6 justify-center items-stretch">
-            {/* QuickFit Lite */}
-            <Card className="flex-1 max-w-sm mx-auto md:mx-0">
-              <CardHeader>
-                <CardTitle>QuickFit Lite</CardTitle>
-                <CardDescription>€4.99 — Access to Vatsal&apos;s workout and diet plan</CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40 mt-4 w-full"
-                >
-                  <a
-                    href="https://buy.stripe.com/5kQfZi4pD2LH8ay94Zds403"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Pay & Get Instant Access
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* QuickFit Pro */}
-            <Card className="flex-1 max-w-sm mx-auto md:mx-0">
-              <CardHeader>
-                <CardTitle>QuickFit Pro</CardTitle>
-                <CardDescription>
-                  €6.99 — Everything in Lite plus a 1-on-1 call and personalized plan from Vatsal
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="text-center">
-                <Button
-                  asChild
-                  size="lg"
-                  className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 text-white hover:opacity-90 shadow-lg shadow-orange-400/40 mt-4 w-full"
-                >
-                  <a
-                    href="https://buy.stripe.com/cNidRa8FTdql0I694Zds402"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Pay & Get Instant Access
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </CardContent>
+          </CardContent>
+        </Card>
+      )}
 
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
@@ -360,6 +438,6 @@ export function FreeAccessSection() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </Card>
+    </div>
   );
 }
