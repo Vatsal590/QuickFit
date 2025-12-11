@@ -237,7 +237,7 @@ const Landing = () => {
                   QuickFit on Luxembourg National Radio
                 </h3>
                 <p className="text-gray-600 font-medium">
-                  QuickFit was featured on RadioARA, Luxembourg's national radio, discussing AI-powered fitness and the future of personalized workouts.
+                  QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker
                 </p>
                 <a 
                   href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
