@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink } from 'lucide-react';
+import radioAraImage from '@/assets/radioara-feature.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 const Landing = () => {
@@ -175,8 +176,45 @@ const Landing = () => {
           </div>
         </div>
 
+        {/* Featured on Radio Section */}
+        <div className="relative bg-gradient-to-r from-fitness-primary/5 via-fitness-secondary/5 to-fitness-accent/5 py-12">
+          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+              <div className="relative flex-shrink-0">
+                <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
+                <img 
+                  src={radioAraImage} 
+                  alt="Vatsal Agarwala featured on RadioARA Luxembourg" 
+                  className="relative w-48 h-48 md:w-56 md:h-56 object-cover rounded-2xl shadow-lg"
+                />
+              </div>
+              <div className="flex-1 text-center md:text-left space-y-4">
+                <div className="flex items-center justify-center md:justify-start gap-2">
+                  <Radio className="h-5 w-5 text-fitness-primary" />
+                  <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">As Featured On</span>
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
+                  QuickFit on Luxembourg National Radio
+                </h3>
+                <p className="text-gray-600 font-medium">
+                  QuickFit was featured on RadioARA, Luxembourg's national radio, discussing AI-powered fitness and the future of personalized workouts.
+                </p>
+                <a 
+                  href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
+                    Listen to the Feature <ExternalLink className="ml-2 h-4 w-4" />
+                  </Button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Core Features with Tilted Cards */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 -mt-12">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center mb-20">
             <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
               Everything You Need
