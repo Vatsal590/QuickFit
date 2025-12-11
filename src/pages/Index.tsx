@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import { 
@@ -10,16 +10,94 @@ import {
   Gift,
   BookOpen,
   Dumbbell,
-  Zap
+  Zap,
+  X,
+  Sparkles
 } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [showPromo, setShowPromo] = useState(false);
+
+  useEffect(() => {
+    // Check if user has seen the promo popup before
+    const hasSeenPromo = sessionStorage.getItem('hasSeenFreeAccessPromo');
+    if (!hasSeenPromo) {
+      // Small delay for better UX
+      const timer = setTimeout(() => {
+        setShowPromo(true);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleClosePromo = () => {
+    setShowPromo(false);
+    sessionStorage.setItem('hasSeenFreeAccessPromo', 'true');
+  };
+
+  const handleGoToFreeAccess = () => {
+    handleClosePromo();
+    navigate('/free-access');
+  };
 
   return (
     <PageContainer>
+      {/* Free Access Promo Popup */}
+      <Dialog open={showPromo} onOpenChange={(open) => !open && handleClosePromo()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center flex items-center justify-center gap-2 text-xl">
+              <Sparkles className="h-5 w-5 text-amber-500" />
+              Exclusive Free Access
+              <Sparkles className="h-5 w-5 text-amber-500" />
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="flex flex-col items-center text-center space-y-4 py-4">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
+              <img 
+                src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
+                alt="Vatsal Agarwala - Founder" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div>
+              <p className="font-semibold text-primary">Vatsal Agarwala</p>
+              <p className="text-sm text-muted-foreground">Founder & CEO</p>
+            </div>
+            
+            <p className="text-foreground leading-relaxed">
+              Get access to <span className="font-bold text-primary">my personal workout AND diet plans</span> completely <span className="font-bold text-amber-500">FREE</span>!
+            </p>
+            
+            <p className="text-sm text-muted-foreground">
+              Just refer 3 friends to unlock. It's that simple!
+            </p>
+            
+            <Button 
+              onClick={handleGoToFreeAccess}
+              variant="gradient"
+              size="lg"
+              className="w-full mt-2"
+            >
+              <Gift className="mr-2 h-5 w-5" />
+              Take Me There
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="max-w-6xl mx-auto">
         <div className="mb-16 text-center">
           <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
