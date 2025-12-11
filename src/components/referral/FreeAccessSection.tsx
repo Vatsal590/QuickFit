@@ -263,7 +263,7 @@ export function FreeAccessSection() {
                 </CardTitle>
                 <div className="flex items-baseline gap-1 mt-2">
                   <span className="text-3xl font-bold">€4.99</span>
-                  <span className="text-muted-foreground text-sm">one-time</span>
+                  <span className="text-muted-foreground text-sm">/mo</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -310,7 +310,7 @@ export function FreeAccessSection() {
                 </CardTitle>
                 <div className="flex items-baseline gap-1 mt-2">
                   <span className="text-3xl font-bold">€6.99</span>
-                  <span className="text-muted-foreground text-sm">one-time</span>
+                  <span className="text-muted-foreground text-sm">/mo</span>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
