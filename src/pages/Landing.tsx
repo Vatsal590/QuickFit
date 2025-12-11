@@ -2,8 +2,10 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink } from 'lucide-react';
-import radioAraImage from '@/assets/radioara-feature.png';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import radioAraImage1 from '@/assets/radioara-feature.png';
+import radioAraImage2 from '@/assets/radioara-feature-2.png';
+import radioAraImage3 from '@/assets/radioara-feature-3.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 const Landing = () => {
@@ -24,6 +26,7 @@ const Landing = () => {
     return list;
   }, []);
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
+  const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
@@ -182,11 +185,48 @@ const Landing = () => {
             <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
               <div className="relative flex-shrink-0">
                 <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
-                <img 
-                  src={radioAraImage} 
-                  alt="Vatsal Agarwala featured on RadioARA Luxembourg" 
-                  className="relative w-48 h-48 md:w-56 md:h-56 object-cover rounded-2xl shadow-lg"
-                />
+                <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
+                  {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
+                    <img 
+                      key={idx}
+                      src={img} 
+                      alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        idx === radioImageIndex ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))}
+                  {/* Navigation dots */}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                    {[0, 1, 2].map((idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setRadioImageIndex(idx)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          idx === radioImageIndex 
+                            ? 'bg-white w-4' 
+                            : 'bg-white/50 hover:bg-white/70'
+                        }`}
+                        aria-label={`View photo ${idx + 1}`}
+                      />
+                    ))}
+                  </div>
+                  {/* Arrow buttons */}
+                  <button
+                    onClick={() => setRadioImageIndex((prev) => (prev === 0 ? 2 : prev - 1))}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                    aria-label="Previous photo"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={() => setRadioImageIndex((prev) => (prev === 2 ? 0 : prev + 1))}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                    aria-label="Next photo"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
               </div>
               <div className="flex-1 text-center md:text-left space-y-4">
                 <div className="flex items-center justify-center md:justify-start gap-2">
