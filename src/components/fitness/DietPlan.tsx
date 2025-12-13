@@ -9,12 +9,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useFitnessProfile } from '@/hooks/useFitnessProfile';
-import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download, BookOpen, Loader2 } from 'lucide-react';
+import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download, BookOpen, Loader2, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast as sonnerToast } from 'sonner';
-import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, MealData } from '@/data/mealDatabase';
+import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, filterByCookTime, MealData } from '@/data/mealDatabase';
 import NutritionGoals from '@/components/fitness/NutritionGoals';
 import { activityTracker } from '@/utils/activityTracker';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -56,7 +56,8 @@ const DietPlan = () => {
     goal_weight: '',
     diet_preferences: [] as string[],
     food_allergies: [] as string[],
-    taste_preferences: [] as string[]
+    taste_preferences: [] as string[],
+    cooking_time_preference: '30'
   });
 
   useEffect(() => {
@@ -65,7 +66,8 @@ const DietPlan = () => {
         goal_weight: profile.goal_weight ? profile.goal_weight.toString() : '',
         diet_preferences: profile.diet_preferences || [],
         food_allergies: profile.food_allergies || [],
-        taste_preferences: profile.taste_preferences || []
+        taste_preferences: profile.taste_preferences || [],
+        cooking_time_preference: (profile as any).cooking_time_preference || '30'
       });
     }
   }, [profile]);
@@ -168,12 +170,13 @@ const DietPlan = () => {
       const isDietVegan = profile.diet_preferences?.includes('Vegan');
       const tastePreferences = profile.taste_preferences || ['American'];
       const allergies = profile.food_allergies || [];
+      const cookingTimeLimit = parseInt((profile as any).cooking_time_preference || '30', 10);
 
       // Generate 7-day meal plan
       const plans: MealPlan[] = [];
 
       // Build comprehensive snack pool from all cuisines for variety
-      const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies);
+      const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies, cookingTimeLimit);
 
       for (let day = 1; day <= 7; day++) {
         const dailyMeals = generateMealsForDay(
@@ -183,7 +186,8 @@ const DietPlan = () => {
           allergies,
           targetCalories,
           day,
-          allSnacks
+          allSnacks,
+          cookingTimeLimit
         );
 
         // Calculate totals for selected meals
@@ -263,7 +267,8 @@ const DietPlan = () => {
     cuisines: string[],
     isVegetarian: boolean,
     isVegan: boolean,
-    allergies: string[]
+    allergies: string[],
+    maxCookTime: number
   ): MealData[] => {
     const activeCuisines = cuisines.filter(c => c !== 'French');
     const allSnacks: MealData[] = [];
@@ -274,6 +279,7 @@ const DietPlan = () => {
       if (isVegan) snacks = filterVegan(snacks);
       else if (isVegetarian) snacks = filterVegetarian(snacks);
       snacks = filterAllergies(snacks, allergies);
+      snacks = filterByCookTime(snacks, maxCookTime);
       allSnacks.push(...snacks);
     });
 
@@ -283,6 +289,7 @@ const DietPlan = () => {
       if (isVegan) snacks = filterVegan(snacks);
       else if (isVegetarian) snacks = filterVegetarian(snacks);
       snacks = filterAllergies(snacks, allergies);
+      snacks = filterByCookTime(snacks, maxCookTime);
       allSnacks.push(...snacks);
     }
 
@@ -298,7 +305,8 @@ const DietPlan = () => {
     allergies: string[],
     targetCalories: number,
     dayNumber: number,
-    comprehensiveSnackPool: MealData[]
+    comprehensiveSnackPool: MealData[],
+    maxCookTime: number
   ) => {
     // Select primary cuisine for the day (rotate through preferences)
     const activeCuisines = cuisines.filter(c => c !== 'French');
@@ -328,6 +336,12 @@ const DietPlan = () => {
     lunchOptions = filterAllergies(lunchOptions, allergies);
     dinnerOptions = filterAllergies(dinnerOptions, allergies);
     snackOptions = filterAllergies(snackOptions, allergies);
+
+    // Apply cooking time filter
+    breakfastOptions = filterByCookTime(breakfastOptions, maxCookTime);
+    lunchOptions = filterByCookTime(lunchOptions, maxCookTime);
+    dinnerOptions = filterByCookTime(dinnerOptions, maxCookTime);
+    snackOptions = filterByCookTime(snackOptions, maxCookTime);
 
     // Sort by absolute protein content first, then by protein density
     const sortByProteinAmount = (meals: MealData[]) => 
@@ -514,8 +528,9 @@ const DietPlan = () => {
         goal_weight: editFormData.goal_weight ? parseFloat(editFormData.goal_weight) : null,
         diet_preferences: editFormData.diet_preferences,
         food_allergies: editFormData.food_allergies,
-        taste_preferences: editFormData.taste_preferences
-      });
+        taste_preferences: editFormData.taste_preferences,
+        cooking_time_preference: editFormData.cooking_time_preference
+      } as any);
 
       toast({
         title: "Profile Updated",
@@ -740,6 +755,36 @@ const DietPlan = () => {
                     ))}
                   </div>
                 </div>
+
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    Available Cooking Time
+                  </Label>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[
+                      { value: '5', label: '5 min' },
+                      { value: '10', label: '10 min' },
+                      { value: '20', label: '20 min' },
+                      { value: '30', label: '30 min' },
+                      { value: '60', label: '60+ min' }
+                    ].map((option) => (
+                      <Button
+                        key={option.value}
+                        type="button"
+                        variant={editFormData.cooking_time_preference === option.value ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => setEditFormData(prev => ({ ...prev, cooking_time_preference: option.value }))}
+                        className="w-full"
+                      >
+                        {option.label}
+                      </Button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Meals will be filtered to match your available cooking time
+                  </p>
+                </div>
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setIsEditingProfile(false)}>
@@ -920,6 +965,10 @@ const DietPlan = () => {
                             </span>
                             <span className="text-muted-foreground">
                               <strong>Calories:</strong> {meal.calories}
+                            </span>
+                            <span className="text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {meal.cookTime} min
                             </span>
                           </div>
                         </div>
