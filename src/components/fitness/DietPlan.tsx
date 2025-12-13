@@ -61,17 +61,34 @@ const DietPlan = () => {
     lunch_cook_time: '30',
     dinner_cook_time: '30'
   });
+  
+  // Inline cook time state for real-time adjustments
+  const [inlineCookTimes, setInlineCookTimes] = useState({
+    breakfast: '20',
+    lunch: '30',
+    dinner: '30'
+  });
 
   useEffect(() => {
     if (profile) {
+      const bfCookTime = (profile as any).breakfast_cook_time || '20';
+      const lunchCookTime = (profile as any).lunch_cook_time || '30';
+      const dinnerCookTime = (profile as any).dinner_cook_time || '30';
+      
       setEditFormData({
         goal_weight: profile.goal_weight ? profile.goal_weight.toString() : '',
         diet_preferences: profile.diet_preferences || [],
         food_allergies: profile.food_allergies || [],
         taste_preferences: profile.taste_preferences || [],
-        breakfast_cook_time: (profile as any).breakfast_cook_time || '20',
-        lunch_cook_time: (profile as any).lunch_cook_time || '30',
-        dinner_cook_time: (profile as any).dinner_cook_time || '30'
+        breakfast_cook_time: bfCookTime,
+        lunch_cook_time: lunchCookTime,
+        dinner_cook_time: dinnerCookTime
+      });
+      
+      setInlineCookTimes({
+        breakfast: bfCookTime,
+        lunch: lunchCookTime,
+        dinner: dinnerCookTime
       });
     }
   }, [profile]);
@@ -576,6 +593,51 @@ const DietPlan = () => {
     return 'Maintenance';
   };
 
+  // Update inline cook time and save to profile
+  const updateInlineCookTime = async (mealType: 'breakfast' | 'lunch' | 'dinner', time: string) => {
+    setInlineCookTimes(prev => ({ ...prev, [mealType]: time }));
+    
+    if (!profile) return;
+    
+    try {
+      const updateData: Record<string, string> = {};
+      updateData[`${mealType}_cook_time`] = time;
+      
+      await supabase
+        .from('fitness_profiles')
+        .update(updateData)
+        .eq('id', profile.id);
+        
+      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} cook time updated`);
+    } catch (error) {
+      console.error('Error updating cook time:', error);
+    }
+  };
+
+  // Cook time selector component
+  const CookTimeSelector = ({ mealType, currentTime }: { mealType: 'breakfast' | 'lunch' | 'dinner'; currentTime: string }) => (
+    <div className="flex items-center gap-1.5 flex-wrap">
+      {[
+        { value: '5', label: '5m' },
+        { value: '10', label: '10m' },
+        { value: '20', label: '20m' },
+        { value: '30', label: '30m' },
+        { value: '60', label: '60+' }
+      ].map((option) => (
+        <Button
+          key={option.value}
+          type="button"
+          variant={currentTime === option.value ? 'default' : 'outline'}
+          size="sm"
+          onClick={() => updateInlineCookTime(mealType, option.value)}
+          className="h-7 px-2 text-xs"
+        >
+          {option.label}
+        </Button>
+      ))}
+    </div>
+  );
+
   const syncMealToTracker = async (meal: MealData, mealType: string, day: number) => {
     if (!user) return;
 
@@ -1001,8 +1063,14 @@ const DietPlan = () => {
 
                 {/* Breakfast */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle>🌅 Breakfast</CardTitle>
+                  <CardHeader className="pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <CardTitle>🌅 Breakfast</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <CookTimeSelector mealType="breakfast" currentTime={inlineCookTimes.breakfast} />
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.breakfast.map((meal, idx) => (
@@ -1055,8 +1123,14 @@ const DietPlan = () => {
 
                 {/* Lunch */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle>🌞 Lunch</CardTitle>
+                  <CardHeader className="pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <CardTitle>🌞 Lunch</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <CookTimeSelector mealType="lunch" currentTime={inlineCookTimes.lunch} />
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.lunch.map((meal, idx) => (
@@ -1109,8 +1183,14 @@ const DietPlan = () => {
 
                 {/* Dinner */}
                 <Card>
-                  <CardHeader>
-                    <CardTitle>🌙 Dinner</CardTitle>
+                  <CardHeader className="pb-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <CardTitle>🌙 Dinner</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-4 w-4 text-muted-foreground" />
+                        <CookTimeSelector mealType="dinner" currentTime={inlineCookTimes.dinner} />
+                      </div>
+                    </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.dinner.map((meal, idx) => (
