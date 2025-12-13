@@ -1235,10 +1235,11 @@ export const getFilteredExercises = (
     const eqs = Array.isArray(ex.equipment) ? ex.equipment : [ex.equipment];
     const eqsLower = eqs.map(e => e.toLowerCase());
 
-    // If equipment is selected, avoid bodyweight exercises
+    // If equipment is selected, avoid bodyweight exercises (except cardio)
     if (selectedEquipment.length > 0) {
       const isBodyweight = eqsLower.length === 1 && eqsLower[0] === "none";
-      if (isBodyweight) return false;
+      const isCardio = muscles.includes("cardio");
+      if (isBodyweight && !isCardio) return false;
     }
 
     const hasEquipment = eqsLower.some(eq =>
