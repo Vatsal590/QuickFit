@@ -78,14 +78,16 @@ export type Database = {
         Row: {
           available_equipment: string[]
           body_type: string
-          cooking_time_preference: string | null
+          breakfast_cook_time: string | null
           created_at: string
           diet_preferences: string[] | null
+          dinner_cook_time: string | null
           fitness_goal: string
           food_allergies: string[] | null
           goal_weight: number | null
           height: number
           id: string
+          lunch_cook_time: string | null
           taste_preferences: string[] | null
           updated_at: string
           user_id: string
@@ -95,14 +97,16 @@ export type Database = {
         Insert: {
           available_equipment?: string[]
           body_type: string
-          cooking_time_preference?: string | null
+          breakfast_cook_time?: string | null
           created_at?: string
           diet_preferences?: string[] | null
+          dinner_cook_time?: string | null
           fitness_goal: string
           food_allergies?: string[] | null
           goal_weight?: number | null
           height: number
           id?: string
+          lunch_cook_time?: string | null
           taste_preferences?: string[] | null
           updated_at?: string
           user_id: string
@@ -112,14 +116,16 @@ export type Database = {
         Update: {
           available_equipment?: string[]
           body_type?: string
-          cooking_time_preference?: string | null
+          breakfast_cook_time?: string | null
           created_at?: string
           diet_preferences?: string[] | null
+          dinner_cook_time?: string | null
           fitness_goal?: string
           food_allergies?: string[] | null
           goal_weight?: number | null
           height?: number
           id?: string
+          lunch_cook_time?: string | null
           taste_preferences?: string[] | null
           updated_at?: string
           user_id?: string

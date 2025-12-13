@@ -57,7 +57,9 @@ const DietPlan = () => {
     diet_preferences: [] as string[],
     food_allergies: [] as string[],
     taste_preferences: [] as string[],
-    cooking_time_preference: '30'
+    breakfast_cook_time: '20',
+    lunch_cook_time: '30',
+    dinner_cook_time: '30'
   });
 
   useEffect(() => {
@@ -67,7 +69,9 @@ const DietPlan = () => {
         diet_preferences: profile.diet_preferences || [],
         food_allergies: profile.food_allergies || [],
         taste_preferences: profile.taste_preferences || [],
-        cooking_time_preference: (profile as any).cooking_time_preference || '30'
+        breakfast_cook_time: (profile as any).breakfast_cook_time || '20',
+        lunch_cook_time: (profile as any).lunch_cook_time || '30',
+        dinner_cook_time: (profile as any).dinner_cook_time || '30'
       });
     }
   }, [profile]);
@@ -170,13 +174,15 @@ const DietPlan = () => {
       const isDietVegan = profile.diet_preferences?.includes('Vegan');
       const tastePreferences = profile.taste_preferences || ['American'];
       const allergies = profile.food_allergies || [];
-      const cookingTimeLimit = parseInt((profile as any).cooking_time_preference || '30', 10);
+      const breakfastCookTime = parseInt((profile as any).breakfast_cook_time || '20', 10);
+      const lunchCookTime = parseInt((profile as any).lunch_cook_time || '30', 10);
+      const dinnerCookTime = parseInt((profile as any).dinner_cook_time || '30', 10);
 
       // Generate 7-day meal plan
       const plans: MealPlan[] = [];
 
       // Build comprehensive snack pool from all cuisines for variety
-      const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies, cookingTimeLimit);
+      const allSnacks = buildComprehensiveSnackPool(tastePreferences, isDietVegetarian, isDietVegan, allergies, 30);
 
       for (let day = 1; day <= 7; day++) {
         const dailyMeals = generateMealsForDay(
@@ -187,7 +193,7 @@ const DietPlan = () => {
           targetCalories,
           day,
           allSnacks,
-          cookingTimeLimit
+          { breakfast: breakfastCookTime, lunch: lunchCookTime, dinner: dinnerCookTime }
         );
 
         // Calculate totals for selected meals
@@ -306,7 +312,7 @@ const DietPlan = () => {
     targetCalories: number,
     dayNumber: number,
     comprehensiveSnackPool: MealData[],
-    maxCookTime: number
+    cookTimes: { breakfast: number; lunch: number; dinner: number }
   ) => {
     // Select primary cuisine for the day (rotate through preferences)
     const activeCuisines = cuisines.filter(c => c !== 'French');
@@ -337,18 +343,18 @@ const DietPlan = () => {
     dinnerOptions = filterAllergies(dinnerOptions, allergies);
     snackOptions = filterAllergies(snackOptions, allergies);
 
-    // Apply cooking time filter
-    breakfastOptions = filterByCookTime(breakfastOptions, maxCookTime);
-    lunchOptions = filterByCookTime(lunchOptions, maxCookTime);
-    dinnerOptions = filterByCookTime(dinnerOptions, maxCookTime);
-    snackOptions = filterByCookTime(snackOptions, maxCookTime);
+    // Apply individual cooking time filters for each meal type
+    breakfastOptions = filterByCookTime(breakfastOptions, cookTimes.breakfast);
+    lunchOptions = filterByCookTime(lunchOptions, cookTimes.lunch);
+    dinnerOptions = filterByCookTime(dinnerOptions, cookTimes.dinner);
+    snackOptions = filterByCookTime(snackOptions, 30);
 
     // Sort by absolute protein content first, then by protein density
     const sortByProteinAmount = (meals: MealData[]) => 
       [...meals].sort((a, b) => {
         const proteinDiff = b.protein - a.protein;
-        if (Math.abs(proteinDiff) > 5) return proteinDiff; // Prioritize high protein
-        return (b.protein / b.calories) - (a.protein / a.calories); // Then density
+        if (Math.abs(proteinDiff) > 5) return proteinDiff;
+        return (b.protein / b.calories) - (a.protein / a.calories);
       });
 
     breakfastOptions = sortByProteinAmount(breakfastOptions);
@@ -356,19 +362,12 @@ const DietPlan = () => {
     dinnerOptions = sortByProteinAmount(dinnerOptions);
     snackOptions = sortByProteinAmount(snackOptions);
 
-    // Select high-protein meals with variety (use day number as seed for rotation)
     const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
     const lunch = selectMeals(lunchOptions, 1, dayNumber);
     const dinner = selectMeals(dinnerOptions, 1, dayNumber);
-    // Start with 1 snack - more will be added if needed to hit macros
     const snacks = selectMeals(comprehensiveSnackPool, 1, dayNumber);
 
-    return {
-      breakfast,
-      lunch,
-      dinner,
-      snacks
-    };
+    return { breakfast, lunch, dinner, snacks };
   };
 
   const selectMeals = (options: MealData[], count: number, seed: number): MealData[] => {
@@ -529,7 +528,9 @@ const DietPlan = () => {
         diet_preferences: editFormData.diet_preferences,
         food_allergies: editFormData.food_allergies,
         taste_preferences: editFormData.taste_preferences,
-        cooking_time_preference: editFormData.cooking_time_preference
+        breakfast_cook_time: editFormData.breakfast_cook_time,
+        lunch_cook_time: editFormData.lunch_cook_time,
+        dinner_cook_time: editFormData.dinner_cook_time
       } as any);
 
       toast({
