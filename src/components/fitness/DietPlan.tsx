@@ -593,12 +593,86 @@ const DietPlan = () => {
     return 'Maintenance';
   };
 
-  // Update inline cook time and save to profile
+  // Generate a single meal for a specific meal type based on cook time
+  const generateSingleMeal = (mealType: 'breakfast' | 'lunch' | 'dinner', cookTime: number, dayNumber: number): MealData[] => {
+    if (!profile) return [];
+    
+    const isDietVegetarian = profile.diet_preferences?.includes('Vegetarian');
+    const isDietVegan = profile.diet_preferences?.includes('Vegan');
+    const tastePreferences = profile.taste_preferences || ['American'];
+    const allergies = profile.food_allergies || [];
+    
+    const activeCuisines = tastePreferences.filter(c => c !== 'French');
+    const primaryCuisine = activeCuisines[(dayNumber - 1) % activeCuisines.length] || 'American';
+    
+    let options = mealDatabase[primaryCuisine]?.[mealType] || mealDatabase.American[mealType];
+    
+    // Apply dietary filters
+    if (isDietVegan) {
+      options = filterVegan(options);
+    } else if (isDietVegetarian) {
+      options = filterVegetarian(options);
+    }
+    
+    // Apply allergy filters
+    options = filterAllergies(options, allergies);
+    
+    // Apply cooking time filter
+    options = filterByCookTime(options, cookTime);
+    
+    // Sort by protein
+    options = [...options].sort((a, b) => b.protein - a.protein);
+    
+    if (options.length === 0) return [];
+    
+    // Select meal based on day number
+    const index = (dayNumber - 1) % options.length;
+    return [options[index]];
+  };
+
+  // Update inline cook time, save to profile, and regenerate just that meal
   const updateInlineCookTime = async (mealType: 'breakfast' | 'lunch' | 'dinner', time: string) => {
     setInlineCookTimes(prev => ({ ...prev, [mealType]: time }));
     
-    if (!profile) return;
+    if (!profile || dietPlan.length === 0) return;
     
+    const cookTime = parseInt(time, 10);
+    
+    // Update each day's meal for this meal type
+    const updatedPlan = dietPlan.map(day => {
+      const newMeals = generateSingleMeal(mealType, cookTime, day.day);
+      
+      if (newMeals.length === 0) {
+        // Keep existing if no meals match the filter
+        return day;
+      }
+      
+      // Calculate new totals
+      const updatedMeals = {
+        ...day.meals,
+        [mealType]: newMeals
+      };
+      
+      const allMeals = [
+        ...updatedMeals.breakfast,
+        ...updatedMeals.lunch,
+        ...updatedMeals.dinner,
+        ...updatedMeals.snacks
+      ];
+      
+      return {
+        ...day,
+        meals: updatedMeals,
+        totalCalories: allMeals.reduce((s, m) => s + m.calories, 0),
+        totalProtein: allMeals.reduce((s, m) => s + m.protein, 0),
+        totalCarbs: allMeals.reduce((s, m) => s + m.carbs, 0),
+        totalFats: allMeals.reduce((s, m) => s + m.fats, 0)
+      };
+    });
+    
+    setDietPlan(updatedPlan);
+    
+    // Save to database
     try {
       const updateData: Record<string, string> = {};
       updateData[`${mealType}_cook_time`] = time;
@@ -607,10 +681,20 @@ const DietPlan = () => {
         .from('fitness_profiles')
         .update(updateData)
         .eq('id', profile.id);
+      
+      // Also update the diet plan in database
+      if (user) {
+        await supabase
+          .from('diet_plans')
+          .update({ daily_meals: updatedPlan as any })
+          .eq('user_id', user.id)
+          .eq('is_active', true);
+      }
         
-      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} cook time updated`);
+      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} updated for ${time}+ min cook time`);
     } catch (error) {
       console.error('Error updating cook time:', error);
+      sonnerToast.error('Failed to save changes');
     }
   };
 
