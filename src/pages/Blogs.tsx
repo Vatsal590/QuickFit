@@ -2,6 +2,7 @@ import { useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useTranslation } from "@/contexts/TranslationContext";
 
 const blogsData = [
   {
@@ -113,6 +114,7 @@ const blogsData = [
 
 const Blogs = () => {
   const [selectedBlog, setSelectedBlog] = useState<typeof blogsData[0] | null>(null);
+  const { t } = useTranslation();
 
   return (
     <PageContainer>
@@ -120,14 +122,14 @@ const Blogs = () => {
         <div className="text-center space-y-6 animate-fade-in">
           <div className="inline-block">
             <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase bg-fitness-primary/10 px-6 py-2 rounded-full">
-              Health & Fitness
+              {t('Health & Fitness')}
             </span>
           </div>
           <h1 className="text-5xl md:text-6xl font-black text-gray-900">
-            Fitness Blogs
+            {t('Fitness Blogs')}
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto font-medium">
-            Expert tips and advice for a healthier, stronger you
+            {t('Expert tips and advice for a healthier, stronger you')}
           </p>
         </div>
 
@@ -153,7 +155,7 @@ const Blogs = () => {
                   {blog.description}
                 </CardDescription>
                 <div className="mt-6 text-fitness-primary font-semibold flex items-center gap-2 group-hover:gap-3 transition-all duration-300">
-                  Read more
+                  {t('Read more')}
                   <span className="transform group-hover:translate-x-1 transition-transform duration-300">→</span>
                 </div>
               </CardHeader>
