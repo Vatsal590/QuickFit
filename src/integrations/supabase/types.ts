@@ -78,6 +78,7 @@ export type Database = {
         Row: {
           available_equipment: string[]
           body_type: string
+          cooking_time_preference: string | null
           created_at: string
           diet_preferences: string[] | null
           fitness_goal: string
@@ -94,6 +95,7 @@ export type Database = {
         Insert: {
           available_equipment?: string[]
           body_type: string
+          cooking_time_preference?: string | null
           created_at?: string
           diet_preferences?: string[] | null
           fitness_goal: string
@@ -110,6 +112,7 @@ export type Database = {
         Update: {
           available_equipment?: string[]
           body_type?: string
+          cooking_time_preference?: string | null
           created_at?: string
           diet_preferences?: string[] | null
           fitness_goal?: string
