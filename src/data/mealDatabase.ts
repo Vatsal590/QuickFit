@@ -57,7 +57,13 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Slow Cooker Pulled Pork Sandwich', protein: 38, carbs: 48, fats: 20, calories: 540, cookTime: 60 },
       { name: 'Homemade Chicken Noodle Soup with Bread', protein: 28, carbs: 52, fats: 12, calories: 440, cookTime: 60 }
     ],
-    dinner: [
+  dinner: [
+      // 5 min
+      { name: 'Deli Turkey Roll-Ups with Cheese and Hummus', protein: 28, carbs: 12, fats: 14, calories: 290, cookTime: 5 },
+      { name: 'Tuna Salad Lettuce Wraps', protein: 32, carbs: 8, fats: 12, calories: 270, cookTime: 5 },
+      // 10 min
+      { name: 'Microwave Salmon with Pre-Steamed Vegetables', protein: 34, carbs: 18, fats: 16, calories: 360, cookTime: 10 },
+      { name: 'Quick Shrimp Stir-Fry with Instant Rice', protein: 30, carbs: 38, fats: 10, calories: 370, cookTime: 10 },
       // 20 min
       { name: 'Beef and Vegetable Stir-Fry over Brown Rice', protein: 38, carbs: 52, fats: 16, calories: 520, cookTime: 20 },
       { name: 'Pan-Seared Salmon with Steamed Vegetables', protein: 36, carbs: 24, fats: 18, calories: 410, cookTime: 20 },
@@ -124,6 +130,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Lasagna Soup with Garlic Bread', protein: 28, carbs: 48, fats: 18, calories: 480, cookTime: 60 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Italian Antipasto Plate with Salami and Cheese', protein: 26, carbs: 14, fats: 22, calories: 360, cookTime: 5 },
+      { name: 'Caprese Salad with Prosciutto', protein: 24, carbs: 10, fats: 18, calories: 300, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Bruschetta with White Beans and Tuna', protein: 28, carbs: 32, fats: 12, calories: 350, cookTime: 10 },
+      { name: 'Italian Egg Drop Soup with Parmesan', protein: 22, carbs: 16, fats: 14, calories: 280, cookTime: 10 },
       // 20 min
       { name: 'Spaghetti Aglio e Olio with Grilled Shrimp', protein: 32, carbs: 52, fats: 16, calories: 490, cookTime: 20 },
       { name: 'Chicken Piccata with Lemon Butter Pasta', protein: 36, carbs: 48, fats: 18, calories: 510, cookTime: 20 },
@@ -187,6 +199,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Tonkotsu Ramen with Soft-Boiled Egg', protein: 36, carbs: 54, fats: 22, calories: 590, cookTime: 120 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Sashimi Plate with Edamame', protein: 30, carbs: 12, fats: 8, calories: 250, cookTime: 5 },
+      { name: 'Cold Tofu with Soy Sauce and Ginger', protein: 18, carbs: 8, fats: 10, calories: 200, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Salmon Rice Bowl with Furikake', protein: 28, carbs: 42, fats: 12, calories: 400, cookTime: 10 },
+      { name: 'Instant Miso Soup with Pre-Cooked Udon', protein: 16, carbs: 48, fats: 6, calories: 320, cookTime: 10 },
       // 20 min
       { name: 'Chicken Yakisoba with Vegetables', protein: 32, carbs: 54, fats: 12, calories: 470, cookTime: 20 },
       { name: 'Quick Beef Yakiniku with Rice', protein: 36, carbs: 46, fats: 16, calories: 490, cookTime: 20 },
@@ -252,6 +270,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Hyderabadi Dum Biryani with Mirchi Ka Salan', protein: 36, carbs: 58, fats: 20, calories: 580, cookTime: 90 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Yogurt with Cucumber Raita and Papad', protein: 12, carbs: 22, fats: 6, calories: 190, cookTime: 5 },
+      { name: 'Paneer Cubes with Ready-Made Roti', protein: 18, carbs: 32, fats: 14, calories: 330, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Egg Curry with Pre-Cooked Rice', protein: 20, carbs: 42, fats: 12, calories: 360, cookTime: 10 },
+      { name: 'Instant Dal with Leftover Rice', protein: 14, carbs: 46, fats: 6, calories: 300, cookTime: 10 },
       // 20 min
       { name: 'Quick Dal Tadka with Roti', protein: 16, carbs: 48, fats: 10, calories: 350, cookTime: 20 },
       { name: 'Paneer Bhurji with Chapati', protein: 22, carbs: 40, fats: 18, calories: 420, cookTime: 20 },
@@ -314,6 +338,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Slow-Cooked Barbacoa Bowl', protein: 38, carbs: 48, fats: 22, calories: 560, cookTime: 180 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Black Bean and Cheese Tostadas', protein: 20, carbs: 34, fats: 14, calories: 350, cookTime: 5 },
+      { name: 'Quick Guacamole Salad with Chips', protein: 8, carbs: 28, fats: 18, calories: 300, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Quesadilla with Rotisserie Chicken', protein: 28, carbs: 32, fats: 16, calories: 400, cookTime: 10 },
+      { name: 'Nachos with Beans and Cheese', protein: 18, carbs: 42, fats: 20, calories: 420, cookTime: 10 },
       // 20 min
       { name: 'Quick Chicken Tacos with Salsa Verde', protein: 32, carbs: 40, fats: 14, calories: 430, cookTime: 20 },
       { name: 'Shrimp Fajitas with Warm Tortillas', protein: 30, carbs: 42, fats: 16, calories: 450, cookTime: 20 },
@@ -375,6 +405,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Slow-Roasted Lamb with Mediterranean Vegetables', protein: 38, carbs: 32, fats: 24, calories: 510, cookTime: 120 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Mezze Platter with Hummus and Pita', protein: 14, carbs: 38, fats: 16, calories: 360, cookTime: 5 },
+      { name: 'Greek Salad with Feta and Olives', protein: 12, carbs: 16, fats: 18, calories: 280, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Falafel Wrap with Store-Bought Falafel', protein: 16, carbs: 42, fats: 14, calories: 360, cookTime: 10 },
+      { name: 'Tuna and White Bean Salad Mediterranean Style', protein: 28, carbs: 22, fats: 12, calories: 310, cookTime: 10 },
       // 20 min
       { name: 'Pan-Seared Fish with Lemon and Herbs', protein: 34, carbs: 12, fats: 14, calories: 320, cookTime: 20 },
       { name: 'Quick Greek Chicken with Orzo', protein: 36, carbs: 42, fats: 14, calories: 450, cookTime: 20 },
@@ -436,6 +472,12 @@ export const mealDatabase: Record<string, CuisineMeals> = {
       { name: 'Slow-Cooked Thai Beef Massaman', protein: 36, carbs: 48, fats: 24, calories: 580, cookTime: 120 }
     ],
     dinner: [
+      // 5 min
+      { name: 'Thai Fresh Spring Rolls with Shrimp', protein: 16, carbs: 24, fats: 6, calories: 220, cookTime: 5 },
+      { name: 'Thai Salad with Peanut Dressing', protein: 10, carbs: 18, fats: 12, calories: 220, cookTime: 5 },
+      // 10 min
+      { name: 'Quick Thai Basil Beef over Rice', protein: 28, carbs: 44, fats: 14, calories: 420, cookTime: 10 },
+      { name: 'Instant Noodles Thai Style with Egg', protein: 16, carbs: 52, fats: 12, calories: 380, cookTime: 10 },
       // 20 min
       { name: 'Thai Fried Rice with Crab and Egg', protein: 26, carbs: 52, fats: 14, calories: 460, cookTime: 15 },
       { name: 'Pad See Ew (Stir-Fried Noodles) with Chicken', protein: 30, carbs: 56, fats: 16, calories: 510, cookTime: 20 },
