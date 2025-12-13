@@ -1020,6 +1020,10 @@ const DietPlan = () => {
                             <span className="text-muted-foreground">
                               <strong>Calories:</strong> {meal.calories}
                             </span>
+                            <span className="text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {meal.cookTime} min
+                            </span>
                           </div>
                         </div>
                         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
@@ -1069,6 +1073,10 @@ const DietPlan = () => {
                             </span>
                             <span className="text-muted-foreground">
                               <strong>Calories:</strong> {meal.calories}
+                            </span>
+                            <span className="text-muted-foreground flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {meal.cookTime} min
                             </span>
                           </div>
                         </div>
