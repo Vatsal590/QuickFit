@@ -757,34 +757,89 @@ const DietPlan = () => {
                   </div>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <Label className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
                     Available Cooking Time
                   </Label>
-                  <div className="grid grid-cols-5 gap-2">
-                    {[
-                      { value: '5', label: '5 min' },
-                      { value: '10', label: '10 min' },
-                      { value: '20', label: '20 min' },
-                      { value: '30', label: '30 min' },
-                      { value: '60', label: '60+ min' }
-                    ].map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant={editFormData.cooking_time_preference === option.value ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setEditFormData(prev => ({ ...prev, cooking_time_preference: option.value }))}
-                        className="w-full"
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Meals will be filtered to match your available cooking time
+                  <p className="text-xs text-muted-foreground -mt-2">
+                    Set your available cooking time for each meal
                   </p>
+                  
+                  {/* Breakfast */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">🌅 Breakfast</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[
+                        { value: '5', label: '5 min' },
+                        { value: '10', label: '10 min' },
+                        { value: '20', label: '20 min' },
+                        { value: '30', label: '30 min' },
+                        { value: '60', label: '60+ min' }
+                      ].map((option) => (
+                        <Button
+                          key={option.value}
+                          type="button"
+                          variant={editFormData.breakfast_cook_time === option.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setEditFormData(prev => ({ ...prev, breakfast_cook_time: option.value }))}
+                          className="w-full text-xs"
+                        >
+                          {option.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Lunch */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">🌞 Lunch</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[
+                        { value: '5', label: '5 min' },
+                        { value: '10', label: '10 min' },
+                        { value: '20', label: '20 min' },
+                        { value: '30', label: '30 min' },
+                        { value: '60', label: '60+ min' }
+                      ].map((option) => (
+                        <Button
+                          key={option.value}
+                          type="button"
+                          variant={editFormData.lunch_cook_time === option.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setEditFormData(prev => ({ ...prev, lunch_cook_time: option.value }))}
+                          className="w-full text-xs"
+                        >
+                          {option.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Dinner */}
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">🌙 Dinner</p>
+                    <div className="grid grid-cols-5 gap-2">
+                      {[
+                        { value: '5', label: '5 min' },
+                        { value: '10', label: '10 min' },
+                        { value: '20', label: '20 min' },
+                        { value: '30', label: '30 min' },
+                        { value: '60', label: '60+ min' }
+                      ].map((option) => (
+                        <Button
+                          key={option.value}
+                          type="button"
+                          variant={editFormData.dinner_cook_time === option.value ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => setEditFormData(prev => ({ ...prev, dinner_cook_time: option.value }))}
+                          className="w-full text-xs"
+                        >
+                          {option.label}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="flex justify-end gap-2">
