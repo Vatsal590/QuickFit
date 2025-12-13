@@ -245,7 +245,7 @@ export function FreeAccessSection() {
             <span className="font-semibold text-lg">Instant Access</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            Get immediate access with a one-time payment
+            Get immediate access with what you would pay a sandwich
           </p>
         </button>
       </div>
