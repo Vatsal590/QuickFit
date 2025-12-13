@@ -32,8 +32,10 @@ import { useToast } from '@/hooks/use-toast';
 import FitnessProfileForm from '@/components/fitness/FitnessProfileForm';
 import PrivacyPolicy from '@/components/legal/PrivacyPolicy';
 import TermsOfConditions from '@/components/legal/TermsOfConditions';
+import LanguageSelector from '@/components/language/LanguageSelector';
 import { useAuth } from '@/contexts/AuthContext';
-import { LogOut, Trash2, User, Shield, FileText } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { LogOut, Trash2, User, Shield, FileText, Globe } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
 import { MenuIcon } from '@/components/ui/menu-icon';
 import { ReferralCongrats } from '@/components/referral/ReferralCongrats';
@@ -55,11 +57,13 @@ const AuthenticatedLayout: React.FC<AuthenticatedLayoutProps> = ({ children }) =
 const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { toggleSidebar } = useSidebar();
   const [showFitnessProfile, setShowFitnessProfile] = useState(false);
   const [showPrivacyPolicy, setShowPrivacyPolicy] = useState(false);
   const [showTermsConditions, setShowTermsConditions] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   const getDisplayName = () => {
     if (user?.user_metadata?.full_name) {
@@ -155,7 +159,17 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
             <h1 className="text-xl md:text-2xl font-bold text-fitness-primary">QuickFit</h1>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Button 
+              variant="ghost" 
+              size="icon"
+              onClick={() => setShowLanguageSelector(true)}
+              className="h-8 w-8"
+              aria-label={t('Language')}
+            >
+              <Globe className="h-5 w-5" />
+            </Button>
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -174,25 +188,29 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowFitnessProfile(true)}>
                   <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
+                  <span>{t('Profile')}</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setShowLanguageSelector(true)}>
+                  <Globe className="mr-2 h-4 w-4" />
+                  <span>{t('Language')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => setShowPrivacyPolicy(true)}>
                   <Shield className="mr-2 h-4 w-4" />
-                  <span>Privacy Policy</span>
+                  <span>{t('Privacy Policy')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowTermsConditions(true)}>
                   <FileText className="mr-2 h-4 w-4" />
-                  <span>Terms of Service</span>
+                  <span>{t('Terms of Service')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  <span>Sign Out</span>
+                  <span>{t('Sign Out')}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
-                  <span>Delete Account</span>
+                  <span>{t('Delete Account')}</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -209,9 +227,9 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       <Dialog open={showFitnessProfile} onOpenChange={setShowFitnessProfile}>
         <DialogContent className="bg-background border border-border">
           <DialogHeader>
-            <DialogTitle>Fitness Profile</DialogTitle>
+            <DialogTitle>{t('Fitness Profile')}</DialogTitle>
             <DialogDescription>
-              Update your fitness information to get better workout recommendations.
+              {t('Update your fitness information to get better workout recommendations.')}
             </DialogDescription>
           </DialogHeader>
           <FitnessProfileForm isOpen={showFitnessProfile} onClose={() => setShowFitnessProfile(false)} />
@@ -221,7 +239,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       <Dialog open={showPrivacyPolicy} onOpenChange={setShowPrivacyPolicy}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
           <DialogHeader>
-            <DialogTitle>Privacy Policy</DialogTitle>
+            <DialogTitle>{t('Privacy Policy')}</DialogTitle>
           </DialogHeader>
           <PrivacyPolicy isOpen={showPrivacyPolicy} onClose={() => setShowPrivacyPolicy(false)} />
         </DialogContent>
@@ -230,7 +248,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       <Dialog open={showTermsConditions} onOpenChange={setShowTermsConditions}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto bg-background border border-border">
           <DialogHeader>
-            <DialogTitle>Terms of Service</DialogTitle>
+            <DialogTitle>{t('Terms of Service')}</DialogTitle>
           </DialogHeader>
           <TermsOfConditions isOpen={showTermsConditions} onClose={() => setShowTermsConditions(false)} />
         </DialogContent>
@@ -239,23 +257,25 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent className="bg-background border border-border">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('Are you absolutely sure?')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
+              {t('This action cannot be undone. This will permanently delete your account and remove your data from our servers.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteAccount}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete Account
+              {t('Delete Account')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* Language Selector */}
+      <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       
       {/* Chatbot */}
       <Chatbot />
