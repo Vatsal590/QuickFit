@@ -8,7 +8,7 @@ import { Clock, Dumbbell, Activity, Heart, CheckCircle, ArrowLeft, Timer, Play }
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import ExerciseTimer from './ExerciseTimer';
-
+import { useTranslation } from '@/contexts/TranslationContext';
 interface WorkoutDisplayProps {
   workout: Workout;
   onBack: () => void;

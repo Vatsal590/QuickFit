@@ -113,9 +113,8 @@ const blogsData = [
 ];
 
 const Blogs = () => {
-  const { t, language } = useTranslation();
-  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
-  const blogsData = createBlogsData(language);
+  const { t } = useTranslation();
+  const [selectedBlog, setSelectedBlog] = useState<typeof blogsData[0] | null>(null);
 
   return (
     <PageContainer>
