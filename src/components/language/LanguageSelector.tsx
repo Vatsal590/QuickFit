@@ -13,6 +13,7 @@ const languages = [
   { code: 'English', label: 'English', flag: '🇺🇸' },
   { code: 'French', label: 'Français', flag: '🇫🇷' },
   { code: 'German', label: 'Deutsch', flag: '🇩🇪' },
+  { code: 'Luxembourgish', label: 'Lëtzebuergesch', flag: '🇱🇺' },
 ];
 
 const LanguageSelector = ({ isOpen, onClose }: LanguageSelectorProps) => {

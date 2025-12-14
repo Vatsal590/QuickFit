@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +9,11 @@ import radioAraImage3 from '@/assets/radioara-feature-3.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import LanguageSelector from '@/components/language/LanguageSelector';
+import { useTranslation } from '@/contexts/TranslationContext';
+
 const Landing = () => {
+  const { t } = useTranslation();
+  const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const {
@@ -29,7 +33,7 @@ const Landing = () => {
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
-  const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = React.useState(false);
+  
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
     if (next) {
