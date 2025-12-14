@@ -23,6 +23,7 @@ interface CompletedExercise {
 
 const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState<'main' | 'warmup' | 'cooldown'>('main');
   const [completedExercises, setCompletedExercises] = useState<CompletedExercise[]>([]);
@@ -450,8 +451,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
   const handleCompleteWorkout = () => {
     onComplete(workout);
     toast({
-      title: "Workout completed!",
-      description: "Great job! Your progress has been saved.",
+      title: t('Workout completed!'),
+      description: t('Great job! Your progress has been saved.'),
     });
   };
   

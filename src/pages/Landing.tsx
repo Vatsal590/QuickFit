@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
 import radioAraImage1 from '@/assets/radioara-feature.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import LanguageSelector from '@/components/language/LanguageSelector';
 const Landing = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Landing = () => {
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
+  const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = React.useState(false);
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
     if (next) {
@@ -99,11 +101,22 @@ const Landing = () => {
                 QuickFit
               </h1>
             </div>
-            <Link to="/auth">
-              <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-6 py-2 text-base font-semibold">
-                Get Started <Sparkles className="ml-2 h-3 w-3" />
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full border-white/40 bg-white/20 backdrop-blur hover:bg-white/40"
+                onClick={() => setIsLanguageSelectorOpen(true)}
+                aria-label="Change language"
+              >
+                <Globe className="h-5 w-5 text-fitness-primary" />
               </Button>
-            </Link>
+              <Link to="/auth">
+                <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-6 py-2 text-base font-semibold">
+                  Get Started <Sparkles className="ml-2 h-3 w-3" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </header>

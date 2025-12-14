@@ -125,6 +125,7 @@ const translations: Record<string, Record<string, string>> = {
     'Health & Fitness': 'Santé & Fitness',
     'Expert tips and advice for a healthier, stronger you': 'Conseils d\'experts pour être en meilleure santé',
     'Read more': 'Lire plus',
+    'Full article content': 'Contenu complet de l\'article',
     'General advice for office goers': 'Conseils généraux pour les employés de bureau',
     'Stay active and healthy despite long hours at your desk': 'Restez actif malgré les longues heures à votre bureau',
     'How to lose fat and gain muscle': 'Comment perdre du gras et gagner du muscle',
@@ -264,6 +265,10 @@ const translations: Record<string, Record<string, string>> = {
     'Weight Progress': 'Progrès du Poids',
     'from last entry': 'depuis la dernière entrée',
     'Weight Entries': 'Entrées de Poids',
+    'Saving...': 'Enregistrement...',
+    'Entry deleted': 'Entrée supprimée',
+    'Weight entry has been deleted successfully.': 'Entrée de poids supprimée avec succès.',
+    'Failed to delete weight entry. Please try again.': 'Échec de la suppression de l\'entrée de poids. Veuillez réessayer.',
     
     // History
     'Workout History': 'Historique des Entraînements',
@@ -346,6 +351,10 @@ const translations: Record<string, Record<string, string>> = {
     'Your privacy is important to us. This policy explains how we handle your data.': 'Votre vie privée est importante pour nous.',
     'QuickFit Terms of Service': 'Conditions d\'Utilisation QuickFit',
     'Please read these terms carefully before using QuickFit.': 'Veuillez lire ces conditions attentivement.',
+    
+    // Diet Plan – Profile check
+    'Profile Required': 'Profil requis',
+    'Please complete your fitness profile first to generate a diet plan.': 'Veuillez compléter votre profil fitness pour générer un plan alimentaire.',
     
     // Fitness Profile
     'Height': 'Taille',
@@ -464,6 +473,7 @@ const translations: Record<string, Record<string, string>> = {
     'Health & Fitness': 'Gesundheit & Fitness',
     'Expert tips and advice for a healthier, stronger you': 'Expertentipps für ein gesünderes, stärkeres Sie',
     'Read more': 'Mehr lesen',
+    'Full article content': 'Vollständiger Artikelinhalt',
     'General advice for office goers': 'Allgemeine Ratschläge für Büroangestellte',
     'Stay active and healthy despite long hours at your desk': 'Bleiben Sie aktiv trotz langer Stunden am Schreibtisch',
     'How to lose fat and gain muscle': 'Wie man Fett verliert und Muskeln aufbaut',

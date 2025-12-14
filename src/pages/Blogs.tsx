@@ -113,8 +113,9 @@ const blogsData = [
 ];
 
 const Blogs = () => {
-  const [selectedBlog, setSelectedBlog] = useState<typeof blogsData[0] | null>(null);
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const blogsData = createBlogsData(language);
 
   return (
     <PageContainer>
@@ -173,7 +174,7 @@ const Blogs = () => {
             <DialogTitle className="text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
               {selectedBlog?.title}
             </DialogTitle>
-            <DialogDescription className="sr-only">Full article content</DialogDescription>
+            <DialogDescription className="sr-only">{t('Full article content')}</DialogDescription>
           </DialogHeader>
           <div className="prose prose-slate prose-lg dark:prose-invert max-w-none pb-6 pt-6">
             {selectedBlog?.content}
