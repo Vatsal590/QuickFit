@@ -124,8 +124,8 @@ const DietPlan = () => {
   const generateDietPlan = async () => {
     if (!profile) {
       toast({
-        title: "Profile Required",
-        description: "Please complete your fitness profile first to generate a diet plan.",
+        title: t('Profile Required'),
+        description: t('Please complete your fitness profile first to generate a diet plan.'),
         variant: "destructive"
       });
       const event = new CustomEvent('openFitnessProfileForm');

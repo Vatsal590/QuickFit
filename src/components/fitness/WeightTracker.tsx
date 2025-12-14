@@ -13,6 +13,7 @@ import { CalendarIcon, Scale, TrendingUp, TrendingDown, Trash2 } from 'lucide-re
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface WeightEntry {
   id: string;
@@ -24,6 +25,7 @@ interface WeightEntry {
 const WeightTracker = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [weightEntries, setWeightEntries] = useState<WeightEntry[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [weight, setWeight] = useState('');
@@ -63,16 +65,16 @@ const WeightTracker = () => {
       if (error) throw error;
 
       toast({
-        title: "Entry deleted",
-        description: "Weight entry has been deleted successfully."
+        title: t('Entry deleted'),
+        description: t('Weight entry has been deleted successfully.'),
       });
       
       loadWeightEntries();
     } catch (error) {
       console.error('Error deleting weight entry:', error);
       toast({
-        title: "Error",
-        description: "Failed to delete weight entry. Please try again.",
+        title: t('Error'),
+        description: t('Failed to delete weight entry. Please try again.'),
         variant: "destructive"
       });
     }
@@ -167,14 +169,14 @@ const WeightTracker = () => {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Scale className="h-5 w-5" />
-            Log Your Weight
+            {t('Log Your Weight')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="date">Date</Label>
+                <Label htmlFor="date">{t('Date')}</Label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -185,7 +187,8 @@ const WeightTracker = () => {
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}
+                      {selectedDate ? format(selectedDate, "PPP") : <span>{t('Pick a date')}</span>}
+                    </Button>
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -202,7 +205,7 @@ const WeightTracker = () => {
               </div>
               
               <div>
-                <Label htmlFor="weight">Weight (kg)</Label>
+                <Label htmlFor="weight">{t('Weight (kg)')}</Label>
                 <Input
                   id="weight"
                   type="number"
@@ -211,11 +214,12 @@ const WeightTracker = () => {
                   value={selectedDateEntry ? selectedDateEntry.weight.toString() : weight}
                   onChange={(e) => setWeight(e.target.value)}
                 />
+                />
               </div>
             </div>
             
             <Button type="submit" disabled={loading || !weight} className="w-full">
-              {loading ? 'Saving...' : selectedDateEntry ? 'Update Weight' : 'Log Weight'}
+              {loading ? t('Saving...') : selectedDateEntry ? t('Update Weight') : t('Log Weight')}
             </Button>
           </form>
         </CardContent>
@@ -227,7 +231,7 @@ const WeightTracker = () => {
           <CardHeader>
             <div className="flex justify-between items-start">
               <div>
-                <CardTitle>Weight Progress</CardTitle>
+                <CardTitle>{t('Weight Progress')}</CardTitle>
                 {trend !== null && (
                   <div className="flex items-center gap-2 mt-2">
                     {trend > 0 ? (
@@ -254,8 +258,8 @@ const WeightTracker = () => {
                     tickFormatter={(value) => `${value}kg`}
                   />
                   <Tooltip 
-                    formatter={(value) => [`${value}kg`, 'Weight']}
-                    labelFormatter={(label) => `Date: ${label}`}
+                    formatter={(value) => [`${value}kg`, t('Weight')]}
+                    labelFormatter={(label) => `${t('Date')}: ${label}`}
                   />
                   <Line 
                     type="monotone" 
