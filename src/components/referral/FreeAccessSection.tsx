@@ -17,10 +17,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export function FreeAccessSection() {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [referralCode, setReferralCode] = useState<string>('');
   const [referralCount, setReferralCount] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -99,14 +101,14 @@ export function FreeAccessSection() {
       await navigator.clipboard.writeText(referralCode);
       setCopied(true);
       toast({
-        title: 'Copied!',
-        description: 'Referral code copied to clipboard.',
+        title: t('Copied!'),
+        description: t('Referral code copied to clipboard.'),
       });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to copy referral code.',
+        title: t('Error'),
+        description: t('Failed to copy referral code.'),
         variant: 'destructive',
       });
     }
@@ -123,8 +125,8 @@ export function FreeAccessSection() {
 
       if (referrerError || !referrer) {
         toast({
-          title: 'Invalid Code',
-          description: 'The referral code you entered is not valid.',
+          title: t('Invalid Code'),
+          description: t('The referral code you entered is not valid.'),
           variant: 'destructive',
         });
         setIsSubmitting(false);
@@ -141,8 +143,8 @@ export function FreeAccessSection() {
 
       if (existingReferral) {
         toast({
-          title: 'Already Used',
-          description: 'You have already used a referral code.',
+          title: t('Already Used'),
+          description: t('You have already used a referral code.'),
           variant: 'destructive',
         });
         setIsSubmitting(false);
@@ -153,8 +155,8 @@ export function FreeAccessSection() {
       setShowConfirmDialog(true);
     } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to validate referral code.',
+        title: t('Error'),
+        description: t('Failed to validate referral code.'),
         variant: 'destructive',
       });
     } finally {
@@ -175,8 +177,8 @@ export function FreeAccessSection() {
       if (error) throw error;
 
       toast({
-        title: 'Success!',
-        description: 'Referral code applied successfully.',
+        title: t('Success'),
+        description: t('Referral code applied successfully.'),
       });
       setReferrerName(pendingReferrer.name);
       setInputReferralCode('');
@@ -184,8 +186,8 @@ export function FreeAccessSection() {
       setPendingReferrer(null);
     } catch {
       toast({
-        title: 'Error',
-        description: 'Failed to apply referral code.',
+        title: t('Error'),
+        description: t('Failed to apply referral code.'),
         variant: 'destructive',
       });
     } finally {
