@@ -58,7 +58,7 @@ const Index = () => {
           <DialogHeader>
             <DialogTitle className="text-center flex items-center justify-center gap-2 text-xl">
               <Sparkles className="h-5 w-5 text-amber-500" />
-              Exclusive Free Access
+              {t('Exclusive Free Access')}
               <Sparkles className="h-5 w-5 text-amber-500" />
             </DialogTitle>
           </DialogHeader>
@@ -74,11 +74,11 @@ const Index = () => {
             
             <div>
               <p className="font-semibold text-primary">Vatsal Agarwala</p>
-              <p className="text-sm text-muted-foreground">Founder & CEO</p>
+              <p className="text-sm text-muted-foreground">{t('Founder & CEO')}</p>
             </div>
             
             <p className="text-foreground leading-relaxed">
-              Get access to <span className="font-bold text-primary">Vatsal's personal workout AND diet plans</span> completely <span className="font-bold text-amber-500">FREE</span>!
+              {t("Get access to Vatsal's personal workout AND diet plans completely FREE!")}
             </p>
             
             <Button 
@@ -88,7 +88,7 @@ const Index = () => {
               className="w-full mt-2"
             >
               <Gift className="mr-2 h-5 w-5" />
-              Take Me There
+              {t('Take Me There')}
             </Button>
           </div>
         </DialogContent>
