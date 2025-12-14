@@ -189,7 +189,6 @@ const WeightTracker = () => {
                       <CalendarIcon className="mr-2 h-4 w-4" />
                       {selectedDate ? format(selectedDate, "PPP") : <span>{t('Pick a date')}</span>}
                     </Button>
-                    </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
@@ -213,7 +212,6 @@ const WeightTracker = () => {
                   placeholder="70.5"
                   value={selectedDateEntry ? selectedDateEntry.weight.toString() : weight}
                   onChange={(e) => setWeight(e.target.value)}
-                />
                 />
               </div>
             </div>

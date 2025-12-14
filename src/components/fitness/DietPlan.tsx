@@ -13,6 +13,7 @@ import { UtensilsCrossed, Target, Calendar, ChefHat, Trash2, Settings, Download,
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 import { toast as sonnerToast } from 'sonner';
 import { mealDatabase, filterVegetarian, filterVegan, filterAllergies, filterByCookTime, MealData } from '@/data/mealDatabase';
 import NutritionGoals from '@/components/fitness/NutritionGoals';
@@ -41,6 +42,7 @@ const DietPlan = () => {
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
