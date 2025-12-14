@@ -126,6 +126,11 @@ const Landing = () => {
         </div>
       </header>
 
+      <LanguageSelector
+        isOpen={isLanguageSelectorOpen}
+        onClose={() => setIsLanguageSelectorOpen(false)}
+      />
+ 
       <main className="relative flex-grow">
         {/* Hero Section with Curved Bottom */}
         <div className="relative bg-gradient-to-br from-white via-blue-50/30 to-green-50/30 pb-32 overflow-hidden">
