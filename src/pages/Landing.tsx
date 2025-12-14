@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Globe } from 'lucide-react';
+import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Languages } from 'lucide-react';
 import radioAraImage1 from '@/assets/radioara-feature.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
@@ -112,8 +112,9 @@ const Landing = () => {
                 className="rounded-full border-white/40 bg-white/20 backdrop-blur hover:bg-white/40"
                 onClick={() => setIsLanguageSelectorOpen(true)}
                 aria-label="Change language"
+                type="button"
               >
-                <Globe className="h-5 w-5 text-fitness-primary" />
+                <Languages className="h-5 w-5 text-fitness-primary" />
               </Button>
               <Link to="/auth">
                 <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-6 py-2 text-base font-semibold">
