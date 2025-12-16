@@ -487,7 +487,13 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                     <div>
                       <h4 className="font-medium flex items-center gap-2">
                         {exercise.name}
-                        <Play className="h-3 w-3 text-fitness-primary" />
+                        {exercise.isCustomEquipment ? (
+                          <Badge variant="secondary" className="text-xs bg-fitness-primary/20 text-fitness-primary">
+                            AI
+                          </Badge>
+                        ) : (
+                          <Play className="h-3 w-3 text-fitness-primary" />
+                        )}
                       </h4>
                       <p className="text-xs text-gray-500">
                         {isWarmupOrCooldown 
@@ -513,19 +519,37 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                   <DialogTitle>{exercise.name}</DialogTitle>
                 </DialogHeader>
                  <div className="space-y-4">
-                   <div className="flex justify-center">
-                     <img 
-                       src={getExerciseAnimationUrl(exercise.name)}
-                       alt={`${exercise.name} animation`}
-                       className="w-full max-w-sm rounded-lg"
-                       style={{ maxHeight: '300px', objectFit: 'contain' }}
-                     />
-                   </div>
+                   {/* Show animation for regular exercises, text for custom equipment */}
+                   {exercise.isCustomEquipment ? (
+                     <div className="bg-fitness-primary/10 p-4 rounded-lg">
+                       <div className="flex items-center gap-2 mb-3">
+                         <Badge variant="secondary" className="bg-fitness-primary/20 text-fitness-primary">
+                           Custom Equipment
+                         </Badge>
+                       </div>
+                       <p className="text-sm text-gray-600 mb-3">{exercise.description}</p>
+                       <div className="border-t pt-3">
+                         <h4 className="font-medium mb-2">How to perform:</h4>
+                         <p className="text-sm text-gray-700 whitespace-pre-line">
+                           {exercise.howToPerform || exercise.description}
+                         </p>
+                       </div>
+                     </div>
+                   ) : (
+                     <div className="flex justify-center">
+                       <img 
+                         src={getExerciseAnimationUrl(exercise.name)}
+                         alt={`${exercise.name} animation`}
+                         className="w-full max-w-sm rounded-lg"
+                         style={{ maxHeight: '300px', objectFit: 'contain' }}
+                       />
+                     </div>
+                   )}
                    <div className="space-y-2 text-sm">
                      <p><strong>{isWarmupOrCooldown ? 'Time:' : 'Sets:'}</strong> {isWarmupOrCooldown ? 'As shown' : exercise.sets}</p>
                      <p><strong>{isWarmupOrCooldown && (typeof exercise.reps === 'number' && exercise.reps > 30) ? 'Duration:' : 'Reps:'}</strong> {exercise.reps}</p>
                      {exercise.restTime && !isWarmupOrCooldown && <p><strong>Rest:</strong> {exercise.restTime}s</p>}
-                     {exercise.description && <p><strong>Description:</strong> {exercise.description}</p>}
+                     {exercise.description && !exercise.isCustomEquipment && <p><strong>Description:</strong> {exercise.description}</p>}
                    </div>
                    
                    {/* Timer for time-based exercises */}

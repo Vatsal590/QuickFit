@@ -47,6 +47,8 @@ export type Exercise = {
   restTime: number; // in seconds
   description: string;
   imageUrl?: string;
+  isCustomEquipment?: boolean; // AI-generated exercise for custom equipment
+  howToPerform?: string; // Detailed instructions for custom exercises
 };
 
 export type WorkoutHistoryItem = {
@@ -70,6 +72,7 @@ export type WorkoutFormData = {
   muscleGroups: MuscleGroup[];
   intensity: IntensityLevel;
   bodyPains?: BodyPain[];
+  customEquipment?: string;
 };
 
 export type WorkoutPlan = {

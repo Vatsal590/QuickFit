@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.analyze-food-image]
 verify_jwt = true
+
+[functions.generate-custom-exercises]
+verify_jwt = false
