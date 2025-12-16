@@ -4,7 +4,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Clock, Dumbbell, Activity, Heart, AlertTriangle } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Clock, Dumbbell, Activity, Heart, AlertTriangle, Plus } from 'lucide-react';
 import { MuscleGroup, Equipment, IntensityLevel, TimeFrame, WorkoutFormData, BodyPain } from '@/types';
 
 interface WorkoutFormProps {
@@ -20,7 +21,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     equipment: ["none"],
     muscleGroups: ["full body"],
     intensity: "moderate",
-    bodyPains: []
+    bodyPains: [],
+    customEquipment: ""
   });
 
   const timeOptions: TimeFrame[] = [10, 20, 30, 45, 60];
@@ -221,6 +223,26 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
                   {label}
                 </Button>
               ))}
+            </div>
+            
+            {/* Custom Equipment Input */}
+            <div className="mt-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Plus className="h-4 w-4 text-fitness-primary" />
+                <span className="text-sm text-gray-600">Have other equipment? Type it below:</span>
+              </div>
+              <Input
+                type="text"
+                placeholder="e.g., TRX bands, medicine ball, foam roller..."
+                value={formData.customEquipment || ""}
+                onChange={(e) => setFormData(prev => ({ ...prev, customEquipment: e.target.value }))}
+                className="max-w-md"
+              />
+              {formData.customEquipment && (
+                <p className="text-xs text-gray-500 mt-1">
+                  AI will suggest exercises for this equipment if suitable
+                </p>
+              )}
             </div>
           </div>
           
