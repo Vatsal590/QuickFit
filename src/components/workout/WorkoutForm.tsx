@@ -7,6 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Clock, Dumbbell, Activity, Heart, AlertTriangle, Plus } from 'lucide-react';
 import { MuscleGroup, Equipment, IntensityLevel, TimeFrame, WorkoutFormData, BodyPain } from '@/types';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface WorkoutFormProps {
   onSubmit: (formData: WorkoutFormData) => void;
@@ -15,6 +16,7 @@ interface WorkoutFormProps {
 
 const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   
   const [formData, setFormData] = useState<WorkoutFormData>({
     time: 30,
@@ -28,52 +30,52 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
   const timeOptions: TimeFrame[] = [10, 20, 30, 45, 60];
   
   const equipmentOptions: { value: Equipment; label: string }[] = [
-    { value: "none", label: "No Equipment" },
-    { value: "dumbbells", label: "Dumbbells" },
-    { value: "barbell", label: "Barbell" },
-    { value: "kettlebell", label: "Kettlebell" },
-    { value: "resistance bands", label: "Resistance Bands" },
-    { value: "cable machine", label: "Cable Machine" },
-    { value: "pull-up bar", label: "Pull-up Bar" }
+    { value: "none", label: t("No Equipment") },
+    { value: "dumbbells", label: t("Dumbbells") },
+    { value: "barbell", label: t("Barbell") },
+    { value: "kettlebell", label: t("Kettlebell") },
+    { value: "resistance bands", label: t("Resistance Bands") },
+    { value: "cable machine", label: t("Cable Machine") },
+    { value: "pull-up bar", label: t("Pull-up Bar") }
   ];
   
   const muscleGroupOptions: { value: MuscleGroup; label: string }[] = [
-    { value: "chest", label: "Chest" },
-    { value: "back", label: "Back" },
-    { value: "shoulders", label: "Shoulders" },
-    { value: "legs", label: "Legs" },
-    { value: "biceps", label: "Biceps" },
-    { value: "triceps", label: "Triceps" },
-    { value: "core", label: "Core" },
-    { value: "full body", label: "Full Body" },
-    { value: "cardio", label: "Cardio" }
+    { value: "chest", label: t("Chest") },
+    { value: "back", label: t("Back") },
+    { value: "shoulders", label: t("Shoulders") },
+    { value: "legs", label: t("Legs") },
+    { value: "biceps", label: t("Biceps") },
+    { value: "triceps", label: t("Triceps") },
+    { value: "core", label: t("Core") },
+    { value: "full body", label: t("Full Body") },
+    { value: "cardio", label: t("Cardio") }
   ];
   
   const intensityOptions: { value: IntensityLevel; label: string; description: string }[] = [
     { 
       value: "light", 
-      label: "Light", 
-      description: "Recovery or beginner friendly workout" 
+      label: t("Light"), 
+      description: t("Recovery or beginner friendly workout") 
     },
     { 
       value: "moderate", 
-      label: "Moderate", 
-      description: "Standard workout with balanced effort" 
+      label: t("Moderate"), 
+      description: t("Standard workout with balanced effort") 
     },
     { 
       value: "intense", 
-      label: "Intense", 
-      description: "Challenging workout with higher intensity" 
+      label: t("Intense"), 
+      description: t("Challenging workout with higher intensity") 
     }
   ];
 
   const bodyPainOptions: { value: BodyPain; label: string }[] = [
-    { value: "knee pain", label: "Knee Pain" },
-    { value: "shoulder pain", label: "Shoulder Pain" },
-    { value: "hip pain", label: "Hip Pain" },
-    { value: "lower back pain", label: "Lower Back Pain" },
-    { value: "wrist pain", label: "Wrist Pain" },
-    { value: "ankle pain", label: "Ankle Pain" }
+    { value: "knee pain", label: t("Knee Pain") },
+    { value: "shoulder pain", label: t("Shoulder Pain") },
+    { value: "hip pain", label: t("Hip Pain") },
+    { value: "lower back pain", label: t("Lower Back Pain") },
+    { value: "wrist pain", label: t("Wrist Pain") },
+    { value: "ankle pain", label: t("Ankle Pain") }
   ];
 
   const handleTimeChange = (time: TimeFrame) => {
@@ -152,8 +154,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     // Validate form data
     if (formData.equipment.length === 0) {
       toast({
-        title: "Equipment required",
-        description: "Select at least one equipment option",
+        title: t("Equipment required"),
+        description: t("Select at least one equipment option"),
         variant: "destructive"
       });
       return;
@@ -161,8 +163,8 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
     
     if (formData.muscleGroups.length === 0) {
       toast({
-        title: "Muscle group required",
-        description: "Select at least one muscle group to train",
+        title: t("Muscle group required"),
+        description: t("Select at least one muscle group to train"),
         variant: "destructive"
       });
       return;
@@ -174,9 +176,9 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
   return (
     <Card className="w-full shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl">Create Your Workout</CardTitle>
+        <CardTitle className="text-2xl">{t('Create Your Workout')}</CardTitle>
         <CardDescription>
-          Tell us what you have available and we'll generate the perfect workout for you
+          {t('Tell us what you have available and we will generate the perfect workout for you')}
         </CardDescription>
       </CardHeader>
       
@@ -186,7 +188,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Clock className="h-5 w-5 text-fitness-primary" />
-              <h3 className="font-medium text-lg">Time Available</h3>
+              <h3 className="font-medium text-lg">{t('Time Available')}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {timeOptions.map(time => (
@@ -197,7 +199,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
                   onClick={() => handleTimeChange(time)}
                   className={formData.time === time ? "bg-fitness-primary hover:bg-fitness-primary/90" : ""}
                 >
-                  {time} min
+                  {time} {t('min')}
                 </Button>
               ))}
             </div>
@@ -209,7 +211,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Dumbbell className="h-5 w-5 text-fitness-primary" />
-              <h3 className="font-medium text-lg">Available Equipment</h3>
+              <h3 className="font-medium text-lg">{t('Available Equipment')}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {equipmentOptions.map(({ value, label }) => (
@@ -229,18 +231,18 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
             <div className="mt-3">
               <div className="flex items-center gap-2 mb-2">
                 <Plus className="h-4 w-4 text-fitness-primary" />
-                <span className="text-sm text-gray-600">Have other equipment? Type it below:</span>
+                <span className="text-sm text-gray-600">{t('Have other equipment? Type it below:')}</span>
               </div>
               <Input
                 type="text"
-                placeholder="e.g., TRX bands, medicine ball, foam roller..."
+                placeholder={t('e.g., TRX bands, medicine ball, foam roller...')}
                 value={formData.customEquipment || ""}
                 onChange={(e) => setFormData(prev => ({ ...prev, customEquipment: e.target.value }))}
                 className="max-w-md"
               />
               {formData.customEquipment && (
                 <p className="text-xs text-gray-500 mt-1">
-                  AI will suggest exercises for this equipment if suitable
+                  {t('AI will suggest exercises for this equipment if suitable')}
                 </p>
               )}
             </div>
@@ -252,7 +254,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-fitness-primary" />
-              <h3 className="font-medium text-lg">What to Train Today</h3>
+              <h3 className="font-medium text-lg">{t('What to Train Today')}</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {muscleGroupOptions.map(({ value, label }) => (
@@ -275,10 +277,10 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-fitness-primary" />
-              <h3 className="font-medium text-lg">Any Body Pains?</h3>
+              <h3 className="font-medium text-lg">{t('Any Body Pains?')}</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Select any areas where you experience pain. We'll customize your workout to avoid aggravating these areas.
+              {t('Select any areas where you experience pain. We will customize your workout to avoid aggravating these areas.')}
             </p>
             <div className="flex flex-wrap gap-2">
               {bodyPainOptions.map(({ value, label }) => (
@@ -301,7 +303,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-fitness-primary" />
-              <h3 className="font-medium text-lg">Workout Intensity</h3>
+              <h3 className="font-medium text-lg">{t('Workout Intensity')}</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {intensityOptions.map(({ value, label, description }) => (
@@ -329,7 +331,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
             type="submit" 
             className="w-full bg-fitness-primary hover:bg-fitness-primary/90 text-white"
           >
-            Generate Workout
+            {t('Generate Workout')}
           </Button>
         </CardFooter>
       </form>

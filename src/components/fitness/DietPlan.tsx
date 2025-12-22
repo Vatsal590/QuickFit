@@ -272,14 +272,14 @@ const DietPlan = () => {
       });
 
       toast({
-        title: "Diet Plan Generated!",
-        description: `Your scientifically calculated ${nutritionTargets.goalType} plan is ready with ${targetCalories} calories (P: ${targetProtein}g, C: ${targetCarbs}g, F: ${targetFats}g).`
+        title: t("Diet Plan Generated!"),
+        description: `${t('Your scientifically calculated')} ${nutritionTargets.goalType} ${t('plan is ready with')} ${targetCalories} ${t('calories')} (P: ${targetProtein}g, C: ${targetCarbs}g, F: ${targetFats}g).`
       });
     } catch (error) {
       console.error('Error generating diet plan:', error);
       toast({
-        title: "Error",
-        description: "Failed to generate diet plan. Please try again.",
+        title: t("Error"),
+        description: t("Failed to generate diet plan. Please try again."),
         variant: "destructive"
       });
     } finally {
@@ -616,8 +616,8 @@ const DietPlan = () => {
       } as any);
 
       toast({
-        title: "Profile Updated",
-        description: "Your dietary preferences have been saved."
+        title: t("Profile Updated"),
+        description: t("Your dietary preferences have been saved.")
       });
       
       setIsEditingProfile(false);
@@ -627,8 +627,8 @@ const DietPlan = () => {
       }
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
+        title: t("Error"),
+        description: t("Failed to update profile. Please try again."),
         variant: "destructive"
       });
     }
@@ -646,8 +646,8 @@ const DietPlan = () => {
   const clearDietPlan = () => {
     setDietPlan([]);
     toast({
-      title: "Diet Plan Cleared",
-      description: "Your diet plan has been removed."
+      title: t("Diet Plan Cleared"),
+      description: t("Your diet plan has been removed.")
     });
   };
 
@@ -735,10 +735,10 @@ const DietPlan = () => {
           .eq('is_active', true);
       }
         
-      sonnerToast.success(`${mealType.charAt(0).toUpperCase() + mealType.slice(1)} updated for ${time}+ min cook time`);
+      sonnerToast.success(`${t(mealType.charAt(0).toUpperCase() + mealType.slice(1))} ${t('updated for')} ${time}+ ${t('min cook time')}`);
     } catch (error) {
       console.error('Error updating cook time:', error);
-      sonnerToast.error('Failed to save changes');
+      sonnerToast.error(t('Failed to save changes'));
     }
   };
 
@@ -794,10 +794,10 @@ const DietPlan = () => {
 
       if (error) throw error;
 
-      sonnerToast.success('Meal synced to food tracker!');
+      sonnerToast.success(t('Meal synced to food tracker!'));
     } catch (error) {
       console.error('Error syncing meal:', error);
-      sonnerToast.error('Failed to sync meal');
+      sonnerToast.error(t('Failed to sync meal'));
     } finally {
       setSyncingMeal(null);
     }
@@ -822,7 +822,7 @@ const DietPlan = () => {
       }
     } catch (error) {
       console.error('Error fetching recipe:', error);
-      sonnerToast.error('Failed to load recipe. Please try again.');
+      sonnerToast.error(t('Failed to load recipe. Please try again.'));
       setSelectedRecipe(null); // Close dialog on error
     } finally {
       setLoadingRecipe(false);
@@ -838,15 +838,15 @@ const DietPlan = () => {
       <Card className="border-2 border-dashed">
         <CardContent className="flex flex-col items-center justify-center py-12">
           <ChefHat className="h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-xl font-semibold mb-2">Complete Your Profile</h3>
+          <h3 className="text-xl font-semibold mb-2">{t('Complete Your Profile')}</h3>
           <p className="text-muted-foreground text-center mb-6">
-            Set up your fitness profile to get a personalized diet plan
+            {t('Set up your fitness profile to get a personalized diet plan')}
           </p>
           <Button onClick={() => {
             const event = new CustomEvent('openFitnessProfileForm');
             window.dispatchEvent(event);
           }}>
-            Complete Profile
+            {t('Complete Profile')}
           </Button>
         </CardContent>
       </Card>
@@ -861,7 +861,7 @@ const DietPlan = () => {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Target className="h-5 w-5" />
-              Your Nutrition Plan
+              {t('Your Nutrition Plan')}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
               {getPlanType()} • {profile.taste_preferences?.join(', ') || 'American'} Cuisine
@@ -872,7 +872,7 @@ const DietPlan = () => {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                 <Settings className="h-4 w-4 mr-2" />
-                Edit Preferences
+                {t('Edit Preferences')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-full">

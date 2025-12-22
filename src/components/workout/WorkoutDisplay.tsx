@@ -423,12 +423,12 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
   
   // Format equipment names for display
   const formatEquipmentList = (equipment: string[]): string => {
-    if (equipment.length === 0) return "None";
-    if (equipment.includes("none") && equipment.length === 1) return "No equipment";
+    if (equipment.length === 0) return t("None");
+    if (equipment.includes("none") && equipment.length === 1) return t("No equipment");
     
     return equipment
       .filter(item => item !== "none")
-      .map(item => item.charAt(0).toUpperCase() + item.slice(1))
+      .map(item => t(item.charAt(0).toUpperCase() + item.slice(1)))
       .join(", ");
   };
   
@@ -524,12 +524,12 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                      <div className="bg-fitness-primary/10 p-4 rounded-lg">
                        <div className="flex items-center gap-2 mb-3">
                          <Badge variant="secondary" className="bg-fitness-primary/20 text-fitness-primary">
-                           Custom Equipment
+                           {t('Custom Equipment')}
                          </Badge>
                        </div>
                        <p className="text-sm text-gray-600 mb-3">{exercise.description}</p>
                        <div className="border-t pt-3">
-                         <h4 className="font-medium mb-2">How to perform:</h4>
+                         <h4 className="font-medium mb-2">{t('How to perform')}:</h4>
                          <p className="text-sm text-gray-700 whitespace-pre-line">
                            {exercise.howToPerform || exercise.description}
                          </p>
@@ -546,10 +546,10 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                      </div>
                    )}
                    <div className="space-y-2 text-sm">
-                     <p><strong>{isWarmupOrCooldown ? 'Time:' : 'Sets:'}</strong> {isWarmupOrCooldown ? 'As shown' : exercise.sets}</p>
-                     <p><strong>{isWarmupOrCooldown && (typeof exercise.reps === 'number' && exercise.reps > 30) ? 'Duration:' : 'Reps:'}</strong> {exercise.reps}</p>
-                     {exercise.restTime && !isWarmupOrCooldown && <p><strong>Rest:</strong> {exercise.restTime}s</p>}
-                     {exercise.description && !exercise.isCustomEquipment && <p><strong>Description:</strong> {exercise.description}</p>}
+                     <p><strong>{isWarmupOrCooldown ? t('Time') + ':' : t('Sets') + ':'}</strong> {isWarmupOrCooldown ? t('As shown') : exercise.sets}</p>
+                     <p><strong>{isWarmupOrCooldown && (typeof exercise.reps === 'number' && exercise.reps > 30) ? t('Duration') + ':' : t('Reps') + ':'}</strong> {exercise.reps}</p>
+                     {exercise.restTime && !isWarmupOrCooldown && <p><strong>{t('Rest')}:</strong> {exercise.restTime}s</p>}
+                     {exercise.description && !exercise.isCustomEquipment && <p><strong>{t('Description')}:</strong> {exercise.description}</p>}
                    </div>
                    
                    {/* Timer for time-based exercises */}
@@ -563,7 +563,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
                    {/* Rest timer for main exercises */}
                    {!isWarmupOrCooldown && exercise.restTime && (
                      <div className="mt-4">
-                       <h4 className="font-medium mb-2">Rest Timer</h4>
+                       <h4 className="font-medium mb-2">{t('Rest Timer')}</h4>
                        <ExerciseTimer 
                          duration={exercise.restTime} 
                          className="mt-2"
@@ -587,45 +587,45 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
         className="mb-4 pl-0 flex items-center gap-1 text-fitness-primary hover:text-fitness-primary/80"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back
+        {t('Back')}
       </Button>
       
       <Card className="shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl">{workout.title}</CardTitle>
           <CardDescription>
-            Your customized {workout.duration} minute workout
+            {t('Your customized')} {workout.duration} {t('minute workout')}
           </CardDescription>
           
           <div className="grid grid-cols-3 gap-4 mt-4">
             <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-md">
               <Dumbbell className="h-5 w-5 text-fitness-primary mb-1" />
-              <span className="text-sm text-gray-500">Equipment</span>
+              <span className="text-sm text-gray-500">{t('Equipment')}</span>
               <span className="font-medium text-center text-sm">
                 {workout.equipment.length === 1 && workout.equipment[0] === "none" 
-                  ? "No equipment" 
+                  ? t("No equipment") 
                   : workout.equipment.length > 2 
-                    ? "Multiple" 
+                    ? t("Multiple") 
                     : formatEquipmentList(workout.equipment)}
               </span>
             </div>
             
             <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-md">
               <Activity className="h-5 w-5 text-fitness-primary mb-1" />
-              <span className="text-sm text-gray-500">Focus</span>
+              <span className="text-sm text-gray-500">{t('Focus')}</span>
               <span className="font-medium text-center text-sm">
                 {workout.targetMuscleGroups.length === 1 
-                  ? workout.targetMuscleGroups[0].charAt(0).toUpperCase() + workout.targetMuscleGroups[0].slice(1)
+                  ? t(workout.targetMuscleGroups[0].charAt(0).toUpperCase() + workout.targetMuscleGroups[0].slice(1))
                   : workout.targetMuscleGroups.includes("full body") 
-                    ? "Full Body" 
-                    : "Multiple"}
+                    ? t("Full Body") 
+                    : t("Multiple")}
               </span>
             </div>
             
             <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-md">
               <Heart className="h-5 w-5 text-fitness-primary mb-1" />
-              <span className="text-sm text-gray-500">Intensity</span>
-              <span className="font-medium">{workout.intensity.charAt(0).toUpperCase() + workout.intensity.slice(1)}</span>
+              <span className="text-sm text-gray-500">{t('Intensity')}</span>
+              <span className="font-medium">{t(workout.intensity.charAt(0).toUpperCase() + workout.intensity.slice(1))}</span>
             </div>
           </div>
         </CardHeader>
@@ -638,14 +638,14 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
               className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'warmup' ? 'bg-fitness-primary text-white' : ''}`}
             >
               <Timer className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              5-Min Warmup
+              {t('5-Min Warmup')}
             </Button>
             <Button
               variant={activeSection === 'main' ? 'default' : 'ghost'}
               onClick={() => setActiveSection('main')}
               className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'main' ? 'bg-fitness-primary text-white' : ''}`}
             >
-              Main Workout
+              {t('Main Workout')}
             </Button>
             <Button
               variant={activeSection === 'cooldown' ? 'default' : 'ghost'}
@@ -653,15 +653,15 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
               className={`text-xs sm:text-sm flex-1 sm:flex-none ${activeSection === 'cooldown' ? 'bg-fitness-primary text-white' : ''}`}
             >
               <Timer className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-              5-Min Cooldown
+              {t('5-Min Cooldown')}
             </Button>
           </div>
           
           {activeSection === 'warmup' && (
             <>
               <div className="flex items-center mb-4">
-                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 mr-2">Warmup</Badge>
-                <h3 className="font-medium text-lg">5-Minute Warmup ({workout.warmupExercises.length})</h3>
+                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 mr-2">{t('Warmup')}</Badge>
+                <h3 className="font-medium text-lg">{t('5-Minute Warmup')} ({workout.warmupExercises.length})</h3>
               </div>
               {renderExerciseList(workout.warmupExercises, true)}
             </>
@@ -669,7 +669,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
           
           {activeSection === 'main' && (
             <>
-              <h3 className="font-medium mb-3 text-lg">Main Exercises ({workout.exercises.length})</h3>
+              <h3 className="font-medium mb-3 text-lg">{t('Main Exercises')} ({workout.exercises.length})</h3>
               {renderExerciseList(workout.exercises)}
             </>
           )}
@@ -677,8 +677,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
           {activeSection === 'cooldown' && (
             <>
               <div className="flex items-center mb-4">
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mr-2">Cooldown</Badge>
-                <h3 className="font-medium text-lg">5-Minute Cooldown ({workout.cooldownExercises.length})</h3>
+                <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mr-2">{t('Cooldown')}</Badge>
+                <h3 className="font-medium text-lg">{t('5-Minute Cooldown')} ({workout.cooldownExercises.length})</h3>
               </div>
               {renderExerciseList(workout.cooldownExercises, true)}
             </>
@@ -691,7 +691,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
             className="w-full bg-fitness-secondary hover:bg-fitness-secondary/90 mb-2 flex items-center gap-2"
           >
             <CheckCircle className="h-5 w-5" />
-            Mark as Completed
+            {t('Mark as Completed')}
           </Button>
         </CardFooter>
       </Card>

@@ -67,8 +67,8 @@ const InstantWorkout = () => {
       let customExercises: Exercise[] = [];
       if (formData.customEquipment && formData.customEquipment.trim()) {
         toast({
-          title: "Analyzing custom equipment...",
-          description: "AI is finding exercises for your equipment",
+          title: t("Analyzing custom equipment..."),
+          description: t("AI is finding exercises for your equipment"),
         });
         
         customExercises = await fetchCustomExercises(
@@ -94,20 +94,20 @@ const InstantWorkout = () => {
       }
       
       const customMsg = customExercises.length > 0 
-        ? ` Including ${customExercises.length} AI-suggested exercise${customExercises.length > 1 ? 's' : ''} for your custom equipment!`
+        ? ` ${t('Including')} ${customExercises.length} ${t('AI-suggested exercise')}${customExercises.length > 1 ? 's' : ''} ${t('for your custom equipment')}!`
         : '';
       
       toast({
-        title: "Workout generated",
-        description: `Your ${finalWorkout.duration} minute workout is ready with 5-min warmup and cooldown!${customMsg}`,
+        title: t("Workout generated"),
+        description: `${t('Your')} ${finalWorkout.duration} ${t('minute workout is ready with 5-min warmup and cooldown')}!${customMsg}`,
       });
       
       addWorkoutToHistory(finalWorkout);
     } catch (error) {
       console.error("Failed to generate workout:", error);
       toast({
-        title: "Error",
-        description: "Failed to generate workout. Please try again.",
+        title: t("Error"),
+        description: t("Failed to generate workout. Please try again."),
         variant: "destructive"
       });
     } finally {
@@ -154,7 +154,7 @@ const InstantWorkout = () => {
             <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-lg text-center">
                 <div className="animate-spin rounded-full h-10 w-10 border-4 border-fitness-primary border-t-transparent mx-auto mb-3"></div>
-                <p className="font-medium">Generating your workout...</p>
+                <p className="font-medium">{t('Generating your workout...')}</p>
               </div>
             </div>
           )}
