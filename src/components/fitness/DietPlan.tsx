@@ -323,6 +323,70 @@ const DietPlan = () => {
     return uniqueSnacks.sort((a, b) => (b.protein / b.calories) - (a.protein / a.calories));
   };
 
+  // Get filtered meals from a specific cuisine with fallback to American
+  const getMealsWithFallback = (
+    mealType: 'breakfast' | 'lunch' | 'dinner' | 'snacks',
+    cuisines: string[],
+    isVegetarian: boolean,
+    isVegan: boolean,
+    allergies: string[],
+    maxCookTime: number
+  ): MealData[] => {
+    const activeCuisines = cuisines.filter(c => c !== 'French');
+    let allMeals: MealData[] = [];
+    
+    // Collect meals from all selected cuisines
+    for (const cuisine of activeCuisines) {
+      let meals = mealDatabase[cuisine]?.[mealType] || [];
+      
+      // Apply dietary filters
+      if (isVegan) {
+        meals = filterVegan(meals);
+      } else if (isVegetarian) {
+        meals = filterVegetarian(meals);
+      }
+      
+      // Apply allergy filters
+      meals = filterAllergies(meals, allergies);
+      
+      // Apply cook time filter
+      meals = filterByCookTime(meals, maxCookTime);
+      
+      allMeals.push(...meals);
+    }
+    
+    // If no meals found from selected cuisines, fallback to American
+    if (allMeals.length === 0) {
+      let meals = mealDatabase.American[mealType];
+      if (isVegan) meals = filterVegan(meals);
+      else if (isVegetarian) meals = filterVegetarian(meals);
+      meals = filterAllergies(meals, allergies);
+      meals = filterByCookTime(meals, maxCookTime);
+      allMeals = meals;
+    }
+    
+    // If still no meals (very restrictive filters), relax cook time
+    if (allMeals.length === 0) {
+      for (const cuisine of [...activeCuisines, 'American']) {
+        let meals = mealDatabase[cuisine]?.[mealType] || [];
+        if (isVegan) meals = filterVegan(meals);
+        else if (isVegetarian) meals = filterVegetarian(meals);
+        meals = filterAllergies(meals, allergies);
+        allMeals.push(...meals);
+      }
+    }
+    
+    // Remove duplicates by name
+    const uniqueMeals = Array.from(new Map(allMeals.map(m => [m.name, m])).values());
+    
+    // Sort by protein content
+    return uniqueMeals.sort((a, b) => {
+      const proteinDiff = b.protein - a.protein;
+      if (Math.abs(proteinDiff) > 5) return proteinDiff;
+      return (b.protein / b.calories) - (a.protein / a.calories);
+    });
+  };
+
   const generateMealsForDay = (
     cuisines: string[],
     isVegetarian: boolean,
@@ -333,60 +397,59 @@ const DietPlan = () => {
     comprehensiveSnackPool: MealData[],
     cookTimes: { breakfast: number; lunch: number; dinner: number }
   ) => {
-    // Select primary cuisine for the day (rotate through preferences)
-    const activeCuisines = cuisines.filter(c => c !== 'French');
-    const primaryCuisine = activeCuisines[(dayNumber - 1) % activeCuisines.length] || 'American';
-    
-    // Get meals from the database
-    let breakfastOptions = mealDatabase[primaryCuisine]?.breakfast || mealDatabase.American.breakfast;
-    let lunchOptions = mealDatabase[primaryCuisine]?.lunch || mealDatabase.American.lunch;
-    let dinnerOptions = mealDatabase[primaryCuisine]?.dinner || mealDatabase.American.dinner;
-    let snackOptions = mealDatabase[primaryCuisine]?.snacks || mealDatabase.American.snacks;
+    // Get all available meals with proper filtering and fallbacks
+    const breakfastOptions = getMealsWithFallback('breakfast', cuisines, !!isVegetarian, !!isVegan, allergies, cookTimes.breakfast);
+    const lunchOptions = getMealsWithFallback('lunch', cuisines, !!isVegetarian, !!isVegan, allergies, cookTimes.lunch);
+    const dinnerOptions = getMealsWithFallback('dinner', cuisines, !!isVegetarian, !!isVegan, allergies, cookTimes.dinner);
 
-    // Apply dietary filters
-    if (isVegan) {
-      breakfastOptions = filterVegan(breakfastOptions);
-      lunchOptions = filterVegan(lunchOptions);
-      dinnerOptions = filterVegan(dinnerOptions);
-      snackOptions = filterVegan(snackOptions);
-    } else if (isVegetarian) {
-      breakfastOptions = filterVegetarian(breakfastOptions);
-      lunchOptions = filterVegetarian(lunchOptions);
-      dinnerOptions = filterVegetarian(dinnerOptions);
-      snackOptions = filterVegetarian(snackOptions);
-    }
-
-    // Apply allergy filters
-    breakfastOptions = filterAllergies(breakfastOptions, allergies);
-    lunchOptions = filterAllergies(lunchOptions, allergies);
-    dinnerOptions = filterAllergies(dinnerOptions, allergies);
-    snackOptions = filterAllergies(snackOptions, allergies);
-
-    // Apply individual cooking time filters for each meal type
-    breakfastOptions = filterByCookTime(breakfastOptions, cookTimes.breakfast);
-    lunchOptions = filterByCookTime(lunchOptions, cookTimes.lunch);
-    dinnerOptions = filterByCookTime(dinnerOptions, cookTimes.dinner);
-    snackOptions = filterByCookTime(snackOptions, 30);
-
-    // Sort by absolute protein content first, then by protein density
-    const sortByProteinAmount = (meals: MealData[]) => 
-      [...meals].sort((a, b) => {
-        const proteinDiff = b.protein - a.protein;
-        if (Math.abs(proteinDiff) > 5) return proteinDiff;
-        return (b.protein / b.calories) - (a.protein / a.calories);
-      });
-
-    breakfastOptions = sortByProteinAmount(breakfastOptions);
-    lunchOptions = sortByProteinAmount(lunchOptions);
-    dinnerOptions = sortByProteinAmount(dinnerOptions);
-    snackOptions = sortByProteinAmount(snackOptions);
-
-    const breakfast = selectMeals(breakfastOptions, 1, dayNumber);
-    const lunch = selectMeals(lunchOptions, 1, dayNumber);
-    const dinner = selectMeals(dinnerOptions, 1, dayNumber);
+    // Select meals ensuring we always have at least one for each time
+    const breakfast = selectMealsGuaranteed(breakfastOptions, 1, dayNumber, 'breakfast', cuisines, !!isVegetarian, !!isVegan, allergies);
+    const lunch = selectMealsGuaranteed(lunchOptions, 1, dayNumber, 'lunch', cuisines, !!isVegetarian, !!isVegan, allergies);
+    const dinner = selectMealsGuaranteed(dinnerOptions, 1, dayNumber, 'dinner', cuisines, !!isVegetarian, !!isVegan, allergies);
     const snacks = selectMeals(comprehensiveSnackPool, 1, dayNumber);
 
     return { breakfast, lunch, dinner, snacks };
+  };
+
+  // Select meals with guaranteed fallback - never returns empty for main meals
+  const selectMealsGuaranteed = (
+    options: MealData[], 
+    count: number, 
+    seed: number,
+    mealType: 'breakfast' | 'lunch' | 'dinner',
+    cuisines: string[],
+    isVegetarian: boolean,
+    isVegan: boolean,
+    allergies: string[]
+  ): MealData[] => {
+    if (options.length > 0) {
+      return selectMeals(options, count, seed);
+    }
+    
+    // Ultimate fallback: get any meal from American cuisine with only diet filter
+    let fallback = mealDatabase.American[mealType];
+    if (isVegan) fallback = filterVegan(fallback);
+    else if (isVegetarian) fallback = filterVegetarian(fallback);
+    fallback = filterAllergies(fallback, allergies);
+    
+    if (fallback.length > 0) {
+      return selectMeals(fallback, count, seed);
+    }
+    
+    // If even that fails (extremely restrictive), return first available from any cuisine
+    for (const cuisineName of Object.keys(mealDatabase)) {
+      let meals = mealDatabase[cuisineName]?.[mealType] || [];
+      if (isVegan) meals = filterVegan(meals);
+      else if (isVegetarian) meals = filterVegetarian(meals);
+      meals = filterAllergies(meals, allergies);
+      if (meals.length > 0) {
+        return [meals[0]];
+      }
+    }
+    
+    // Absolute last resort: return first American meal (ignoring all filters except allergy)
+    const lastResort = filterAllergies(mealDatabase.American[mealType], allergies);
+    return lastResort.length > 0 ? [lastResort[0]] : [];
   };
 
   const selectMeals = (options: MealData[], count: number, seed: number): MealData[] => {
@@ -604,32 +667,11 @@ const DietPlan = () => {
     const tastePreferences = profile.taste_preferences || ['American'];
     const allergies = profile.food_allergies || [];
     
-    const activeCuisines = tastePreferences.filter(c => c !== 'French');
-    const primaryCuisine = activeCuisines[(dayNumber - 1) % activeCuisines.length] || 'American';
+    // Use the same robust fallback logic as main generation
+    const options = getMealsWithFallback(mealType, tastePreferences, !!isDietVegetarian, !!isDietVegan, allergies, cookTime);
     
-    let options = mealDatabase[primaryCuisine]?.[mealType] || mealDatabase.American[mealType];
-    
-    // Apply dietary filters
-    if (isDietVegan) {
-      options = filterVegan(options);
-    } else if (isDietVegetarian) {
-      options = filterVegetarian(options);
-    }
-    
-    // Apply allergy filters
-    options = filterAllergies(options, allergies);
-    
-    // Apply cooking time filter
-    options = filterByCookTime(options, cookTime);
-    
-    // Sort by protein
-    options = [...options].sort((a, b) => b.protein - a.protein);
-    
-    if (options.length === 0) return [];
-    
-    // Select meal based on day number
-    const index = (dayNumber - 1) % options.length;
-    return [options[index]];
+    // Use guaranteed selection to ensure we always return a meal
+    return selectMealsGuaranteed(options, 1, dayNumber, mealType, tastePreferences, !!isDietVegetarian, !!isDietVegan, allergies);
   };
 
   // Update inline cook time, save to profile, and regenerate just that meal
