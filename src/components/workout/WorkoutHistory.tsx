@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { WorkoutHistoryItem, Workout } from '@/types';
 import { format } from 'date-fns';
 import { CheckCircle, Clock, Dumbbell } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface WorkoutHistoryProps {
   history: WorkoutHistoryItem[];
@@ -13,6 +14,7 @@ interface WorkoutHistoryProps {
 }
 
 const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps) => {
+  const { t } = useTranslation();
   // Match history items with workout details
   const historyWithDetails = history.map(historyItem => {
     const matchingWorkout = recentWorkouts.find(w => w.id === historyItem.workoutId);
@@ -42,16 +44,16 @@ const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps
     return (
       <Card className="shadow-sm">
         <CardHeader>
-          <CardTitle>Workout History</CardTitle>
-          <CardDescription>You haven't completed any workouts yet</CardDescription>
+          <CardTitle>{t('Workout History')}</CardTitle>
+          <CardDescription>{t("You haven't completed any workouts yet")}</CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center py-8 text-center">
           <div className="bg-gray-100 rounded-full p-4 mb-4">
             <Clock className="h-8 w-8 text-gray-400" />
           </div>
-          <h3 className="text-lg font-medium mb-2">No workout history yet</h3>
+          <h3 className="text-lg font-medium mb-2">{t('No workout history yet')}</h3>
           <p className="text-gray-500 max-w-md">
-            Generate your first workout and complete it to start tracking your progress
+            {t('Generate your first workout and complete it to start tracking your progress')}
           </p>
         </CardContent>
       </Card>
@@ -61,8 +63,8 @@ const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Workout History</CardTitle>
-        <CardDescription>Track your workout progress over time</CardDescription>
+        <CardTitle>{t('Workout History')}</CardTitle>
+        <CardDescription>{t('Track your workout progress over time')}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {sortedDates.map(dateStr => (
@@ -84,7 +86,7 @@ const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps
                       {item.completed && (
                         <span className="ml-2 flex items-center text-green-600 text-sm">
                           <CheckCircle className="h-4 w-4 mr-1" />
-                          Completed
+                          {t('Completed')}
                         </span>
                       )}
                     </div>
@@ -98,18 +100,18 @@ const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps
                       <div className="flex items-center gap-4 mb-3 text-sm">
                         <div className="flex items-center">
                           <Clock className="h-4 w-4 text-fitness-primary mr-1" />
-                          <span>{item.workout.duration} min</span>
+                          <span>{item.workout.duration} {t('min')}</span>
                         </div>
                         <div className="flex items-center">
                           <Dumbbell className="h-4 w-4 text-fitness-primary mr-1" />
                           <span>
                             {item.workout.equipment.includes("none") && item.workout.equipment.length === 1
-                              ? "No equipment"
+                              ? t("No equipment")
                               : item.workout.equipment.length > 2
-                                ? "Multiple"
+                                ? t("Multiple")
                                 : item.workout.equipment
                                     .filter(eq => eq !== "none")
-                                    .map(eq => eq.charAt(0).toUpperCase() + eq.slice(1))
+                                    .map(eq => t(eq.charAt(0).toUpperCase() + eq.slice(1)))
                                     .join(", ")}
                           </span>
                         </div>
@@ -121,7 +123,7 @@ const WorkoutHistory = ({ history, recentWorkouts, onView }: WorkoutHistoryProps
                         onClick={() => onView(item.workout!)}
                         className="text-fitness-primary border-fitness-primary/30 hover:bg-fitness-primary/10"
                       >
-                        View Details
+                        {t('View Details')}
                       </Button>
                     </>
                   )}
