@@ -372,27 +372,37 @@ export const generateWorkout = (
     }
   ];
 
-  // Generate cooldown exercises with animations
+  // Generate cooldown with static stretches
   const cooldownExercises: Exercise[] = [
     {
-      id: "cooldown-plank",
-      name: "Plank Hold",
+      id: "cooldown-lower-back-stretch",
+      name: "Lower Back Stretch",
       muscleGroup: "core",
       equipment: ["none"],
       sets: 1,
       reps: 30,
-      restTime: 15,
-      description: "Hold a plank position for 30 seconds. Keep your body in a straight line from head to heels."
+      restTime: 10,
+      description: "Gentle stretches to relieve lower back tension. Hold each stretch for 20-30 seconds."
     },
     {
-      id: "cooldown-burpees",
-      name: "Burpees",
-      muscleGroup: "full body",
+      id: "cooldown-hip-flexor-stretch",
+      name: "Hip Flexor Stretch",
+      muscleGroup: "legs",
       equipment: ["none"],
       sets: 1,
-      reps: 5,
+      reps: 30,
+      restTime: 10,
+      description: "Stretches to release tight hip flexors. Hold each side for 30 seconds."
+    },
+    {
+      id: "cooldown-shoulder-stretch",
+      name: "Shoulder Stretch",
+      muscleGroup: "shoulders",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30,
       restTime: 0,
-      description: "Drop to the floor, perform a push-up, jump feet forward, then explode upward into a jump."
+      description: "Cross-body shoulder stretches to cool down upper body. Hold each side for 30 seconds."
     }
   ];
 

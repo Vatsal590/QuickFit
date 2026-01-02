@@ -96,6 +96,11 @@ export const getExerciseAnimationUrl = (exerciseName: string): string => {
     'high knees': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/high-knees.gif',
     'high knee': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/high-knees.gif',
     'plank hold': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
+    
+    // Static stretches for cooldown
+    'lower back stretch': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/03/cat-cow-stretch.gif',
+    'hip flexor stretch': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/07/kneeling-hip-flexor-stretch.gif',
+    'shoulder stretch': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/01/cross-body-shoulder-stretch.gif',
   };
 
   return exerciseMap[normalizedName] || 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif';
