@@ -338,30 +338,61 @@ export const generateWorkout = (
   // Build final exercise list - add pain exercises at the end
   const finalExercises = [...selectedExercises, ...painExercises];
 
-  // Generate warmup and cooldown
+  // Generate warmup exercises with animations
   const warmupExercises: Exercise[] = [
     {
-      id: "warmup-1",
-      name: "Dynamic Stretching",
-      muscleGroup: "full body",
+      id: "warmup-jumping-jacks",
+      name: "Jumping Jacks",
+      muscleGroup: "cardio",
       equipment: ["none"],
       sets: 1,
-      reps: 10,
+      reps: 20,
+      restTime: 15,
+      description: "Start standing with arms at sides. Jump feet out while raising arms overhead, then jump back to start position."
+    },
+    {
+      id: "warmup-high-knees",
+      name: "High Knees",
+      muscleGroup: "cardio",
+      equipment: ["none"],
+      sets: 1,
+      reps: 20,
+      restTime: 15,
+      description: "Run in place, bringing knees up toward chest as high as possible. Keep a quick pace."
+    },
+    {
+      id: "warmup-mountain-climbers",
+      name: "Mountain Climbers",
+      muscleGroup: "core",
+      equipment: ["none"],
+      sets: 1,
+      reps: 15,
       restTime: 0,
-      description: "Full body dynamic stretches to prepare muscles"
+      description: "Start in plank position. Alternate bringing knees toward chest in a running motion."
     }
   ];
 
+  // Generate cooldown exercises with animations
   const cooldownExercises: Exercise[] = [
     {
-      id: "cooldown-1",
-      name: "Static Stretching",
+      id: "cooldown-plank",
+      name: "Plank Hold",
+      muscleGroup: "core",
+      equipment: ["none"],
+      sets: 1,
+      reps: 30,
+      restTime: 15,
+      description: "Hold a plank position for 30 seconds. Keep your body in a straight line from head to heels."
+    },
+    {
+      id: "cooldown-burpees",
+      name: "Burpees",
       muscleGroup: "full body",
       equipment: ["none"],
       sets: 1,
-      reps: 10,
+      reps: 5,
       restTime: 0,
-      description: "Hold stretches for 30 seconds each to cool down"
+      description: "Drop to the floor, perform a push-up, jump feet forward, then explode upward into a jump."
     }
   ];
 

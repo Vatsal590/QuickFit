@@ -36,7 +36,15 @@ const FreeAccess = () => {
             <p className="text-muted-foreground mb-4">{t('Founder & CEO, Age 15')}</p>
             
             <div className="text-left max-w-3xl mx-auto space-y-4 text-muted-foreground">
-              <p>{t('Free Access Founder Paragraph')}</p>
+              <p>
+                {t("Hi, I'm Vatsal Agarwala, the founder and CEO of QuickFit. At just 15 years old, I've dedicated myself to transforming how people approach fitness. My journey began when I realized that most fitness apps were either too complicated, too expensive, or simply didn't deliver results.")}
+              </p>
+              <p>
+                {t("I created QuickFit to solve these problems - combining AI-powered workout generation, personalized diet plans, and real-time tracking into one seamless experience. The workout and diet plans you unlock here are the exact routines I personally use to maintain my fitness goals.")}
+              </p>
+              <p>
+                {t("What makes QuickFit different is our commitment to making fitness accessible to everyone. Whether you're just starting out or you're an experienced athlete, our AI adapts to your unique needs, equipment, and goals.")}
+              </p>
               <p className="text-fitness-primary font-medium text-center mt-6">
                 {t('About Founder Closing')}
               </p>
