@@ -89,6 +89,13 @@ export const getExerciseAnimationUrl = (exerciseName: string): string => {
     'cable bicep hammer curls': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
     'cable pulldown': 'https://i.pinimg.com/originals/74/68/5a/74685a8a1b44b902c9d3ac1404844e88.gif',
     'cable pulldowns': 'https://i.pinimg.com/originals/74/68/5a/74685a8a1b44b902c9d3ac1404844e88.gif',
+    
+    // Warmup & Cooldown exercises
+    'jumping jacks': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/jumping-jacks.gif',
+    'jumping jack': 'https://www.inspireusafoundation.org/wp-content/uploads/2023/04/jumping-jacks.gif',
+    'high knees': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/high-knees.gif',
+    'high knee': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/high-knees.gif',
+    'plank hold': 'https://www.inspireusafoundation.org/wp-content/uploads/2022/01/plank.gif',
   };
 
   return exerciseMap[normalizedName] || 'https://www.inspireusafoundation.org/wp-content/uploads/2022/11/push-up.gif';
