@@ -396,9 +396,9 @@ const generateExercises = (
   // Filter by equipment
   pool = pool.filter(ex => ex.equipment.some(eq => normalizedEquipment.includes(eq) || eq === 'none'));
 
-  // Adjust count based on duration
-  const count = duration <= 20 ? 3 : duration <= 40 ? 4 : duration <= 50 ? 5 : 6;
-  const chosen = [...pool].sort(() => 0.5 - Math.random()).slice(0, count);
+  // Ensure at least 5 exercises per workout day, scale up for longer durations
+  const count = duration <= 30 ? 5 : duration <= 45 ? 6 : duration <= 60 ? 7 : 8;
+  const chosen = [...pool].sort(() => 0.5 - Math.random()).slice(0, Math.max(5, count));
 
   // Intensity-based volume adjustments
   const volume = {
