@@ -3,8 +3,8 @@ import { getFilteredExercises } from "./exercises";
 
 const shuffle = <T>(arr: T[]): T[] => [...arr].sort(() => Math.random() - 0.5);
 
-const getExerciseCount = (time: TimeFrame): number => {
-  const counts = { 10: 2, 20: 2, 30: 3, 45: 4, 60: 5 };
+export const getExerciseCount = (time: TimeFrame): number => {
+  const counts = { 10: 2, 20: 3, 30: 4, 45: 5, 60: 6 };
   return counts[time] || 3;
 };
 
@@ -50,9 +50,10 @@ export const generateWorkout = (
   intensity: IntensityLevel,
   muscleGroups: MuscleGroup[],
   equipment: Equipment[],
-  bodyPains?: BodyPain[]
+  bodyPains?: BodyPain[],
+  customExerciseCount?: number
 ): WorkoutResult => {
-  const maxExercises = getExerciseCount(time);
+  const maxExercises = customExerciseCount ?? getExerciseCount(time);
   const excludedExercises: ExcludedExerciseInfo[] = [];
   
   // Get filtered exercises based on muscle groups, equipment, and intensity
