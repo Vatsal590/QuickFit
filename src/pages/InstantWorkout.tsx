@@ -5,7 +5,7 @@ import WorkoutDisplay from '../components/workout/WorkoutDisplay';
 import ExcludedExercisesDialog from '../components/workout/ExcludedExercisesDialog';
 import { Workout, WorkoutFormData, BodyPain, Exercise } from '../types';
 import { useWorkoutHistory } from '../hooks/useWorkoutHistory';
-import { generateWorkout, ExcludedExerciseInfo } from '../data/workoutGenerator';
+import { generateWorkout, getExerciseCount, ExcludedExerciseInfo } from '../data/workoutGenerator';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
@@ -55,15 +55,10 @@ const InstantWorkout = () => {
     setIsGenerating(true);
     
     try {
-      const result = generateWorkout(
-        formData.time,
-        formData.intensity,
-        formData.muscleGroups,
-        formData.equipment,
-        formData.bodyPains
-      );
+      // Get target exercise count based on duration
+      const targetExerciseCount = getExerciseCount(formData.time);
       
-      // Fetch custom equipment exercises if provided
+      // Fetch custom equipment exercises first if provided
       let customExercises: Exercise[] = [];
       if (formData.customEquipment && formData.customEquipment.trim()) {
         toast({
@@ -78,7 +73,19 @@ const InstantWorkout = () => {
         );
       }
       
-      // Add custom exercises to the workout
+      // Calculate how many base exercises we need (target minus AI exercises)
+      const baseExerciseCount = Math.max(1, targetExerciseCount - customExercises.length);
+      
+      const result = generateWorkout(
+        formData.time,
+        formData.intensity,
+        formData.muscleGroups,
+        formData.equipment,
+        formData.bodyPains,
+        baseExerciseCount
+      );
+      
+      // Combine base exercises with AI exercises (total = target count)
       const finalWorkout = {
         ...result.workout,
         exercises: [...result.workout.exercises, ...customExercises]
