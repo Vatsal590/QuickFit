@@ -14,19 +14,49 @@ const AuthForm = () => {
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/home`,
-          queryParams: { prompt: 'select_account' }
+          queryParams: { prompt: 'select_account' },
+          skipBrowserRedirect: true
         }
       });
+      
       if (error) {
         toast({ title: 'Error', description: error.message, variant: 'destructive' });
+        setGoogleLoading(false);
+        return;
+      }
+
+      if (data?.url) {
+        // Open popup for Google auth
+        const width = 500;
+        const height = 600;
+        const left = window.screenX + (window.innerWidth - width) / 2;
+        const top = window.screenY + (window.innerHeight - height) / 2;
+        
+        const popup = window.open(
+          data.url,
+          'google-auth-popup',
+          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+        );
+
+        // Poll for popup close and auth state change
+        const checkPopup = setInterval(async () => {
+          if (popup?.closed) {
+            clearInterval(checkPopup);
+            setGoogleLoading(false);
+            // Check if user is now authenticated
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              window.location.href = '/home';
+            }
+          }
+        }, 500);
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to sign in with Google.', variant: 'destructive' });
-    } finally {
       setGoogleLoading(false);
     }
   };
