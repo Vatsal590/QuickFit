@@ -108,13 +108,13 @@ const Landing = () => {
             <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 variant="outline"
-                size="icon"
-                className="rounded-full border-white/40 bg-white/20 backdrop-blur hover:bg-white/40 h-9 w-9 sm:h-10 sm:w-10"
+                className="rounded-full border-primary/30 bg-primary/10 backdrop-blur hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 h-9 px-3 sm:h-10 sm:px-4 gap-1.5 sm:gap-2"
                 onClick={() => setIsLanguageSelectorOpen(true)}
                 aria-label="Change language"
                 type="button"
               >
-                <Languages className="h-4 w-4 sm:h-5 sm:w-5 text-fitness-primary" />
+                <Languages className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                <span className="text-xs sm:text-sm font-medium text-primary">🌐</span>
               </Button>
               <Link to="/auth">
                 <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-3 sm:px-6 py-2 text-sm sm:text-base font-semibold">
