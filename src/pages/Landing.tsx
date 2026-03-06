@@ -101,7 +101,7 @@ const Landing = () => {
                 <img src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" alt="QuickFit Logo" className="w-8 h-8 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-100 group-hover:rotate-6" />
                 <div className="absolute inset-0 bg-fitness-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
+              <h1 className="text-xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent my-0 mb-[5px] sm:text-3xl mr-[6px]">
                 QuickFit
               </h1>
             </div>
