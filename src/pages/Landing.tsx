@@ -26,14 +26,14 @@ const Landing = () => {
     const v = vRef.current;
     const withV = (p: string) => `${p}?v=${v}`;
     const list: string[] = [];
-    bases.forEach((b) => exts.forEach((e) => list.push(withV(`${b}${e}`))));
+    bases.forEach(b => exts.forEach(e => list.push(withV(`${b}${e}`))));
     list.push(withV('/lovable-uploads/vatsal-agarwala-founder.jpg'));
     return list;
   }, []);
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
-
+  
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
     if (next) {
@@ -101,18 +101,18 @@ const Landing = () => {
                 <img src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" alt="QuickFit Logo" className="w-8 h-8 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-100 group-hover:rotate-6" />
                 <div className="absolute inset-0 bg-fitness-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </div>
-              <h1 className="text-xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent my-0 mb-[5px] sm:text-3xl mr-[6px]">
+              <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
                 QuickFit
               </h1>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <Button
-              variant="outline"
-              className="rounded-full border-primary/30 bg-primary/10 backdrop-blur hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 h-9 px-3 sm:h-10 sm:px-4 gap-1.5 sm:gap-2"
-              onClick={() => setIsLanguageSelectorOpen(true)}
-              aria-label="Change language"
-              type="button">
-              
+                variant="outline"
+                className="rounded-full border-primary/30 bg-primary/10 backdrop-blur hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 h-9 px-3 sm:h-10 sm:px-4 gap-1.5 sm:gap-2"
+                onClick={() => setIsLanguageSelectorOpen(true)}
+                aria-label="Change language"
+                type="button"
+              >
                 <Languages className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
                 <span className="text-xs sm:text-sm font-medium text-primary">🌐</span>
               </Button>
@@ -129,9 +129,9 @@ const Landing = () => {
       </header>
 
       <LanguageSelector
-      isOpen={isLanguageSelectorOpen}
-      onClose={() => setIsLanguageSelectorOpen(false)} />
-    
+        isOpen={isLanguageSelectorOpen}
+        onClose={() => setIsLanguageSelectorOpen(false)}
+      />
  
       <main className="relative flex-grow">
         {/* Hero Section with Curved Bottom */}
@@ -146,7 +146,7 @@ const Landing = () => {
             <div className="text-center mb-16 space-y-8">
               <h2 className="text-6xl md:text-8xl font-black text-gray-900 mb-8 animate-fade-in-up leading-tight">
                 {t('Your Complete')}
-                <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer text-8xl" style={{
+                <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer" style={{
                 backgroundSize: '200% auto'
               }}>
                   {t('Fitness Companion')}
@@ -211,44 +211,44 @@ const Landing = () => {
               <div className="relative flex-shrink-0">
                 <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
                 <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
-                  {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) =>
-                <img
-                  key={idx}
-                  src={img}
-                  alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
-                  className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                  idx === radioImageIndex ? 'opacity-100' : 'opacity-0'}`
-                  } />
-
-                )}
+                  {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
+                    <img 
+                      key={idx}
+                      src={img} 
+                      alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        idx === radioImageIndex ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  ))}
                   {/* Navigation dots */}
                   <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                    {[0, 1, 2].map((idx) =>
-                  <button
-                    key={idx}
-                    onClick={() => setRadioImageIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                    idx === radioImageIndex ?
-                    'bg-white w-4' :
-                    'bg-white/50 hover:bg-white/70'}`
-                    }
-                    aria-label={`View photo ${idx + 1}`} />
-
-                  )}
+                    {[0, 1, 2].map((idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setRadioImageIndex(idx)}
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                          idx === radioImageIndex 
+                            ? 'bg-white w-4' 
+                            : 'bg-white/50 hover:bg-white/70'
+                        }`}
+                        aria-label={`View photo ${idx + 1}`}
+                      />
+                    ))}
                   </div>
                   {/* Arrow buttons */}
                   <button
-                  onClick={() => setRadioImageIndex((prev) => prev === 0 ? 2 : prev - 1)}
-                  className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                  aria-label="Previous photo">
-                  
+                    onClick={() => setRadioImageIndex((prev) => (prev === 0 ? 2 : prev - 1))}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                    aria-label="Previous photo"
+                  >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
                   <button
-                  onClick={() => setRadioImageIndex((prev) => prev === 2 ? 0 : prev + 1)}
-                  className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                  aria-label="Next photo">
-                  
+                    onClick={() => setRadioImageIndex((prev) => (prev === 2 ? 0 : prev + 1))}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                    aria-label="Next photo"
+                  >
                     <ChevronRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -264,11 +264,11 @@ const Landing = () => {
                 <p className="text-gray-600 font-medium">
                   {t("QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker")}
                 </p>
-                <a
-                href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala"
-                target="_blank"
-                rel="noopener noreferrer">
-                
+                <a 
+                  href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
                   <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
                     {t('Listen to the Feature')} <ExternalLink className="ml-2 h-4 w-4" />
                   </Button>
