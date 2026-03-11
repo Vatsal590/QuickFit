@@ -137,7 +137,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-background border-b border-border h-16 flex items-center justify-between px-4 
+        <header className="bg-white border-b border-border h-16 flex items-center justify-between px-4 
              fixed top-0 left-0 right-0 z-50 pt-[env(safe-area-inset-top)]">
           <div className="flex items-center gap-4">
             <Button 
@@ -155,7 +155,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
             <img 
               src={quickfitLogo}
               alt="QuickFit Logo" 
-              className="h-8 md:h-10 w-auto"
+              className="h-10 md:h-12 w-auto"
             />
           </div>
           
