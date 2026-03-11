@@ -6,6 +6,7 @@ import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, Ba
 import radioAraImage1 from '@/assets/radioara-feature.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
+import quickfitLogo from '@/assets/quickfit-logo.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import LanguageSelector from '@/components/language/LanguageSelector';
@@ -93,17 +94,11 @@ const Landing = () => {
       </div>
 
       {/* Header with Apple Glass Effect */}
-      <header className="relative glass sticky top-0 z-50 shadow-sm">
+      <header className="relative bg-white sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
-            <div className="flex items-center space-x-1 group">
-              <div className="relative">
-                <img src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" alt="QuickFit Logo" className="w-8 h-8 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-100 group-hover:rotate-6" />
-                <div className="absolute inset-0 bg-fitness-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </div>
-              <h1 className="text-xl sm:text-3xl font-bold bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
-                QuickFit
-              </h1>
+            <div className="flex items-center group">
+              <img src={quickfitLogo} alt="QuickFit Logo" className="h-10 md:h-12 w-auto" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <Button
