@@ -150,13 +150,12 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
             </Button>
           </div>
           
-          <div className="flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2">
+          <div className="absolute left-1/2 transform -translate-x-1/2">
             <img 
-              src="/lovable-uploads/1c5d9536-3ab1-4377-bc37-da68da0ce646.png" 
+              src={quickfitLogo}
               alt="QuickFit Logo" 
-              className="w-8 h-8"
+              className="h-8 md:h-10 w-auto"
             />
-            <h1 className="text-xl md:text-2xl font-bold text-fitness-primary">QuickFit</h1>
           </div>
           
           <div className="flex items-center space-x-2">
