@@ -155,7 +155,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
             <img 
               src={quickfitLogo}
               alt="QuickFit Logo" 
-              className="h-8 md:h-10 w-auto"
+              className="h-10 md:h-12 w-auto"
             />
           </div>
           
