@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import quickfitLogo from '@/assets/quickfit-logo.png';
 import { Button } from "@/components/ui/button";
 import { SidebarProvider, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { 
