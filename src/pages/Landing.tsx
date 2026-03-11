@@ -6,6 +6,7 @@ import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, Ba
 import radioAraImage1 from '@/assets/radioara-feature.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
+import quickfitLogo from '@/assets/quickfit-logo.png';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import LanguageSelector from '@/components/language/LanguageSelector';
