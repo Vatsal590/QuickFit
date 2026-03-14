@@ -1207,7 +1207,7 @@ const DietPlan = () => {
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
                           <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
-                              <strong>Protein:</strong> {meal.protein}g
+                              <strong>{t('Protein')}:</strong> {meal.protein}g
                             </span>
                             <span className="text-muted-foreground">
                               <strong>Carbs:</strong> {meal.carbs}g
