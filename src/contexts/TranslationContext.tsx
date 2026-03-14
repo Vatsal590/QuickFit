@@ -452,7 +452,6 @@ const translations: Record<string, Record<string, string>> = {
     'Goal Weight': 'Poids Cible',
     'Enter goal weight': 'Entrez le poids cible',
     'Dietary Preferences': 'Préférences Alimentaires',
-    'Food Allergies': 'Allergies Alimentaires',
     'Cuisine Preferences': 'Préférences de Cuisine',
     'Available Cooking Time': 'Temps de Cuisson Disponible',
     'Set your available cooking time for each meal': 'Définissez votre temps de cuisson pour chaque repas',
