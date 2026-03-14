@@ -1092,9 +1092,9 @@ const DietPlan = () => {
         <Card className="border-2 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <UtensilsCrossed className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Generate Your Diet Plan</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('Generate Your Diet Plan')}</h3>
             <p className="text-muted-foreground text-center mb-6 max-w-md">
-              Get a personalized 7-day meal plan with accurate macros based on your preferences
+              {t('Get a personalized 7-day meal plan with accurate macros based on your preferences')}
             </p>
             <Button 
               size="lg" 
