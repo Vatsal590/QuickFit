@@ -1158,7 +1158,7 @@ const DietPlan = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Calendar className="h-5 w-5" />
-                      Day {plan.day} Summary
+                      {t('Day')} {plan.day} {t('Summary')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
