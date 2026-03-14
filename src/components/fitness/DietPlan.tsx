@@ -1102,7 +1102,7 @@ const DietPlan = () => {
               disabled={isGenerating}
               className="min-w-[200px]"
             >
-              {isGenerating ? 'Generating...' : 'Generate 7-Day Plan'}
+              {isGenerating ? t('Generating...') : t('Generate 7-Day Plan')}
             </Button>
           </CardContent>
         </Card>
