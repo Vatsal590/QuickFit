@@ -1110,7 +1110,7 @@ const DietPlan = () => {
         <>
           {/* Diet Plan Display */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-            <h2 className="text-2xl font-bold">Your 7-Day {getPlanType()} Plan</h2>
+            <h2 className="text-2xl font-bold">{t('Your 7-Day')} {t(getPlanType())} {t('Plan')}</h2>
             <div className="flex gap-2 w-full md:w-auto">
               <Button variant="outline" size="sm" onClick={generateDietPlan} className="flex-1 md:flex-none">
                 Regenerate Plan
