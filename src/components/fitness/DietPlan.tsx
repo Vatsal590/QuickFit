@@ -1301,7 +1301,7 @@ const DietPlan = () => {
                             disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
-                            {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                            {syncingMeal === `${plan.day}-lunch-${meal.name}` ? t('Syncing...') : t('Add to Tracker')}
                           </Button>
                         </div>
                       </div>
