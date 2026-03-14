@@ -1049,16 +1049,6 @@ export const exercises: Exercise[] = [
     description: "Run in place, bringing knees up toward chest as high as possible. Keep a quick pace, pumping arms as if running."
   },
   {
-    id: "jump-rope",
-    name: "Jump Rope",
-    muscleGroup: "cardio",
-    equipment: ["none"],
-    sets: 3,
-    reps: 50,
-    restTime: 30,
-    description: "Jump rope at a steady pace, keeping jumps small and consistent. Use an actual jump rope or simulate the movement."
-  },
-  {
     id: "jumping-squat",
     name: "Jumping Squat",
     muscleGroup: "cardio",
