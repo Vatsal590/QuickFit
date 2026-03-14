@@ -1352,7 +1352,7 @@ const DietPlan = () => {
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Recipe
+                            {t('Recipe')}
                           </Button>
                           <Button
                             size="sm"
