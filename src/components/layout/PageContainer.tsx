@@ -1,12 +1,15 @@
 
 import React from 'react';
 import { Instagram } from 'lucide-react';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface PageContainerProps {
   children: React.ReactNode;
 }
 
 const PageContainer = ({ children }: PageContainerProps) => {
+  const { t } = useTranslation();
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Apple-style Animated Background */}
@@ -25,16 +28,16 @@ const PageContainer = ({ children }: PageContainerProps) => {
       
       <footer className="relative bg-fitness-dark text-white py-6 mt-12">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-base font-semibold mb-3">© 2025 QuickFit. Sculpted by Vatsal Agarwala.</p>
+          <p className="text-base font-semibold mb-3">© 2025 QuickFit. {t('Sculpted by Vatsal Agarwala.')}</p>
           <div className="flex flex-wrap justify-center gap-6 text-sm text-white/70">
             <a href="/" className="hover:text-white transition-colors duration-300 font-medium">
-              Home
+              {t('Home')}
             </a>
             <a href="/privacy-policy" className="hover:text-white transition-colors duration-300 font-medium">
-              Privacy Policy
+              {t('Privacy Policy')}
             </a>
             <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-medium">
-              Terms of Service
+              {t('Terms of Service')}
             </a>
             <a 
               href="https://www.instagram.com/quickfit.dev/" 

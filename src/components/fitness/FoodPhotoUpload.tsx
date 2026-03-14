@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface FoodPhotoUploadProps {
   onFoodLogged: () => void;
@@ -16,6 +17,7 @@ interface FoodPhotoUploadProps {
 
 const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzedFoods, setAnalyzedFoods] = useState<any[]>([]);
@@ -31,7 +33,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
     if (!file) return;
 
     if (!file.type.startsWith('image/')) {
-      toast.error('Please select an image file');
+      toast.error(t('Please select an image file'));
       return;
     }
 
@@ -46,7 +48,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
 
   const analyzeImage = async (imageData: string) => {
     setIsAnalyzing(true);
-    toast.loading('Analyzing your food... This may take a moment', { id: 'analyzing' });
+    toast.loading(t('Analyzing your food... This may take a moment'), { id: 'analyzing' });
     
     try {
       const { data, error } = await supabase.functions.invoke('analyze-food-image', {
@@ -83,11 +85,11 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       }
       
       toast.dismiss('analyzing');
-      toast.success('Food analyzed successfully!');
+      toast.success(t('Food analyzed successfully!'));
     } catch (error: any) {
       console.error('Error analyzing food:', error);
       toast.dismiss('analyzing');
-      toast.error('Hmm...Maybe try uploading a different picture?');
+      toast.error(t('Hmm...Maybe try uploading a different picture?'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -151,12 +153,12 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         .order('created_at', { ascending: false })
         .limit(1);
 
-      toast.success('Meal logged successfully!');
+      toast.success(t('Meal logged successfully!'));
       resetForm();
       onFoodLogged();
     } catch (error: any) {
       console.error('Error saving food log:', error);
-      toast.error('Failed to save meal log');
+      toast.error(t('Failed to save meal log'));
     }
   };
 
@@ -176,13 +178,13 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Camera className="h-5 w-5" />
-          Log Your Meal
+          {t('Log Your Meal')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="photo-upload">Upload Photo</Label>
+            <Label htmlFor="photo-upload">{t('Upload Photo')}</Label>
             <div className="mt-2">
               <Input
                 ref={fileInputRef}
@@ -201,13 +203,13 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 disabled={isAnalyzing}
               >
                 <Upload className="h-4 w-4 mr-2" />
-                Choose File
+                {t('Choose File')}
               </Button>
             </div>
           </div>
           
           <div>
-            <Label htmlFor="camera-capture">Take Photo</Label>
+            <Label htmlFor="camera-capture">{t('Take Photo')}</Label>
             <div className="mt-2">
               <Input
                 ref={cameraInputRef}
@@ -227,7 +229,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 disabled={isAnalyzing}
               >
                 <Camera className="h-4 w-4 mr-2" />
-                Take Photo
+                {t('Take Photo')}
               </Button>
             </div>
           </div>
@@ -238,15 +240,15 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
             <div className="relative">
               <img
                 src={selectedImage}
-                alt="Selected food"
+                alt={t('Selected food')}
                 className="w-full h-48 object-cover rounded-lg"
               />
               {isAnalyzing && (
                 <div className="absolute inset-0 glass rounded-lg flex flex-col items-center justify-center gap-3">
                   <Loader2 className="h-12 w-12 animate-spin text-primary" />
                   <div className="text-center space-y-1">
-                    <p className="font-semibold text-foreground">Analyzing your food...</p>
-                    <p className="text-sm text-muted-foreground">This may take a moment</p>
+                    <p className="font-semibold text-foreground">{t('Analyzing your food...')}</p>
+                    <p className="text-sm text-muted-foreground">{t('This may take a moment')}</p>
                   </div>
                 </div>
               )}
@@ -264,14 +266,14 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
             ) : analyzedFoods.length > 0 && (
               <>
                 <div className="space-y-2">
-                  <h3 className="font-semibold">Detected Foods (Edit as needed):</h3>
+                  <h3 className="font-semibold">{t('Detected Foods (Edit as needed)')}:</h3>
                   <div className="space-y-3">
                     {analyzedFoods.map((food, index) => (
                       <div key={index} className="p-3 bg-muted rounded-lg space-y-2">
                         <div className="flex items-start gap-2">
                           <div className="flex-1 space-y-2">
                             <div>
-                              <Label className="text-xs">Food Name</Label>
+                              <Label className="text-xs">{t('Food Name')}</Label>
                               <Input
                                 value={food.name}
                                 onChange={(e) => updateFood(index, 'name', e.target.value)}
@@ -279,7 +281,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                               />
                             </div>
                             <div>
-                              <Label className="text-xs">Portion</Label>
+                              <Label className="text-xs">{t('Portion')}</Label>
                               <Input
                                 value={food.portion}
                                 onChange={(e) => updateFood(index, 'portion', e.target.value)}
@@ -299,7 +301,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                         </div>
                         <div className="grid grid-cols-4 gap-2">
                           <div>
-                            <Label className="text-xs">Calories</Label>
+                            <Label className="text-xs">{t('Calories')}</Label>
                             <Input
                               type="number"
                               value={food.calories}
@@ -308,7 +310,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                             />
                           </div>
                           <div>
-                            <Label className="text-xs">Protein (g)</Label>
+                            <Label className="text-xs">{t('Protein')} (g)</Label>
                             <Input
                               type="number"
                               value={food.protein}
@@ -317,7 +319,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                             />
                           </div>
                           <div>
-                            <Label className="text-xs">Carbs (g)</Label>
+                            <Label className="text-xs">{t('Carbs')} (g)</Label>
                             <Input
                               type="number"
                               value={food.carbs}
@@ -326,7 +328,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                             />
                           </div>
                           <div>
-                            <Label className="text-xs">Fats (g)</Label>
+                            <Label className="text-xs">{t('Fats')} (g)</Label>
                             <Input
                               type="number"
                               value={food.fats}
@@ -343,47 +345,47 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 {totals && (
                   <div className="p-4 bg-primary/10 rounded-lg space-y-4">
                     <div>
-                      <h3 className="font-semibold mb-2">Macronutrients:</h3>
+                      <h3 className="font-semibold mb-2">{t('Macronutrients')}:</h3>
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                         <div>
-                          <div className="text-muted-foreground">Calories</div>
+                          <div className="text-muted-foreground">{t('Calories')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.calories)}</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Protein</div>
+                          <div className="text-muted-foreground">{t('Protein')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.protein)}g</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Carbs</div>
+                          <div className="text-muted-foreground">{t('Carbs')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.carbs)}g</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Fats</div>
+                          <div className="text-muted-foreground">{t('Fats')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.fats)}g</div>
                         </div>
                       </div>
                     </div>
                     <div>
-                      <h3 className="font-semibold mb-2">Micronutrients:</h3>
+                      <h3 className="font-semibold mb-2">{t('Micronutrients')}:</h3>
                       <div className="grid grid-cols-3 md:grid-cols-5 gap-3 text-sm">
                         <div>
-                          <div className="text-muted-foreground">Sodium</div>
+                          <div className="text-muted-foreground">{t('Sodium')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.sodium)}mg</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Calcium</div>
+                          <div className="text-muted-foreground">{t('Calcium')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.calcium)}mg</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Iron</div>
+                          <div className="text-muted-foreground">{t('Iron')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.iron * 10) / 10}mg</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Fiber</div>
+                          <div className="text-muted-foreground">{t('Fiber')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.fiber)}g</div>
                         </div>
                         <div>
-                          <div className="text-muted-foreground">Sugar</div>
+                          <div className="text-muted-foreground">{t('Sugar')}</div>
                           <div className="text-lg font-bold">{Math.round(totals.sugar)}g</div>
                         </div>
                       </div>
@@ -395,7 +397,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                   <div className="p-4 bg-accent/20 border border-accent/30 rounded-lg">
                     <h3 className="font-semibold mb-3 flex items-center gap-2 text-accent-foreground">
                       <Lightbulb className="h-5 w-5 text-yellow-500" />
-                      Make It Healthier
+                      {t('Make It Healthier')}
                     </h3>
                     <ul className="space-y-2">
                       {healthSuggestions.map((suggestion, index) => (
@@ -409,33 +411,33 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
                 )}
 
                 <div>
-                  <Label htmlFor="meal-type">Meal Type</Label>
+                  <Label htmlFor="meal-type">{t('Meal Type')}</Label>
                   <Select value={mealType} onValueChange={setMealType}>
                     <SelectTrigger id="meal-type">
-                      <SelectValue placeholder="Select meal type" />
+                      <SelectValue placeholder={t('Select meal type')} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="breakfast">Breakfast</SelectItem>
-                      <SelectItem value="lunch">Lunch</SelectItem>
-                      <SelectItem value="dinner">Dinner</SelectItem>
-                      <SelectItem value="snack">Snack</SelectItem>
+                      <SelectItem value="breakfast">{t('Breakfast')}</SelectItem>
+                      <SelectItem value="lunch">{t('Lunch')}</SelectItem>
+                      <SelectItem value="dinner">{t('Dinner')}</SelectItem>
+                      <SelectItem value="snack">{t('Snack')}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="notes">Notes (optional)</Label>
+                  <Label htmlFor="notes">{t('Notes (optional)')}</Label>
                   <Textarea
                     id="notes"
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Add any notes about this meal..."
+                    placeholder={t('Add any notes about this meal...')}
                     rows={2}
                   />
                 </div>
 
                 <Button onClick={handleSaveLog} className="w-full" disabled={!mealType}>
-                  Save Meal Log
+                  {t('Save Meal Log')}
                 </Button>
               </>
             )}

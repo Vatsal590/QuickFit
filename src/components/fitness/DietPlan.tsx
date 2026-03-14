@@ -864,7 +864,7 @@ const DietPlan = () => {
               {t('Your Nutrition Plan')}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {getPlanType()} • {profile.taste_preferences?.join(', ') || 'American'} Cuisine
+              {t(getPlanType())} • {profile.taste_preferences?.join(', ') || 'American'} {t('Cuisine')}
             </p>
           </div>
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
@@ -877,24 +877,24 @@ const DietPlan = () => {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-full">
               <DialogHeader>
-                <DialogTitle>Edit Diet Preferences</DialogTitle>
+                <DialogTitle>{t('Edit Diet Preferences')}</DialogTitle>
                 <DialogDescription>
-                  Update your dietary preferences and restrictions
+                  {t('Update your dietary preferences and restrictions')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-6 py-4">
                 <div className="space-y-3">
-                  <Label>Goal Weight</Label>
+                  <Label>{t('Goal Weight')}</Label>
                   <Input
                     type="number"
                     value={editFormData.goal_weight}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
-                    placeholder="Enter goal weight"
+                    placeholder={t('Enter goal weight')}
                   />
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Dietary Preferences</Label>
+                  <Label>{t('Dietary Preferences')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {dietPreferences.map((pref) => (
                       <div key={pref} className="flex items-center space-x-2">
@@ -904,7 +904,7 @@ const DietPlan = () => {
                           onCheckedChange={() => handleCheckboxChange('diet_preferences', pref)}
                         />
                         <label htmlFor={`diet-${pref}`} className="text-sm cursor-pointer">
-                          {pref}
+                          {t(pref)}
                         </label>
                       </div>
                     ))}
@@ -912,7 +912,7 @@ const DietPlan = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Food Allergies</Label>
+                  <Label>{t('Food Allergies')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {allergyOptions.map((allergy) => (
                       <div key={allergy} className="flex items-center space-x-2">
@@ -922,7 +922,7 @@ const DietPlan = () => {
                           onCheckedChange={() => handleCheckboxChange('food_allergies', allergy)}
                         />
                         <label htmlFor={`allergy-${allergy}`} className="text-sm cursor-pointer">
-                          {allergy}
+                          {t(allergy)}
                         </label>
                       </div>
                     ))}
@@ -930,7 +930,7 @@ const DietPlan = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Cuisine Preferences</Label>
+                  <Label>{t('Cuisine Preferences')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {cuisineOptions.map((cuisine) => (
                       <div key={cuisine} className="flex items-center space-x-2">
@@ -940,7 +940,7 @@ const DietPlan = () => {
                           onCheckedChange={() => handleCheckboxChange('taste_preferences', cuisine)}
                         />
                         <label htmlFor={`cuisine-${cuisine}`} className="text-sm cursor-pointer">
-                          {cuisine}
+                          {t(cuisine)}
                         </label>
                       </div>
                     ))}
@@ -950,15 +950,15 @@ const DietPlan = () => {
                 <div className="space-y-4">
                   <Label className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    Available Cooking Time
+                    {t('Available Cooking Time')}
                   </Label>
                   <p className="text-xs text-muted-foreground -mt-2">
-                    Set your available cooking time for each meal
+                    {t('Set your available cooking time for each meal')}
                   </p>
                   
                   {/* Breakfast */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">🌅 Breakfast</p>
+                    <p className="text-sm font-medium">🌅 {t('Breakfast')}</p>
                     <div className="grid grid-cols-5 gap-2">
                       {[
                         { value: '5', label: '5 min' },
@@ -983,7 +983,7 @@ const DietPlan = () => {
 
                   {/* Lunch */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">🌞 Lunch</p>
+                    <p className="text-sm font-medium">🌞 {t('Lunch')}</p>
                     <div className="grid grid-cols-5 gap-2">
                       {[
                         { value: '5', label: '5 min' },
@@ -1008,7 +1008,7 @@ const DietPlan = () => {
 
                   {/* Dinner */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">🌙 Dinner</p>
+                    <p className="text-sm font-medium">🌙 {t('Dinner')}</p>
                     <div className="grid grid-cols-5 gap-2">
                       {[
                         { value: '5', label: '5 min' },
@@ -1034,10 +1034,10 @@ const DietPlan = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setIsEditingProfile(false)}>
-                  Cancel
+                  {t('Cancel')}
                 </Button>
                 <Button onClick={handleUpdateProfile}>
-                  Save Changes
+                  {t('Save Changes')}
                 </Button>
               </div>
             </DialogContent>
@@ -1052,14 +1052,14 @@ const DietPlan = () => {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                 <Settings className="h-4 w-4 mr-2" />
-                Calories & Macros
+                {t('Calories & Macros')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md w-[95vw] md:w-full">
               <DialogHeader>
-                <DialogTitle>Edit Calories & Macros</DialogTitle>
+                <DialogTitle>{t('Edit Calories & Macros')}</DialogTitle>
                 <DialogDescription>
-                  These sync with your AI Food Tracker goals.
+                  {t('These sync with your AI Food Tracker goals.')}
                 </DialogDescription>
               </DialogHeader>
               <NutritionGoals />
@@ -1092,9 +1092,9 @@ const DietPlan = () => {
         <Card className="border-2 border-dashed">
           <CardContent className="flex flex-col items-center justify-center py-12">
             <UtensilsCrossed className="h-16 w-16 text-muted-foreground mb-4" />
-            <h3 className="text-xl font-semibold mb-2">Generate Your Diet Plan</h3>
+            <h3 className="text-xl font-semibold mb-2">{t('Generate Your Diet Plan')}</h3>
             <p className="text-muted-foreground text-center mb-6 max-w-md">
-              Get a personalized 7-day meal plan with accurate macros based on your preferences
+              {t('Get a personalized 7-day meal plan with accurate macros based on your preferences')}
             </p>
             <Button 
               size="lg" 
@@ -1102,7 +1102,7 @@ const DietPlan = () => {
               disabled={isGenerating}
               className="min-w-[200px]"
             >
-              {isGenerating ? 'Generating...' : 'Generate 7-Day Plan'}
+              {isGenerating ? t('Generating...') : t('Generate 7-Day Plan')}
             </Button>
           </CardContent>
         </Card>
@@ -1110,29 +1110,29 @@ const DietPlan = () => {
         <>
           {/* Diet Plan Display */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-            <h2 className="text-2xl font-bold">Your 7-Day {getPlanType()} Plan</h2>
+            <h2 className="text-2xl font-bold">{t('Your 7-Day')} {t(getPlanType())} {t('Plan')}</h2>
             <div className="flex gap-2 w-full md:w-auto">
               <Button variant="outline" size="sm" onClick={generateDietPlan} className="flex-1 md:flex-none">
-                Regenerate Plan
+                {t('Regenerate Plan')}
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="sm" className="flex-1 md:flex-none">
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Clear Plan
+                    {t('Clear Plan')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Diet Plan?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('Clear Diet Plan?')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will remove your current diet plan. You can always generate a new one.
+                      {t('This will remove your current diet plan. You can always generate a new one.')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={clearDietPlan}>
-                      Clear Plan
+                      {t('Clear Plan')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
@@ -1145,7 +1145,7 @@ const DietPlan = () => {
               <TabsList className="inline-flex md:grid md:grid-cols-7 w-auto md:w-full min-w-max">
                 {dietPlan.map((plan) => (
                   <TabsTrigger key={plan.day} value={`day${plan.day}`} className="flex-shrink-0">
-                    Day {plan.day}
+                    {t('Day')} {plan.day}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -1158,31 +1158,31 @@ const DietPlan = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Calendar className="h-5 w-5" />
-                      Day {plan.day} Summary
+                      {t('Day')} {plan.day} {t('Summary')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Target</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Target')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.targetCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Total</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Total')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Protein</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Protein')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalProtein}g</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Carbs</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Carbs')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalCarbs}g</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Fats</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Fats')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalFats}g</p>
                       </div>
                     </div>
@@ -1193,7 +1193,7 @@ const DietPlan = () => {
                 <Card>
                   <CardHeader className="pb-3">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <CardTitle>🌅 Breakfast</CardTitle>
+                      <CardTitle>🌅 {t('Breakfast')}</CardTitle>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <CookTimeSelector mealType="breakfast" currentTime={inlineCookTimes.breakfast} />
@@ -1207,16 +1207,16 @@ const DietPlan = () => {
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
                           <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
-                              <strong>Protein:</strong> {meal.protein}g
+                              <strong>{t('Protein')}:</strong> {meal.protein}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Carbs:</strong> {meal.carbs}g
+                              <strong>{t('Carbs')}:</strong> {meal.carbs}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Fats:</strong> {meal.fats}g
+                              <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Calories:</strong> {meal.calories}
+                              <strong>{t('Calories')}:</strong> {meal.calories}
                             </span>
                             <span className="text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" />
@@ -1232,7 +1232,7 @@ const DietPlan = () => {
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Recipe
+                            {t('Recipe')}
                           </Button>
                           <Button
                             size="sm"
@@ -1241,7 +1241,7 @@ const DietPlan = () => {
                             disabled={syncingMeal === `${plan.day}-breakfast-${meal.name}`}
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
-                            {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                            {syncingMeal === `${plan.day}-breakfast-${meal.name}` ? t('Syncing...') : t('Add to Tracker')}
                           </Button>
                         </div>
                       </div>
@@ -1253,7 +1253,7 @@ const DietPlan = () => {
                 <Card>
                   <CardHeader className="pb-3">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <CardTitle>🌞 Lunch</CardTitle>
+                      <CardTitle>🌞 {t('Lunch')}</CardTitle>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <CookTimeSelector mealType="lunch" currentTime={inlineCookTimes.lunch} />
@@ -1267,16 +1267,16 @@ const DietPlan = () => {
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
                           <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
-                              <strong>Protein:</strong> {meal.protein}g
+                              <strong>{t('Protein')}:</strong> {meal.protein}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Carbs:</strong> {meal.carbs}g
+                              <strong>{t('Carbs')}:</strong> {meal.carbs}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Fats:</strong> {meal.fats}g
+                              <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Calories:</strong> {meal.calories}
+                              <strong>{t('Calories')}:</strong> {meal.calories}
                             </span>
                             <span className="text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" />
@@ -1292,7 +1292,7 @@ const DietPlan = () => {
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Recipe
+                            {t('Recipe')}
                           </Button>
                           <Button
                             size="sm"
@@ -1301,7 +1301,7 @@ const DietPlan = () => {
                             disabled={syncingMeal === `${plan.day}-lunch-${meal.name}`}
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
-                            {syncingMeal === `${plan.day}-lunch-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                            {syncingMeal === `${plan.day}-lunch-${meal.name}` ? t('Syncing...') : t('Add to Tracker')}
                           </Button>
                         </div>
                       </div>
@@ -1313,7 +1313,7 @@ const DietPlan = () => {
                 <Card>
                   <CardHeader className="pb-3">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                      <CardTitle>🌙 Dinner</CardTitle>
+                      <CardTitle>🌙 {t('Dinner')}</CardTitle>
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-muted-foreground" />
                         <CookTimeSelector mealType="dinner" currentTime={inlineCookTimes.dinner} />
@@ -1327,16 +1327,16 @@ const DietPlan = () => {
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
                           <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
-                              <strong>Protein:</strong> {meal.protein}g
+                              <strong>{t('Protein')}:</strong> {meal.protein}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Carbs:</strong> {meal.carbs}g
+                              <strong>{t('Carbs')}:</strong> {meal.carbs}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Fats:</strong> {meal.fats}g
+                              <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Calories:</strong> {meal.calories}
+                              <strong>{t('Calories')}:</strong> {meal.calories}
                             </span>
                             <span className="text-muted-foreground flex items-center gap-1">
                               <Clock className="h-3 w-3" />
@@ -1352,7 +1352,7 @@ const DietPlan = () => {
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Recipe
+                            {t('Recipe')}
                           </Button>
                           <Button
                             size="sm"
@@ -1361,7 +1361,7 @@ const DietPlan = () => {
                             disabled={syncingMeal === `${plan.day}-dinner-${meal.name}`}
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
-                            {syncingMeal === `${plan.day}-dinner-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                            {syncingMeal === `${plan.day}-dinner-${meal.name}` ? t('Syncing...') : t('Add to Tracker')}
                           </Button>
                         </div>
                       </div>
@@ -1372,7 +1372,7 @@ const DietPlan = () => {
                 {/* Snacks */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>🍎 Snacks</CardTitle>
+                    <CardTitle>🍎 {t('Snacks')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.snacks.map((meal, idx) => (
@@ -1381,16 +1381,16 @@ const DietPlan = () => {
                           <h4 className="font-semibold mb-2">{meal.name}</h4>
                           <div className="flex flex-wrap gap-2 md:gap-3 text-sm">
                             <span className="text-muted-foreground">
-                              <strong>Protein:</strong> {meal.protein}g
+                              <strong>{t('Protein')}:</strong> {meal.protein}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Carbs:</strong> {meal.carbs}g
+                              <strong>{t('Carbs')}:</strong> {meal.carbs}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Fats:</strong> {meal.fats}g
+                              <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Calories:</strong> {meal.calories}
+                              <strong>{t('Calories')}:</strong> {meal.calories}
                             </span>
                           </div>
                         </div>
@@ -1402,7 +1402,7 @@ const DietPlan = () => {
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
                             <BookOpen className="h-4 w-4 mr-2" />
-                            Recipe
+                            {t('Recipe')}
                           </Button>
                           <Button
                             size="sm"
@@ -1411,7 +1411,7 @@ const DietPlan = () => {
                             disabled={syncingMeal === `${plan.day}-snacks-${meal.name}`}
                             className="w-full sm:w-auto whitespace-nowrap"
                           >
-                            {syncingMeal === `${plan.day}-snacks-${meal.name}` ? 'Syncing...' : 'Add to Tracker'}
+                            {syncingMeal === `${plan.day}-snacks-${meal.name}` ? t('Syncing...') : t('Add to Tracker')}
                           </Button>
                         </div>
                       </div>
@@ -1433,7 +1433,7 @@ const DietPlan = () => {
               {selectedRecipe?.mealName}
             </DialogTitle>
             <DialogDescription>
-              Recipe for 1 portion
+              {t('Recipe for 1 portion')}
             </DialogDescription>
           </DialogHeader>
           
@@ -1441,7 +1441,7 @@ const DietPlan = () => {
             <div className="space-y-6 py-4">
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <span className="text-sm font-medium">Generating recipe...</span>
+                <span className="text-sm font-medium">{t('Generating recipe...')}</span>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -1469,7 +1469,7 @@ const DietPlan = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <UtensilsCrossed className="h-5 w-5" />
-                    Ingredients
+                    {t('Ingredients')}
                   </h3>
                   <ul className="space-y-2">
                     {selectedRecipe.ingredients.map((ingredient, idx) => (
@@ -1485,7 +1485,7 @@ const DietPlan = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <BookOpen className="h-5 w-5" />
-                    Instructions
+                    {t('Instructions')}
                   </h3>
                   <ol className="space-y-3">
                     {selectedRecipe.instructions.map((instruction, idx) => (

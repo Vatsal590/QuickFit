@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 interface ExerciseTimerProps {
   duration: number; // in seconds
@@ -11,6 +12,7 @@ interface ExerciseTimerProps {
 }
 
 const ExerciseTimer = ({ duration, onComplete, autoStart = false, className = "" }: ExerciseTimerProps) => {
+  const { t } = useTranslation();
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(autoStart);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -107,7 +109,7 @@ const ExerciseTimer = ({ duration, onComplete, autoStart = false, className = ""
           className="flex items-center gap-1"
         >
           {isRunning ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-          {isRunning ? 'Pause' : 'Play'}
+          {isRunning ? t('Pause') : t('Play')}
         </Button>
         
         <Button
@@ -117,7 +119,7 @@ const ExerciseTimer = ({ duration, onComplete, autoStart = false, className = ""
           className="flex items-center gap-1"
         >
           <RotateCcw className="h-4 w-4" />
-          Reset
+          {t('Reset')}
         </Button>
       </div>
     </div>
