@@ -889,7 +889,7 @@ const DietPlan = () => {
                     type="number"
                     value={editFormData.goal_weight}
                     onChange={(e) => setEditFormData(prev => ({ ...prev, goal_weight: e.target.value }))}
-                    placeholder="Enter goal weight"
+                    placeholder={t('Enter goal weight')}
                   />
                 </div>
 
