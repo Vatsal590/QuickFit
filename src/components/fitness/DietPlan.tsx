@@ -864,7 +864,7 @@ const DietPlan = () => {
               {t('Your Nutrition Plan')}
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">
-              {getPlanType()} • {profile.taste_preferences?.join(', ') || 'American'} Cuisine
+              {t(getPlanType())} • {profile.taste_preferences?.join(', ') || 'American'} {t('Cuisine')}
             </p>
           </div>
           <div className="flex flex-wrap gap-2 w-full md:w-auto">
