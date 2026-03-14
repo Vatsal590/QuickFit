@@ -1130,9 +1130,9 @@ const DietPlan = () => {
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel>{t('Cancel')}</AlertDialogCancel>
                     <AlertDialogAction onClick={clearDietPlan}>
-                      Clear Plan
+                      {t('Clear Plan')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
