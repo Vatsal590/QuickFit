@@ -579,16 +579,6 @@ export const exercises: Exercise[] = [
     description: "Lie face down, simultaneously lift chest and legs off ground, hold briefly, then lower back down."
   },
   {
-    id: "cat-cow-pose",
-    name: "Cat-Cow Pose",
-    muscleGroup: "back",
-    equipment: ["none"],
-    sets: 3,
-    reps: 10,
-    restTime: 30,
-    description: "On hands and knees, alternate between arching back (cow) and rounding spine (cat)."
-  },
-  {
     id: "bird-dog-pose",
     name: "Bird Dog Pose",
     muscleGroup: "back",
