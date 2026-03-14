@@ -894,7 +894,7 @@ const DietPlan = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Dietary Preferences</Label>
+                  <Label>{t('Dietary Preferences')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {dietPreferences.map((pref) => (
                       <div key={pref} className="flex items-center space-x-2">
