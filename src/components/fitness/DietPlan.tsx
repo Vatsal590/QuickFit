@@ -1124,9 +1124,9 @@ const DietPlan = () => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
-                    <AlertDialogTitle>Clear Diet Plan?</AlertDialogTitle>
+                    <AlertDialogTitle>{t('Clear Diet Plan?')}</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This will remove your current diet plan. You can always generate a new one.
+                      {t('This will remove your current diet plan. You can always generate a new one.')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
