@@ -1174,7 +1174,7 @@ const DietPlan = () => {
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Protein</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Protein')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalProtein}g</p>
                       </div>
                       <div className="text-center">
