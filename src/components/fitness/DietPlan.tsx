@@ -1273,7 +1273,7 @@ const DietPlan = () => {
                               <strong>{t('Carbs')}:</strong> {meal.carbs}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Fats:</strong> {meal.fats}g
+                              <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
                               <strong>Calories:</strong> {meal.calories}
