@@ -877,9 +877,9 @@ const DietPlan = () => {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto w-[95vw] md:w-full">
               <DialogHeader>
-                <DialogTitle>Edit Diet Preferences</DialogTitle>
+                <DialogTitle>{t('Edit Diet Preferences')}</DialogTitle>
                 <DialogDescription>
-                  Update your dietary preferences and restrictions
+                  {t('Update your dietary preferences and restrictions')}
                 </DialogDescription>
               </DialogHeader>
               <div className="space-y-6 py-4">
