@@ -912,7 +912,7 @@ const DietPlan = () => {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>Food Allergies</Label>
+                  <Label>{t('Food Allergies')}</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {allergyOptions.map((allergy) => (
                       <div key={allergy} className="flex items-center space-x-2">
