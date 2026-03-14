@@ -1169,7 +1169,7 @@ const DietPlan = () => {
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Total</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Total')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.totalCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
