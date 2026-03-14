@@ -1469,7 +1469,7 @@ const DietPlan = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <UtensilsCrossed className="h-5 w-5" />
-                    Ingredients
+                    {t('Ingredients')}
                   </h3>
                   <ul className="space-y-2">
                     {selectedRecipe.ingredients.map((ingredient, idx) => (
