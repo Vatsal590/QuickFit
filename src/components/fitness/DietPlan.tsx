@@ -904,7 +904,7 @@ const DietPlan = () => {
                           onCheckedChange={() => handleCheckboxChange('diet_preferences', pref)}
                         />
                         <label htmlFor={`diet-${pref}`} className="text-sm cursor-pointer">
-                          {pref}
+                          {t(pref)}
                         </label>
                       </div>
                     ))}
