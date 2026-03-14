@@ -1145,7 +1145,7 @@ const DietPlan = () => {
               <TabsList className="inline-flex md:grid md:grid-cols-7 w-auto md:w-full min-w-max">
                 {dietPlan.map((plan) => (
                   <TabsTrigger key={plan.day} value={`day${plan.day}`} className="flex-shrink-0">
-                    Day {plan.day}
+                    {t('Day')} {plan.day}
                   </TabsTrigger>
                 ))}
               </TabsList>
