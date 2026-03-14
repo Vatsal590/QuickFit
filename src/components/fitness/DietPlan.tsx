@@ -1390,7 +1390,7 @@ const DietPlan = () => {
                               <strong>{t('Fats')}:</strong> {meal.fats}g
                             </span>
                             <span className="text-muted-foreground">
-                              <strong>Calories:</strong> {meal.calories}
+                              <strong>{t('Calories')}:</strong> {meal.calories}
                             </span>
                           </div>
                         </div>
