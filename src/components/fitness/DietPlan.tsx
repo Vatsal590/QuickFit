@@ -1485,7 +1485,7 @@ const DietPlan = () => {
                 <div>
                   <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
                     <BookOpen className="h-5 w-5" />
-                    Instructions
+                    {t('Instructions')}
                   </h3>
                   <ol className="space-y-3">
                     {selectedRecipe.instructions.map((instruction, idx) => (
