@@ -579,16 +579,6 @@ export const exercises: Exercise[] = [
     description: "Lie face down, simultaneously lift chest and legs off ground, hold briefly, then lower back down."
   },
   {
-    id: "cat-cow-pose",
-    name: "Cat-Cow Pose",
-    muscleGroup: "back",
-    equipment: ["none"],
-    sets: 3,
-    reps: 10,
-    restTime: 30,
-    description: "On hands and knees, alternate between arching back (cow) and rounding spine (cat)."
-  },
-  {
     id: "bird-dog-pose",
     name: "Bird Dog Pose",
     muscleGroup: "back",
@@ -1057,16 +1047,6 @@ export const exercises: Exercise[] = [
     reps: 30,
     restTime: 30,
     description: "Run in place, bringing knees up toward chest as high as possible. Keep a quick pace, pumping arms as if running."
-  },
-  {
-    id: "jump-rope",
-    name: "Jump Rope",
-    muscleGroup: "cardio",
-    equipment: ["none"],
-    sets: 3,
-    reps: 50,
-    restTime: 30,
-    description: "Jump rope at a steady pace, keeping jumps small and consistent. Use an actual jump rope or simulate the movement."
   },
   {
     id: "jumping-squat",
