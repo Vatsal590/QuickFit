@@ -884,7 +884,7 @@ const DietPlan = () => {
               </DialogHeader>
               <div className="space-y-6 py-4">
                 <div className="space-y-3">
-                  <Label>Goal Weight</Label>
+                  <Label>{t('Goal Weight')}</Label>
                   <Input
                     type="number"
                     value={editFormData.goal_weight}
