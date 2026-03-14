@@ -922,7 +922,7 @@ const DietPlan = () => {
                           onCheckedChange={() => handleCheckboxChange('food_allergies', allergy)}
                         />
                         <label htmlFor={`allergy-${allergy}`} className="text-sm cursor-pointer">
-                          {allergy}
+                          {t(allergy)}
                         </label>
                       </div>
                     ))}
