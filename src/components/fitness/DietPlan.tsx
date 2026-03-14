@@ -1113,7 +1113,7 @@ const DietPlan = () => {
             <h2 className="text-2xl font-bold">{t('Your 7-Day')} {t(getPlanType())} {t('Plan')}</h2>
             <div className="flex gap-2 w-full md:w-auto">
               <Button variant="outline" size="sm" onClick={generateDietPlan} className="flex-1 md:flex-none">
-                Regenerate Plan
+                {t('Regenerate Plan')}
               </Button>
               <AlertDialog>
                 <AlertDialogTrigger asChild>
