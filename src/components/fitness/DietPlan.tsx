@@ -1441,7 +1441,7 @@ const DietPlan = () => {
             <div className="space-y-6 py-4">
               <div className="flex items-center gap-3 text-muted-foreground">
                 <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <span className="text-sm font-medium">Generating recipe...</span>
+                <span className="text-sm font-medium">{t('Generating recipe...')}</span>
               </div>
               <div className="space-y-4">
                 <div className="space-y-2">
