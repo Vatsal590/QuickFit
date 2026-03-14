@@ -1057,9 +1057,9 @@ const DietPlan = () => {
             </DialogTrigger>
             <DialogContent className="max-w-md w-[95vw] md:w-full">
               <DialogHeader>
-                <DialogTitle>Edit Calories & Macros</DialogTitle>
+                <DialogTitle>{t('Edit Calories & Macros')}</DialogTitle>
                 <DialogDescription>
-                  These sync with your AI Food Tracker goals.
+                  {t('These sync with your AI Food Tracker goals.')}
                 </DialogDescription>
               </DialogHeader>
               <NutritionGoals />
