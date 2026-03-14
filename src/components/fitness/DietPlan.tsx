@@ -1119,7 +1119,7 @@ const DietPlan = () => {
                 <AlertDialogTrigger asChild>
                   <Button variant="destructive" size="sm" className="flex-1 md:flex-none">
                     <Trash2 className="h-4 w-4 mr-2" />
-                    Clear Plan
+                    {t('Clear Plan')}
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
