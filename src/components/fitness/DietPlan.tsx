@@ -1008,7 +1008,7 @@ const DietPlan = () => {
 
                   {/* Dinner */}
                   <div className="space-y-2">
-                    <p className="text-sm font-medium">🌙 Dinner</p>
+                    <p className="text-sm font-medium">🌙 {t('Dinner')}</p>
                     <div className="grid grid-cols-5 gap-2">
                       {[
                         { value: '5', label: '5 min' },
