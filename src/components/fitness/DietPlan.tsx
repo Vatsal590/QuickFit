@@ -1052,7 +1052,7 @@ const DietPlan = () => {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm" className="flex-1 md:flex-none">
                 <Settings className="h-4 w-4 mr-2" />
-                Calories & Macros
+                {t('Calories & Macros')}
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md w-[95vw] md:w-full">
