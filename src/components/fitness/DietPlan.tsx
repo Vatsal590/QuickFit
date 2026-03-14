@@ -950,10 +950,10 @@ const DietPlan = () => {
                 <div className="space-y-4">
                   <Label className="flex items-center gap-2">
                     <Clock className="h-4 w-4" />
-                    Available Cooking Time
+                    {t('Available Cooking Time')}
                   </Label>
                   <p className="text-xs text-muted-foreground -mt-2">
-                    Set your available cooking time for each meal
+                    {t('Set your available cooking time for each meal')}
                   </p>
                   
                   {/* Breakfast */}
