@@ -1433,7 +1433,7 @@ const DietPlan = () => {
               {selectedRecipe?.mealName}
             </DialogTitle>
             <DialogDescription>
-              Recipe for 1 portion
+              {t('Recipe for 1 portion')}
             </DialogDescription>
           </DialogHeader>
           
