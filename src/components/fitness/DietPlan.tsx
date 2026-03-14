@@ -1372,7 +1372,7 @@ const DietPlan = () => {
                 {/* Snacks */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>🍎 Snacks</CardTitle>
+                    <CardTitle>🍎 {t('Snacks')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {plan.meals.snacks.map((meal, idx) => (
