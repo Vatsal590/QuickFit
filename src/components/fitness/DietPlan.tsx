@@ -1164,7 +1164,7 @@ const DietPlan = () => {
                   <CardContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 md:gap-4">
                       <div className="text-center">
-                        <p className="text-xs md:text-sm text-muted-foreground">Target</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{t('Target')}</p>
                         <p className="text-xl md:text-2xl font-bold">{plan.targetCalories}</p>
                         <p className="text-xs text-muted-foreground">cal</p>
                       </div>
