@@ -510,38 +510,41 @@ export function filterByCookTime(meals: MealData[], maxCookTime: number): MealDa
 
 // Helper function to get vegetarian meals
 export function filterVegetarian(meals: MealData[]): MealData[] {
+  const meatKeywords = [
+    'chicken', 'beef', 'fish', 'pork', 'turkey', 'lamb', 'meat', 'salmon',
+    'shrimp', 'crab', 'tuna', 'prosciutto', 'chorizo', 'sausage', 'bacon',
+    'carnitas', 'barbacoa', 'chashu', 'gyudon', 'birria', 'steak', 'salami',
+    'cod', 'mackerel', 'sea bass', 'machaca', 'carne', 'osso buco', 'prawn',
+    'lobster', 'duck', 'veal', 'venison', 'ham', 'pepperoni', 'anchovy',
+    'sardine', 'trout', 'tilapia', 'halibut', 'moo ping', 'satay',
+    'tandoori', 'kebab', 'shawarma', 'gyro', 'kofta', 'congee',
+    'katsu', 'tonkatsu', 'yakiniku', 'sukiyaki'
+  ];
   return meals.filter(meal => {
     const lower = meal.name.toLowerCase();
-    return !lower.includes('chicken') && !lower.includes('beef') && 
-           !lower.includes('fish') && !lower.includes('pork') && 
-           !lower.includes('turkey') && !lower.includes('lamb') && 
-           !lower.includes('meat') && !lower.includes('salmon') &&
-           !lower.includes('shrimp') && !lower.includes('crab') &&
-           !lower.includes('tuna') && !lower.includes('prosciutto') &&
-           !lower.includes('chorizo') && !lower.includes('sausage') &&
-           !lower.includes('bacon') && !lower.includes('carnitas') &&
-           !lower.includes('barbacoa') && !lower.includes('chashu') &&
-           !lower.includes('gyudon') && !lower.includes('birria');
+    return !meatKeywords.some(keyword => lower.includes(keyword));
   });
 }
 
 // Helper function to get vegan meals
 export function filterVegan(meals: MealData[]): MealData[] {
+  const nonVeganKeywords = [
+    'chicken', 'beef', 'fish', 'pork', 'turkey', 'lamb', 'meat', 'salmon',
+    'shrimp', 'crab', 'tuna', 'prosciutto', 'chorizo', 'sausage', 'bacon',
+    'carnitas', 'barbacoa', 'chashu', 'gyudon', 'birria', 'steak', 'salami',
+    'cod', 'mackerel', 'sea bass', 'machaca', 'carne', 'osso buco', 'prawn',
+    'lobster', 'duck', 'veal', 'venison', 'ham', 'pepperoni', 'anchovy',
+    'sardine', 'trout', 'tilapia', 'halibut', 'moo ping', 'satay',
+    'tandoori', 'kebab', 'shawarma', 'gyro', 'kofta', 'congee',
+    'katsu', 'tonkatsu', 'yakiniku', 'sukiyaki',
+    'egg', 'cheese', 'yogurt', 'milk', 'cream', 'butter', 'feta',
+    'paneer', 'ricotta', 'halloumi', 'labneh', 'curd', 'whey',
+    'mozzarella', 'parmesan', 'provolone', 'cottage', 'ghee', 'raita',
+    'lassi', 'honey'
+  ];
   return meals.filter(meal => {
     const lower = meal.name.toLowerCase();
-    return !lower.includes('chicken') && !lower.includes('beef') && 
-           !lower.includes('fish') && !lower.includes('pork') && 
-           !lower.includes('turkey') && !lower.includes('lamb') && 
-           !lower.includes('meat') && !lower.includes('salmon') &&
-           !lower.includes('shrimp') && !lower.includes('crab') &&
-           !lower.includes('tuna') && !lower.includes('egg') &&
-           !lower.includes('cheese') && !lower.includes('yogurt') &&
-           !lower.includes('milk') && !lower.includes('cream') &&
-           !lower.includes('butter') && !lower.includes('feta') &&
-           !lower.includes('paneer') && !lower.includes('ricotta') &&
-           !lower.includes('prosciutto') && !lower.includes('chorizo') &&
-           !lower.includes('sausage') && !lower.includes('bacon') &&
-           !lower.includes('halloumi') && !lower.includes('labneh');
+    return !nonVeganKeywords.some(keyword => lower.includes(keyword));
   });
 }
 
