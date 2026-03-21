@@ -9,14 +9,6 @@ const FreeAccess = () => {
   return (
     <PageContainer>
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            {t("Unlock Vatsal's Plans")}
-          </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto">
-            {t("Get exclusive access to Vatsal's personal workout and diet plans that helped him achieve his transformation")}
-          </p>
-        </div>
 
         <FreeAccessSection />
 

@@ -282,10 +282,6 @@ export function FreeAccessSection() {
                     <Check className="h-4 w-4 text-green-500" />
                     {t('1-on-1 call with Vatsal')}
                   </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    {t('Lifetime access')}
-                  </li>
                 </ul>
                 <Button
                   asChild
