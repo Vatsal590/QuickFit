@@ -316,8 +316,7 @@ const translations: Record<string, Record<string, string>> = {
     'Lifetime access': 'Accès à vie',
     '1-on-1 call with Vatsal': 'Appel 1-à-1 avec Vatsal',
     'Get Pro Access': 'Obtenir l\'Accès Pro',
-    'Personalized plan review': 'Révision personnalisée du plan',
-    'Get Pro Access': 'Obtenir l\'Accès Pro',
+    
     'Referral Program': 'Programme de Parrainage',
     'Share your code with friends to unlock free access': 'Partagez votre code avec des amis pour débloquer l\'accès gratuit',
     'Your Referral Code': 'Votre Code de Parrainage',
