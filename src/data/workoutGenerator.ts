@@ -59,38 +59,25 @@ export const generateWorkout = (
   // Get filtered exercises based on muscle groups, equipment, and intensity
   let filtered = getFilteredExercises(muscleGroups, equipment, intensity);
 
-  // Map of mobility exercises to their required pain selection
-  const mobilityExerciseToPain: { [key: string]: BodyPain } = {
-    "wrist": "wrist pain",
-    "knee": "knee pain",
-    "ankle": "ankle pain",
-    "shoulder": "shoulder pain",
-    "hip": "hip pain",
-    "back": "lower back pain"
-  };
+  // IDs of all pain/mobility/stretching exercises - these should NEVER appear as normal exercises
+  const PAIN_EXERCISE_IDS = new Set([
+    "lower-back-stretch", "shoulder-mobility", "hip-flexor-stretch",
+    "knee-mobility", "wrist-mobility", "ankle-mobility",
+    "knee-stretch", "shoulder-stretch", "back-stretch",
+    "wrist-stretch", "hip-stretch", "ankle-stretch"
+  ]);
 
-  // Always filter out mobility/stretching exercises unless the corresponding pain is selected
-  const stretchingKeywords = ['stretch', 'mobility', 'relief', 'circles', 'rolls', 'twists'];
+  // Always filter out ALL mobility/stretching exercises from the main exercise pool
+  // They are only added as dedicated pain relief exercises when body pains are selected
   filtered = filtered.filter(ex => {
+    if (PAIN_EXERCISE_IDS.has(ex.id)) return false;
+    
     const nameLower = ex.name.toLowerCase();
     const descLower = ex.description.toLowerCase();
-    
-    // Check if this is a mobility/stretching exercise
-    const isMobilityExercise = stretchingKeywords.some(keyword => 
+    const stretchingKeywords = ['stretch', 'mobility', 'relief', 'circles', 'rolls'];
+    return !stretchingKeywords.some(keyword => 
       nameLower.includes(keyword) || descLower.includes(keyword)
     );
-    
-    if (!isMobilityExercise) return true;
-    
-    // If it's a mobility exercise, only include if the corresponding pain is selected
-    for (const [bodyPart, requiredPain] of Object.entries(mobilityExerciseToPain)) {
-      if (nameLower.includes(bodyPart) || descLower.includes(bodyPart)) {
-        return bodyPains?.includes(requiredPain) || false;
-      }
-    }
-    
-    // Generic mobility exercise without specific body part - exclude unless any pain selected
-    return bodyPains && bodyPains.length > 0;
   });
 
   // Remove exercises that use affected body parts and track excluded ones
