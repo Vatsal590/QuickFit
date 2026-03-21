@@ -255,55 +255,12 @@ export function FreeAccessSection() {
       {/* Content Based on Selection */}
       {activeTab === 'instant' && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* QuickFit Lite */}
-            <Card className="relative overflow-hidden border-2 border-border">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2">
-                  <Zap className="h-5 w-5 text-amber-500" />
-                  QuickFit Lite
-                </CardTitle>
-                <div className="flex items-baseline gap-1 mt-2">
-                  <span className="text-3xl font-bold">€4.99</span>
-                  <span className="text-muted-foreground text-sm">/mo</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <ul className="space-y-2 text-sm">
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    Vatsal's complete workout plan
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    Vatsal's complete diet plan
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <Check className="h-4 w-4 text-green-500" />
-                    Lifetime access
-                  </li>
-                </ul>
-                <Button
-                  asChild
-                  size="lg"
-                  className="w-full bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90 shadow-lg"
-                >
-                  <a
-                    href="https://buy.stripe.com/5kQfZi4pD2LH8ay94Zds403"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Get Instant Access
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* QuickFit Pro - MOST POPULAR */}
-            <Card className="relative overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/10">
+          <div className="flex justify-center">
+            {/* QuickFit Pro */}
+            <Card className="relative overflow-hidden border-2 border-amber-500 shadow-lg shadow-amber-500/10 max-w-md w-full">
               <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-center text-xs font-bold py-1">
                 <Crown className="h-3 w-3 inline mr-1" />
-                MOST POPULAR
+                {t('RECOMMENDED')}
               </div>
               <CardHeader className="pb-4 pt-8">
                 <CardTitle className="flex items-center gap-2">
@@ -319,15 +276,15 @@ export function FreeAccessSection() {
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    Everything in Lite
+                    {t('Get a workout and diet plan made for you, by Vatsal himself')}
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    1-on-1 call with Vatsal
+                    {t('1-on-1 call with Vatsal')}
                   </li>
                   <li className="flex items-center gap-2">
                     <Check className="h-4 w-4 text-green-500" />
-                    Personalized plan review
+                    {t('Lifetime access')}
                   </li>
                 </ul>
                 <Button
@@ -340,7 +297,7 @@ export function FreeAccessSection() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Get Pro Access
+                    {t('Get Pro Access')}
                   </a>
                 </Button>
               </CardContent>
