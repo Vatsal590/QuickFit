@@ -1249,8 +1249,7 @@ const translations: Record<string, Record<string, string>> = {
     'Lifetime access': 'Liewenslangen Zougang',
     '1-on-1 call with Vatsal': '1-op-1 Uruff mat Vatsal',
     'Get Pro Access': 'Pro Zougang kréien',
-    'Personalized plan review': 'Personaliséiert Plangiwwerpréiwung',
-    'Get Pro Access': 'Pro Zougang kréien',
+    
     'Referral Program': 'Empfeelungsprogramm',
     'Share your code with friends to unlock free access': 'Deelt Äre Code mat Frënn fir gratis Zougang',
     'Your Referral Code': 'Äre Empfeelungscode',
