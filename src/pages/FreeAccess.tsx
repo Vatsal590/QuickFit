@@ -25,21 +25,19 @@ const FreeAccess = () => {
               />
             </div>
             <h3 className="text-xl font-semibold text-fitness-primary mb-2">Vatsal Agarwala</h3>
-            <p className="text-muted-foreground mb-4">{t('Founder & CEO, Age 15')}</p>
+            <p className="text-muted-foreground mb-4">{t('Founder & CEO')}</p>
             
             <div className="text-left max-w-3xl mx-auto space-y-4 text-muted-foreground">
               <p>
-                {t("Hi, I'm Vatsal Agarwala, the founder and CEO of QuickFit. At just 15 years old, I've dedicated myself to transforming how people approach fitness. My journey began when I realized that most fitness apps were either too complicated, too expensive, or simply didn't deliver results.")}
+                {t("Hi, I'm Vatsal Agarwala, the founder and CEO of QuickFit. I've dedicated myself to transforming how people approach fitness. My journey began when I realized that most fitness apps were either too complicated, too expensive, or simply didn't deliver results.")}
               </p>
               <p>
-                {t("I created QuickFit to solve these problems - combining AI-powered workout generation, personalized diet plans, and real-time tracking into one seamless experience. The workout and diet plans you unlock here are the exact routines I personally use to maintain my fitness goals.")}
+                {t("I created QuickFit to solve these problems - combining AI-powered workout generation, personalized diet plans, and real-time tracking into one seamless experience.")}
               </p>
               <p>
                 {t("What makes QuickFit different is our commitment to making fitness accessible to everyone. Whether you're just starting out or you're an experienced athlete, our AI adapts to your unique needs, equipment, and goals.")}
               </p>
-              <p className="text-fitness-primary font-medium text-center mt-6">
-                {t('About Founder Closing')}
-              </p>
+              
             </div>
           </CardContent>
         </Card>
