@@ -2,7 +2,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'com.quickfit.app',
+  appId: 'com.quickfit.dev',
   appName: 'QuickFit',
   webDir: 'build',
   server: {
