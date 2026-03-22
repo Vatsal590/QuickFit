@@ -31,6 +31,8 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
     
     await GoogleAuth.initialize({
       clientId: platform === 'ios' ? iosClientId : webClientId,
+      iosClientId,
+      serverClientId: webClientId,
       scopes: ['profile', 'email'],
       grantOfflineAccess: true,
     } as any);
