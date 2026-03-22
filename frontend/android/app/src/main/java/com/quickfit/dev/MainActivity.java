@@ -1,4 +1,4 @@
-package com.quickfit.app;
+package com.quickfit.dev;
 
 import com.getcapacitor.BridgeActivity;
 
