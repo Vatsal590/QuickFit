@@ -34,7 +34,7 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
       iosClientId,
       serverClientId: webClientId,
       scopes: ['profile', 'email'],
-      grantOfflineAccess: true,
+      grantOfflineAccess: false,
     } as any);
     
     const result = await GoogleAuth.signIn();
