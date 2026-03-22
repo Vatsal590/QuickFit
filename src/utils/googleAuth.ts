@@ -1,5 +1,7 @@
 import { Capacitor } from '@capacitor/core';
 
+let nativeGoogleInitialized = false;
+
 // Check if running as a native app
 export const isNativePlatform = (): boolean => {
   return Capacitor.isNativePlatform();
@@ -28,14 +30,17 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
     const platform = Capacitor.getPlatform();
     const iosClientId = '602471950477-0gu5j74jda1dg0edr9etqjitslp4hkir.apps.googleusercontent.com';
     const webClientId = '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com';
-    
-    await GoogleAuth.initialize({
-      clientId: platform === 'ios' ? iosClientId : webClientId,
-      iosClientId,
-      serverClientId: webClientId,
-      scopes: ['profile', 'email'],
-      grantOfflineAccess: false,
-    } as any);
+
+    if (!nativeGoogleInitialized) {
+      await GoogleAuth.initialize({
+        clientId: platform === 'ios' ? iosClientId : webClientId,
+        iosClientId,
+        serverClientId: webClientId,
+        scopes: ['profile', 'email'],
+        grantOfflineAccess: false,
+      } as any);
+      nativeGoogleInitialized = true;
+    }
     
     // Try silent native session restore first to avoid showing Google account UI repeatedly
     try {
