@@ -69,7 +69,7 @@ const AuthForm = () => {
   const handleCredentialResponse = async (response: { credential: string }) => {
     setGoogleLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithIdToken({
+      const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: response.credential,
       });
@@ -80,9 +80,8 @@ const AuthForm = () => {
           description: error.message, 
           variant: 'destructive' 
         });
-      } else if (data.session) {
-        window.location.href = '/home';
       }
+      // Navigation is handled automatically by PublicRoute detecting auth state change
     } catch (err) {
       toast({ 
         title: 'Error', 
