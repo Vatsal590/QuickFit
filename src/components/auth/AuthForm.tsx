@@ -36,6 +36,8 @@ const AuthForm = () => {
           callback: handleCredentialResponse,
           auto_select: false,
           cancel_on_tap_outside: true,
+          ux_mode: 'popup',
+          itp_support: true,
         });
 
         window.google.accounts.id.renderButton(googleButtonRef.current, {
@@ -46,6 +48,9 @@ const AuthForm = () => {
           shape: 'rectangular',
           width: 320,
         });
+
+        // Also trigger One Tap for a seamless inline experience
+        window.google.accounts.id.prompt();
       }
     };
 
@@ -61,7 +66,6 @@ const AuthForm = () => {
         }
       }, 100);
 
-      // Cleanup
       return () => clearInterval(checkGoogle);
     }
   }, []);
