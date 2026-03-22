@@ -25,16 +25,27 @@ export const hashNonce = async (nonce: string): Promise<string> => {
 export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> => {
   try {
     const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
+    const platform = Capacitor.getPlatform();
+    
     await GoogleAuth.initialize({
       clientId: '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com',
       scopes: ['profile', 'email'],
+      grantOfflineAccess: true,
     });
+    
     const result = await GoogleAuth.signIn();
+    
     if (result.authentication?.idToken) {
       return { idToken: result.authentication.idToken };
     }
+    
+    console.error('No idToken returned from Google Sign-In. Platform:', platform);
     return null;
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.message?.includes('canceled') || error?.message?.includes('cancelled')) {
+      console.log('Google Sign-In was cancelled by user');
+      return null;
+    }
     console.error('Native Google Sign-In error:', error);
     throw error;
   }
