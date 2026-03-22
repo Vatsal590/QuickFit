@@ -209,7 +209,7 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>{t('Sign Out')}</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setShowDeleteDialog(true)} className="text-destructive">
+                <DropdownMenuItem onClick={() => window.location.href = '/delete-account'} className="text-destructive">
                   <Trash2 className="mr-2 h-4 w-4" />
                   <span>{t('Delete Account')}</span>
                 </DropdownMenuItem>
