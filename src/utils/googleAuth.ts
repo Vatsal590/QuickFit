@@ -26,13 +26,14 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
   try {
     const { GoogleAuth } = await import('@codetrix-studio/capacitor-google-auth');
     const platform = Capacitor.getPlatform();
+    const iosClientId = '602471950477-0gu5j74jda1dg0edr9etqjitslp4hkir.apps.googleusercontent.com';
+    const webClientId = '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com';
+    
     await GoogleAuth.initialize({
-      clientId: platform === 'ios'
-        ? '602471950477-0gu5j74jda1dg0edr9etqjitslp4hkir.apps.googleusercontent.com'
-        : '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com',
+      clientId: platform === 'ios' ? iosClientId : webClientId,
       scopes: ['profile', 'email'],
       grantOfflineAccess: true,
-    });
+    } as any);
     
     const result = await GoogleAuth.signIn();
     
