@@ -22,15 +22,37 @@ declare global {
   }
 }
 
+// Generate a random nonce string
+const generateNonce = (): string => {
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, '0')).join('');
+};
+
+// Hash nonce with SHA-256 for Google
+const hashNonce = async (nonce: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(nonce);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((byte) => byte.toString(16).padStart(2, '0')).join('');
+};
+
 const AuthForm = () => {
   const [googleLoading, setGoogleLoading] = useState(false);
   const { toast } = useToast();
   const { t } = useTranslation();
   const googleButtonRef = useRef<HTMLDivElement>(null);
+  const nonceRef = useRef<string>('');
 
   useEffect(() => {
-    const initializeGoogle = () => {
+    const initializeGoogle = async () => {
       if (window.google && googleButtonRef.current) {
+        // Generate and store nonce for secure token verification
+        const nonce = generateNonce();
+        nonceRef.current = nonce;
+        const hashedNonce = await hashNonce(nonce);
+
         window.google.accounts.id.initialize({
           client_id: GOOGLE_CLIENT_ID,
           callback: handleCredentialResponse,
@@ -38,6 +60,7 @@ const AuthForm = () => {
           cancel_on_tap_outside: true,
           ux_mode: 'popup',
           itp_support: true,
+          nonce: hashedNonce,
         });
 
         window.google.accounts.id.renderButton(googleButtonRef.current, {
@@ -49,16 +72,14 @@ const AuthForm = () => {
           width: 320,
         });
 
-        // Also trigger One Tap for a seamless inline experience
+        // Trigger One Tap for inline experience
         window.google.accounts.id.prompt();
       }
     };
 
-    // Check if Google script is already loaded
     if (window.google) {
       initializeGoogle();
     } else {
-      // Wait for script to load
       const checkGoogle = setInterval(() => {
         if (window.google) {
           clearInterval(checkGoogle);
@@ -76,6 +97,7 @@ const AuthForm = () => {
       const { error } = await supabase.auth.signInWithIdToken({
         provider: 'google',
         token: response.credential,
+        nonce: nonceRef.current,
       });
 
       if (error) {
@@ -85,7 +107,7 @@ const AuthForm = () => {
           variant: 'destructive' 
         });
       }
-      // Navigation is handled automatically by PublicRoute detecting auth state change
+      // Navigation handled automatically by PublicRoute detecting auth state change
     } catch (err) {
       toast({ 
         title: 'Error', 
@@ -120,7 +142,7 @@ const AuthForm = () => {
             {/* Google One Tap Button Container */}
             <div className="flex justify-center">
               {googleLoading ? (
-                <Button disabled className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 border-2 border-gray-300 py-3 rounded-xl">
+                <Button disabled className="w-full flex items-center justify-center gap-3 bg-background text-foreground border-2 border-border py-3 rounded-xl">
                   <Loader2 className="h-5 w-5 animate-spin" />
                   Signing in...
                 </Button>
