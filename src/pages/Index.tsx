@@ -18,51 +18,9 @@ import { Button } from "@/components/ui/button";
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  };
 
   return (
     <PageContainer>
-      {/* Free Access Promo Popup */}
-      <Dialog open={showPromo} onOpenChange={(open) => !open && handleClosePromo()}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-center flex items-center justify-center gap-2 text-xl">
-              <Sparkles className="h-5 w-5 text-amber-500" />
-              {t('Exclusive Free Access')}
-              <Sparkles className="h-5 w-5 text-amber-500" />
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="flex flex-col items-center text-center space-y-4 py-4">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/20 shadow-lg">
-              <img 
-                src="/lovable-uploads/vatsal-agarwala-founder.jpg" 
-                alt="Vatsal Agarwala - Founder" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            <div>
-              <p className="font-semibold text-primary">Vatsal Agarwala</p>
-              <p className="text-sm text-muted-foreground">{t('Founder & CEO')}</p>
-            </div>
-            
-            <p className="text-foreground leading-relaxed">
-              {t("Get access to Vatsal's personal workout AND diet plans completely FREE!")}
-            </p>
-            
-            <Button 
-              onClick={handleGoToFreeAccess}
-              variant="gradient"
-              size="lg"
-              className="w-full mt-2"
-            >
-              <Gift className="mr-2 h-5 w-5" />
-              {t('Take Me There')}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       <div className="max-w-6xl mx-auto">
         <div className="mb-16 text-center">
