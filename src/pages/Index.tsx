@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '../components/layout/PageContainer';
 import { 
@@ -11,43 +11,13 @@ import {
   BookOpen,
   Dumbbell,
   Zap,
-  X,
-  Sparkles
 } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [showPromo, setShowPromo] = useState(false);
-
-  useEffect(() => {
-    // Check if user has seen the promo popup before
-    const hasSeenPromo = sessionStorage.getItem('hasSeenFreeAccessPromo');
-    if (!hasSeenPromo) {
-      // Small delay for better UX
-      const timer = setTimeout(() => {
-        setShowPromo(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  const handleClosePromo = () => {
-    setShowPromo(false);
-    sessionStorage.setItem('hasSeenFreeAccessPromo', 'true');
-  };
-
-  const handleGoToFreeAccess = () => {
-    handleClosePromo();
-    navigate('/free-access');
   };
 
   return (
