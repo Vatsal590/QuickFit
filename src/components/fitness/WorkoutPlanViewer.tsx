@@ -320,7 +320,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'childs pose': 'https://fitnessprogramer.com/wp-content/uploads/2022/05/Balasana-Child-Pose.gif',
       'chest stretch': 'https://lyfta.app/images/exercises/17871101.png',
       'chest stretches': 'https://lyfta.app/images/exercises/17871101.png',
-      'knee mobility stretch;: 'https://cdn.jefit.com/assets/img/exercises/gifs/298.gif',
+      'knee mobility stretch': 'https://cdn.jefit.com/assets/img/exercises/gifs/298.gif',
       'shoulder mobility stretch': 'https://gymvisual.com/img/p/1/2/5/2/4/12524.gif',
       'hip mobility stretch': 'https://assets.myworkouts.io/exercises-media/BFYqdDcxdHQjb2sRB/hip_circles_(prone)_male_v14_gif_capoff.gif',
       'lower back stretch': 'https://www.doyou.com/wp-content/uploads/2017/02/Spinal_twist1.gif',
