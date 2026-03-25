@@ -194,6 +194,15 @@ html {
     @apply bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent;
   }
 
+  /* Ensure animated elements with delays start invisible */
+  .animate-fade-in,
+  .animate-fade-in-up,
+  .animate-scale-in,
+  .animate-slide-in-left,
+  .animate-slide-in-right {
+    opacity: 0;
+  }
+
   /* Glassmorphism effect - Apple style */
   .glass {
     @apply backdrop-blur-xl bg-white/70 dark:bg-black/30 border border-white/20 dark:border-white/10;
