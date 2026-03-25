@@ -73,11 +73,8 @@ export const generateWorkout = (
     if (PAIN_EXERCISE_IDS.has(ex.id)) return false;
     
     const nameLower = ex.name.toLowerCase();
-    const descLower = ex.description.toLowerCase();
     const stretchingKeywords = ['stretch', 'mobility', 'relief', 'circles', 'rolls'];
-    return !stretchingKeywords.some(keyword => 
-      nameLower.includes(keyword) || descLower.includes(keyword)
-    );
+    return !stretchingKeywords.some(keyword => nameLower.includes(keyword));
   });
 
   // Remove exercises that use affected body parts and track excluded ones
