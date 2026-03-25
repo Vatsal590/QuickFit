@@ -228,10 +228,10 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
             </div>
             
             {/* Custom Equipment Input */}
-            <div className="mt-3">
-              <div className="flex items-center gap-2 mb-2">
-                <Plus className="h-4 w-4 text-fitness-primary" />
-                <span className="text-sm text-gray-600">{t('Have other equipment? Type it below:')}</span>
+            <div className="mt-4 p-4 rounded-xl border-2 border-dashed border-fitness-primary/40 bg-fitness-primary/5">
+              <div className="flex items-center gap-2 mb-3">
+                <Plus className="h-5 w-5 text-fitness-primary" />
+                <span className="font-medium text-foreground">{t('Have other equipment? Type it below:')}</span>
               </div>
               <Input
                 type="text"
@@ -241,7 +241,7 @@ const WorkoutForm = ({ onSubmit, previousWorkouts = [] }: WorkoutFormProps) => {
                 className="max-w-md"
               />
               {formData.customEquipment && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-2">
                   {t('AI will suggest exercises for this equipment if suitable')}
                 </p>
               )}
