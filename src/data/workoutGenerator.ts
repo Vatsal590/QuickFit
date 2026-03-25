@@ -268,9 +268,23 @@ export const generateWorkout = (
     
     if (muscleExercises.length === 0) continue;
     
-    // Prioritize compound exercises first
+    // Prioritize: compound exercises with priority equipment first, then other compounds, then isolations
     const compounds = muscleExercises.filter(ex => isCompoundExercise(ex));
     const isolations = muscleExercises.filter(ex => !isCompoundExercise(ex));
+    
+    // Within compounds and isolations, prioritize those using selected priority equipment
+    if (hasPriorityEquipment) {
+      const priorityEq = equipment.filter(eq => PRIORITY_EQUIPMENT.includes(eq));
+      const sortByPriority = (a: Exercise, b: Exercise) => {
+        const aP = a.equipment.some(eq => priorityEq.includes(eq));
+        const bP = b.equipment.some(eq => priorityEq.includes(eq));
+        if (aP && !bP) return -1;
+        if (!aP && bP) return 1;
+        return 0;
+      };
+      compounds.sort(sortByPriority);
+      isolations.sort(sortByPriority);
+    }
     const prioritizedExercises = [...compounds, ...isolations];
     
     let selectedExercise: Exercise | null = null;
