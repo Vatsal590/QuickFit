@@ -35,7 +35,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
     
     const exerciseMap: { [key: string]: string } = {
      // Chest exercises - various naming patterns
-      'neutral grip hand rows': 'https://gymvisual.com/img/p/2/1/7/7/5/21775.gif',
+       'neutral grip hand rows': 'https://gymvisual.com/img/p/2/1/7/7/5/21775.gif',
       'cable pulldown': 'https://gymvisual.com/img/p/2/8/3/3/5/28335.gif',
       'cable bicep curl': 'https://hips.hearstapps.com/hmg-prod/images/766/fitgif10-13-1508511602.gif?crop=0.636xw:1xh;center,top&resize=1200:*',
       'cable hammer curl': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
@@ -45,9 +45,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
       'hindu push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
       'hindu pushup': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
       'hindu pushups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
-      'push ups': 'https://www.saga.co.uk/helix-contentlibrary/exceptional/2023/09/pushup.gif?sc=max&mw=800&h=450&la=en&h=365&w=480&hash=884E2AC7955EE13CBB86847B16CA34B6',
-      'pushups': 'https://www.saga.co.uk/helix-contentlibrary/exceptional/2023/09/pushup.gif?sc=max&mw=800&h=450&la=en&h=365&w=480&hash=884E2AC7955EE13CBB86847B16CA34B6',
-      'standard push-ups': 'https://www.saga.co.uk/helix-contentlibrary/exceptional/2023/09/pushup.gif?sc=max&mw=800&h=450&la=en&h=365&w=480&hash=884E2AC7955EE13CBB86847B16CA34B6',
+      'push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
+      'pushups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
+      'standard push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
       'incline push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif',
       'incline push ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/Incline-Push-Up.gif',
       'diamond push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Diamond-Push-up.gif',
