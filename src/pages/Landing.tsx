@@ -441,16 +441,6 @@ const Landing = () => {
   </div>
       </div>
 
-      {/* Tailwind animation */}
-      <style>{`
-  @keyframes scale-in {
-    0% { opacity: 0; transform: scale(0.95); }
-    100% { opacity: 1; transform: scale(1); }
-  }
-  .animate-scale-in {
-    animation: scale-in 0.5s ease forwards;
-  }
-`}</style>
 
 
         {/* Final CTA with Gradient and Glow */}
