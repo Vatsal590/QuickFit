@@ -681,16 +681,6 @@ export const exercises: Exercise[] = [
     description: "Stand on band with feet shoulder-width apart. Hold handles with palms facing each other, curl up without rotating wrists."
   },
   {
-    id: "kettlebell-curl",
-    name: "Kettlebell Curl",
-    muscleGroup: "biceps",
-    equipment: ["kettlebell"],
-    sets: 3,
-    reps: 10,
-    restTime: 60,
-    description: "Hold kettlebell by the handle with underhand grip. Curl up toward shoulder while keeping elbow stationary."
-  },
-  {
     id: "cable-bicep-curl",
     name: "Cable Bicep Curl",
     muscleGroup: "biceps",
