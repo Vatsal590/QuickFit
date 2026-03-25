@@ -792,16 +792,6 @@ export const exercises: Exercise[] = [
     restTime: 45,
     description: "Anchor band overhead. Hold handles and push down while keeping elbows at sides until arms are fully extended."
   },
-  {
-    id: "kettlebell-floor-press",
-    name: "Kettlebell Floor Press",
-    muscleGroup: "chest",
-    equipment: ["kettlebell"],
-    sets: 3,
-    reps: 8,
-    restTime: 90,
-    description: "Lie on floor holding kettlebell. Press kettlebell up from chest level until arm is extended, focusing on tricep engagement."
-  },
 
   // Core exercises
   {
