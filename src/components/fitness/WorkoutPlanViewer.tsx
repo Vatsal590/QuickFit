@@ -63,7 +63,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
       'cable pulldown': 'https://gymvisual.com/img/p/2/8/3/3/5/28335.gif',
       'cable bicep curl': 'https://hips.hearstapps.com/hmg-prod/images/766/fitgif10-13-1508511602.gif?crop=0.636xw:1xh;center,top&resize=1200:*',
       'cable hammer curl': 'https://fitnessprogramer.com/wp-content/uploads/2021/06/rope-bicep-curls.gif',
-      'push-ups': 'https://www.saga.co.uk/helix-contentlibrary/exceptional/2023/09/pushup.gif?sc=max&mw=800&h=450&la=en&h=365&w=480&hash=884E2AC7955EE13CBB86847B16CA34B6',
+      'push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Push-Up.gif',
       'hindu push up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
       'hindu push-up': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
       'hindu push-ups': 'https://fitnessprogramer.com/wp-content/uploads/2021/02/Pike-to-Cobra.gif',
