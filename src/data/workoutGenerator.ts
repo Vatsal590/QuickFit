@@ -206,6 +206,22 @@ export const generateWorkout = (
     });
   }
 
+  // Prioritize exercises that use dumbbells, barbell, or cable machine when selected
+  const PRIORITY_EQUIPMENT: Equipment[] = ["dumbbells", "barbell", "cable machine"];
+  const hasPriorityEquipment = equipment.some(eq => PRIORITY_EQUIPMENT.includes(eq));
+  
+  if (hasPriorityEquipment) {
+    const priorityEq = equipment.filter(eq => PRIORITY_EQUIPMENT.includes(eq));
+    // Sort so exercises using priority equipment come first
+    filtered.sort((a, b) => {
+      const aHasPriority = a.equipment.some(eq => priorityEq.includes(eq));
+      const bHasPriority = b.equipment.some(eq => priorityEq.includes(eq));
+      if (aHasPriority && !bHasPriority) return -1;
+      if (!aHasPriority && bHasPriority) return 1;
+      return 0;
+    });
+  }
+
   // Select exercises in the preferred muscle group order
   // Only reduce exercise count if we actually have pain exercises to add
   const exerciseCount = (bodyPains && bodyPains.length > 0) 
