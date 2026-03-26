@@ -108,8 +108,8 @@ const InstantWorkout = () => {
         setShowExcludedDialog(true);
       }
       
-      const customMsg = customExercises.length > 0 
-        ? ` ${t('Including')} ${customExercises.length} ${t('AI-suggested exercise')}${customExercises.length > 1 ? 's' : ''} ${t('for your custom equipment')}!`
+      const customMsg = uniqueCustomExercises.length > 0 
+        ? ` ${t('Including')} ${uniqueCustomExercises.length} ${t('AI-suggested exercise')}${uniqueCustomExercises.length > 1 ? 's' : ''} ${t('for your custom equipment')}!`
         : '';
       
       toast({
