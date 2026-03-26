@@ -85,10 +85,18 @@ const InstantWorkout = () => {
         baseExerciseCount
       );
       
-      // Combine base exercises with AI exercises (total = target count)
+      // Filter out AI exercises that duplicate base workout exercises
+      const baseExerciseNames = new Set(
+        result.workout.exercises.map(ex => ex.name.toLowerCase())
+      );
+      const uniqueCustomExercises = customExercises.filter(
+        ex => !baseExerciseNames.has(ex.name.toLowerCase())
+      );
+      
+      // Combine base exercises with unique AI exercises
       const finalWorkout = {
         ...result.workout,
-        exercises: [...result.workout.exercises, ...customExercises]
+        exercises: [...result.workout.exercises, ...uniqueCustomExercises]
       };
       
       setCurrentWorkout(finalWorkout);
@@ -100,8 +108,8 @@ const InstantWorkout = () => {
         setShowExcludedDialog(true);
       }
       
-      const customMsg = customExercises.length > 0 
-        ? ` ${t('Including')} ${customExercises.length} ${t('AI-suggested exercise')}${customExercises.length > 1 ? 's' : ''} ${t('for your custom equipment')}!`
+      const customMsg = uniqueCustomExercises.length > 0 
+        ? ` ${t('Including')} ${uniqueCustomExercises.length} ${t('AI-suggested exercise')}${uniqueCustomExercises.length > 1 ? 's' : ''} ${t('for your custom equipment')}!`
         : '';
       
       toast({
