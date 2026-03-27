@@ -23,7 +23,7 @@ const mainItems = [
   { titleKey: "AI Food Tracker", url: "/food-tracker", icon: Camera },
   { titleKey: "Weight Tracker", url: "/weight-tracker", icon: Scale },
   { titleKey: "History", url: "/history", icon: History },
-  { titleKey: "Free Access", url: "/free-access", icon: Gift, highlight: true },
+  { titleKey: "Premium", url: "/premium", icon: Crown, highlight: true },
   { titleKey: "Fitness Blogs", url: "/blogs", icon: BookOpen },
 ];
 
