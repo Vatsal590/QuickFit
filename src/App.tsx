@@ -160,13 +160,14 @@ const AppRoutes = () => {
         } 
       />
       <Route 
-        path="/free-access" 
+        path="/premium" 
         element={
           <ProtectedRoute>
-            <FreeAccess />
+            <Premium />
           </ProtectedRoute>
         } 
       />
+      <Route path="/free-access" element={<Navigate to="/premium" replace />} />
       <Route 
         path="/blogs" 
         element={
