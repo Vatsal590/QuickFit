@@ -39,7 +39,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { LogOut, Trash2, User, Shield, FileText, Languages } from 'lucide-react';
 import Chatbot from '@/components/chat/Chatbot';
 import { MenuIcon } from '@/components/ui/menu-icon';
-import { ReferralCongrats } from '@/components/referral/ReferralCongrats';
+
 
 interface AuthenticatedLayoutProps {
   children: React.ReactNode;
