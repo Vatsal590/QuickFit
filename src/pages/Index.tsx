@@ -7,7 +7,7 @@ import {
   Scale,
   Camera,
   UtensilsCrossed,
-  Gift,
+  Crown,
   BookOpen,
   Dumbbell,
   Zap,
