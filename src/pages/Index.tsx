@@ -170,17 +170,17 @@ const Index = () => {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <button
-                onClick={() => navigate('/free-access')}
+                onClick={() => navigate('/premium')}
                 className="group relative overflow-hidden glass-card p-6 text-left transition-all hover:shadow-lg hover:scale-[1.02] active:scale-95"
               >
                 <div className="flex items-start gap-4">
-                  <div className="rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 p-3 shadow-md">
-                    <Gift className="w-6 h-6 text-white" />
+                  <div className="rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 p-3 shadow-md">
+                    <Crown className="w-6 h-6 text-white" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold mb-2">{t('Free Access')}</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('Premium')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      {t('Refer friends for rewards')}
+                      {t('Get QuickFit Pro access')}
                     </p>
                   </div>
                 </div>

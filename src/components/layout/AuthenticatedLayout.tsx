@@ -281,8 +281,6 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       {/* Chatbot */}
       <Chatbot />
       
-      {/* Referral Congrats */}
-      <ReferralCongrats />
     </div>
   );
 };

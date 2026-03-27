@@ -1,4 +1,4 @@
-import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Gift, BookOpen, Camera, Zap, Sparkles } from "lucide-react";
+import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Crown, BookOpen, Camera, Zap, Sparkles } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "@/contexts/TranslationContext";
 
