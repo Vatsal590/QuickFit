@@ -206,72 +206,147 @@ const Landing = () => {
         {/* Featured on Radio Section */}
         <div className="relative bg-gradient-to-r from-fitness-primary/5 via-fitness-secondary/5 to-fitness-accent/5 py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
-              <div className="relative flex-shrink-0">
-                <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
-                <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
-                  {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
-                    <img 
-                      key={idx}
-                      src={img} 
-                      alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
-                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                        idx === radioImageIndex ? 'opacity-100' : 'opacity-0'
-                      }`}
-                    />
-                  ))}
-                  {/* Navigation dots */}
-                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                    {[0, 1, 2].map((idx) => (
-                      <button
+            {/* Feature slide navigation */}
+            <div className="flex justify-center gap-3 mb-6">
+              {[t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setFeatureSlide(idx)}
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    featureSlide === idx
+                      ? 'bg-gradient-to-r from-fitness-primary to-fitness-secondary text-white shadow-lg'
+                      : 'bg-white/60 text-muted-foreground hover:bg-white border border-border'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            {/* RadioARA Slide */}
+            <div className={`transition-all duration-500 ${featureSlide === 0 ? 'block' : 'hidden'}`}>
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+                <div className="relative flex-shrink-0">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
+                  <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
+                    {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
+                      <img 
                         key={idx}
-                        onClick={() => setRadioImageIndex(idx)}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                          idx === radioImageIndex 
-                            ? 'bg-white w-4' 
-                            : 'bg-white/50 hover:bg-white/70'
+                        src={img} 
+                        alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                          idx === radioImageIndex ? 'opacity-100' : 'opacity-0'
                         }`}
-                        aria-label={`View photo ${idx + 1}`}
                       />
                     ))}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                      {[0, 1, 2].map((idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setRadioImageIndex(idx)}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            idx === radioImageIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/70'
+                          }`}
+                          aria-label={`View photo ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setRadioImageIndex((prev) => (prev === 0 ? 2 : prev - 1))}
+                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                      aria-label="Previous photo"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setRadioImageIndex((prev) => (prev === 2 ? 0 : prev + 1))}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                      aria-label="Next photo"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
                   </div>
-                  {/* Arrow buttons */}
-                  <button
-                    onClick={() => setRadioImageIndex((prev) => (prev === 0 ? 2 : prev - 1))}
-                    className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                    aria-label="Previous photo"
+                </div>
+                <div className="flex-1 text-center md:text-left space-y-4">
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <Radio className="h-5 w-5 text-fitness-primary" />
+                    <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">{t('As Featured On')}</span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                    {t('QuickFit on Luxembourg National Radio')}
+                  </h3>
+                  <p className="text-muted-foreground font-medium">
+                    {t("QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker")}
+                  </p>
+                  <a 
+                    href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
                   >
-                    <ChevronLeft className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setRadioImageIndex((prev) => (prev === 2 ? 0 : prev + 1))}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                    aria-label="Next photo"
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </button>
+                    <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
+                      {t('Listen to the Feature')} <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
                 </div>
               </div>
-              <div className="flex-1 text-center md:text-left space-y-4">
-                <div className="flex items-center justify-center md:justify-start gap-2">
-                  <Radio className="h-5 w-5 text-fitness-primary" />
-                  <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">{t('As Featured On')}</span>
+            </div>
+
+            {/* JEL Alumni Award Slide */}
+            <div className={`transition-all duration-500 ${featureSlide === 1 ? 'block' : 'hidden'}`}>
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+                <div className="relative flex-shrink-0">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30"></div>
+                  <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
+                    {[jelEvent1, jelEvent2].map((img, idx) => (
+                      <img 
+                        key={idx}
+                        src={img} 
+                        alt={`QuickFit at Vente en Commun JEL event - Photo ${idx + 1}`}
+                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                          idx === jelImageIndex ? 'opacity-100' : 'opacity-0'
+                        }`}
+                      />
+                    ))}
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+                      {[0, 1].map((idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setJelImageIndex(idx)}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            idx === jelImageIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/70'
+                          }`}
+                          aria-label={`View JEL photo ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      onClick={() => setJelImageIndex((prev) => (prev === 0 ? 1 : 0))}
+                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                      aria-label="Previous photo"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => setJelImageIndex((prev) => (prev === 1 ? 0 : 1))}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
+                      aria-label="Next photo"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
-                <h3 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {t('QuickFit on Luxembourg National Radio')}
-                </h3>
-                <p className="text-gray-600 font-medium">
-                  {t("QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker")}
-                </p>
-                <a 
-                  href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
-                    {t('Listen to the Feature')} <ExternalLink className="ml-2 h-4 w-4" />
-                  </Button>
-                </a>
+                <div className="flex-1 text-center md:text-left space-y-4">
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <Trophy className="h-5 w-5 text-amber-500" />
+                    <span className="text-amber-500 font-bold text-sm tracking-widest uppercase">{t('Award Winner')}</span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                    {t('JEL Alumni Award at Vente en Commun')}
+                  </h3>
+                  <p className="text-muted-foreground font-medium">
+                    {t("QuickFit won the JEL Alumni Award at the Vente en Commun event held at Cloche D'Or, Luxembourg. The event was organised by Jonk Entrepreneuren Luxembourg (JEL), the Luxembourg chapter of Junior Achievement (JA) Europe — the largest non-profit in Europe dedicated to entrepreneurship education.")}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
