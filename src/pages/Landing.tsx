@@ -302,7 +302,7 @@ const Landing = () => {
                         key={idx}
                         src={img} 
                         alt={`QuickFit at Vente en Commun JEL event - Photo ${idx + 1}`}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
+                        className={`absolute inset-0 w-full h-full object-cover object-right transition-opacity duration-500 ${
                           idx === jelImageIndex ? 'opacity-100' : 'opacity-0'
                         }`}
                       />
