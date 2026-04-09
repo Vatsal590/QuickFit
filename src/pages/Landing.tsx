@@ -344,7 +344,7 @@ const Landing = () => {
                     {t('JEL Alumni Award at Vente en Commun')}
                   </h3>
                   <p className="text-muted-foreground font-medium">
-                    {t("QuickFit won the JEL Alumni Award at the Vente en Commun event held at Cloche D'Or, Luxembourg. The event was organised by Jonk Entrepreneuren Luxembourg (JEL), the Luxembourg chapter of Junior Achievement (JA) Europe — the largest non-profit in Europe dedicated to entrepreneurship education.")}
+                    {t("QuickFit won the 2026 JEL Alumni Award at the Vente en Commun event held at Cloche D'Or, Luxembourg. The event was organised by Jonk Entrepreneuren Luxembourg (JEL), the Luxembourg chapter of Junior Achievement (JA) Europe — the largest non-profit in Europe dedicated to entrepreneurship education.")}
                   </p>
                 </div>
               </div>
