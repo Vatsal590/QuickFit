@@ -35,6 +35,8 @@ const Landing = () => {
   }, []);
   const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
+  const [featureSlide, setFeatureSlide] = React.useState(0);
+  const [jelImageIndex, setJelImageIndex] = React.useState(0);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
   
   const handleFounderImgError = () => {
