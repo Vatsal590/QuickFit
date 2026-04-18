@@ -453,7 +453,7 @@ const Landing = () => {
                   <div className="p-10 flex flex-col justify-center space-y-6">
                     <h4 className="text-3xl font-bold text-gray-900">{t('Vatsal Agarwala')}</h4>
                     <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
-                      🎉 {t("Get a customized plan made for you by Vatsal for FREE!")}
+                      🎉 {t("Get a customized plan made by Vatsal for the cost of a sandwich!")}
                     </p>
                     <p className="text-lg text-gray-700 leading-relaxed">
                       {t("Created by Vatsal Agarwala, a 15-year-old (now older) from Luxembourg who started his fitness journey at 13. After trying countless apps and videos, he built QuickFit to make fitness simple for everyone.")}
