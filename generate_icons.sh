@@ -1,6 +1,6 @@
 
 #!/bin/bash
-SOURCE="src/assets/quickfit-logo.png"
+SOURCE="new-icon.png"
 RES_DIR="android/app/src/main/res"
 
 # Adaptive Foreground Icons (108dp)
