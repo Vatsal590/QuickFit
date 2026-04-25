@@ -90,8 +90,9 @@ const AuthForm = () => {
       if (error) {
         toast({ title: 'Error', description: error.message, variant: 'destructive' });
       }
-    } catch (err) {
-      toast({ title: 'Error', description: 'Failed to sign in with Google.', variant: 'destructive' });
+    } catch (err: any) {
+      console.error('Sign-in error:', err);
+      toast({ title: 'Error', description: err?.message || 'Failed to sign in with Google.', variant: 'destructive' });
     } finally {
       setGoogleLoading(false);
     }
@@ -115,8 +116,9 @@ const AuthForm = () => {
       if (error) {
         toast({ title: 'Error', description: error.message, variant: 'destructive' });
       }
-    } catch (err) {
-      toast({ title: 'Error', description: 'Failed to sign in with Google.', variant: 'destructive' });
+    } catch (err: any) {
+      console.error('Sign-in error:', err);
+      toast({ title: 'Error', description: err?.message || 'Failed to sign in with Google.', variant: 'destructive' });
     } finally {
       setGoogleLoading(false);
     }

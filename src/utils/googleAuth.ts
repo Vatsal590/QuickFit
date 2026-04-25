@@ -32,13 +32,15 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
     const webClientId = '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com';
 
     if (!nativeGoogleInitialized) {
-      await GoogleAuth.initialize({
-        clientId: platform === 'ios' ? iosClientId : webClientId,
-        iosClientId,
+      const initOptions = {
+        clientId: webClientId,
+        iosClientId: iosClientId,
         serverClientId: webClientId,
         scopes: ['profile', 'email'],
         grantOfflineAccess: false,
-      } as any);
+      };
+      console.log('Initializing GoogleAuth with options:', JSON.stringify(initOptions));
+      await GoogleAuth.initialize(initOptions as any);
       nativeGoogleInitialized = true;
     }
     
