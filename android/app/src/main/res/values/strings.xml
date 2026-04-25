@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">QuickFit</string>
+    <string name="title_activity_main">QuickFit</string>
+    <string name="package_name">com.quickfit.dev</string>
+    <string name="custom_url_scheme">com.quickfit.dev</string>
+    <string name="server_client_id">602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com</string>
+</resources>
