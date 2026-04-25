@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "710855002650",
+    "project_id": "quickfitdev-5922d",
+    "storage_bucket": "quickfitdev-5922d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:710855002650:android:28861b9a90b5230816dfa3",
+        "android_client_info": {
+          "package_name": "com.quickfit.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcYl7xB1ve2UkoKwcYHwUhT0jBIpifHhM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
