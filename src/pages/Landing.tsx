@@ -101,9 +101,8 @@ const Landing = () => {
       <header className="relative bg-white sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 sm:h-20">
-            <div className="flex items-center gap-2 group">
-              <img src={quickfitLogo} alt="QuickFit Logo" className="h-8 sm:h-10 w-auto" />
-              <span className="text-blue-600 font-bold text-xl sm:text-2xl">QuickFit</span>
+            <div className="flex items-center group">
+              <img src={quickfitLogo} alt="QuickFit Logo" className="h-10 md:h-12 w-auto" />
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
               <Button
