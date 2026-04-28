@@ -13,9 +13,13 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import LanguageSelector from '@/components/language/LanguageSelector';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
+import './landing.css';
 
 const Landing = () => {
   const { t } = useTranslation();
+  const landingRef = React.useRef<HTMLDivElement>(null);
+  useScrollReveal(landingRef);
   const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -85,14 +89,17 @@ const Landing = () => {
     };
     checkVerification();
   }, [searchParams, navigate, toast]);
-  return <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
-      {/* Apple-style Animated Background Elements */}
+  return <div ref={landingRef} className="landing-root min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
+      {/* Scroll progress bar */}
+      <div id="scroll-progress-bar" className="scroll-progress" aria-hidden="true"></div>
+
+      {/* Apple-style Animated Background Elements (with subtle parallax) */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{
+        <div data-parallax="0.12" className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div data-parallax="-0.08" className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{
         animationDelay: '2s'
       }}></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{
+        <div data-parallax="0.06" className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{
         animationDelay: '4s'
       }}></div>
       </div>
