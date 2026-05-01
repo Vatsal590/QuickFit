@@ -13,13 +13,9 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import LanguageSelector from '@/components/language/LanguageSelector';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useScrollReveal } from '@/hooks/useScrollReveal';
-import './landing.css';
 
 const Landing = () => {
   const { t } = useTranslation();
-  const landingRef = React.useRef<HTMLDivElement>(null);
-  useScrollReveal(landingRef);
   const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -89,17 +85,14 @@ const Landing = () => {
     };
     checkVerification();
   }, [searchParams, navigate, toast]);
-  return <div ref={landingRef} className="landing-root min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
-      {/* Scroll progress bar */}
-      <div id="scroll-progress-bar" className="scroll-progress" aria-hidden="true"></div>
-
-      {/* Apple-style Animated Background Elements (with subtle parallax) */}
+  return <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
+      {/* Apple-style Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div data-parallax="0.12" className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-        <div data-parallax="-0.08" className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{
+        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{
         animationDelay: '2s'
       }}></div>
-        <div data-parallax="0.06" className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{
+        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{
         animationDelay: '4s'
       }}></div>
       </div>
@@ -211,7 +204,7 @@ const Landing = () => {
         </div>
 
         {/* Featured on Radio Section */}
-        <div data-reveal="fade" className="relative bg-gradient-to-r from-fitness-primary/5 via-fitness-secondary/5 to-fitness-accent/5 py-12">
+        <div className="relative bg-gradient-to-r from-fitness-primary/5 via-fitness-secondary/5 to-fitness-accent/5 py-12">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Feature slide navigation */}
             <div className="flex justify-center gap-3 mb-6">
@@ -361,7 +354,7 @@ const Landing = () => {
 
         {/* Core Features with Tilted Cards */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div data-reveal className="text-center mb-20">
+          <div className="text-center mb-20">
             <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
               {t('Everything You Need')}
             </h3>
@@ -370,7 +363,7 @@ const Landing = () => {
             </p>
           </div>
           
-          <div data-stagger className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {[{
             icon: Zap,
             title: t('Instant Workouts'),
@@ -407,8 +400,8 @@ const Landing = () => {
             description: t('Simple tips for a healthier lifestyle.'),
             gradient: 'from-purple-500 to-pink-600',
             delay: '0.5s'
-          }].map((feature, idx) => <Card key={idx} data-reveal="zoom" className="group relative overflow-hidden border-2 border-transparent hover:border-gray-200 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2" style={{
-            transitionDelay: feature.delay
+          }].map((feature, idx) => <Card key={idx} className="group relative overflow-hidden border-2 border-transparent hover:border-gray-200 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up" style={{
+            animationDelay: feature.delay
           }}>
                 <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
                 <CardHeader className="pb-4 relative">
@@ -441,7 +434,7 @@ const Landing = () => {
         {/* About the Founder - Angled Section */}
         <div className="relative bg-white py-24">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div data-reveal className="text-center mb-16">
+            <div className="text-center mb-16">
               <h3 className="text-5xl font-black text-gray-900 mb-4">
                 {t('About the Founder')}
               </h3>
@@ -451,7 +444,7 @@ const Landing = () => {
               {/* Tilted background accent */}
               <div className="absolute -inset-4 bg-gradient-to-r from-fitness-primary/5 to-fitness-secondary/5 transform -rotate-1 rounded-3xl"></div>
               
-              <div data-reveal="zoom" className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
+              <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
                 <div className="grid md:grid-cols-2 gap-0">
                   <div className="relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/10 to-fitness-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -483,7 +476,7 @@ const Landing = () => {
         }}></div>
 
   <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div data-reveal className="text-center mb-16">
+    <div className="text-center mb-16">
       <span className="text-fitness-accent font-bold text-sm tracking-widest uppercase bg-fitness-accent/20 px-6 py-2 rounded-full">
         {t('Reviews')}
       </span>
@@ -492,7 +485,7 @@ const Landing = () => {
       </h3>
     </div>
 
-    <div data-stagger className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       {[{
               name: 'Andrew',
               role: t('Student'),
@@ -509,7 +502,9 @@ const Landing = () => {
               name: 'Vedika',
               role: t('Housewife'),
               text: t('The exercise animations make it so much easier to workout. I like the fitness blogs!')
-            }].map((review, idx) => <Card key={idx} data-reveal="zoom" className="group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2">
+            }].map((review, idx) => <Card key={idx} className="group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 animate-scale-in" style={{
+              animationDelay: `${idx * 0.1}s`
+            }}>
           <CardContent className="flex flex-col items-center text-center p-6">
             <div className="mb-4 w-16 h-16 rounded-full bg-fitness-primary/10 flex items-center justify-center text-2xl font-bold text-fitness-primary">
               {review.name[0]}
@@ -539,7 +534,7 @@ const Landing = () => {
         }}></div>
 
           <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div data-reveal="zoom" data-stagger className="space-y-8">
+            <div className="space-y-8">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-bold border border-white/30">
                 <Sparkles className="h-4 w-4" />
                 <span>{t('Join the other Fitness Enthusiasts')}</span>
