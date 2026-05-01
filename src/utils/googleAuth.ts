@@ -44,16 +44,9 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
       nativeGoogleInitialized = true;
     }
     
-    // Try silent native session restore first to avoid showing Google account UI repeatedly
-    try {
-      const refreshed = await GoogleAuth.refresh();
-      if (refreshed?.idToken) {
-        return { idToken: refreshed.idToken };
-      }
-    } catch {
-      // Expected when user has not signed in before on this device
-    }
-
+    // Always call signIn() to get a fresh idToken.
+    // GoogleAuth.refresh() returns the cached (often expired) idToken,
+    // which causes Supabase to reject it with "Bad ID token".
     const result = await GoogleAuth.signIn();
     
     if (result.authentication?.idToken) {
