@@ -30,10 +30,11 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
     const platform = Capacitor.getPlatform();
     const iosClientId = '602471950477-0gu5j74jda1dg0edr9etqjitslp4hkir.apps.googleusercontent.com';
     const webClientId = '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com';
+    const androidClientId = '602471950477-mo08salu0lu9nvgqlvpnq5djipt13r47.apps.googleusercontent.com';
 
     if (!nativeGoogleInitialized) {
       const initOptions = {
-        clientId: webClientId,
+        clientId: platform === 'android' ? androidClientId : webClientId,
         iosClientId: iosClientId,
         serverClientId: webClientId,
         scopes: ['profile', 'email'],
