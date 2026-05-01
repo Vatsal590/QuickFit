@@ -30,11 +30,12 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
     const platform = Capacitor.getPlatform();
     const iosClientId = '602471950477-0gu5j74jda1dg0edr9etqjitslp4hkir.apps.googleusercontent.com';
     const webClientId = '602471950477-h5kud4birt5a806m85u5ab8pd8d31ubr.apps.googleusercontent.com';
-    const androidClientId = '602471950477-mo08salu0lu9nvgqlvpnq5djipt13r47.apps.googleusercontent.com';
 
     if (!nativeGoogleInitialized) {
       const initOptions = {
-        clientId: platform === 'android' ? androidClientId : webClientId,
+        // Android's requestIdToken must use the Web client ID as the audience.
+        // Passing the Android OAuth client ID creates an ID token Supabase rejects as "Bad ID token".
+        clientId: webClientId,
         iosClientId: iosClientId,
         serverClientId: webClientId,
         scopes: ['profile', 'email'],
@@ -45,6 +46,9 @@ export const nativeGoogleSignIn = async (): Promise<{ idToken: string } | null> 
       nativeGoogleInitialized = true;
     }
     
+    // Clear any token cached under the previous/native client ID, then get a fresh idToken.
+    await GoogleAuth.signOut().catch(() => undefined);
+
     // Always call signIn() to get a fresh idToken.
     // GoogleAuth.refresh() returns the cached (often expired) idToken,
     // which causes Supabase to reject it with "Bad ID token".
