@@ -279,7 +279,7 @@ const Landing = () => {
                     {t("QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker")}
                   </p>
                   <a 
-                    href="https://aracityradio.com/features-blog/2025/11/11/ai-powered-fitness-with-vatsal-agarwala" 
+                    href="https://soundcloud.com/aracityradio/ai-powered-fitness-with-vatsal-agarwala" 
                     target="_blank" 
                     rel="noopener noreferrer"
                   >
