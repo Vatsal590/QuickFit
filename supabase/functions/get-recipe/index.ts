@@ -11,11 +11,16 @@ serve(async (req) => {
   }
 
   try {
-    const { mealName } = await req.json();
+    const { mealName, language } = await req.json();
     
     if (!mealName) {
       throw new Error('Meal name is required');
     }
+
+    const langName = language && language !== 'English' ? language : 'English';
+    const langInstruction = langName !== 'English'
+      ? ` All ingredients and instructions MUST be written in ${langName}.`
+      : '';
 
     const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
     if (!lovableApiKey) {
@@ -36,7 +41,7 @@ serve(async (req) => {
         messages: [
           {
             role: 'system',
-            content: 'You are a chef. Provide recipes with measurements for 1 portion in JSON format: {"ingredients": ["item with amount"], "instructions": ["step"]}. Be concise and precise.'
+            content: `You are a chef. Provide recipes with measurements for 1 portion in JSON format: {"ingredients": ["item with amount"], "instructions": ["step"]}. Be concise and precise.${langInstruction}`
           },
           {
             role: 'user',

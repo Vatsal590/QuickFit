@@ -11,7 +11,11 @@ serve(async (req) => {
   }
 
   try {
-    const { imageData } = await req.json();
+    const { imageData, language } = await req.json();
+    const langName = language && language !== 'English' ? language : 'English';
+    const langInstruction = langName !== 'English'
+      ? `IMPORTANT: All text values in the response (food names, portions, and especially healthSuggestions) MUST be written in ${langName}. Numeric values stay numeric.`
+      : '';
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -29,7 +33,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a nutrition expert. Analyze food images and:
+            content: `${langInstruction}\nYou are a nutrition expert. Analyze food images and:
 1. Identify all food items with their estimated portions and nutritional values including micronutrients
 2. Provide practical, personalized suggestions to make this meal healthier
 
