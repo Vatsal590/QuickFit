@@ -516,8 +516,6 @@ const translations: Record<string, Record<string, string>> = {
     'Dietary Restrictions': 'Restrictions alimentaires',
     'Gluten-Free': 'Sans gluten',
     'Sesame': 'Sésame',
-    'Cuisine Preferences': 'Préférences culinaires',
-    'No Equipment': 'Aucun équipement',
     'Bench': 'Banc',
     'Pull-Up Bar': 'Barre de traction',
     'Update Profile': 'Mettre à jour le profil',
