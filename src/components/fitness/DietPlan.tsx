@@ -42,7 +42,7 @@ const DietPlan = () => {
   const { profile, updateProfile } = useFitnessProfile();
   const { toast } = useToast();
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -810,7 +810,7 @@ const DietPlan = () => {
     
     try {
       const { data, error } = await supabase.functions.invoke('get-recipe', {
-        body: { mealName }
+        body: { mealName, language }
       });
 
       if (error) throw error;
