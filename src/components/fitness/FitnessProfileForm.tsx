@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useFitnessProfile } from '../../hooks/useFitnessProfile';
+import { useTranslation } from '@/contexts/TranslationContext';
 import WorkoutPlanGenerator from './WorkoutPlanGenerator';
 import { Target, Dumbbell, Calendar } from 'lucide-react';
 import ectomorphImage from '@/assets/ectomorph-body-type.jpg';
@@ -25,6 +26,7 @@ interface FitnessProfileFormProps {
 
 const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfileFormProps) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const { profile, createProfile, updateProfile } = useFitnessProfile();
   const [showPlanGenerator, setShowPlanGenerator] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
@@ -203,9 +205,9 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
       <Dialog open={isOpen && !showSummary && !showPlanGenerator} onOpenChange={onClose}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{profile ? 'Update' : 'Create'} Your Fitness Profile</DialogTitle>
+            <DialogTitle>{profile ? t('Update Your Fitness Profile') : t('Create Your Fitness Profile')}</DialogTitle>
             <DialogDescription>
-              Tell us about yourself to get personalized 30-day workout plans
+              {t('Tell us about yourself to get personalized 30-day workout plans')}
             </DialogDescription>
           </DialogHeader>
 
@@ -213,12 +215,12 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
             {/* Basic Info */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Basic Information</CardTitle>
+                <CardTitle className="text-lg">{t('Basic Information')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="height">Height (cm)</Label>
+                    <Label htmlFor="height">{t('Height (cm)')}</Label>
                     <Input
                       id="height"
                       type="number"
@@ -228,7 +230,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                     />
                   </div>
                   <div>
-                    <Label htmlFor="weight">Current Weight (kg)</Label>
+                    <Label htmlFor="weight">{t('Current Weight (kg)')}</Label>
                     <Input
                       id="weight"
                       type="number"
@@ -238,7 +240,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                     />
                   </div>
                   <div>
-                    <Label htmlFor="goal_weight">Goal Weight (kg)</Label>
+                    <Label htmlFor="goal_weight">{t('Goal Weight (kg)')}</Label>
                     <Input
                       id="goal_weight"
                       type="number"
@@ -256,18 +258,18 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Target className="h-5 w-5" />
-                  Fitness Goal
+                  {t('Fitness Goal')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <Select value={formData.fitness_goal} onValueChange={(value) => setFormData(prev => ({ ...prev, fitness_goal: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select your primary goal" />
+                    <SelectValue placeholder={t('Select your primary goal')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="muscle_gain">Muscle Gain</SelectItem>
-                    <SelectItem value="fat_loss">Fat Loss</SelectItem>
-                    <SelectItem value="athlete_training">Train Like an Athlete</SelectItem>
+                    <SelectItem value="muscle_gain">{t('Muscle Gain')}</SelectItem>
+                    <SelectItem value="fat_loss">{t('Fat Loss')}</SelectItem>
+                    <SelectItem value="athlete_training">{t('Train Like an Athlete')}</SelectItem>
                   </SelectContent>
                 </Select>
               </CardContent>
@@ -276,9 +278,9 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
             {/* Body Type */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Body Type</CardTitle>
+                <CardTitle className="text-lg">{t('Body Type')}</CardTitle>
                 <CardDescription>
-                  Most people fall into 2 categories, not just one. Select up to 2 body types that best describe you.
+                  {t('Most people fall into 2 categories, not just one. Select up to 2 body types that best describe you.')}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -286,20 +288,20 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                   {[
                     {
                       value: 'ectomorph',
-                      title: 'Ectomorph',
-                      description: 'Naturally thin, fast metabolism, difficulty gaining weight',
+                      title: t('Ectomorph'),
+                      description: t('Naturally thin, fast metabolism, difficulty gaining weight'),
                       image: ectomorphImage
                     },
                     {
                       value: 'mesomorph',
-                      title: 'Mesomorph',
-                      description: 'Athletic build, gains muscle easily, balanced metabolism',
+                      title: t('Mesomorph'),
+                      description: t('Athletic build, gains muscle easily, balanced metabolism'),
                       image: mesomorphImage
                     },
                     {
                       value: 'endomorph',
-                      title: 'Endomorph',
-                      description: 'Rounder physique, slower metabolism, gains weight easily',
+                      title: t('Endomorph'),
+                      description: t('Rounder physique, slower metabolism, gains weight easily'),
                       image: endomorphImage
                     }
                   ].map((type) => (
@@ -342,19 +344,19 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  Workout Schedule
+                  {t('Workout Schedule')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <Label htmlFor="workout-days">Days per week you can work out</Label>
+                <Label htmlFor="workout-days">{t('Days per week you can work out')}</Label>
                 <Select value={formData.workout_days_per_week} onValueChange={(value) => setFormData(prev => ({ ...prev, workout_days_per_week: value }))}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select workout frequency" />
+                    <SelectValue placeholder={t('Select workout frequency')} />
                   </SelectTrigger>
                   <SelectContent>
                     {[1, 2, 3, 4, 5, 6, 7].map((days) => (
                       <SelectItem key={days} value={days.toString()}>
-                        {days} day{days > 1 ? 's' : ''} per week
+                        {days === 1 ? t('1 day per week') : `${days} ${t('days per week')}`}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -365,11 +367,11 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
             {/* Diet Preferences */}
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Diet Preferences</CardTitle>
+                <CardTitle className="text-lg">{t('Diet Preferences')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium">Dietary Restrictions</Label>
+                  <Label className="text-sm font-medium">{t('Dietary Restrictions')}</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     {['Vegetarian', 'Vegan', 'Ketogenic', 'Paleo', 'Lactose Intolerant', 'Gluten-Free'].map((diet) => (
                       <div key={diet} className="flex items-center space-x-2">
@@ -386,7 +388,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                           }}
                         />
                         <Label htmlFor={`diet-${diet}`} className="text-sm font-normal">
-                          {diet}
+                          {t(diet)}
                         </Label>
                       </div>
                     ))}
@@ -394,7 +396,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                 </div>
                 
                 <div>
-                  <Label className="text-sm font-medium">Food Allergies</Label>
+                  <Label className="text-sm font-medium">{t('Food Allergies')}</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     {['Nuts', 'Dairy', 'Eggs', 'Shellfish', 'Soy', 'Wheat', 'Fish', 'Sesame'].map((allergy) => (
                       <div key={allergy} className="flex items-center space-x-2">
@@ -411,7 +413,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                           }}
                         />
                         <Label htmlFor={`allergy-${allergy}`} className="text-sm font-normal">
-                          {allergy}
+                          {t(allergy)}
                         </Label>
                       </div>
                     ))}
@@ -419,7 +421,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium">Cuisine Preferences</Label>
+                  <Label className="text-sm font-medium">{t('Cuisine Preferences')}</Label>
                   <div className="grid grid-cols-2 gap-3 mt-2">
                     {['American', 'Italian', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'Thai'].map((cuisine) => (
                       <div key={cuisine} className="flex items-center space-x-2">
@@ -436,7 +438,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                           }}
                         />
                         <Label htmlFor={cuisine} className="text-sm font-normal">
-                          {cuisine}
+                          {t(cuisine)}
                         </Label>
                       </div>
                     ))}
@@ -450,7 +452,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Dumbbell className="h-5 w-5" />
-                  Available Equipment
+                  {t('Available Equipment')}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -463,7 +465,7 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
                         onCheckedChange={(checked) => handleEquipmentChange(equipment, checked as boolean)}
                       />
                       <Label htmlFor={equipment} className="text-sm font-normal capitalize">
-                        {equipment === 'none' ? 'No Equipment' : equipment.replace('_', ' ')}
+                        {equipment === 'none' ? t('No Equipment') : t(equipment.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()))}
                       </Label>
                     </div>
                   ))}
@@ -473,10 +475,10 @@ const FitnessProfileForm = ({ isOpen, onClose, onPlanGenerated }: FitnessProfile
 
             <div className="flex gap-3">
               <Button type="button" variant="outline" onClick={onClose} className="flex-1">
-                Cancel
+                {t('Cancel')}
               </Button>
               <Button type="submit" className="flex-1 bg-fitness-primary hover:bg-fitness-primary/90">
-                {profile ? 'Update Profile' : 'Create Profile'}
+                {profile ? t('Update Profile') : t('Create Profile')}
               </Button>
             </div>
           </form>
