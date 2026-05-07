@@ -17,7 +17,7 @@ interface FoodPhotoUploadProps {
 
 const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const { user } = useAuth();
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [analyzedFoods, setAnalyzedFoods] = useState<any[]>([]);
@@ -52,7 +52,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
     
     try {
       const { data, error } = await supabase.functions.invoke('analyze-food-image', {
-        body: { imageData }
+        body: { imageData, language }
       });
 
       if (error) throw error;
