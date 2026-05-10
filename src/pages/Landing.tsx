@@ -164,7 +164,7 @@ const Landing = () => {
                   <Button size="lg" className="relative bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-2xl hover:shadow-fitness-primary/40 text-lg px-16 py-8 font-bold text-white overflow-hidden transition-all duration-300 hover:scale-105">
                     <span className="relative z-10 flex items-center gap-2">
                       {t('Start Free Today')}
-                      <Zap className="h-5 w-5 group-hover:animate-pulse" />
+                      <Dumbbell className="h-5 w-5 group-hover:animate-pulse" />
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-fitness-secondary to-fitness-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </Button>
