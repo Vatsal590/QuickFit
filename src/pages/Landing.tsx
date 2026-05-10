@@ -178,7 +178,7 @@ const Landing = () => {
               animationDelay: '0.6s'
             }}>
                 {[{
-                icon: Zap,
+                icon: Dumbbell,
                 text: t('Instant workout generation')
               }, {
                 icon: Calendar,
