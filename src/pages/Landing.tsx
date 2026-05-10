@@ -364,7 +364,7 @@ const Landing = () => {
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {[{
-            icon: Zap,
+            icon: Dumbbell,
             title: t('Instant Workouts'),
             description: t('Generate personalized workouts in seconds based on your time, equipment, and goals.'),
             gradient: 'from-fitness-primary to-blue-600',
