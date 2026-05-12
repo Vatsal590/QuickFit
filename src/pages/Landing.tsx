@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Languages, Trophy } from 'lucide-react';
+import { Dumbbell, Calendar, MessageCircle, Apple, CheckCircle, Sparkles, BookOpen, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Languages, Trophy, Flame, Play } from 'lucide-react';
 import radioAraImage1 from '@/assets/radioara-feature.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
@@ -19,9 +19,8 @@ const Landing = () => {
   const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const vRef = React.useRef(Date.now().toString());
   const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG', '.webp', '.avif'];
   const bases = ['/lovable-uploads/vatsal-agarwala-founder.jpg', 'lovable-uploads/vatsal-agarwala-founder.jpg', `${import.meta.env.BASE_URL}lovable-uploads/vatsal-agarwala-founder`];
@@ -37,88 +36,79 @@ const Landing = () => {
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const [featureSlide, setFeatureSlide] = React.useState(0);
   const [jelImageIndex, setJelImageIndex] = React.useState(0);
+  const [reviewIndex, setReviewIndex] = React.useState(0);
+  const [reviewPaused, setReviewPaused] = React.useState(false);
   const fallbackPaths = React.useRef(allCandidates.slice(1));
-  
+
   const handleFounderImgError = () => {
     const next = fallbackPaths.current.shift();
-    if (next) {
-      setFounderSrc(next);
-    } else {
-      setFounderSrc(`/placeholder.svg?v=${vRef.current}`);
-    }
+    if (next) setFounderSrc(next);
+    else setFounderSrc(`/placeholder.svg?v=${vRef.current}`);
   };
+
   useEffect(() => {
     const checkVerification = async () => {
       const error = searchParams.get('error');
       const errorDescription = searchParams.get('error_description');
       if (error || errorDescription) {
-        if (errorDescription?.includes('expired') || errorDescription?.includes('invalid')) {
-          toast({
-            title: "Verification Link Expired",
-            description: "Your email confirmation link has expired or is invalid. Please sign up again to receive a new confirmation email.",
-            variant: "destructive"
-          });
-          navigate('/', {
-            replace: true
-          });
-        } else {
-          toast({
-            title: "Verification Error",
-            description: errorDescription || "There was an issue verifying your email. Please try again.",
-            variant: "destructive"
-          });
-          navigate('/', {
-            replace: true
-          });
-        }
-      }
-      const {
-        data: {
-          session
-        }
-      } = await supabase.auth.getSession();
-      if (session) {
-        navigate('/home', {
-          replace: true
+        toast({
+          title: errorDescription?.includes('expired') ? "Verification Link Expired" : "Verification Error",
+          description: errorDescription || "There was an issue verifying your email. Please try again.",
+          variant: "destructive",
         });
+        navigate('/', { replace: true });
       }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) navigate('/home', { replace: true });
     };
     checkVerification();
   }, [searchParams, navigate, toast]);
-  return <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-background via-accent/20 to-background">
-      {/* Apple-style Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-fitness-secondary/5 rounded-full blur-3xl animate-float" style={{
-        animationDelay: '2s'
-      }}></div>
-        <div className="absolute top-1/2 left-1/2 w-80 h-80 bg-fitness-accent/5 rounded-full blur-3xl animate-float" style={{
-        animationDelay: '4s'
-      }}></div>
-      </div>
 
-      {/* Header with Apple Glass Effect */}
-      <header className="relative bg-white sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 sm:h-20">
-            <div className="flex items-center group">
-              <img src={quickfitLogo} alt="QuickFit Logo" className="h-10 md:h-12 w-auto" />
+  const reviews = [
+    { name: 'Andrew', role: t('Student'), text: t('Clear, well organised. I like the weight tracker.') },
+    { name: 'Nina', role: t('Mother'), text: t('Easy to use and navigate.') },
+    { name: 'Harshit', role: t('Student'), text: t('Liked how so many features were there for free, even the AI fitness chatbot.') },
+    { name: 'Vedika', role: t('Housewife'), text: t('The exercise animations make it so much easier to workout. I like the fitness blogs!') },
+  ];
+
+  useEffect(() => {
+    if (reviewPaused) return;
+    const id = setInterval(() => setReviewIndex(i => (i + 1) % reviews.length), 5500);
+    return () => clearInterval(id);
+  }, [reviewPaused, reviews.length]);
+
+  const features = [
+    { icon: Dumbbell, title: t('Instant Workouts'), description: t('Smart workouts in seconds based on your time, equipment, and goals.') },
+    { icon: Calendar, title: t('30-Day Plans'), description: t('Stay consistent with a structured 30-day plan tailored to you.') },
+    { icon: Apple, title: t('7-Day Diet Plans'), description: t('Simple 7-day meal plans aligned with your fitness goals.') },
+    { icon: Camera, title: t('AI Food Tracker'), description: t('Snap a photo, let AI estimate and track your nutrition.') },
+    { icon: MessageCircle, title: t('AI Fitness Coach'), description: t('Chat with an AI coach 24/7 for form, plan tweaks, and guidance.') },
+    { icon: BookOpen, title: t('Fitness Blogs'), description: t('Short, practical articles to build better habits.') },
+  ];
+
+  return (
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground antialiased">
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-background/80 border-b border-border/60">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <img src={quickfitLogo} alt="QuickFit Logo" className="h-9 md:h-10 w-auto" />
             </div>
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2">
               <Button
-                variant="outline"
-                className="rounded-full border-primary/30 bg-primary/10 backdrop-blur hover:bg-primary/20 hover:border-primary/50 transition-all duration-300 h-9 px-3 sm:h-10 sm:px-4 gap-1.5 sm:gap-2"
+                variant="ghost"
+                size="sm"
+                className="rounded-full gap-2 text-muted-foreground hover:text-foreground"
                 onClick={() => setIsLanguageSelectorOpen(true)}
                 aria-label="Change language"
-                type="button"
               >
-                <Languages className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                <span className="text-xs sm:text-sm font-medium text-primary">🌐</span>
+                <Languages className="h-4 w-4" />
+                <span className="text-sm font-medium hidden sm:inline">EN</span>
               </Button>
               <Link to="/auth">
-                <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-3 sm:px-6 py-2 text-sm sm:text-base font-semibold">
-                  <span className="hidden sm:inline">{t('Get Started')}</span>
-                  <span className="sm:hidden">{t('Start')}</span>
+                <Button size="sm" className="rounded-full px-5 font-semibold shadow-sm">
+                  {t('Get Started')}
                 </Button>
               </Link>
             </div>
@@ -126,95 +116,147 @@ const Landing = () => {
         </div>
       </header>
 
-      <LanguageSelector
-        isOpen={isLanguageSelectorOpen}
-        onClose={() => setIsLanguageSelectorOpen(false)}
-      />
- 
-      <main className="relative flex-grow">
-        {/* Hero Section with Curved Bottom */}
-        <div className="relative bg-gradient-to-br from-white via-blue-50/30 to-green-50/30 pb-32 overflow-hidden">
-          {/* Decorative Elements */}
-          <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
-            <div className="absolute -top-10 -right-10 w-72 h-72 bg-fitness-accent/10 rounded-full blur-3xl"></div>
-            <div className="absolute top-40 -left-20 w-96 h-96 bg-fitness-primary/10 rounded-full blur-3xl"></div>
-          </div>
+      <LanguageSelector isOpen={isLanguageSelectorOpen} onClose={() => setIsLanguageSelectorOpen(false)} />
 
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div className="text-center mb-16 space-y-8">
-              <h2 className="text-6xl md:text-8xl font-black text-gray-900 mb-8 animate-fade-in-up leading-tight">
-                {t('Your Complete')}
-                <span className="block bg-gradient-to-r from-fitness-primary via-fitness-secondary to-fitness-accent bg-clip-text text-transparent mt-4 animate-shimmer" style={{
-                backgroundSize: '200% auto'
-              }}>
-                  {t('Fitness Companion')}
-                </span>
-              </h2>
+      <main>
+        {/* HERO */}
+        <section className="relative overflow-hidden">
+          {/* Gradient background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/10 via-background to-fitness-secondary/10" />
+          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-fitness-primary/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] bg-fitness-secondary/20 rounded-full blur-3xl" />
 
-              <p className="text-xl md:text-2xl text-gray-700 mb-12 max-w-4xl mx-auto leading-relaxed animate-fade-in font-medium" style={{
-              animationDelay: '0.2s'
-            }}>
-                {t('Personalized workouts, nutrition plans, and AI coaching in one place.')}
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12 animate-scale-in" style={{
-              animationDelay: '0.4s'
-            }}>
-                <Link to="/auth" className="group">
-                  <Button size="lg" className="relative bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-2xl hover:shadow-fitness-primary/40 text-lg px-16 py-8 font-bold text-white overflow-hidden transition-all duration-300 hover:scale-105">
-                    <span className="relative z-10 flex items-center gap-2">
+          <div className="relative max-w-6xl mx-auto px-6 lg:px-8 py-20 md:py-28 min-h-[88vh] flex items-center">
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center w-full">
+              {/* Text */}
+              <div className="lg:col-span-7 space-y-7">
+                <div
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 backdrop-blur px-3 py-1.5 text-xs font-medium text-muted-foreground opacity-0 animate-fade-in"
+                  style={{ animationDelay: '0ms', animationFillMode: 'forwards' }}
+                >
+                  <Sparkles className="h-3.5 w-3.5 text-fitness-primary" />
+                  {t('AI-powered fitness, made simple')}
+                </div>
+
+                <h1
+                  className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.05] opacity-0 animate-fade-in"
+                  style={{ animationDelay: '80ms', animationFillMode: 'forwards' }}
+                >
+                  {t('Your Complete')}{' '}
+                  <span className="bg-gradient-to-r from-fitness-primary to-fitness-secondary bg-clip-text text-transparent">
+                    {t('Fitness Companion')}
+                  </span>
+                </h1>
+
+                <p
+                  className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed opacity-0 animate-fade-in"
+                  style={{ animationDelay: '180ms', animationFillMode: 'forwards' }}
+                >
+                  {t('Personalized workouts, nutrition plans, and AI coaching in one place.')}
+                </p>
+
+                <div
+                  className="flex flex-col sm:flex-row gap-3 opacity-0 animate-fade-in"
+                  style={{ animationDelay: '260ms', animationFillMode: 'forwards' }}
+                >
+                  <Link to="/auth">
+                    <Button size="lg" className="rounded-full px-7 h-12 font-semibold shadow-lg shadow-fitness-primary/20 hover:shadow-fitness-primary/40 transition-shadow animate-cta-pulse">
                       {t('Start Free Today')}
-                      <Dumbbell className="h-5 w-5 group-hover:animate-pulse" />
-                    </span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-fitness-secondary to-fitness-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </Button>
-                </Link>
-                <p className="text-sm text-gray-600 font-medium">
-                  {t('No credit card required • Get started in 2 minutes')}
+                    </Button>
+                  </Link>
+                  <a href="#features">
+                    <Button size="lg" variant="outline" className="rounded-full px-7 h-12 font-semibold gap-2">
+                      <Play className="h-4 w-4" />
+                      {t('View Demo')}
+                    </Button>
+                  </a>
+                </div>
+
+                <p
+                  className="text-sm text-muted-foreground opacity-0 animate-fade-in"
+                  style={{ animationDelay: '340ms', animationFillMode: 'forwards' }}
+                >
+                  {t('Instant workouts • 30-day plans • AI fitness coaching')}
                 </p>
               </div>
 
-              <div className="flex flex-wrap justify-center items-center gap-8 text-base text-gray-700 animate-fade-in" style={{
-              animationDelay: '0.6s'
-            }}>
-                {[{
-                icon: Dumbbell,
-                text: t('Instant workout generation')
-              }, {
-                icon: Calendar,
-                text: t('30-day personalized plans')
-              }, {
-                icon: Sparkles,
-                text: t('AI fitness coaching')
-              }].map((item, idx) => <div key={idx} className="flex items-center gap-3 bg-white/60 backdrop-blur-sm px-6 py-3 rounded-full shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300 hover:scale-105">
-                    <item.icon className="h-5 w-5 text-fitness-primary" />
-                    <span className="font-semibold">{item.text}</span>
-                  </div>)}
+              {/* App mockup */}
+              <div
+                className="lg:col-span-5 opacity-0 animate-fade-in"
+                style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+              >
+                <div className="relative mx-auto max-w-sm">
+                  <div className="absolute -inset-6 bg-gradient-to-br from-fitness-primary/30 to-fitness-secondary/30 rounded-[2.5rem] blur-2xl opacity-60" />
+                  <div className="relative rounded-[2rem] border border-border/60 bg-card/80 backdrop-blur-xl shadow-2xl p-5 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-xs text-muted-foreground">{t("Today's Workout")}</p>
+                        <p className="text-lg font-bold">{t('Upper Body Strength')}</p>
+                      </div>
+                      <div className="h-10 w-10 rounded-full bg-fitness-primary/10 flex items-center justify-center">
+                        <Flame className="h-5 w-5 text-fitness-primary" />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      {[
+                        { v: '42', l: t('min') },
+                        { v: '6', l: t('exercises') },
+                        { v: '380', l: t('kcal') },
+                      ].map((s, i) => (
+                        <div key={i} className="rounded-xl bg-muted/60 p-3 text-center">
+                          <p className="text-base font-bold">{s.v}</p>
+                          <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{s.l}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2">
+                      {[
+                        { name: t('Bench Press'), sets: '4 × 8' },
+                        { name: t('Pull-ups'), sets: '3 × 10' },
+                        { name: t('Shoulder Press'), sets: '3 × 12' },
+                      ].map((ex, i) => (
+                        <div key={i} className="flex items-center gap-3 rounded-xl border border-border/60 p-3">
+                          <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-fitness-primary to-fitness-secondary flex items-center justify-center">
+                            <Dumbbell className="h-4 w-4 text-white" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold truncate">{ex.name}</p>
+                            <p className="text-xs text-muted-foreground">{ex.sets}</p>
+                          </div>
+                          <CheckCircle className="h-4 w-4 text-fitness-secondary" />
+                        </div>
+                      ))}
+                    </div>
+
+                    <Button className="w-full rounded-xl" size="sm">
+                      {t('Start Workout')}
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Curved Bottom */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
-            <svg className="relative block w-full h-20" viewBox="0 0 1200 120" preserveAspectRatio="none">
-              <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" className="fill-slate-50"></path>
-            </svg>
-          </div>
-        </div>
+        {/* AS FEATURED ON */}
+        <section className="py-20 bg-muted/30 border-y border-border/60">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-10">
+              <p className="text-xs font-bold tracking-[0.2em] text-muted-foreground uppercase">{t('As Featured On')}</p>
+              <h2 className="text-2xl md:text-3xl font-bold mt-3">{t('Trusted & Recognized')}</h2>
+            </div>
 
-        {/* Featured on Radio Section */}
-        <div className="relative bg-gradient-to-r from-fitness-primary/5 via-fitness-secondary/5 to-fitness-accent/5 py-12">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Feature slide navigation */}
-            <div className="flex justify-center gap-3 mb-6">
+            <div className="flex justify-center gap-2 mb-8">
               {[t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
                 <button
                   key={idx}
                   onClick={() => setFeatureSlide(idx)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                     featureSlide === idx
-                      ? 'bg-gradient-to-r from-fitness-primary to-fitness-secondary text-white shadow-lg'
-                      : 'bg-white/60 text-muted-foreground hover:bg-white border border-border'
+                      ? 'bg-foreground text-background'
+                      : 'bg-background text-muted-foreground hover:text-foreground border border-border'
                   }`}
                 >
                   {label}
@@ -222,377 +264,233 @@ const Landing = () => {
               ))}
             </div>
 
-            {/* RadioARA Slide */}
-            <div className={`transition-all duration-500 ${featureSlide === 0 ? 'block' : 'hidden'}`}>
-              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
-                <div className="relative flex-shrink-0">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
-                  <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
-                    {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
-                      <img 
+            {/* RadioARA */}
+            <div className={featureSlide === 0 ? 'block' : 'hidden'}>
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-card rounded-2xl p-6 md:p-8 border border-border/60 shadow-sm">
+                <div className="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0 overflow-hidden rounded-2xl">
+                  {[radioAraImage1, radioAraImage2, radioAraImage3].map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`Vatsal Agarwala on RadioARA - Photo ${idx + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${idx === radioImageIndex ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                  ))}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {[0, 1, 2].map(idx => (
+                      <button
                         key={idx}
-                        src={img} 
-                        alt={`Vatsal Agarwala featured on RadioARA Luxembourg - Photo ${idx + 1}`}
-                        className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-                          idx === radioImageIndex ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        onClick={() => setRadioImageIndex(idx)}
+                        className={`h-1.5 rounded-full transition-all ${idx === radioImageIndex ? 'bg-white w-5' : 'bg-white/60 w-1.5'}`}
+                        aria-label={`Photo ${idx + 1}`}
                       />
                     ))}
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                      {[0, 1, 2].map((idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setRadioImageIndex(idx)}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            idx === radioImageIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/70'
-                          }`}
-                          aria-label={`View photo ${idx + 1}`}
-                        />
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => setRadioImageIndex((prev) => (prev === 0 ? 2 : prev - 1))}
-                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                      aria-label="Previous photo"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setRadioImageIndex((prev) => (prev === 2 ? 0 : prev + 1))}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                      aria-label="Next photo"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
                   </div>
+                  <button onClick={() => setRadioImageIndex(p => (p === 0 ? 2 : p - 1))} className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1" aria-label="Previous">
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+                  <button onClick={() => setRadioImageIndex(p => (p === 2 ? 0 : p + 1))} className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1" aria-label="Next">
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
                 </div>
-                <div className="flex-1 text-center md:text-left space-y-4">
+                <div className="flex-1 text-center md:text-left space-y-3">
                   <div className="flex items-center justify-center md:justify-start gap-2">
-                    <Radio className="h-5 w-5 text-fitness-primary" />
-                    <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">{t('As Featured On')}</span>
+                    <Radio className="h-4 w-4 text-fitness-primary" />
+                    <span className="text-fitness-primary font-semibold text-xs tracking-widest uppercase">{t('Luxembourg National Radio')}</span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">
-                    {t('QuickFit on Luxembourg National Radio')}
-                  </h3>
-                  <p className="text-muted-foreground font-medium">
+                  <h3 className="text-xl md:text-2xl font-bold">{t('QuickFit on Luxembourg National Radio')}</h3>
+                  <p className="text-muted-foreground">
                     {t("QuickFit was featured on RadioARA, Luxembourg's national radio. Vatsal, the founder of QuickFit was invited as a speaker")}
                   </p>
-                  <a 
-                    href="https://soundcloud.com/aracityradio/ai-powered-fitness-with-vatsal-agarwala" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                  >
-                    <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
-                      {t('Listen to the Feature')} <ExternalLink className="ml-2 h-4 w-4" />
+                  <a href="https://soundcloud.com/aracityradio/ai-powered-fitness-with-vatsal-agarwala" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" className="rounded-full mt-2 gap-2">
+                      {t('Listen to the Feature')} <ExternalLink className="h-4 w-4" />
                     </Button>
                   </a>
                 </div>
               </div>
             </div>
 
-            {/* JEL Alumni Award Slide */}
-            <div className={`transition-all duration-500 ${featureSlide === 1 ? 'block' : 'hidden'}`}>
-              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
-                <div className="relative flex-shrink-0">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30"></div>
-                  <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
-                    {[jelEvent1, jelEvent2].map((img, idx) => (
-                      <img 
+            {/* JEL */}
+            <div className={featureSlide === 1 ? 'block' : 'hidden'}>
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-card rounded-2xl p-6 md:p-8 border border-border/60 shadow-sm">
+                <div className="relative w-48 h-48 md:w-56 md:h-56 flex-shrink-0 overflow-hidden rounded-2xl">
+                  {[jelEvent1, jelEvent2].map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`JEL event - Photo ${idx + 1}`}
+                      className={`absolute inset-0 w-full h-full object-cover object-left transition-opacity duration-500 ${idx === jelImageIndex ? 'opacity-100' : 'opacity-0'}`}
+                    />
+                  ))}
+                  <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {[0, 1].map(idx => (
+                      <button
                         key={idx}
-                        src={img} 
-                        alt={`QuickFit at Vente en Commun JEL event - Photo ${idx + 1}`}
-                        className={`absolute inset-0 w-full h-full object-cover object-left transition-opacity duration-500 ${
-                          idx === jelImageIndex ? 'opacity-100' : 'opacity-0'
-                        }`}
+                        onClick={() => setJelImageIndex(idx)}
+                        className={`h-1.5 rounded-full transition-all ${idx === jelImageIndex ? 'bg-white w-5' : 'bg-white/60 w-1.5'}`}
+                        aria-label={`Photo ${idx + 1}`}
                       />
                     ))}
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
-                      {[0, 1].map((idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setJelImageIndex(idx)}
-                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                            idx === jelImageIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/70'
-                          }`}
-                          aria-label={`View JEL photo ${idx + 1}`}
-                        />
-                      ))}
-                    </div>
-                    <button
-                      onClick={() => setJelImageIndex((prev) => (prev === 0 ? 1 : 0))}
-                      className="absolute left-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                      aria-label="Previous photo"
-                    >
-                      <ChevronLeft className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setJelImageIndex((prev) => (prev === 1 ? 0 : 1))}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1 transition-colors"
-                      aria-label="Next photo"
-                    >
-                      <ChevronRight className="h-4 w-4" />
-                    </button>
                   </div>
                 </div>
-                <div className="flex-1 text-center md:text-left space-y-4">
+                <div className="flex-1 text-center md:text-left space-y-3">
                   <div className="flex items-center justify-center md:justify-start gap-2">
-                    <Trophy className="h-5 w-5 text-amber-500" />
-                    <span className="text-amber-500 font-bold text-sm tracking-widest uppercase">{t('Award Winner')}</span>
+                    <Trophy className="h-4 w-4 text-amber-500" />
+                    <span className="text-amber-500 font-semibold text-xs tracking-widest uppercase">{t('Award Winner')}</span>
                   </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">
-                    {t('JEL Alumni Award at Vente en Commun')}
-                  </h3>
-                  <p className="text-muted-foreground font-medium">
+                  <h3 className="text-xl md:text-2xl font-bold">{t('JEL Alumni Award at Vente en Commun')}</h3>
+                  <p className="text-muted-foreground">
                     {t("QuickFit won the 2026 My First Enterprise JEL Alumni Award held at Cloche D'Or, Luxembourg. The event was organised by Jonk Entrepreneuren Luxembourg (JEL), the Luxembourg chapter of Junior Achievement (JA) Europe — the largest non-profit in Europe dedicated to entrepreneurship education.")}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Core Features with Tilted Cards */}
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-          <div className="text-center mb-20">
-            <h3 className="text-5xl md:text-6xl font-black text-gray-900 mb-6">
-              {t('Everything You Need')}
-            </h3>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto font-medium leading-relaxed">
-              {t('Workouts, meal plans, and tracking in one place.')}
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            {[{
-            icon: Dumbbell,
-            title: t('Instant Workouts'),
-            description: t('Generate personalized workouts in seconds based on your time, equipment, and goals.'),
-            gradient: 'from-fitness-primary to-blue-600',
-            delay: '0s'
-          }, {
-            icon: Calendar,
-            title: t('30-Day Plans'),
-            description: t('Month-long programs that adapt to your fitness level and available equipment.'),
-            gradient: 'from-fitness-secondary to-green-600',
-            delay: '0.1s'
-          }, {
-            icon: Apple,
-            title: t('7-Day Diet Plans'),
-            description: t('Personalized meal plans with nutritional guidance for your goals.'),
-            gradient: 'from-fitness-accent to-yellow-600',
-            delay: '0.2s'
-          }, {
-            icon: Camera,
-            title: t('AI Food Tracker'),
-            description: t('Log meals with photos and track nutrition automatically using AI.'),
-            gradient: 'from-blue-500 to-indigo-600',
-            delay: '0.3s'
-          }, {
-            icon: MessageCircle,
-            title: t('AI Fitness Coach'),
-            description: t('Get instant answers to fitness questions 24/7.'),
-            gradient: 'from-green-500 to-emerald-600',
-            delay: '0.4s'
-          }, {
-            icon: BookOpen,
-            title: t('Fitness Blogs'),
-            description: t('Simple tips for a healthier lifestyle.'),
-            gradient: 'from-purple-500 to-pink-600',
-            delay: '0.5s'
-          }].map((feature, idx) => <Card key={idx} className="group relative overflow-hidden border-2 border-transparent hover:border-gray-200 bg-white hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in-up" style={{
-            animationDelay: feature.delay
-          }}>
-                <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}></div>
-                <CardHeader className="pb-4 relative">
-                  <div className={`mx-auto bg-gradient-to-br ${feature.gradient} w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform transition-all duration-500 group-hover:scale-110 group-hover:rotate-6`}>
-                    <feature.icon className="h-10 w-10 text-white" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold mb-2 group-hover:text-fitness-primary transition-colors duration-300">
-                    {feature.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base leading-relaxed text-gray-600 font-medium">
-                    {feature.description}
-                  </CardDescription>
-                </CardContent>
-                
-                {/* Decorative corner accent */}
-                <div className={`absolute -bottom-8 -right-8 w-32 h-32 bg-gradient-to-br ${feature.gradient} opacity-10 rounded-full blur-2xl group-hover:opacity-20 transition-opacity duration-500`}></div>
-              </Card>)}
-          </div>
-        </div>
-
-        {/* Curved Transition */}
-        <div className="relative w-full overflow-hidden">
-          <svg className="relative block w-full h-24" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" className="fill-white"></path>
-          </svg>
-        </div>
-
-        {/* About the Founder - Angled Section */}
-        <div className="relative bg-white py-24">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h3 className="text-5xl font-black text-gray-900 mb-4">
-                {t('About the Founder')}
-              </h3>
+        {/* FEATURES */}
+        <section id="features" className="py-24">
+          <div className="max-w-6xl mx-auto px-6 lg:px-8">
+            <div className="text-center max-w-2xl mx-auto mb-14">
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight">{t('Everything You Need')}</h2>
+              <p className="text-lg text-muted-foreground mt-4">{t('Workouts, meal plans, and tracking in one place.')}</p>
             </div>
 
-            <div className="relative">
-              {/* Tilted background accent */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-fitness-primary/5 to-fitness-secondary/5 transform -rotate-1 rounded-3xl"></div>
-              
-              <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className="relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/10 to-fitness-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src={founderSrc} alt="Vatsal Agarwala - Founder of QuickFit" className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" onError={handleFounderImgError} />
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {features.map((f, idx) => (
+                <div
+                  key={idx}
+                  className="group rounded-2xl border border-border/60 bg-card p-6 shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-200 ease-out animate-fade-in opacity-0"
+                  style={{ animationDelay: `${idx * 70}ms`, animationFillMode: 'forwards' }}
+                >
+                  <div className="h-12 w-12 rounded-xl bg-fitness-primary/10 flex items-center justify-center mb-5 transition-colors group-hover:bg-fitness-primary/20">
+                    <f.icon className="h-6 w-6 text-fitness-primary" />
                   </div>
-                  <div className="p-10 flex flex-col justify-center space-y-6">
-                    <h4 className="text-3xl font-bold text-gray-900">{t('Vatsal Agarwala')}</h4>
-                    <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
-                      🎉 {t("Get a customized plan made for you by Vatsal!")}
-                    </p>
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      {t("Created by Vatsal Agarwala, a 15-year-old (now older) from Luxembourg who started his fitness journey at 13. After trying countless apps and videos, he built QuickFit to make fitness simple for everyone.")}
-                    </p>
-                  </div>
+                  <h3 className="text-lg font-semibold mb-2">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* REVIEWS - slider */}
+        <section className="py-24 bg-muted/30 border-y border-border/60">
+          <div className="max-w-4xl mx-auto px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <p className="text-xs font-bold tracking-[0.2em] text-muted-foreground uppercase">{t('Reviews')}</p>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mt-3">{t('What Our Users Say')}</h2>
+            </div>
+
+            <div
+              className="relative"
+              onMouseEnter={() => setReviewPaused(true)}
+              onMouseLeave={() => setReviewPaused(false)}
+            >
+              <div className="overflow-hidden rounded-2xl">
+                <div
+                  className="flex transition-transform duration-500 ease-out"
+                  style={{ transform: `translateX(-${reviewIndex * 100}%)` }}
+                >
+                  {reviews.map((r, idx) => (
+                    <div key={idx} className="w-full flex-shrink-0 px-2">
+                      <div className="bg-card rounded-2xl border border-border/60 p-8 md:p-10 text-center shadow-sm">
+                        <div className="mx-auto mb-5 h-14 w-14 rounded-full bg-fitness-primary/10 flex items-center justify-center text-xl font-bold text-fitness-primary">
+                          {r.name[0]}
+                        </div>
+                        <p className="text-lg md:text-xl font-medium leading-relaxed text-foreground/90">"{r.text}"</p>
+                        <p className="mt-5 font-semibold">{r.name}</p>
+                        <p className="text-sm text-muted-foreground">{r.role}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-center gap-2 mt-6">
+                {reviews.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setReviewIndex(idx)}
+                    className={`h-2 rounded-full transition-all ${idx === reviewIndex ? 'bg-foreground w-6' : 'bg-muted-foreground/30 w-2'}`}
+                    aria-label={`Review ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* FOUNDER */}
+        <section className="py-24">
+          <div className="max-w-4xl mx-auto px-6 lg:px-8">
+            <div className="grid md:grid-cols-[200px_1fr] gap-8 md:gap-10 items-center">
+              <div className="mx-auto">
+                <div className="relative h-40 w-40 md:h-48 md:w-48 rounded-full overflow-hidden border-4 border-background shadow-xl ring-1 ring-border">
+                  <img src={founderSrc} alt="Vatsal Agarwala" className="w-full h-full object-cover" onError={handleFounderImgError} />
+                </div>
+              </div>
+              <div className="text-center md:text-left space-y-3">
+                <p className="text-xs font-bold tracking-[0.2em] text-fitness-primary uppercase">{t('Meet the Founder')}</p>
+                <h3 className="text-3xl font-bold">{t('Vatsal Agarwala')}</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {t('Vatsal started his fitness journey at 13 and built QuickFit to make fitness less confusing for beginners.')}
+                </p>
+                <div className="inline-flex items-center gap-2 rounded-full bg-fitness-primary/10 text-fitness-primary px-4 py-1.5 text-sm font-medium">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  {t('Get a customized plan made for you by Vatsal!')}
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-       {/* Reviews Section */}
-      <div className="relative py-24 overflow-hidden" style={{
-        background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #dcfce7 100%)'
-      }}>
-  {/* Dot Pattern Overlay */}
-  <div className="absolute inset-0 opacity-20" style={{
-          backgroundImage: 'radial-gradient(circle, #94a3b8 1px, transparent 1px)',
-          backgroundSize: '20px 20px'
-        }}></div>
+        {/* FINAL CTA */}
+        <section className="py-24 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary to-fitness-secondary" />
+          <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-white/10 rounded-full blur-3xl" />
 
-  <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div className="text-center mb-16">
-      <span className="text-fitness-accent font-bold text-sm tracking-widest uppercase bg-fitness-accent/20 px-6 py-2 rounded-full">
-        {t('Reviews')}
-      </span>
-      <h3 className="text-5xl font-black text-gray-900 mt-6">
-        {t('What Our Users Say')}
-      </h3>
-    </div>
-
-    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-      {[{
-              name: 'Andrew',
-              role: t('Student'),
-              text: t('Clear, well organised. I like the weight tracker.')
-            }, {
-              name: 'Nina',
-              role: t('Mother'),
-              text: t('Easy to use and navigate.')
-            }, {
-              name: 'Harshit',
-              role: t('Student'),
-              text: t('Liked how so many features were there for free, even the AI fitness chatbot.')
-            }, {
-              name: 'Vedika',
-              role: t('Housewife'),
-              text: t('The exercise animations make it so much easier to workout. I like the fitness blogs!')
-            }].map((review, idx) => <Card key={idx} className="group bg-white/80 backdrop-blur-sm hover:bg-white border-2 border-transparent hover:border-gray-200 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 animate-scale-in" style={{
-              animationDelay: `${idx * 0.1}s`
-            }}>
-          <CardContent className="flex flex-col items-center text-center p-6">
-            <div className="mb-4 w-16 h-16 rounded-full bg-fitness-primary/10 flex items-center justify-center text-2xl font-bold text-fitness-primary">
-              {review.name[0]}
+          <div className="relative max-w-3xl mx-auto px-6 lg:px-8 text-center text-white">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
+              {t('Ready to Transform Your')} <span className="block">{t('Fitness Journey?')}</span>
+            </h2>
+            <p className="text-lg md:text-xl text-white/90 mt-5 max-w-2xl mx-auto">
+              {t("Join others who've made fitness simple with QuickFit's intelligent approach to workouts, nutrition, and progress tracking.")}
+            </p>
+            <div className="mt-8 flex justify-center">
+              <Link to="/auth">
+                <Button size="lg" className="rounded-full px-8 h-12 bg-white text-fitness-primary hover:bg-white/90 font-semibold shadow-xl">
+                  {t('Start Free Today')}
+                </Button>
+              </Link>
             </div>
-            <p className="text-gray-900 font-semibold text-lg">{review.name}</p>
-            <p className="text-gray-500 text-sm mb-4">{review.role}</p>
-            <CardDescription className="text-base leading-relaxed font-medium text-gray-700">
-              "{review.text}"
-            </CardDescription>
-          </CardContent>
-        </Card>)}
-    </div>
-  </div>
-      </div>
-
-
-
-        {/* Final CTA with Gradient and Glow */}
-        <div className="relative py-24 overflow-hidden">
-          {/* Animated gradient background */}
-          <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary via-fitness-secondary to-fitness-accent opacity-95"></div>
-          
-          {/* Glowing orbs */}
-          <div className="absolute top-10 left-10 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-glow"></div>
-          <div className="absolute bottom-10 right-10 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-glow" style={{
-          animationDelay: '1s'
-        }}></div>
-
-          <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full text-sm font-bold border border-white/30">
-                <Sparkles className="h-4 w-4" />
-                <span>{t('Join the other Fitness Enthusiasts')}</span>
-              </div>
-
-              <h3 className="text-5xl md:text-6xl font-black text-white mb-6 leading-tight">
-                {t('Ready to Transform Your')}
-                <span className="block mt-2">{t('Fitness Journey?')}</span>
-              </h3>
-
-              <p className="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto leading-relaxed font-medium">
-                {t("Join others who've made fitness simple with QuickFit's intelligent approach to workouts, nutrition, and progress tracking.")}
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-                <Link to="/auth" className="group">
-                  <Button size="lg" className="relative bg-white text-fitness-primary hover:bg-gray-50 px-16 py-8 text-xl font-bold shadow-2xl shadow-black/20 overflow-hidden transition-all duration-300 hover:scale-110">
-                    <span className="relative z-10 flex items-center gap-3">
-                      {t('Start Your Free Journey')}
-                      <TrendingUp className="h-6 w-6 group-hover:translate-x-1 transition-transform duration-300" />
-                    </span>
-                  </Button>
-                </Link>
-              </div>
-
-              <div className="flex flex-wrap justify-center items-center gap-8 text-base text-white/80 font-semibold">
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5" />
-                  {t('No subscription required')}
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5" />
-                  {t('Instant access')}
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5" />
-                  {t('Works on any device')}
-                </span>
-              </div>
+            <div className="mt-8 flex flex-wrap justify-center items-center gap-6 text-sm text-white/80">
+              <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4" />{t('No subscription required')}</span>
+              <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4" />{t('Instant access')}</span>
+              <span className="flex items-center gap-1.5"><CheckCircle className="h-4 w-4" />{t('Works on any device')}</span>
             </div>
           </div>
-        </div>
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="relative bg-fitness-dark text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-base font-semibold mb-4">© 2025 QuickFit. {t('Sculpted by Vatsal Agarwala.')}</p>
+      <footer className="bg-fitness-dark text-white py-10">
+        <div className="max-w-6xl mx-auto px-6 lg:px-8 text-center">
+          <p className="text-sm font-medium mb-4">© 2025 QuickFit. {t('Sculpted by Vatsal Agarwala.')}</p>
           <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-white/70">
-            <a href="/" className="hover:text-white transition-colors duration-300 font-medium">{t('Home')}</a>
-            <a href="/privacy-policy" className="hover:text-white transition-colors duration-300 font-medium">{t('Privacy Policy')}</a>
-            <a href="/terms-of-service" className="hover:text-white transition-colors duration-300 font-medium">{t('Terms of Service')}</a>
-            <a href="https://www.instagram.com/quickfit.dev/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors duration-300 font-medium flex items-center gap-1">
-              <Instagram className="h-4 w-4" />
-              Instagram
+            <a href="/" className="hover:text-white transition-colors">{t('Home')}</a>
+            <a href="/privacy-policy" className="hover:text-white transition-colors">{t('Privacy Policy')}</a>
+            <a href="/terms-of-service" className="hover:text-white transition-colors">{t('Terms of Service')}</a>
+            <a href="https://www.instagram.com/quickfit.dev/" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5">
+              <Instagram className="h-4 w-4" /> Instagram
             </a>
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
 export default Landing;
