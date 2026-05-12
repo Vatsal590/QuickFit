@@ -135,6 +135,10 @@ export default {
 				'shimmer': {
 					'0%': { backgroundPosition: '-1000px 0' },
 					'100%': { backgroundPosition: '1000px 0' }
+				},
+				'cta-pulse': {
+					'0%, 90%, 100%': { transform: 'scale(1)', boxShadow: '0 10px 25px -10px hsl(var(--fitness-primary) / 0.4)' },
+					'95%': { transform: 'scale(1.03)', boxShadow: '0 15px 35px -10px hsl(var(--fitness-primary) / 0.6)' }
 				}
 			},
 			animation: {
