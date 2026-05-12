@@ -119,7 +119,7 @@ const Landing = () => {
                 <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 px-3 sm:px-6 py-2 text-sm sm:text-base font-semibold">
                   <span className="hidden sm:inline">{t('Get Started')}</span>
                   <span className="sm:hidden">{t('Start')}</span>
-                  <Sparkles className="ml-1 sm:ml-2 h-3 w-3" />
+                  
                 </Button>
               </Link>
             </div>
