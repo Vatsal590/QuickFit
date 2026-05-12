@@ -152,7 +152,8 @@ export default {
 				'scale-in': 'scale-in 0.5s ease-out forwards',
 				'float': 'float 6s ease-in-out infinite',
 				'glow': 'glow 2s ease-in-out infinite',
-				'shimmer': 'shimmer 3s linear infinite'
+				'shimmer': 'shimmer 3s linear infinite',
+				'cta-pulse': 'cta-pulse 9s ease-in-out infinite'
 			}
 		}
 	},
