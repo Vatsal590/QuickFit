@@ -198,6 +198,7 @@ const App = () => (
         <Sonner />
         <AuthProvider>
           <BrowserRouter>
+            <VapiVoiceAgent />
             <AppRoutes />
           </BrowserRouter>
         </AuthProvider>
