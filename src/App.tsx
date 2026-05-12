@@ -23,6 +23,7 @@ import Premium from "./pages/Premium";
 import Blogs from "./pages/Blogs";
 import Support from "./pages/Support";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
+import VapiVoiceAgent from "./components/vapi/VapiVoiceAgent";
 
 const queryClient = new QueryClient();
 
