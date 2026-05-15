@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dumbbell, Clock, Target, Zap, Calendar, MessageCircle, Scale, Apple, BarChart3, CheckCircle, Sparkles, TrendingUp, BookOpen, Award, Instagram, Camera, Radio, ExternalLink, ChevronLeft, ChevronRight, Languages, Trophy } from 'lucide-react';
 import radioAraImage1 from '@/assets/radioara-feature.png';
+import googlePlayBadge from '@/assets/google-play-badge.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
 import jelEvent1 from '@/assets/jel-event-1.png';
@@ -193,6 +194,22 @@ const Landing = () => {
                   </div>)}
               </div>
             </div>
+          </div>
+
+          {/* Google Play Badge */}
+          <div className="flex justify-center mt-8 mb-4 relative z-10">
+            <a
+              href="https://play.google.com/store/apps/details?id=com.quickfit.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-transform duration-300 hover:scale-105 active:scale-95"
+            >
+              <img
+                src={googlePlayBadge}
+                alt="Get QuickFit on Google Play"
+                className="h-16 sm:h-20 w-auto"
+              />
+            </a>
           </div>
 
           {/* Curved Bottom */}
