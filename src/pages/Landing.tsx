@@ -197,7 +197,10 @@ const Landing = () => {
           </div>
 
           {/* Google Play Badge */}
-          <div className="flex justify-center mt-8 mb-4 relative z-10">
+          <div className="flex flex-col items-center justify-center mt-8 mb-4 relative z-10">
+            <p className="text-base sm:text-lg font-semibold text-foreground mb-3 text-center">
+              {t('Download the QuickFit app. Click below.')}
+            </p>
             <a
               href="https://play.google.com/store/apps/details?id=com.quickfit.dev"
               target="_blank"
