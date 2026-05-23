@@ -1185,7 +1185,19 @@ export const getFilteredExercises = (
 
   const isAllEquipmentSelected = selectedEquipment.length >= 5;
 
+  // Pain/mobility exercises should only be added explicitly when a body pain is selected,
+  // never appear as normal exercises in standard workouts.
+  const PAIN_EXERCISE_IDS = new Set([
+    "lower-back-stretch",
+    "shoulder-mobility",
+    "hip-flexor-stretch",
+    "knee-mobility",
+    "wrist-mobility",
+    "ankle-mobility",
+  ]);
+
   let filtered = exercises.filter(ex => {
+    if (PAIN_EXERCISE_IDS.has(ex.id)) return false;
     const muscles = Array.isArray(ex.muscleGroup) ? ex.muscleGroup : [ex.muscleGroup];
     const matchesMuscle = targetMuscleGroups.includes("full body") || muscles.some(mg => targetMuscleGroups.includes(mg));
     if (!matchesMuscle) return false;
