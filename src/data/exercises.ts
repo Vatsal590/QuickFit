@@ -726,7 +726,7 @@ export const exercises: Exercise[] = [
     id: "tricep-dips",
     name: "Tricep Dips",
     muscleGroup: "triceps",
-    equipment: ["bench"],
+    equipment: ["none"],
     sets: 3,
     reps: 12,
     restTime: 45,
