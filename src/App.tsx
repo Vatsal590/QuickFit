@@ -185,6 +185,14 @@ const AppRoutes = () => {
           </ProtectedRoute>
         } 
       />
+      <Route
+        path="/mcp"
+        element={
+          <ProtectedRoute>
+            <MCPConnect />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
