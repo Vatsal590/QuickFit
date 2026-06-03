@@ -22,6 +22,7 @@ import FoodTracker from "./pages/FoodTracker";
 import Premium from "./pages/Premium";
 import Blogs from "./pages/Blogs";
 import Support from "./pages/Support";
+import MCPConnect from "./pages/MCPConnect";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
