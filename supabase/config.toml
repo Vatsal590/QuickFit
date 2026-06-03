@@ -32,3 +32,6 @@ verify_jwt = true
 
 [functions.generate-custom-exercises]
 verify_jwt = false
+
+[functions.mcp]
+verify_jwt = false
