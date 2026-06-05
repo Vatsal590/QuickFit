@@ -7,6 +7,7 @@ import radioAraImage1 from '@/assets/radioara-feature.png';
 import googlePlayBadge from '@/assets/google-play-badge.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
+import paperjamImage from '@/assets/paperjam-feature.png';
 import jelEvent1 from '@/assets/jel-event-1.png';
 import jelEvent2 from '@/assets/jel-event-2.png';
 import quickfitLogo from '@/assets/quickfit-logo.png';
@@ -228,7 +229,7 @@ const Landing = () => {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Feature slide navigation */}
             <div className="flex justify-center gap-3 mb-6">
-              {[t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
+              {[t('Paperjam Feature'), t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
                 <button
                   key={idx}
                   onClick={() => setFeatureSlide(idx)}
@@ -243,8 +244,46 @@ const Landing = () => {
               ))}
             </div>
 
-            {/* RadioARA Slide */}
+            {/* Paperjam Slide */}
             <div className={`transition-all duration-500 ${featureSlide === 0 ? 'block' : 'hidden'}`}>
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
+                <div className="relative flex-shrink-0">
+                  <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
+                  <div className="relative w-48 h-48 md:w-56 md:h-56 overflow-hidden rounded-2xl shadow-lg">
+                    <img
+                      src={paperjamImage}
+                      alt="Vatsal Agarwala featured in Paperjam Luxembourg magazine"
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+                <div className="flex-1 text-center md:text-left space-y-4">
+                  <div className="flex items-center justify-center md:justify-start gap-2">
+                    <BookOpen className="h-5 w-5 text-fitness-primary" />
+                    <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">{t('As Featured In')}</span>
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-bold text-foreground">
+                    {t('QuickFit in Paperjam Magazine')}
+                  </h3>
+                  <p className="text-muted-foreground font-medium">
+                    {t("Vatsal Agarwala was featured by PAPERJAM, one of Luxembourg's most well known magazine")}
+                  </p>
+                  <a
+                    href="https://en.paperjam.lu/article/at-16-vatsal-agarwala-turned-a-fitness-passion-into-quickfit"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Button className="bg-gradient-to-r from-fitness-primary to-fitness-secondary hover:shadow-lg hover:shadow-fitness-primary/30 transition-all duration-300 hover:scale-105 mt-2">
+                      {t('Read the Article')} <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* RadioARA Slide */}
+            <div className={`transition-all duration-500 ${featureSlide === 1 ? 'block' : 'hidden'}`}>
+
               <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
                 <div className="relative flex-shrink-0">
                   <div className="absolute -inset-2 bg-gradient-to-r from-fitness-primary to-fitness-secondary rounded-2xl blur opacity-30"></div>
@@ -312,7 +351,8 @@ const Landing = () => {
             </div>
 
             {/* JEL Alumni Award Slide */}
-            <div className={`transition-all duration-500 ${featureSlide === 1 ? 'block' : 'hidden'}`}>
+            <div className={`transition-all duration-500 ${featureSlide === 2 ? 'block' : 'hidden'}`}>
+
               <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
                 <div className="relative flex-shrink-0">
                   <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30"></div>
