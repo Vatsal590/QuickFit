@@ -351,7 +351,8 @@ const Landing = () => {
             </div>
 
             {/* JEL Alumni Award Slide */}
-            <div className={`transition-all duration-500 ${featureSlide === 1 ? 'block' : 'hidden'}`}>
+            <div className={`transition-all duration-500 ${featureSlide === 2 ? 'block' : 'hidden'}`}>
+
               <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-100">
                 <div className="relative flex-shrink-0">
                   <div className="absolute -inset-2 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30"></div>
