@@ -7,6 +7,7 @@ import radioAraImage1 from '@/assets/radioara-feature.png';
 import googlePlayBadge from '@/assets/google-play-badge.png';
 import radioAraImage2 from '@/assets/radioara-feature-2.png';
 import radioAraImage3 from '@/assets/radioara-feature-3.png';
+import paperjamImage from '@/assets/paperjam-feature.png';
 import jelEvent1 from '@/assets/jel-event-1.png';
 import jelEvent2 from '@/assets/jel-event-2.png';
 import quickfitLogo from '@/assets/quickfit-logo.png';
