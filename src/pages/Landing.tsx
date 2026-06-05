@@ -229,7 +229,7 @@ const Landing = () => {
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Feature slide navigation */}
             <div className="flex justify-center gap-3 mb-6">
-              {[t('Paperjam Feature'), t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
+              {[t('PAPERJAM Feature'), t('RadioARA Feature'), t('JEL Alumni Award')].map((label, idx) => (
                 <button
                   key={idx}
                   onClick={() => setFeatureSlide(idx)}
