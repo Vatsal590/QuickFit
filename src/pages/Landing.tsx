@@ -263,7 +263,7 @@ const Landing = () => {
                     <span className="text-fitness-primary font-bold text-sm tracking-widest uppercase">{t('As Featured In')}</span>
                   </div>
                   <h3 className="text-2xl md:text-3xl font-bold text-foreground">
-                    {t('QuickFit in Paperjam Magazine')}
+                    {t('QuickFit in PAPERJAM Magazine')}
                   </h3>
                   <p className="text-muted-foreground font-medium">
                     {t("Vatsal Agarwala was featured by PAPERJAM, one of Luxembourg's most well known magazine")}
