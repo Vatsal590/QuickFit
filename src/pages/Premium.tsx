@@ -31,11 +31,11 @@ const Premium = () => {
               <ul className="space-y-2 text-sm">
                 <li className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-green-500" />
-                  {t('Get a workout and diet plan made for you, by Vatsal himself')}
+                  {t('Get a workout and diet plan made for you, by Vatsal himself. 1 edit per month')}
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-4 w-4 text-green-500" />
-                  {t('1-on-1 call with Vatsal')}
+                  {t('1-on-1 call with Vatsal every month, discussing goals and progress')}
                 </li>
               </ul>
               <Button
