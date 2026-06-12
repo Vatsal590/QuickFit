@@ -812,7 +812,7 @@ const translations: Record<string, Record<string, string>> = {
     'QuickFit Pro': 'QuickFit Pro',
     'Get a workout and diet plan made for you, by Vatsal himself. 1 edit per month': 'Erhalte einen Trainings- und Ernährungsplan, erstellt von Vatsal persönlich. 1 Bearbeitung pro Monat',
     'Lifetime access': 'Lebenslanger Zugang',
-    '1-on-1 call 1-zu-1 Gespräch mit Vatsal jeden Monat, um Ziele und Fortschritte zu besprechen',
+    '1-on-1 call with Vatsal every month, discussing goals and progress': '1-zu-1 Gespräch mit Vatsal jeden Monat, um Ziele und Fortschritte zu besprechen',
     'Get Pro Access': 'Pro-Zugang erhalten',
     
     'Referral Program': 'Empfehlungsprogramm',
