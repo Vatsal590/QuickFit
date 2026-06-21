@@ -172,9 +172,6 @@ const Landing = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-fitness-secondary to-fitness-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </Button>
                 </Link>
-                <p className="text-sm text-gray-600 font-medium">
-                  {t('No credit card required • Get started in 2 minutes')}
-                </p>
               </div>
 
               <div className="flex flex-wrap justify-center items-center gap-8 text-base text-gray-700 animate-fade-in" style={{
