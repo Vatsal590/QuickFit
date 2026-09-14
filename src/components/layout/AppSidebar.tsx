@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Badge } from "@/components/ui/badge";
+
 
 const mainItems = [
   { titleKey: "Home", url: "/home", icon: Home },
@@ -36,10 +36,7 @@ export function AppSidebar() {
     return currentPath === path;
   };
 
-  const getNavCls = (isActiveState: boolean, isHighlight?: boolean) => {
-    if (isHighlight && !isActiveState) {
-      return "bg-gradient-to-r from-primary/20 to-amber-500/20 hover:from-primary/30 hover:to-amber-500/30 border border-primary/30 text-primary font-medium";
-    }
+  const getNavCls = (isActiveState: boolean) => {
     return isActiveState ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
   };
 
@@ -61,19 +58,11 @@ export function AppSidebar() {
                     <NavLink 
                       to={item.url} 
                       end 
-                      className={`${getNavCls(isActive(item.url), item.highlight)} ${item.highlight ? 'relative' : ''}`}
+                      className={getNavCls(isActive(item.url))}
                       onClick={handleNavClick}
                     >
-                      <item.icon className={`mr-2 h-4 w-4 ${item.highlight ? 'text-amber-500' : ''}`} />
-                      <span className="flex items-center gap-2">
-                        {t(item.titleKey)}
-                        {item.highlight && (
-                          <Badge variant="secondary" className="bg-amber-500/20 text-amber-600 dark:text-amber-400 text-[10px] px-1.5 py-0 animate-pulse border-amber-500/30">
-                            <Sparkles className="h-2.5 w-2.5 mr-0.5" />
-                            HOT
-                          </Badge>
-                        )}
-                      </span>
+                      <item.icon className="mr-2 h-4 w-4" />
+                      <span>{t(item.titleKey)}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
