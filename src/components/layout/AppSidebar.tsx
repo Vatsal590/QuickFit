@@ -1,4 +1,4 @@
-import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, Crown, BookOpen, Camera, Zap, Sparkles } from "lucide-react";
+import { Calendar, History, Home, Dumbbell, Scale, UtensilsCrossed, BookOpen, Camera, Zap } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "@/contexts/TranslationContext";
 
@@ -23,8 +23,6 @@ const mainItems = [
   { titleKey: "AI Food Tracker", url: "/food-tracker", icon: Camera },
   { titleKey: "Weight Tracker", url: "/weight-tracker", icon: Scale },
   { titleKey: "History", url: "/history", icon: History },
-  { titleKey: "Premium", url: "/premium", icon: Crown, highlight: true },
-  
   { titleKey: "Fitness Blogs", url: "/blogs", icon: BookOpen },
 ];
 

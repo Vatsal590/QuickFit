@@ -24,31 +24,9 @@ const Landing = () => {
   const {
     toast
   } = useToast();
-  const vRef = React.useRef(Date.now().toString());
-  const exts = ['.jpg', '.jpeg', '.png', '.JPG', '.JPEG', '.PNG', '.webp', '.avif'];
-  const bases = ['/lovable-uploads/vatsal-agarwala-founder.jpg', 'lovable-uploads/vatsal-agarwala-founder.jpg', `${import.meta.env.BASE_URL}lovable-uploads/vatsal-agarwala-founder`];
-  const allCandidates = React.useMemo(() => {
-    const v = vRef.current;
-    const withV = (p: string) => `${p}?v=${v}`;
-    const list: string[] = [];
-    bases.forEach(b => exts.forEach(e => list.push(withV(`${b}${e}`))));
-    list.push(withV('/lovable-uploads/vatsal-agarwala-founder.jpg'));
-    return list;
-  }, []);
-  const [founderSrc, setFounderSrc] = React.useState(allCandidates[0]);
   const [radioImageIndex, setRadioImageIndex] = React.useState(0);
   const [featureSlide, setFeatureSlide] = React.useState(0);
   const [jelImageIndex, setJelImageIndex] = React.useState(0);
-  const fallbackPaths = React.useRef(allCandidates.slice(1));
-  
-  const handleFounderImgError = () => {
-    const next = fallbackPaths.current.shift();
-    if (next) {
-      setFounderSrc(next);
-    } else {
-      setFounderSrc(`/placeholder.svg?v=${vRef.current}`);
-    }
-  };
   useEffect(() => {
     const checkVerification = async () => {
       const error = searchParams.get('error');
@@ -486,40 +464,6 @@ const Landing = () => {
           <svg className="relative block w-full h-24" viewBox="0 0 1200 120" preserveAspectRatio="none">
             <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" className="fill-white"></path>
           </svg>
-        </div>
-
-        {/* About the Founder - Angled Section */}
-        <div className="relative bg-white py-24">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-16">
-              <h3 className="text-5xl font-black text-gray-900 mb-4">
-                {t('About the Founder')}
-              </h3>
-            </div>
-
-            <div className="relative">
-              {/* Tilted background accent */}
-              <div className="absolute -inset-4 bg-gradient-to-r from-fitness-primary/5 to-fitness-secondary/5 transform -rotate-1 rounded-3xl"></div>
-              
-              <div className="relative bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
-                <div className="grid md:grid-cols-2 gap-0">
-                  <div className="relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-fitness-primary/10 to-fitness-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <img src={founderSrc} alt="Vatsal Agarwala - Founder of QuickFit" className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110" onError={handleFounderImgError} />
-                  </div>
-                  <div className="p-10 flex flex-col justify-center space-y-6">
-                    <h4 className="text-3xl font-bold text-gray-900">{t('Vatsal Agarwala')}</h4>
-                    <p className="text-fitness-primary font-bold text-lg tracking-wide text-center">
-                      🎉 {t("Get a customized plan made for you by Vatsal!")}
-                    </p>
-                    <p className="text-lg text-gray-700 leading-relaxed">
-                      {t("Created by Vatsal Agarwala, a 15-year-old (now older) from Luxembourg who started his fitness journey at 13. After trying countless apps and videos, he built QuickFit to make fitness simple for everyone.")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
        {/* Reviews Section */}
