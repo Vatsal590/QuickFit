@@ -25,13 +25,12 @@ const TermsOfServiceContent = () => {
 
       <section>
         <h3 className="text-lg font-semibold mb-2">3. User Eligibility and Age Requirements</h3>
-        <p>You must be at least 16 years old to use QuickFit. By using this Service, you represent and warrant that:</p>
+        <p>You must be at least 13 years old to use QuickFit. By using this Service, you confirm that:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
-          <li>You are at least 16 years of age</li>
-          <li>You have the legal capacity to enter into this agreement</li>
+          <li>You are at least 13 years of age</li>
           <li>You will comply with all applicable laws and regulations</li>
         </ul>
-        <p className="mt-2">Users under 18 should use the Service under parental or guardian supervision.</p>
+        <p className="mt-2">Users aged 13 to 15 need the agreement of a parent or guardian before using optional features that rely on consent, such as push notifications or entering allergy or body-pain information.</p>
       </section>
 
       <section>
