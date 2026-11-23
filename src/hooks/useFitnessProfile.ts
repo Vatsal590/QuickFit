@@ -3,6 +3,11 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { rememberFact } from '@/lib/memory';
+
+function rememberProfile(data: Record<string, unknown>) {
+  rememberFact('preference', `Saved fitness/nutrition preferences: ${JSON.stringify(Object.fromEntries(Object.entries(data).filter(([k]) => !['id','user_id','created_at','updated_at'].includes(k))))}`.slice(0, 1100));
+}
 
 export interface FitnessProfile {
   id: string;
@@ -95,7 +100,8 @@ export const useFitnessProfile = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      rememberProfile(data);
       queryClient.invalidateQueries({ queryKey: ['fitness-profile', user?.id] });
     }
   });
@@ -124,7 +130,8 @@ export const useFitnessProfile = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      rememberProfile(data);
       queryClient.invalidateQueries({ queryKey: ['fitness-profile', user?.id] });
     }
   });

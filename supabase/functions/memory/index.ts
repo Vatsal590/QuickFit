@@ -1,14 +1,18 @@
 import { z } from "npm:zod@3";
 import { corsHeaders, json, admin, userId, ai, getMemoryRow } from "../_shared/http.ts";
 import { createEntity, remember, recall, deleteEntity, BasiraError } from "../_shared/basira.ts";
+import { Snapshot } from '../_shared/coach-context.ts';
+import { syncMemoryNotes } from '../_shared/memory-notes.ts';
+import { factKey, hasMemoryConsent } from '../_shared/memory-fact.ts';
 
-const KINDS = ["workout", "meal", "weight", "pain", "difficulty", "goal"] as const;
+const KINDS = ["workout", "meal", "weight", "pain", "difficulty", "goal", "preference", "plan"] as const;
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("status") }),
   z.object({ action: z.literal("consent"), email_opt_in: z.boolean().optional() }),
   z.object({ action: z.literal("set_email_opt_in"), value: z.boolean() }),
   z.object({ action: z.literal("remember"), kind: z.enum(KINDS), text: z.string().trim().min(1).max(1100), occurredAt: z.string().datetime().optional() }),
   z.object({ action: z.literal("delete") }),
+  z.object({ action: z.literal('context'), scope: z.enum(['instant','plan','food','diet']), snapshot: Snapshot }),
   z.object({ action: z.literal("adapt"), intensity: z.enum(["light", "moderate", "intense"]), muscleGroups: z.array(z.string().max(40)).max(12).default([]), planDay: z.number().int().min(1).max(60).optional(), language: z.string().max(30).default("English") }),
 ]);
 
@@ -49,18 +53,32 @@ Deno.serve(async (req) => {
         return json({ ok: true });
       }
 
+      case 'context': {
+        if (!hasMemoryConsent(row)) return json({ stored: false, reason: 'no_consent' });
+        const { error } = await db.from('coach_context').upsert({ user_id: uid, scope: body.scope, snapshot: body.snapshot });
+        if (error) throw error;
+        return json({ stored: true });
+      }
+
       case "remember": {
-        if (!row?.consent_at) return json({ stored: false, reason: "no_consent" });
-        const eid = row.entity_id ?? await ensureEntity(uid);
-        if (!row.entity_id) await db.from("user_memory").update({ entity_id: eid }).eq("user_id", uid);
+        if (!row || !hasMemoryConsent(row)) return json({ stored: false, reason: "no_consent" });
         const when = body.occurredAt ? new Date(body.occurredAt) : new Date();
         const day = when.toISOString().slice(0, 10);
-        await remember(eid, `${day} (${body.kind}): ${body.text}`, body.kind, when);
-        return json({ stored: true });
+        const text = `${day} (${body.kind}): ${body.text}`;
+        const { error } = await db.from('training_memory_notes').upsert({ user_id: uid, fact_key: await factKey(text,body.kind,when.toISOString()), kind: body.kind, text, occurred_at: when.toISOString() }, { onConflict: 'user_id,fact_key', ignoreDuplicates: true });
+        if (error) throw error;
+        try {
+          const eid = row.entity_id ?? await ensureEntity(uid);
+          if (!row.entity_id) await db.from('user_memory').update({ entity_id: eid }).eq('user_id',uid);
+          await syncMemoryNotes(uid,eid);
+          return json({ stored: true, sync: 'on' });
+        } catch { return json({ stored: true, sync: 'pending' }); }
       }
 
       case "delete": {
         if (row?.entity_id) await deleteEntity(row.entity_id);
+        await db.from('coach_context').delete().eq('user_id', uid);
+        await db.from('training_memory_notes').delete().eq('user_id',uid);
         await db.from("weekly_insights").delete().eq("user_id", uid);
         await db.from("user_memory").delete().eq("user_id", uid);
         return json({ deleted: true });
@@ -68,14 +86,18 @@ Deno.serve(async (req) => {
 
       case "adapt": {
         const none = { extraPains: [], intensity: body.intensity, repeat: [], reason: null };
-        if (!row?.consent_at || !row.entity_id) return json({ ...none, memory: "off" });
-        const facts = await recall(row.entity_id, `Recent workouts and how they felt, skipped days, reported pain or injuries, movements the user struggled with, stated fitness goal. Focus on ${body.muscleGroups.join(", ") || "full body"}.`, 20);
+        if (!row?.consent_at) return json({ ...none, memory: "off" });
+        const { data: notes } = await db.from('training_memory_notes').select('text').eq('user_id',uid).in('kind',['pain','workout','difficulty','goal']).order('occurred_at',{ascending:false}).limit(30);
+        let facts = (notes ?? []).map(n => ({ text: n.text }));
+        if (row.entity_id) {
+          try { facts = [...facts, ...await recall(row.entity_id, `Recent workouts and how they felt, skipped days, reported pain or injuries, movements the user struggled with, stated fitness goal. Focus on ${body.muscleGroups.join(", ") || "full body"}.`, 20)]; } catch { /* local notes preserve adaptation during an outage */ }
+        }
         if (!facts.length) return json({ ...none, memory: "empty" });
         const list = facts.map((f) => `- ${f.text.slice(0, 300)}`).join("\n");
         const today = new Date().toISOString().slice(0, 10);
         const out = await ai(
           `You adapt today's workout from a user's training memory. Today is ${today}. Rules, in priority order:
-1. Never contradict a stated injury: any pain/injury reported in the last 14 days and not reported as resolved must be listed in extraPains (only from: ${PAINS.join(", ")}).
+1. Never contradict a stated injury: any reported injury not explicitly reported as resolved must remain a constraint regardless of its age. Unresolved reported pain must be listed in extraPains (only from: ${PAINS.join(", ")}). Never assume recovery.
 2. After a reported pain in the last 7 days, lower intensity one level (intense->moderate->light).
 3. If the user struggled with a movement, list that movement name in repeat (max 2).
 4. Only if the last three sessions were all reported as easy and there is no recent pain, raise intensity one level.

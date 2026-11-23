@@ -1,4 +1,8 @@
 # Roadmap – Basira memory features
+- [x] Exact current workout, 30-day plan, food and diet context for Coach Q
+- [x] Consent-based preference/plan memory, outage-safe fact queue and contextual conversations
+- [x] Update product knowledge: no paid features; context tests and public chat verified
+- [ ] Signed-in end-to-end verification – blocked: preview session is externally managed; no signed-in test session available
 - [x] Steps 1–5 (adapter, recording, adaptive plans, coach, mascot Coach Q)
 - [x] Live workout tips, landing invite bubble, graceful fallback when Basira quota is exceeded
 - [x] README section + translations

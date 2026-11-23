@@ -1,0 +1,2 @@
+ALTER TABLE public.workout_plans ADD COLUMN selected_equipment text[];
+COMMENT ON COLUMN public.workout_plans.selected_equipment IS 'Exact equipment selection at plan creation; null for older plans whose original selection is unknown.';

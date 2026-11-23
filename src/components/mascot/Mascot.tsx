@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useTranslation } from "@/contexts/TranslationContext";
 import { MASCOT } from "@/config/mascot";
 import { memoryStatus } from "@/lib/memory";
+import { getCoachContext, clearCoachContext } from '@/lib/coachContext';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import MascotAvatar from "./MascotAvatar";
@@ -35,22 +36,30 @@ export default function Mascot() {
   const lastSend = useRef(0);
   const greeted = useRef<string | null>(null);
   const session = useRef(rid());
+  const account = useRef(user?.id);
+  const previousAccount = useRef(user?.id);
+  account.current = user?.id;
   const endRef = useRef<HTMLDivElement>(null);
 
   const msgs = tab === "help" ? help : tab === "coach" ? coach : workoutMsgs;
   const setterFor = (k: Tab) => (k === "help" ? setHelp : k === "coach" ? setCoach : setWorkoutMsgs);
 
   useEffect(() => subscribeLiveWorkout(setLive), []);
-  useEffect(() => { if (!live && tab === "workout") setTab("help"); }, [live, tab]);
+  useEffect(() => { if (!live && tab === "workout") setTab(user ? 'coach' : 'help'); }, [live, tab, user]);
+  useEffect(() => { if (live && user) setTab('workout'); }, [live?.title, user?.id]);
+  useEffect(() => { if (user && (pathname.includes('food') || pathname.includes('diet'))) setTab('coach'); }, [pathname, user?.id]);
 
   // Live coaching: one tip each time the user opens a new exercise of their generated workout.
   useEffect(() => {
+    if (previousAccount.current === user?.id) return;
+    previousAccount.current = user?.id;
     const ex = live?.exercise;
     if (!user || !live || !ex || lastTipFor.current === ex.name) return;
     lastTipFor.current = ex.name;
     const id = setTimeout(async () => {
-      const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live.title, exercise: ex.name, detail: ex.detail, language } });
-      if (!data?.tip) return;
+      const uid = user.id;
+      const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live.title, exercise: ex.name, detail: ex.detail, context: getCoachContext(), sessionId: session.current, turnId: rid(), language } });
+      if (!data?.tip || account.current !== uid) return;
       setWorkoutMsgs((m) => [...m, { role: "bot", text: `${ex.name}: ${data.tip}` }]);
       setBubble(data.tip);
     }, 800);
@@ -68,7 +77,11 @@ export default function Mascot() {
   useEffect(() => { if (open) setBubble(null); }, [open]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs.length, busy]);
-  useEffect(() => { if (!user) { setTab("help"); setCoach([]); setConsented(null); greeted.current = null; } }, [user]);
+  useEffect(() => {
+    setHelp([]); setCoach([]); setWorkoutMsgs([]); setBubble(null); setConsented(null);
+    greeted.current = null; lastTipFor.current = null; session.current = rid();
+    clearCoachContext(); setLive(null); setTab(user ? 'coach' : 'help');
+  }, [user?.id]);
 
   useEffect(() => {
     if (!open) return;
@@ -76,7 +89,7 @@ export default function Mascot() {
     if (user && greeted.current !== user.id) {
       greeted.current = user.id;
       supabase.functions.invoke("mascot", { body: { action: "greet", language } }).then(({ data }) => {
-        if (data?.greeting) setHelp((m) => [...m, { role: "bot", text: data.greeting }]);
+        if (data?.greeting && account.current === user.id) setHelp((m) => [...m, { role: "bot", text: data.greeting }]);
       });
       memoryStatus().then((s) => setConsented(!!s?.consented));
     }
@@ -88,7 +101,10 @@ export default function Mascot() {
     if (!q || busy || Date.now() - lastSend.current < MIN_INTERVAL_MS) return;
     lastSend.current = Date.now();
     setInput("");
-    const add = (m: Msg) => setterFor(tab)((prev) => [...prev, m]);
+    const uid = user?.id;
+    const context = getCoachContext();
+    const history = msgs.slice(-12).map(({ role, text }) => ({ role, text: text.slice(0, 6000) }));
+    const add = (m: Msg) => { if (account.current === uid) setterFor(tab)((prev) => [...prev, m]); };
     add({ role: "user", text: q });
     setBusy(true);
     try {
@@ -99,12 +115,12 @@ export default function Mascot() {
         else add({ role: "bot", text: t("Sorry, I can't remember right now. Please try again in a moment."), human: true });
       } else if (tab === "workout") {
         const ex = live?.exercise;
-        const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live?.title ?? "", exercise: ex?.name ?? "", detail: ex?.detail ?? "", question: q, language } });
+        const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live?.title ?? "", exercise: ex?.name ?? "", detail: ex?.detail ?? "", question: q, context, history, sessionId: session.current, turnId: rid(), language } });
         add({ role: "bot", text: data?.tip ?? t("The coach is unavailable right now. Please try again in a moment.") });
       } else {
-        const { data, error } = await supabase.functions.invoke("coach", { body: { message: q, sessionId: session.current, turnId: rid(), language } });
+        const { data, error } = await supabase.functions.invoke("coach", { body: { message: q, sessionId: session.current, turnId: rid(), context, history, language } });
         if (error || !data?.reply) add({ role: "bot", text: t("The coach is unavailable right now. Please try again in a moment.") });
-        else add({ role: "bot", text: data.reply + (data.memory === "unavailable" ? `\n\n(${t("I can't remember your history right now, so this is general advice.")})` : "") });
+        else add({ role: "bot", text: data.reply + (data.memory === "unavailable" ? `\n\n(${t("I'm using your current context and saved records; long-term recall is unavailable right now.")})` : "") });
       }
     } catch {
       add({ role: "bot", text: t("Sorry, I can't remember right now. Please try again in a moment."), human: true });
@@ -150,6 +166,13 @@ export default function Mascot() {
             </div>
           )}
           <div className="flex-1 overflow-y-auto p-3 space-y-2">
+            {user && tab !== 'help' && !busy && (
+              <div className="flex flex-wrap gap-1">
+                <Button size="sm" variant="outline" onClick={() => { setTab('coach'); setInput(t(live ? 'Suggest an alternative with my equipment' : pathname.includes('food') || pathname.includes('diet') ? 'Suggest a meal that fits my goals' : 'Help me plan my next week')); }} className="whitespace-normal h-auto py-2 text-xs">
+                  {t(live ? 'Suggest an alternative with my equipment' : pathname.includes('food') || pathname.includes('diet') ? 'Suggest a meal that fits my goals' : 'Help me plan my next week')}
+                </Button>
+              </div>
+            )}
             {msgs.map((m, i) => (
               <div key={i} className={m.role === "user" ? "flex justify-end" : "flex justify-start"}>
                 <div className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm whitespace-pre-wrap ${m.role === "user" ? "bg-fitness-primary text-primary-foreground" : "bg-muted text-foreground"}`}>

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { rememberFact } from '@/lib/memory';
+import { setCoachContext, compactContext } from '@/lib/coachContext';
 import { Camera, Upload, Loader2, Trash2, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +29,10 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
   const [notes, setNotes] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    setCoachContext('food', analyzedFoods.length ? { source: 'food-photo', status: 'estimated, not logged', foods: compactContext(analyzedFoods), totals, mealType, notes, healthSuggestions } : null);
+  }, [analyzedFoods, totals, mealType, notes, healthSuggestions]);
+  useEffect(() => () => setCoachContext('food', null), []);
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -155,6 +160,7 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         .limit(1);
 
       const names = analyzedFoods.map((f: any) => f.name).filter(Boolean).join(', ');
+      setCoachContext('food', { source: 'food-photo', status: 'logged; nutrition estimates', foods: compactContext(analyzedFoods), totals, mealType, notes }, true);
       rememberFact('meal', `Logged ${mealType || 'meal'}: ${names} (about ${Math.round(totals?.calories || 0)} kcal)${notes ? `. Note: ${notes}` : ''}`.slice(0, 1000));
       toast.success(t('Meal logged successfully!'));
       resetForm();

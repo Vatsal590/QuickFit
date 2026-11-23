@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { adaptWorkout, rememberFact } from '@/lib/memory';
+import { setCoachContext, compactContext } from '@/lib/coachContext';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,6 +82,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
           plan_name: planName,
           fitness_goal: profile.fitness_goal,
           total_days: 30,
+          selected_equipment: profile.available_equipment,
           daily_workouts: dailyWorkouts
         })
         .select()
@@ -101,6 +103,8 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
       };
 
       onPlanGenerated?.(newPlan);
+      setCoachContext('plan', { plan: compactContext(newPlan), preferences: compactContext(profile), reportedPains: selectedPains }, true);
+      rememberFact('plan', `Created 30-day ${profile.fitness_goal} plan; equipment: ${profile.available_equipment.join(', ') || 'none'}; ${profile.workout_days_per_week} training days per week; user-reported pain: ${selectedPains.join(', ') || 'none selected'}. This is a planned program, not completed training.`);
 
       // Track activity
       await activityTracker.trackActivity('workout_plan_created', 'plans', {

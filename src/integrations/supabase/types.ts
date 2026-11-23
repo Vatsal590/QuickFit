@@ -32,6 +32,30 @@ export type Database = {
         }
         Relationships: []
       }
+      coach_context: {
+        Row: {
+          created_at: string
+          scope: string
+          snapshot: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          scope: string
+          snapshot?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          scope?: string
+          snapshot?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       diet_plans: {
         Row: {
           created_at: string
@@ -407,6 +431,42 @@ export type Database = {
         }
         Relationships: []
       }
+      training_memory_notes: {
+        Row: {
+          created_at: string
+          fact_key: string
+          id: string
+          kind: string
+          occurred_at: string
+          synced_at: string | null
+          text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          fact_key: string
+          id?: string
+          kind: string
+          occurred_at: string
+          synced_at?: string | null
+          text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          fact_key?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          synced_at?: string | null
+          text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_activities: {
         Row: {
           action: string
@@ -593,6 +653,7 @@ export type Database = {
           is_active: boolean
           plan_name: string
           profile_id: string
+          selected_equipment: string[] | null
           total_days: number
           user_id: string
         }
@@ -604,6 +665,7 @@ export type Database = {
           is_active?: boolean
           plan_name: string
           profile_id: string
+          selected_equipment?: string[] | null
           total_days?: number
           user_id: string
         }
@@ -615,6 +677,7 @@ export type Database = {
           is_active?: boolean
           plan_name?: string
           profile_id?: string
+          selected_equipment?: string[] | null
           total_days?: number
           user_id?: string
         }

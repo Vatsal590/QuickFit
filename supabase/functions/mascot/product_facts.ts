@@ -16,7 +16,7 @@ The Diet Plan creates meals that match your calorie and macro targets, your diet
 
 The Weight Tracker lets you log your weight for any day and see your progress over time. History shows your past workouts.
 
-QuickFit's core features are free. QuickFit Pro costs €6.99 per month. With Pro, Vatsal himself makes a workout and diet plan for you, with 1 edit per month, and you get a 1-on-1 call with Vatsal every month to discuss your goals and progress.
+QuickFit currently has no paid features. Its currently available features are free. There is no available QuickFit Pro subscription or paid upgrade.
 
 QuickFit works in any modern web browser on phones, tablets and computers. There is also an Android app on the Google Play Store.
 

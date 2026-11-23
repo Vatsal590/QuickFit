@@ -21,6 +21,12 @@ const translations: Record<string, Record<string, string>> = {
   English: {},
   
   French: {
+    "I'm using your current context and saved records; long-term recall is unavailable right now.": "J'utilise ton contexte actuel et tes données enregistrées ; la mémoire à long terme est indisponible pour le moment.",
+    "Suggest an alternative with my equipment": "Propose une alternative avec mon équipement",
+    "Suggest a meal that fits my goals": "Propose un repas adapté à mes objectifs",
+    "Help me plan my next week": "Aide-moi à planifier ma prochaine semaine",
+    "Coach Q can remember your equipment, goals, plans, logged meals and training feedback to give advice that fits you. Memory is optional and you can delete it at any time.": "Coach Q peut se souvenir de ton équipement, de tes objectifs, de tes plans, de tes repas enregistrés et de tes retours sur l'entraînement pour te donner des conseils adaptés. La mémoire est facultative et tu peux la supprimer à tout moment.",
+    "I agree that QuickFit remembers my equipment, goals, workout and diet plans, logged meals, weight and reported pain to personalise my coach. I can delete this memory at any time.": "J'accepte que QuickFit mémorise mon équipement, mes objectifs, mes plans sportifs et alimentaires, mes repas enregistrés, mon poids et mes douleurs signalées pour personnaliser mon coach. Je peux supprimer cette mémoire à tout moment.",
     // Memory, coach & mascot
     "Hi! I'm {name}. Ask me anything about QuickFit.": "Salut ! Je suis {name}. Pose-moi tes questions sur QuickFit.",
     "I don't know that one yet. Would you like to ask a human?": "Je ne sais pas encore répondre à ça. Veux-tu demander à un humain ?",
@@ -562,6 +568,12 @@ const translations: Record<string, Record<string, string>> = {
   },
   
   German: {
+    "I'm using your current context and saved records; long-term recall is unavailable right now.": "Ich nutze deinen aktuellen Kontext und deine gespeicherten Daten; der Langzeitabruf ist gerade nicht verfügbar.",
+    "Suggest an alternative with my equipment": "Schlage eine Alternative mit meiner Ausrüstung vor",
+    "Suggest a meal that fits my goals": "Schlage eine Mahlzeit passend zu meinen Zielen vor",
+    "Help me plan my next week": "Hilf mir, meine nächste Woche zu planen",
+    "Coach Q can remember your equipment, goals, plans, logged meals and training feedback to give advice that fits you. Memory is optional and you can delete it at any time.": "Coach Q kann sich deine Ausrüstung, Ziele, Pläne, protokollierten Mahlzeiten und Trainingsrückmeldungen merken, um passende Ratschläge zu geben. Das Gedächtnis ist optional und jederzeit löschbar.",
+    "I agree that QuickFit remembers my equipment, goals, workout and diet plans, logged meals, weight and reported pain to personalise my coach. I can delete this memory at any time.": "Ich stimme zu, dass QuickFit meine Ausrüstung, Ziele, Trainings- und Ernährungspläne, protokollierten Mahlzeiten, mein Gewicht und gemeldete Schmerzen speichert, um meinen Coach zu personalisieren. Ich kann dieses Gedächtnis jederzeit löschen.",
     // Memory, coach & mascot
     "Hi! I'm {name}. Ask me anything about QuickFit.": "Hallo! Ich bin {name}. Frag mich alles über QuickFit.",
     "I don't know that one yet. Would you like to ask a human?": "Das weiß ich leider noch nicht. Möchtest du einen Menschen fragen?",
@@ -1094,6 +1106,12 @@ const translations: Record<string, Record<string, string>> = {
   },
   
   Luxembourgish: {
+    "I'm using your current context and saved records; long-term recall is unavailable right now.": "Ech benotzen däin aktuelle Kontext an deng gespäichert Donnéeën; de laangfristegen Abruff ass elo net disponibel.",
+    "Suggest an alternative with my equipment": "Proposéier eng Alternativ mat menger Ausrüstung",
+    "Suggest a meal that fits my goals": "Proposéier en Iessen dat zu mengen Ziler passt",
+    "Help me plan my next week": "Hëllef mir meng nächst Woch ze plangen",
+    "Coach Q can remember your equipment, goals, plans, logged meals and training feedback to give advice that fits you. Memory is optional and you can delete it at any time.": "Coach Q ka sech un deng Ausrüstung, Ziler, Pläng, protokolléiert Iessen an Trainingsréckmeldungen erënneren, fir dir passend Rotschléi ze ginn. D'Gedächtnis ass fräiwëlleg an du kanns et ëmmer läschen.",
+    "I agree that QuickFit remembers my equipment, goals, workout and diet plans, logged meals, weight and reported pain to personalise my coach. I can delete this memory at any time.": "Ech sinn averstanen, datt QuickFit meng Ausrüstung, Ziler, Trainings- an Iesspläng, protokolléiert Iessen, Gewiicht a gemellt Péng späichert, fir mäi Coach ze personaliséieren. Ech kann dëst Gedächtnis ëmmer läschen.",
     // Memory, coach & mascot
     "Hi! I'm {name}. Ask me anything about QuickFit.": "Moien! Ech sinn {name}. Frot mech alles iwwer QuickFit.",
     "I don't know that one yet. Would you like to ask a human?": "Dat weess ech nach net. Wëlls de e Mënsch froen?",

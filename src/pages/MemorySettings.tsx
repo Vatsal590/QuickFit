@@ -45,12 +45,12 @@ export default function MemorySettings() {
         <Card className="glass-card">
           <CardHeader>
             <CardTitle>{t("Training memory")}</CardTitle>
-            <CardDescription>{t("QuickFit can remember your completed workouts, meals, weight entries and reported pain, so your workouts and AI coach adapt to you. Only what you enter is stored, and only you can access it.")}</CardDescription>
+            <CardDescription>{t("Coach Q can remember your equipment, goals, plans, logged meals and training feedback to give advice that fits you. Memory is optional and you can delete it at any time.")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {loading ? <p className="text-sm text-muted-foreground">{t("Loading...")}</p> : status?.consented ? (
               <>
-                <p className="text-sm">{t("Memory is on since")} {new Date(status.consent_at!).toLocaleDateString()}.</p>
+                <p className="text-sm">{t("Memory is on since")} {status.consent_at ? new Date(status.consent_at).toLocaleDateString() : ''}.</p>
                 <label className="flex items-center justify-between gap-4 text-sm">
                   <span>{t("Email me my weekly progress insight")}</span>
                   <Switch checked={status.email_opt_in} onCheckedChange={setEmail} />
@@ -73,7 +73,7 @@ export default function MemorySettings() {
               <>
                 <label className="flex items-start gap-3 text-sm">
                   <Checkbox checked={agree} onCheckedChange={(v) => setAgree(v === true)} className="mt-0.5" />
-                  <span>{t("I agree that QuickFit stores short notes about my training (workouts, meals, weight and reported pain) to personalise my plans and coach. I can delete them at any time.")}</span>
+                  <span>{t("I agree that QuickFit remembers my equipment, goals, workout and diet plans, logged meals, weight and reported pain to personalise my coach. I can delete this memory at any time.")}</span>
                 </label>
                 <Button onClick={turnOn} disabled={!agree || busy} className="active:scale-95">{t("Turn on memory")}</Button>
               </>

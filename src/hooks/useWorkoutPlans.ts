@@ -22,7 +22,7 @@ export const useWorkoutPlans = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('workout_plans')
-        .select('*')
+        .select('*, fitness_profiles(available_equipment)')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
@@ -37,7 +37,7 @@ export const useWorkoutPlans = () => {
           type: 'custom',
           duration: plan.total_days || 30,
           daysLeft: plan.total_days || 30,
-          equipment: [],
+          equipment: (plan.selected_equipment ?? plan.fitness_profiles?.available_equipment ?? []) as WorkoutPlan['equipment'],
           createdAt: plan.created_at,
           dailyWorkouts: Array.isArray(plan.daily_workouts) ? plan.daily_workouts : []
         }));

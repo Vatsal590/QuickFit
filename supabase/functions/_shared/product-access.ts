@@ -1,0 +1,1 @@
+export const PRODUCT_ACCESS = { paidFeatures: false, subscriptionAvailable: false } as const;

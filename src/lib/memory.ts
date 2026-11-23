@@ -1,6 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 
-export type MemoryKind = "workout" | "meal" | "weight" | "pain" | "difficulty" | "goal";
+export type MemoryKind = "workout" | "meal" | "weight" | "pain" | "difficulty" | "goal" | "preference" | "plan";
 export type Adaptation = { extraPains: string[]; intensity: "light" | "moderate" | "intense"; repeat: string[]; reason: string | null; memory?: string };
 
 let consentCache: { uid: string; consented: boolean } | null = null;

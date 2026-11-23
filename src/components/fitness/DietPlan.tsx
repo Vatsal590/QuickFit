@@ -22,6 +22,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 
 import { calculateNutritionTargets } from '@/utils/nutritionCalculations';
+import { setCoachContext, compactContext } from '@/lib/coachContext';
+import { rememberFact } from '@/lib/memory';
 
 interface MealPlan {
   day: number;
@@ -44,6 +46,10 @@ const DietPlan = () => {
   const { user } = useAuth();
   const { t, language } = useTranslation();
   const [dietPlan, setDietPlan] = useState<MealPlan[]>([]);
+  useEffect(() => {
+    setCoachContext('diet', dietPlan.length ? { source: 'diet-plan', status: 'planned, not eaten', meals: compactContext(dietPlan), preferences: compactContext(profile) } : null);
+  }, [dietPlan, profile]);
+  useEffect(() => () => setCoachContext('diet', null), []);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [syncingMeal, setSyncingMeal] = useState<string | null>(null);
@@ -262,6 +268,7 @@ const DietPlan = () => {
       if (error) throw error;
 
       // Track activity
+      rememberFact('plan', `Created 7-day diet plan: ${targetCalories} kcal, protein ${targetProtein}g, carbs ${targetCarbs}g, fats ${targetFats}g per day; diet ${profile.diet_preferences?.join(', ') || 'none selected'}; cuisines ${tastePreferences.join(', ')}; cook times ${breakfastCookTime}/${lunchCookTime}/${dinnerCookTime} minutes. Meals are planned, not logged.`);
       await activityTracker.trackActivity('diet_plan_created', 'diet-plan', {
         planName: `${nutritionTargets.goalType} Diet Plan`,
         targetCalories,
@@ -795,6 +802,7 @@ const DietPlan = () => {
       if (error) throw error;
 
       sonnerToast.success(t('Meal synced to food tracker!'));
+      rememberFact('meal', `Logged ${mealType}: ${meal.name}, ${meal.calories} kcal, protein ${meal.protein}g, carbs ${meal.carbs}g, fats ${meal.fats}g; from day ${day} diet plan.`);
     } catch (error) {
       console.error('Error syncing meal:', error);
       sonnerToast.error(t('Failed to sync meal'));

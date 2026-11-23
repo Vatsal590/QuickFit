@@ -17,6 +17,7 @@ const InstantWorkout = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const [currentWorkout, setCurrentWorkout] = useState<Workout | null>(null);
+  const [workoutPreferences, setWorkoutPreferences] = useState<WorkoutFormData | null>(null);
   const [excludedExercises, setExcludedExercises] = useState<ExcludedExerciseInfo[]>([]);
   const [selectedPains, setSelectedPains] = useState<BodyPain[]>([]);
   const [showExcludedDialog, setShowExcludedDialog] = useState(false);
@@ -47,6 +48,7 @@ const InstantWorkout = () => {
   };
 
   const handleCreateWorkout = async (formData: WorkoutFormData) => {
+    const selectedPreferences = { ...formData };
     activityTracker.trackWorkoutAction('create', { 
       time: formData.time, 
       intensity: formData.intensity, 
@@ -68,8 +70,8 @@ const InstantWorkout = () => {
         };
       }
       setAdaptationReason(adaptation?.reason ?? null);
-      if (formData.bodyPains && formData.bodyPains.length > 0) {
-        rememberFact('pain', `Reported ${formData.bodyPains.join(', ')} before a workout`);
+      if (selectedPreferences.bodyPains && selectedPreferences.bodyPains.length > 0) {
+        rememberFact('pain', `Reported ${selectedPreferences.bodyPains.join(', ')} before a workout`);
       }
 
       // Get target exercise count based on duration
@@ -127,6 +129,8 @@ const InstantWorkout = () => {
       };
       
       setCurrentWorkout(finalWorkout);
+      setWorkoutPreferences(selectedPreferences);
+      rememberFact('preference', `Instant workout selections: equipment ${selectedPreferences.equipment.join(', ') || 'none'}; custom equipment ${selectedPreferences.customEquipment || 'none'}; ${selectedPreferences.time} minutes; ${selectedPreferences.intensity}; focus ${selectedPreferences.muscleGroups.join(', ')}. User-reported pain: ${selectedPreferences.bodyPains?.join(', ') || 'none selected'}.`);
       setExcludedExercises(result.excludedExercises);
       setSelectedPains(formData.bodyPains || []);
       
@@ -182,6 +186,7 @@ const InstantWorkout = () => {
           {currentWorkout ? (
             <WorkoutDisplay
               workout={currentWorkout}
+              preferences={workoutPreferences}
               onBack={() => { 
                 setCurrentWorkout(null);
                 setExcludedExercises([]);

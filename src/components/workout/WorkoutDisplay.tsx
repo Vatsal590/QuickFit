@@ -10,11 +10,14 @@ import { Badge } from '@/components/ui/badge';
 import ExerciseTimer from './ExerciseTimer';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { setLiveWorkout } from '@/lib/workoutContext';
+import { setCoachContext, compactContext } from '@/lib/coachContext';
+import type { WorkoutFormData } from '@/types';
 interface WorkoutDisplayProps {
   workout: Workout;
   onBack: () => void;
   onComplete: (workout: Workout, feel?: 'easy' | 'just right' | 'hard') => void;
   adaptationReason?: string | null;
+  preferences?: WorkoutFormData | null;
 }
 
 interface CompletedExercise {
@@ -23,15 +26,24 @@ interface CompletedExercise {
   restTimersCompleted: number;
 }
 
-const WorkoutDisplay = ({ workout, onBack, onComplete, adaptationReason }: WorkoutDisplayProps) => {
+const WorkoutDisplay = ({ workout, onBack, onComplete, adaptationReason, preferences }: WorkoutDisplayProps) => {
   const [feel, setFeel] = useState<'easy' | 'just right' | 'hard' | undefined>(undefined);
   const { toast } = useToast();
   const { t } = useTranslation();
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState<'main' | 'warmup' | 'cooldown'>('main');
   const [completedExercises, setCompletedExercises] = useState<CompletedExercise[]>([]);
-  useEffect(() => { setLiveWorkout({ title: workout.title }); return () => setLiveWorkout(null); }, [workout]);
-  const focusExercise = (ex: any) => setLiveWorkout({ title: workout.title, exercise: { name: ex.name, detail: [ex.sets && `${ex.sets} sets`, ex.reps && `${ex.reps} reps`, ex.duration && `${ex.duration}s`, ex.rest && `rest ${ex.rest}s`].filter(Boolean).join(', ') } });
+  const context = { source: 'instant', workout: compactContext(workout), preferences, adaptationReason };
+  useEffect(() => {
+    setCoachContext('instant', context, true);
+    setLiveWorkout({ title: workout.title, context });
+    return () => { setLiveWorkout(null); setCoachContext('instant', null); };
+  }, [workout, preferences, adaptationReason]);
+  const focusExercise = (ex: any) => {
+    const focused = { ...context, currentExercise: compactContext(ex) };
+    setCoachContext('instant', focused);
+    setLiveWorkout({ title: workout.title, context: focused, exercise: { name: ex.name, detail: [ex.sets && `${ex.sets} sets`, ex.reps && `${ex.reps} reps`, ex.duration && `${ex.duration}s`, (ex.restTime ?? ex.rest) && `rest ${ex.restTime ?? ex.rest}s`].filter(Boolean).join(', ') } });
+  };
   
   // Get exercise animation URL based on exercise name
   const getExerciseAnimationUrl = (exerciseName: string): string => {

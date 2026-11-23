@@ -1,12 +1,15 @@
 import { z } from "npm:zod@3";
 import { corsHeaders, json, admin, userId, ai, getMemoryRow } from "../_shared/http.ts";
 import { PRODUCT_FACTS_MD } from "./product_facts.ts";
-import { createEntity, remember, recall, BasiraError } from "../_shared/basira.ts";
+import { PRODUCT_ACCESS } from '../_shared/product-access.ts';
+import { createEntity, remember, recall, chat, BasiraError } from "../_shared/basira.ts";
+import { SessionContext, Conversation, userCoachContext } from '../_shared/coach-context.ts';
+import { CONTEXT_RULES } from '../_shared/coach-rules.ts';
 
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("ask"), message: z.string().trim().min(1).max(500), language: z.string().max(30).default("English") }),
   z.object({ action: z.literal("greet"), language: z.string().max(30).default("English") }),
-  z.object({ action: z.literal("workout_tip"), language: z.string().max(30).default("English"), workout: z.string().max(200), exercise: z.string().max(120), detail: z.string().max(300).default(""), question: z.string().trim().max(500).optional() }),
+  z.object({ action: z.literal("workout_tip"), language: z.string().max(30).default("English"), workout: z.string().max(200), exercise: z.string().max(120), detail: z.string().max(300).default(""), question: z.string().trim().max(2000).optional(), context: SessionContext, history: Conversation, sessionId: z.string().regex(/^[A-Za-z0-9._~:+/=-]{8,128}$/).optional(), turnId: z.string().regex(/^[A-Za-z0-9._~:+/=-]{8,128}$/).optional() }),
   z.object({ action: z.literal("vote"), question: z.string().max(500), answer: z.string().max(2000), vote: z.union([z.literal(1), z.literal(-1)]) }),
 ]);
 
@@ -30,17 +33,17 @@ async function productEntity(): Promise<string> {
   const db = admin();
   const { data: rows } = await db.from("app_settings").select("key,value").in("key", ["product_entity_id", "product_facts_hash"]);
   const get = (k: string) => rows?.find((r) => r.key === k)?.value;
-  let id = get("product_entity_id");
-  if (!id) {
-    id = await createEntity("product", { type: "service", stableKey: "quickfit-product" });
-    await db.from("app_settings").upsert({ key: "product_entity_id", value: id });
-  }
   const md = PRODUCT_FACTS_MD;
   const hash = await sha(md);
+  let id = get("product_entity_id");
+  if (!id || get('product_facts_hash') !== hash) {
+    // New version avoids recalling superseded prices/features from the previous entity.
+    id = await createEntity("product", { type: "service", stableKey: `quickfit-product-${hash.slice(0,32)}` });
+  }
   if (get("product_facts_hash") !== hash) {
     const facts = md.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
     for (const f of facts) await remember(id, f.slice(0, 1200), "product_fact", "2026-01-01T00:00:00Z");
-    await db.from("app_settings").upsert({ key: "product_facts_hash", value: hash });
+    await db.from("app_settings").upsert([{ key: 'product_entity_id', value: id }, { key: "product_facts_hash", value: hash }]);
   }
   return id;
 }
@@ -65,9 +68,17 @@ Deno.serve(async (req) => {
 
   if (body.action === "workout_tip") {
     if (!uid) return json({ tip: null }, 401);
-    const tip = await ai(`${PERSONA} You are coaching the user live during their generated workout. Give one practical tip for the current exercise (form, breathing, tempo or rest) that fits the planned sets/reps. Never change the plan or add exercises. This is general fitness guidance, not medical advice; if the user mentions pain, tell them to stop that exercise and see a professional. Reply in ${body.language}.`,
-      `Workout: ${body.workout}\nCurrent exercise: ${body.exercise}\nPlan: ${body.detail}\n${body.question ? "User asks: " + body.question : "Give a tip for this exercise."}`);
-    return json({ tip });
+    const personal = await userCoachContext(uid, body.context, body.question || body.exercise);
+    const rules = `${PERSONA} ${CONTEXT_RULES} You are coaching during the user's exact generated workout. Give a practical tip that fits the current exercise and planned sets/reps. If asked for an alternative, offer a suitable replacement within their selected equipment and constraints; otherwise do not add exercises. Advice is general fitness guidance, not medical advice. Reply in ${body.language}.`;
+    const input = `${personal.prompt}\nConversation: ${JSON.stringify(body.history)}\nWorkout: ${body.workout}\nCurrent exercise: ${body.exercise}\nPlan: ${body.detail}\n${body.question ? "User asks: " + body.question : "Give a tip for this exercise."}`;
+    if (personal.row?.consent_at && personal.row.entity_id && body.sessionId && body.turnId) {
+      try {
+        const tip = await chat(personal.row.entity_id, `${uid.slice(0,8)}-${body.sessionId}`.slice(0,128), body.turnId, `[${rules}]\n${input}`);
+        return json({ tip, memory: 'on' });
+      } catch { /* Keep exact context in the fallback even when Basira is unavailable. */ }
+    }
+    const tip = await ai(rules,input);
+    return json({ tip, memory: personal.row?.consent_at ? 'unavailable' : 'off' });
   }
 
   if (body.action === "greet") {
@@ -100,7 +111,7 @@ Deno.serve(async (req) => {
   }
   if (!facts.length) return json({ answer: null, status: "unknown" });
   const out = await ai(
-    `${PERSONA} Answer the visitor's question about QuickFit using ONLY the facts below. Never invent features, prices or details. If the facts do not answer the question, reply exactly UNKNOWN. Reply in ${body.language}.\nFacts:\n${facts.map((f) => "- " + f).join("\n")}`,
+    `${PERSONA} Answer the visitor's question about QuickFit using ONLY the facts below. Never invent features, prices or details. Current access policy: ${JSON.stringify(PRODUCT_ACCESS)}. Superseded paid plans are not available. If the facts do not answer the question, reply exactly UNKNOWN. Reply in ${body.language}.\nFacts:\n${facts.map((f) => "- " + f).join("\n")}`,
     body.message);
   if (!out) return json({ answer: null, status: "memory_unavailable" });
   if (/^\W*UNKNOWN\W*$/i.test(out)) return json({ answer: null, status: "unknown" });

@@ -6,6 +6,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Clock, Target, Calendar, CheckCircle, Play, Lock, Timer } from 'lucide-react';
 import { WorkoutPlan } from '@/types';
 import ExerciseTimer from '@/components/workout/ExerciseTimer';
+import { setCoachContext, compactContext } from '@/lib/coachContext';
+import { setLiveWorkout } from '@/lib/workoutContext';
 
 interface WorkoutPlanViewerProps {
   plan: WorkoutPlan;
@@ -51,6 +53,17 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
   }, [dailyWorkouts]);
   
   const selectedDayData = dailyWorkouts.find((day: any) => day.day === selectedDay);
+  const coachContext = { source: 'plan', planId: plan.id, title: plan.title, goal: plan.goal, equipment: plan.equipment, selectedDay, day: compactContext(selectedDayData) };
+  React.useEffect(() => {
+    setCoachContext('plan', coachContext);
+    setLiveWorkout({ title: plan.title, context: coachContext });
+    return () => { setCoachContext('plan', null); setLiveWorkout(null); };
+  }, [plan, selectedDay]);
+  const focusExercise = (exercise: any) => {
+    const context = { ...coachContext, currentExercise: compactContext(exercise) };
+    setCoachContext('plan', context);
+    setLiveWorkout({ title: plan.title, context, exercise: { name: exercise.name, detail: `${exercise.sets} sets × ${exercise.reps}; rest ${exercise.rest ?? exercise.restTime}` } });
+  };
 
   // Get exercise animation URL based on exercise name
   const getExerciseAnimationUrl = (exerciseName: string): string => {
@@ -584,7 +597,7 @@ const WorkoutPlanViewer: React.FC<WorkoutPlanViewerProps> = ({ plan, onMarkCompl
                 {selectedDayData.workout.exercises.map((exercise: any, index: number) => (
                   <Dialog key={index}>
                     <DialogTrigger asChild>
-                      <button className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left">
+                      <button onClick={() => focusExercise(exercise)} className="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors text-left">
                         <div className="flex items-center gap-3">
                           <span className="flex-shrink-0 w-8 h-8 rounded-full bg-fitness-primary text-white flex items-center justify-center text-sm font-medium">
                             {index + 1}
