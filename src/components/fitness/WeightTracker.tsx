@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { rememberFact } from '@/lib/memory';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -124,6 +125,7 @@ const WeightTracker = () => {
         });
       }
 
+      rememberFact('weight', `Weighed ${parseFloat(weight)} kg`, selectedDate);
       setWeight('');
       loadWeightEntries();
     } catch (error) {

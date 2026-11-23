@@ -21,7 +21,7 @@ export class BasiraError extends Error {
 }
 
 export type EntityType = "personnage" | "monde" | "service" | "actif";
-export type Evidence = { content?: string; title?: string; occurred_at?: string; score?: number; [k: string]: unknown };
+export type Evidence = { text: string; title: string; occurredAt: string | null; score: number };
 
 function env() {
   const key = Deno.env.get("BASIRA_KEY");
@@ -112,7 +112,11 @@ export async function recall(entityId: string, query: string, limit = 8): Promis
   const body = { entity_id: entityId, query: q, limit: Math.max(1, Math.min(159, Math.floor(limit))) };
   const res = await request("POST", "/recall", body, `recall-${crypto.randomUUID()}`); // fresh view each call
   const j = await res.json();
-  return Array.isArray(j?.evidence) ? j.evidence : [];
+  // basira-evidence/v1: each item carries `excerpt`, `title`, `event_time`, `score`.
+  return (Array.isArray(j?.evidence) ? j.evidence : []).map((e: Record<string, unknown>) => ({
+    text: String(e.excerpt ?? e.content ?? ""), title: String(e.title ?? ""),
+    occurredAt: e.event_time ? String(e.event_time) : null, score: Number(e.score ?? 0),
+  })).filter((e: Evidence) => e.text);
 }
 
 /** POST /spaces/{space}/sawm/responses (SSE). One memory-aware AI turn; returns the final text after turn.done. */

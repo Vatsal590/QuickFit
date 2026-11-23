@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
       diet_plans: {
         Row: {
           created_at: string
@@ -188,6 +206,33 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
+        }
+        Relationships: []
+      }
+      mascot_votes: {
+        Row: {
+          answer: string
+          created_at: string
+          id: string
+          question: string
+          user_id: string | null
+          vote: number
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          id?: string
+          question: string
+          user_id?: string | null
+          vote: number
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          id?: string
+          question?: string
+          user_id?: string | null
+          vote?: number
         }
         Relationships: []
       }
@@ -389,6 +434,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_memory: {
+        Row: {
+          consent_at: string | null
+          created_at: string
+          email_insights_opt_in: boolean
+          entity_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          consent_at?: string | null
+          created_at?: string
+          email_insights_opt_in?: boolean
+          entity_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          consent_at?: string | null
+          created_at?: string
+          email_insights_opt_in?: boolean
+          entity_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_nutrition_goals: {
         Row: {
           created_at: string
@@ -461,6 +533,30 @@ export type Database = {
           total_points?: number
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      weekly_insights: {
+        Row: {
+          created_at: string
+          id: string
+          summary: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          summary: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          summary?: string
+          user_id?: string
+          week_start?: string
         }
         Relationships: []
       }

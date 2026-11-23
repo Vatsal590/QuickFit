@@ -12,7 +12,8 @@ import { useTranslation } from '@/contexts/TranslationContext';
 interface WorkoutDisplayProps {
   workout: Workout;
   onBack: () => void;
-  onComplete: (workout: Workout) => void;
+  onComplete: (workout: Workout, feel?: 'easy' | 'just right' | 'hard') => void;
+  adaptationReason?: string | null;
 }
 
 interface CompletedExercise {
@@ -21,7 +22,8 @@ interface CompletedExercise {
   restTimersCompleted: number;
 }
 
-const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) => {
+const WorkoutDisplay = ({ workout, onBack, onComplete, adaptationReason }: WorkoutDisplayProps) => {
+  const [feel, setFeel] = useState<'easy' | 'just right' | 'hard' | undefined>(undefined);
   const { toast } = useToast();
   const { t } = useTranslation();
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
@@ -455,7 +457,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
   };
   
   const handleCompleteWorkout = () => {
-    onComplete(workout);
+    onComplete(workout, feel);
     toast({
       title: t('Workout completed!'),
       description: t('Great job! Your progress has been saved.'),
@@ -634,6 +636,9 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
               <span className="font-medium">{t(workout.intensity.charAt(0).toUpperCase() + workout.intensity.slice(1))}</span>
             </div>
           </div>
+          {adaptationReason && (
+            <p className="mt-3 rounded-xl bg-fitness-primary/10 px-3 py-2 text-sm text-foreground">💡 {adaptationReason}</p>
+          )}
         </CardHeader>
         
         <CardContent>
@@ -692,6 +697,16 @@ const WorkoutDisplay = ({ workout, onBack, onComplete }: WorkoutDisplayProps) =>
         </CardContent>
         
         <CardFooter className="flex flex-col">
+          <div className="w-full mb-3">
+            <p className="text-sm text-muted-foreground mb-2">{t('How did it feel? (optional)')}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {(['easy', 'just right', 'hard'] as const).map((f) => (
+                <Button key={f} type="button" size="sm" variant={feel === f ? 'default' : 'outline'} onClick={() => setFeel(feel === f ? undefined : f)} className="active:scale-95">
+                  {t(f === 'easy' ? 'Easy' : f === 'hard' ? 'Hard' : 'Just right')}
+                </Button>
+              ))}
+            </div>
+          </div>
           <Button 
             onClick={handleCompleteWorkout}
             className="w-full bg-fitness-secondary hover:bg-fitness-secondary/90 mb-2 flex items-center gap-2"

@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { activityTracker } from '@/utils/activityTracker';
 import { supabase } from '@/integrations/supabase/client';
+import { adaptWorkout, rememberFact } from '@/lib/memory';
+import { exercises as allExercises } from '../data/exercises';
 
 const InstantWorkout = () => {
   const { toast } = useToast();
@@ -19,6 +21,7 @@ const InstantWorkout = () => {
   const [selectedPains, setSelectedPains] = useState<BodyPain[]>([]);
   const [showExcludedDialog, setShowExcludedDialog] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [adaptationReason, setAdaptationReason] = useState<string | null>(null);
   const { addWorkoutToHistory, markWorkoutCompleted } = useWorkoutHistory();
 
   const fetchCustomExercises = async (
@@ -55,6 +58,20 @@ const InstantWorkout = () => {
     setIsGenerating(true);
     
     try {
+      // Adapt to what the user really did (memory). Falls back to the generic plan if memory is off/unavailable.
+      const adaptation = await adaptWorkout(formData.intensity, formData.muscleGroups);
+      if (adaptation) {
+        formData = {
+          ...formData,
+          intensity: adaptation.intensity,
+          bodyPains: Array.from(new Set([...(formData.bodyPains || []), ...(adaptation.extraPains as BodyPain[])])),
+        };
+      }
+      setAdaptationReason(adaptation?.reason ?? null);
+      if (formData.bodyPains && formData.bodyPains.length > 0) {
+        rememberFact('pain', `Reported ${formData.bodyPains.join(', ')} before a workout`);
+      }
+
       // Get target exercise count based on duration
       const targetExerciseCount = getExerciseCount(formData.time);
       
@@ -94,9 +111,19 @@ const InstantWorkout = () => {
       );
       
       // Combine base exercises with unique AI exercises
+      let combined = [...result.workout.exercises, ...uniqueCustomExercises];
+      // Repeat a movement the user struggled with (if it exists and is not excluded by pain)
+      const excludedNames = new Set(result.excludedExercises.map(e => e.exerciseName.toLowerCase()));
+      const hasEquipment = (ex: Exercise) => ex.equipment.every(eq => eq === 'none' || formData.equipment.includes(eq));
+      for (const name of adaptation?.repeat ?? []) {
+        const n = name.toLowerCase();
+        if (combined.some(ex => ex.name.toLowerCase().includes(n) || n.includes(ex.name.toLowerCase()))) continue;
+        const match = allExercises.find(ex => (ex.name.toLowerCase().includes(n) || n.includes(ex.name.toLowerCase())) && !excludedNames.has(ex.name.toLowerCase()) && hasEquipment(ex) && !(formData.bodyPains || []).length);
+        if (match && combined.length > 0) combined = [match, ...combined.slice(0, -1)];
+      }
       const finalWorkout = {
         ...result.workout,
-        exercises: [...result.workout.exercises, ...uniqueCustomExercises]
+        exercises: combined
       };
       
       setCurrentWorkout(finalWorkout);
@@ -130,9 +157,12 @@ const InstantWorkout = () => {
     }
   };
   
-  const handleCompleteWorkout = (workout: Workout) => {
+  const handleCompleteWorkout = (workout: Workout, feel?: 'easy' | 'just right' | 'hard') => {
     activityTracker.trackWorkoutAction('complete', { workoutId: workout.id, title: workout.title });
     markWorkoutCompleted(workout.id);
+    const list = workout.exercises.map(ex => `${ex.sets}x${ex.reps} ${ex.name}`).join(', ');
+    rememberFact('workout', `Completed ${workout.intensity} workout "${workout.title}": ${list}${feel ? `. Felt ${feel}` : ''}`.slice(0, 1000));
+    if (feel === 'hard') rememberFact('difficulty', `Found the workout "${workout.title}" hard`);
   };
 
   return (
@@ -159,6 +189,7 @@ const InstantWorkout = () => {
                 activityTracker.trackButtonClick('back_from_workout', 'instant-workout');
               }}
               onComplete={handleCompleteWorkout}
+              adaptationReason={adaptationReason}
             />
           ) : (
             <WorkoutForm 

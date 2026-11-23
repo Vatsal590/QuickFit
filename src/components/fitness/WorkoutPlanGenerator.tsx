@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { adaptWorkout, rememberFact } from '@/lib/memory';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,7 +65,11 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
     setIsGenerating(true);
     try {
-      const dailyWorkouts = generatePersonalizedPlan(profile, selectedPains);
+      // Adapt the plan to remembered pain/injuries (falls back to the generic plan if memory is off).
+      const adaptation = await adaptWorkout('moderate', []);
+      const pains = Array.from(new Set([...selectedPains, ...((adaptation?.extraPains ?? []) as typeof selectedPains)]));
+      if (selectedPains.length) rememberFact('pain', `Reported ${selectedPains.join(', ')} when creating a 30-day plan`);
+      const dailyWorkouts = generatePersonalizedPlan(profile, pains);
 
       const planName = `${capitalizeWords(profile.fitness_goal)} Plan - ${new Date().toLocaleDateString()}`;
 
@@ -107,7 +112,7 @@ const WorkoutPlanGenerator = ({ isOpen, onClose, profile, onPlanGenerated }: Wor
 
       toast({
         title: "Plan generated successfully!",
-        description: "Your personalized 30-day workout plan is ready to use."
+        description: adaptation?.reason ?? "Your personalized 30-day workout plan is ready to use."
       });
 
       window.dispatchEvent(new CustomEvent('planGenerated'));

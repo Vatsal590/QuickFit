@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { rememberFact } from '@/lib/memory';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { WorkoutPlan } from '@/types';
@@ -103,6 +104,10 @@ export const useWorkoutPlans = () => {
       if (error) {
         console.error('Error updating workout plan:', error);
       } else {
+        const done: any = currentPlan.dailyWorkouts.find((d: any) => d.day === dayNumber);
+        const focus = String(done?.workout?.focus ?? '').replace(/_/g, ' ');
+        const names = (done?.workout?.exercises ?? []).map((e: any) => [e.sets && e.reps ? `${e.sets}x${e.reps}` : '', e.name].filter(Boolean).join(' ')).filter(Boolean).join(', ');
+        rememberFact('workout', `Completed day ${dayNumber} of the 30-day plan${focus ? ` (${focus})` : ''}${names ? `: ${names}` : ''}`.slice(0, 1000));
         // Track activity
         await activityTracker.trackActivity('workout_plan_day_completed', 'plans', {
           planId,

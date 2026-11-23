@@ -36,8 +36,8 @@ import TermsOfConditions from '@/components/legal/TermsOfConditions';
 import LanguageSelector from '@/components/language/LanguageSelector';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { LogOut, Trash2, User, Shield, FileText, Languages } from 'lucide-react';
-import Chatbot from '@/components/chat/Chatbot';
+import { LogOut, Trash2, User, Shield, FileText, Languages, Brain } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { MenuIcon } from '@/components/ui/menu-icon';
 
 
@@ -191,6 +191,9 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
                   <User className="mr-2 h-4 w-4" />
                   <span>{t('Profile')}</span>
                 </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/memory-settings"><Brain className="mr-2 h-4 w-4" />{t('Memory settings')}</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setShowLanguageSelector(true)}>
                   <Languages className="mr-2 h-4 w-4" />
                   <span>{t('Language')}</span>
@@ -278,8 +281,6 @@ const AuthenticatedContent: React.FC<{ children: React.ReactNode }> = ({ childre
       {/* Language Selector */}
       <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       
-      {/* Chatbot */}
-      <Chatbot />
       
     </div>
   );

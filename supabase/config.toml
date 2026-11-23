@@ -35,3 +35,15 @@ verify_jwt = false
 
 [functions.mcp]
 verify_jwt = false
+
+[functions.memory]
+verify_jwt = false
+
+[functions.coach]
+verify_jwt = false
+
+[functions.mascot]
+verify_jwt = false
+
+[functions.weekly-insight]
+verify_jwt = false

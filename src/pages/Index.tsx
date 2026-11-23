@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { Button } from "@/components/ui/button";
+import WeeklyInsightCard from '@/components/fitness/WeeklyInsightCard';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -32,6 +33,7 @@ const Index = () => {
           </p>
         </div>
 
+        <WeeklyInsightCard />
         <div className="space-y-8">
           {/* Workout Section */}
           <div className="space-y-4">

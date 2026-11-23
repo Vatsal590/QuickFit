@@ -23,6 +23,8 @@ import Premium from "./pages/Premium";
 import Blogs from "./pages/Blogs";
 import Support from "./pages/Support";
 import MCPConnect from "./pages/MCPConnect";
+import MemorySettings from "./pages/MemorySettings";
+import Mascot from "./components/mascot/Mascot";
 import AuthenticatedLayout from "./components/layout/AuthenticatedLayout";
 
 const queryClient = new QueryClient();
@@ -193,6 +195,14 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route
+        path="/memory-settings"
+        element={
+          <ProtectedRoute>
+            <MemorySettings />
+          </ProtectedRoute>
+        }
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
@@ -207,6 +217,7 @@ const App = () => (
         <AuthProvider>
           <BrowserRouter>
             <AppRoutes />
+            <Mascot />
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>

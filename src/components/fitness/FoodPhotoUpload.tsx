@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { rememberFact } from '@/lib/memory';
 import { Camera, Upload, Loader2, Trash2, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -153,6 +154,8 @@ const FoodPhotoUpload: React.FC<FoodPhotoUploadProps> = ({ onFoodLogged }) => {
         .order('created_at', { ascending: false })
         .limit(1);
 
+      const names = analyzedFoods.map((f: any) => f.name).filter(Boolean).join(', ');
+      rememberFact('meal', `Logged ${mealType || 'meal'}: ${names} (about ${Math.round(totals?.calories || 0)} kcal)${notes ? `. Note: ${notes}` : ''}`.slice(0, 1000));
       toast.success(t('Meal logged successfully!'));
       resetForm();
       onFoodLogged();
