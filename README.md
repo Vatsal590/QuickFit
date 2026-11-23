@@ -3,6 +3,7 @@
 **QuickFit** is an AI-powered fitness web app that creates personalized workouts, training plans, and meal plans in seconds. It is designed for people who want practical fitness guidance that fits their available equipment, schedule, goals, and preferences.
 
 Website: **https://www.quickfit.dev**  
+Android App: QuickFit.dev
 Founder: **Vatsal Agarwala**
 
 ## What QuickFit Does
