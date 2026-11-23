@@ -6,10 +6,19 @@ import { createEntity, remember, recall, BasiraError } from "../_shared/basira.t
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("ask"), message: z.string().trim().min(1).max(500), language: z.string().max(30).default("English") }),
   z.object({ action: z.literal("greet"), language: z.string().max(30).default("English") }),
+  z.object({ action: z.literal("workout_tip"), language: z.string().max(30).default("English"), workout: z.string().max(200), exercise: z.string().max(120), detail: z.string().max(300).default(""), question: z.string().trim().max(500).optional() }),
   z.object({ action: z.literal("vote"), question: z.string().max(500), answer: z.string().max(2000), vote: z.union([z.literal(1), z.literal(-1)]) }),
 ]);
 
-const PERSONA = "You are Pip, QuickFit's friendly mascot. Answer in at most 3 short sentences. Be warm and encouraging, never pushy.";
+const PERSONA = "You are Coach Q, QuickFit's friendly mascot. Answer in at most 3 short sentences. Be warm and encouraging, never pushy.";
+
+/** Local fallback when the memory service is down: keyword match over the same product facts. */
+function localFacts(q: string, limit: number): string[] {
+  const words = q.toLowerCase().match(/[\p{L}\d]{3,}/gu) ?? [];
+  return PRODUCT_FACTS_MD.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+    .map((f) => ({ f, s: words.filter((w) => f.toLowerCase().includes(w)).length }))
+    .filter((x) => x.s > 0).sort((a, b) => b.s - a.s).slice(0, limit).map((x) => x.f);
+}
 
 async function sha(t: string) {
   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t));
@@ -54,6 +63,13 @@ Deno.serve(async (req) => {
     return json({ ok: true });
   }
 
+  if (body.action === "workout_tip") {
+    if (!uid) return json({ tip: null }, 401);
+    const tip = await ai(`${PERSONA} You are coaching the user live during their generated workout. Give one practical tip for the current exercise (form, breathing, tempo or rest) that fits the planned sets/reps. Never change the plan or add exercises. This is general fitness guidance, not medical advice; if the user mentions pain, tell them to stop that exercise and see a professional. Reply in ${body.language}.`,
+      `Workout: ${body.workout}\nCurrent exercise: ${body.exercise}\nPlan: ${body.detail}\n${body.question ? "User asks: " + body.question : "Give a tip for this exercise."}`);
+    return json({ tip });
+  }
+
   if (body.action === "greet") {
     if (!uid) return json({ greeting: null });
     const db = admin();
@@ -79,8 +95,8 @@ Deno.serve(async (req) => {
     facts = (await recall(pid, body.message, 6)).map((e) => e.text).filter(Boolean);
   } catch (e) {
     const code = e instanceof BasiraError ? `${e.status} ${e.code}` : String((e as Error)?.name ?? "error");
-    console.error("mascot memory", code, e);
-    return json({ answer: null, status: "memory_unavailable", code });
+    console.error("mascot memory, using local facts", code);
+    facts = localFacts(body.message, 6);
   }
   if (!facts.length) return json({ answer: null, status: "unknown" });
   const out = await ai(

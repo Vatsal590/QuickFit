@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import ExerciseTimer from './ExerciseTimer';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { setLiveWorkout } from '@/lib/workoutContext';
 interface WorkoutDisplayProps {
   workout: Workout;
   onBack: () => void;
@@ -29,6 +30,8 @@ const WorkoutDisplay = ({ workout, onBack, onComplete, adaptationReason }: Worko
   const [activeExerciseIndex, setActiveExerciseIndex] = useState<number | null>(null);
   const [activeSection, setActiveSection] = useState<'main' | 'warmup' | 'cooldown'>('main');
   const [completedExercises, setCompletedExercises] = useState<CompletedExercise[]>([]);
+  useEffect(() => { setLiveWorkout({ title: workout.title }); return () => setLiveWorkout(null); }, [workout]);
+  const focusExercise = (ex: any) => setLiveWorkout({ title: workout.title, exercise: { name: ex.name, detail: [ex.sets && `${ex.sets} sets`, ex.reps && `${ex.reps} reps`, ex.duration && `${ex.duration}s`, ex.rest && `rest ${ex.rest}s`].filter(Boolean).join(', ') } });
   
   // Get exercise animation URL based on exercise name
   const getExerciseAnimationUrl = (exerciseName: string): string => {
@@ -486,6 +489,7 @@ const WorkoutDisplay = ({ workout, onBack, onComplete, adaptationReason }: Worko
             <Dialog>
               <DialogTrigger asChild>
                 <button
+                  onClick={() => focusExercise(exercise)}
                   className="flex items-center justify-between w-full p-3 text-left hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                   <div className="flex items-center">

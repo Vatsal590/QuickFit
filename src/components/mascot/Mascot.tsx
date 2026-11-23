@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { getLiveWorkout, subscribeLiveWorkout, type LiveWorkout } from "@/lib/workoutContext";
 import { X, ThumbsUp, ThumbsDown, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import MascotAvatar from "./MascotAvatar";
 
 type Msg = { role: "user" | "bot"; text: string; question?: string; voted?: 1 | -1; voteable?: boolean; human?: boolean };
-type Tab = "help" | "coach";
+type Tab = "help" | "coach" | "workout";
 const MIN_INTERVAL_MS = 1500; // debounce: never fire calls in quick succession
 
 const rid = () => crypto.randomUUID().replace(/-/g, "");
@@ -26,13 +27,45 @@ export default function Mascot() {
   const [help, setHelp] = useState<Msg[]>([]);
   const [coach, setCoach] = useState<Msg[]>([]);
   const [consented, setConsented] = useState<boolean | null>(null);
+  const [live, setLive] = useState<LiveWorkout>(getLiveWorkout());
+  const [workoutMsgs, setWorkoutMsgs] = useState<Msg[]>([]);
+  const [bubble, setBubble] = useState<string | null>(null);
+  const lastTipFor = useRef<string | null>(null);
+  const { pathname } = useLocation();
   const lastSend = useRef(0);
   const greeted = useRef<string | null>(null);
   const session = useRef(rid());
   const endRef = useRef<HTMLDivElement>(null);
 
-  const msgs = tab === "help" ? help : coach;
-  const setMsgs = tab === "help" ? setHelp : setCoach;
+  const msgs = tab === "help" ? help : tab === "coach" ? coach : workoutMsgs;
+  const setterFor = (k: Tab) => (k === "help" ? setHelp : k === "coach" ? setCoach : setWorkoutMsgs);
+
+  useEffect(() => subscribeLiveWorkout(setLive), []);
+  useEffect(() => { if (!live && tab === "workout") setTab("help"); }, [live, tab]);
+
+  // Live coaching: one tip each time the user opens a new exercise of their generated workout.
+  useEffect(() => {
+    const ex = live?.exercise;
+    if (!user || !live || !ex || lastTipFor.current === ex.name) return;
+    lastTipFor.current = ex.name;
+    const id = setTimeout(async () => {
+      const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live.title, exercise: ex.name, detail: ex.detail, language } });
+      if (!data?.tip) return;
+      setWorkoutMsgs((m) => [...m, { role: "bot", text: `${ex.name}: ${data.tip}` }]);
+      setBubble(data.tip);
+    }, 800);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [live, user]);
+
+  // Landing page: gently invite visitors to ask a question (once per visit).
+  useEffect(() => {
+    if (pathname !== "/" || user || open || sessionStorage.getItem("mascot-invited")) return;
+    const id = setTimeout(() => { setBubble(t("Hi! Got a question about QuickFit? Ask me!")); sessionStorage.setItem("mascot-invited", "1"); }, 3000);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname, user, open]);
+  useEffect(() => { if (open) setBubble(null); }, [open]);
 
   useEffect(() => { endRef.current?.scrollIntoView({ behavior: "smooth" }); }, [msgs.length, busy]);
   useEffect(() => { if (!user) { setTab("help"); setCoach([]); setConsented(null); greeted.current = null; } }, [user]);
@@ -55,7 +88,7 @@ export default function Mascot() {
     if (!q || busy || Date.now() - lastSend.current < MIN_INTERVAL_MS) return;
     lastSend.current = Date.now();
     setInput("");
-    const add = (m: Msg) => (tab === "help" ? setHelp : setCoach)((prev) => [...prev, m]);
+    const add = (m: Msg) => setterFor(tab)((prev) => [...prev, m]);
     add({ role: "user", text: q });
     setBusy(true);
     try {
@@ -64,6 +97,10 @@ export default function Mascot() {
         if (data?.status === "ok" && data.answer) add({ role: "bot", text: data.answer, question: q, voteable: true });
         else if (data?.status === "unknown") add({ role: "bot", text: t("I don't know that one yet. Would you like to ask a human?"), question: q, voteable: true, human: true });
         else add({ role: "bot", text: t("Sorry, I can't remember right now. Please try again in a moment."), human: true });
+      } else if (tab === "workout") {
+        const ex = live?.exercise;
+        const { data } = await supabase.functions.invoke("mascot", { body: { action: "workout_tip", workout: live?.title ?? "", exercise: ex?.name ?? "", detail: ex?.detail ?? "", question: q, language } });
+        add({ role: "bot", text: data?.tip ?? t("The coach is unavailable right now. Please try again in a moment.") });
       } else {
         const { data, error } = await supabase.functions.invoke("coach", { body: { message: q, sessionId: session.current, turnId: rid(), language } });
         if (error || !data?.reply) add({ role: "bot", text: t("The coach is unavailable right now. Please try again in a moment.") });
@@ -96,14 +133,17 @@ export default function Mascot() {
           </div>
           {user && (
             <div className="flex gap-1 p-2 border-b border-border">
-              {(["help", "coach"] as Tab[]).map((k) => (
+              {((live ? ["help", "workout", "coach"] : ["help", "coach"]) as Tab[]).map((k) => (
                 <button key={k} onClick={() => setTab(k)} className={`flex-1 rounded-xl py-1.5 text-sm font-medium active:scale-95 ${tab === k ? "bg-fitness-primary text-primary-foreground" : "hover:bg-muted"}`}>
-                  {k === "help" ? t("Ask {name}").replace("{name}", MASCOT.name) : t("AI Coach")}
+                  {k === "help" ? t("Ask {name}").replace("{name}", MASCOT.name) : k === "workout" ? t("Live workout") : t("AI Coach")}
                 </button>
               ))}
             </div>
           )}
-          {tab === "coach" && (
+          {tab === "workout" && msgs.length === 0 && (
+            <div className="px-4 py-2 text-xs text-muted-foreground bg-muted/50">{t("Open an exercise and I'll give you tips as you go. Ask me anything about this workout.")}</div>
+          )}
+          {tab !== "help" && (
             <div className="px-4 py-2 text-xs text-muted-foreground bg-muted/50">
               {t("Advice is general fitness guidance, not medical advice. For pain or health conditions, please see a professional.")}
               {consented === false && (<> {" "}<Link to="/memory-settings" className="underline" onClick={() => setOpen(false)}>{t("Turn on memory so the coach remembers you.")}</Link></>)}
@@ -134,8 +174,14 @@ export default function Mascot() {
           <div className="px-4 pb-2 text-center text-xs"><a href={mail} className="text-muted-foreground underline">{t("Ask a human")}</a></div>
         </div>
       )}
+      {bubble && !open && (
+        <div className="fixed z-50 bottom-24 right-5 max-w-[16rem] rounded-2xl rounded-br-sm border border-border bg-background/90 backdrop-blur-xl shadow-xl px-3 py-2 text-sm animate-in fade-in slide-in-from-bottom-3 duration-300">
+          <button onClick={() => { setOpen(true); if (live && user) setTab("workout"); }} className="text-left">{bubble}</button>
+          <button onClick={() => setBubble(null)} aria-label={t("Close")} className="absolute -top-2 -left-2 rounded-full bg-muted p-0.5"><X className="h-3 w-3" /></button>
+        </div>
+      )}
       <button onClick={() => setOpen((o) => !o)} aria-label={t("Open {name}").replace("{name}", MASCOT.name)}
-        className="fixed z-50 bottom-5 right-5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-lg p-1.5 transition-all hover:scale-110 active:scale-95">
+        className={`fixed z-50 bottom-5 right-5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-lg p-1.5 transition-all hover:scale-110 active:scale-95 ${bubble && !open ? "animate-bounce" : ""}`}>
         <MascotAvatar size={48} />
       </button>
     </>

@@ -12,6 +12,11 @@ const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("adapt"), intensity: z.enum(["light", "moderate", "intense"]), muscleGroups: z.array(z.string().max(40)).max(12).default([]), planDay: z.number().int().min(1).max(60).optional(), language: z.string().max(30).default("English") }),
 ]);
 
+async function ensureEntity(uid: string) {
+  // Opaque name: no email or personal data is sent to Basira.
+  return await createEntity(`quickfit-user-${uid}`, { type: "personnage", stableKey: `user:${uid}` });
+}
+
 const PAINS = ["knee pain", "shoulder pain", "hip pain", "lower back pain", "wrist pain", "ankle pain"];
 
 Deno.serve(async (req) => {
@@ -27,15 +32,15 @@ Deno.serve(async (req) => {
   try {
     switch (body.action) {
       case "status":
-        return json({ consented: !!row?.consent_at && !!row?.entity_id, consent_at: row?.consent_at ?? null, email_opt_in: row?.email_insights_opt_in ?? false });
+        return json({ consented: !!row?.consent_at, memory_ready: !!row?.entity_id, consent_at: row?.consent_at ?? null, email_opt_in: row?.email_insights_opt_in ?? false });
 
       case "consent": {
-        // Opaque name: no email or personal data is sent to Basira.
-        const entityId = row?.entity_id ?? await createEntity(`quickfit-user-${uid}`, { type: "personnage", stableKey: `user:${uid}` });
+        // Consent is saved even if the memory service is down; the memory itself is created later.
+        const entityId = row?.entity_id ?? await ensureEntity(uid).catch((e) => { console.error("memory consent entity", e instanceof BasiraError ? `${e.status} ${e.code}` : e); return null; });
         const consent_at = row?.consent_at ?? new Date().toISOString();
         const { error } = await db.from("user_memory").upsert({ user_id: uid, entity_id: entityId, consent_at, email_insights_opt_in: body.email_opt_in ?? row?.email_insights_opt_in ?? false });
         if (error) throw error;
-        return json({ consented: true, consent_at });
+        return json({ consented: true, consent_at, memory_ready: !!entityId });
       }
 
       case "set_email_opt_in": {
@@ -45,10 +50,12 @@ Deno.serve(async (req) => {
       }
 
       case "remember": {
-        if (!row?.consent_at || !row.entity_id) return json({ stored: false, reason: "no_consent" });
+        if (!row?.consent_at) return json({ stored: false, reason: "no_consent" });
+        const eid = row.entity_id ?? await ensureEntity(uid);
+        if (!row.entity_id) await db.from("user_memory").update({ entity_id: eid }).eq("user_id", uid);
         const when = body.occurredAt ? new Date(body.occurredAt) : new Date();
         const day = when.toISOString().slice(0, 10);
-        await remember(row.entity_id, `${day} (${body.kind}): ${body.text}`, body.kind, when);
+        await remember(eid, `${day} (${body.kind}): ${body.text}`, body.kind, when);
         return json({ stored: true });
       }
 
