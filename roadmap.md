@@ -1,4 +1,5 @@
 # Roadmap – Basira memory features
+- [x] Unify Ask Coach Q chat, automatic routing and translations; 19 tests passed and real public chat/mobile flow verified
 - [x] Exact current workout, 30-day plan, food and diet context for Coach Q
 - [x] Consent-based preference/plan memory, outage-safe fact queue and contextual conversations
 - [x] Update product knowledge: no paid features; context tests and public chat verified

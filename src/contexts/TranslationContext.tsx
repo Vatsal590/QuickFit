@@ -21,6 +21,7 @@ const translations: Record<string, Record<string, string>> = {
   English: {},
   
   French: {
+    "Hi! I'm {name}. What would you like help with today?": "Salut ! Je suis {name}. Comment puis-je t'aider aujourd'hui ?",
     "I'm using your current context and saved records; long-term recall is unavailable right now.": "J'utilise ton contexte actuel et tes données enregistrées ; la mémoire à long terme est indisponible pour le moment.",
     "Suggest an alternative with my equipment": "Propose une alternative avec mon équipement",
     "Suggest a meal that fits my goals": "Propose un repas adapté à mes objectifs",
@@ -568,6 +569,7 @@ const translations: Record<string, Record<string, string>> = {
   },
   
   German: {
+    "Hi! I'm {name}. What would you like help with today?": "Hallo! Ich bin {name}. Wobei kann ich dir heute helfen?",
     "I'm using your current context and saved records; long-term recall is unavailable right now.": "Ich nutze deinen aktuellen Kontext und deine gespeicherten Daten; der Langzeitabruf ist gerade nicht verfügbar.",
     "Suggest an alternative with my equipment": "Schlage eine Alternative mit meiner Ausrüstung vor",
     "Suggest a meal that fits my goals": "Schlage eine Mahlzeit passend zu meinen Zielen vor",
@@ -1106,6 +1108,7 @@ const translations: Record<string, Record<string, string>> = {
   },
   
   Luxembourgish: {
+    "Hi! I'm {name}. What would you like help with today?": "Moien! Ech sinn {name}. Woubäi kann ech dir haut hëllefen?",
     "I'm using your current context and saved records; long-term recall is unavailable right now.": "Ech benotzen däin aktuelle Kontext an deng gespäichert Donnéeën; de laangfristegen Abruff ass elo net disponibel.",
     "Suggest an alternative with my equipment": "Proposéier eng Alternativ mat menger Ausrüstung",
     "Suggest a meal that fits my goals": "Proposéier en Iessen dat zu mengen Ziler passt",

@@ -5,3 +5,4 @@
 - Save consented facts to the private training_memory_notes outbox before Basira writes and drain at most three per memory action, so outages cannot erase user-entered history or create client-side API loops.
 - Preserve plan-creation equipment in workout_plans.selected_equipment instead of deriving it from a later profile update, so alternatives match the original plan constraints.
 - Keep product access flags in the shared product-access module consumed by coach and mascot prompts, so both agree about feature access without cross-function imports.
+- Use one session-only Ask Coach Q conversation and a tested UI routing helper to dispatch to existing product, personal-coach or live-workout handlers; this preserves server-side permissions without requiring users to choose a tab.
