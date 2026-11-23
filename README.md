@@ -21,7 +21,7 @@ How to test:
 3. Adaptive plans: report knee pain on a workout, then open today's workout — a one-line reason appears.
 4. Coach: open Coach Q → "AI Coach"; the medical disclaimer is shown.
 5. Mascot: on the landing page Coach Q invites you after 3 s; ask "How much is QuickFit Pro?". During a workout, open an exercise to get a live tip ("Live workout" tab).
-6. Weekly insight: runs every Monday 07:00 UTC (`weekly-insight`); shown on the dashboard, emailed only if opted in.
+6. Weekly insight: needs a weekly schedule for `weekly-insight` (not enabled yet); shown on the dashboard, emailed only if opted in.
 
 If Basira is unavailable (e.g. quota exceeded) consent is still saved, plans fall back to generic, and Coach Q answers product questions from `product_facts.md` directly. Edit facts in `supabase/functions/mascot/product_facts.md`, then run `python3 supabase/functions/mascot/sync_facts.py`.
 
