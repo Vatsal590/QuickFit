@@ -1,39 +1,145 @@
-# Here are your Instructions
-QuickFit (quickfit.dev) is an AI-powered fitness web app that generates personalized instant workouts and meal plans. It was founded by Vatsal Agarwala and is designed for users who want fast, customized fitness solutions without needing a gym membership or extensive equipment. 
-Key features of the web application include:
-Instant Workouts: Generates customized workouts in seconds based on user input, such as available equipment (bodyweight, dumbbells, full gym), time constraints, and fitness goals.
-Personalized Plans: Offers customized 30-day workout programs and 7-day diet plans tailored to the user's needs.
-AI Integration: Features an AI food tracker for logging meals with photos and an AI fitness chatbot that provides instant answers to fitness questions.
-Progress Tracking: Includes a weight tracker and provides fitness blogs for additional guidance. 
-The platform can be accessed via its website, quickfit.dev
+# QuickFit
 
-## Memory, AI coach & Coach Q mascot (Basira)
+**QuickFit** is an AI-powered fitness web app that creates personalized workouts, training plans, and meal plans in seconds. It is designed for people who want practical fitness guidance that fits their available equipment, schedule, goals, and preferences.
 
-Secrets (Supabase → Edge Function secrets, never in the browser):
-- `BASIRA_KEY` – Basira API key (scopes: entities:write/delete, events:write, memory:recall, sawm:run, root admin)
-- `BASIRA_SPACE` – Basira space ID
-- `LOVABLE_API_KEY` – AI gateway (set automatically)
-- `RESEND_API_KEY`, `RESEND_FROM` – optional, for weekly insight emails
+Website: **https://www.quickfit.dev**  
+Founder: **Vatsal Agarwala**
 
-How to test:
-1. Adapter: `deno test supabase/functions/_shared/basira_test.ts`
-2. Recording: Settings → Memory, tick consent, complete a workout / log a meal or weight.
-3. Adaptive plans: report knee pain on a workout, then open today's workout — a one-line reason appears.
-4. Coach: open Coach Q → "AI Coach"; the medical disclaimer is shown.
-5. Mascot: on the landing page Coach Q invites you after 3 s; ask "Does QuickFit have paid features?" (answer: no). During a workout, open an exercise to get a live tip ("Live workout" tab).
-6. Weekly insight: needs a weekly schedule for `weekly-insight` (not enabled yet); shown on the dashboard, emailed only if opted in.
+## What QuickFit Does
 
-If Basira is unavailable (e.g. quota exceeded) consent is still saved, plans fall back to generic, and Coach Q answers product questions from `product_facts.md` directly. Edit facts in `supabase/functions/mascot/product_facts.md`, then run `python3 supabase/functions/mascot/sync_facts.py`.
+QuickFit removes the friction of figuring out what to train, what to eat, and how to adapt when life changes. Users can generate an instant workout based on their equipment and available time, build a longer-term training program, create a diet plan, log meals, and track progress—all in one place.
 
-Rename Coach Q or change its colors in `src/config/mascot.ts`.
+The platform is built to work for beginners as well as more experienced gym-goers. It supports bodyweight-only training, dumbbell setups, and full-gym access, so users can get useful guidance without needing a gym membership or expensive equipment.
 
-### Exact Coach Q context
-- Instant workouts: select only dumbbells, generate a workout, then ask for a replacement in Live workout or AI Coach. Coach Q receives the full workout (warm-up, main exercises, cool-down, sets/reps/rest), original selections, selected exercise and recent conversation. It must not require a bench or other unselected equipment.
-- 30-day plans: open a day/exercise; ask for an alternative or about the next week. The selected day, saved program, completed-day flags, fitness profile and equipment are provided. Planned days never count as completed progress.
-- New 30-day plans preserve equipment at creation. For older plans without that field, current profile equipment is the fallback; QuickFit cannot recover an unrecorded historical selection.
-- Food tracker: analyze/edit a meal and ask AI Coach about it before saving. Edited foods/macros and notes are session context; scanned values are estimates, not proof of eating. After saving, logged meals are available across visits.
-- Diet plans: open a plan and ask about a meal replacement. Saved meal plans, calorie/macro targets, dietary preferences, allergies and cooking times are provided. Advice never silently edits a saved plan.
-- Long-term memory: with consent, instant selections are saved in `coach_context` even during a Basira outage. Saved app workouts/plans/meals/profile remain available to the coach; Basira historical recall is optional and its absence is disclosed. New profile/plan changes are recorded as dated notes when Basira is available. Without consent no extra snapshots are persisted.
-- Consented facts are first saved privately in `training_memory_notes`; a bounded server outbox sends up to three pending facts on each new memory write. Basira outages do not discard new workout, meal, preference or pain notes. Later memory writes retry pending notes with stable keys; the coach can use local notes immediately.
-- Isolation/deletion: sign out and switch accounts; chats/session context must reset. Delete memory removes saved coach snapshots and Basira memory; original app records remain, as stated in the confirmation.
-- Rules/context tests: `bun test tests/coach-context.test.ts`.
+## Core Features
+
+### Instant Workouts
+
+QuickFit generates customized workouts in seconds based on:
+
+- Available equipment: bodyweight, dumbbells, or full gym
+- Training goal: for example, muscle gain, fat loss, endurance, or general fitness
+- Time available
+- Fitness level and preferences
+- Specific muscle groups or workout type
+
+Each workout includes a structured warm-up, main exercises, cool-down, sets, reps, and rest guidance. Users can also ask for exercise replacements during a workout when an exercise does not suit their equipment, mobility, or preferences.
+
+### 30-Day Training Plans
+
+Users can create personalized 30-day workout programs rather than only single sessions. These plans are tailored to the user’s fitness profile, goals, and available equipment.
+
+QuickFit tracks which planned days have been completed, while planned-but-uncompleted days do not incorrectly count as progress. New plans preserve the equipment selected at creation, helping the app keep recommendations consistent over time.
+
+### 7-Day Diet Plans
+
+QuickFit creates 7-day meal plans based on the user’s goals and dietary needs. Plans can account for:
+
+- Calorie and macro targets
+- Dietary preferences
+- Allergies
+- Cooking time and convenience
+- Meal replacements
+
+Users can ask the AI Coach about swaps or alternatives without the app silently changing their saved plan.
+
+### AI Food Tracker
+
+The AI food tracker lets users log meals quickly, including by photo. It estimates foods and macros, allows users to edit entries before saving, and stores logged meals so they remain available across visits.
+
+Scanned or AI-estimated values are treated as estimates, not proof of exactly what was eaten. This keeps the tracker useful while avoiding overly precise claims.
+
+### Progress Tracking
+
+QuickFit includes tools to help users monitor progress over time, including:
+
+- Weight tracking
+- Workout completion tracking
+- Training history
+- Personal fitness profile
+- Fitness blogs for extra guidance
+
+## The New AI Coach
+
+QuickFit’s new **AI Coach** acts as a fitness assistant that understands the user’s current workout, plan, meals, profile, and equipment. Instead of giving generic advice, it can respond in the context of what the user is actually doing in the app.
+
+### What the AI Coach Can Do
+
+The AI Coach can help users:
+
+- Replace an exercise in an instant workout
+- Suggest alternatives that match available equipment
+- Explain how to adapt a workout around pain, fatigue, or missing equipment
+- Answer questions about a 30-day plan or upcoming training week
+- Suggest meal replacements within a diet plan
+- Discuss logged meals, macros, and nutrition targets
+- Provide guidance based on saved profile, preferences, allergies, and goals
+- Remember relevant training context with user consent
+
+### Coach Q
+
+**Coach Q** is QuickFit’s AI coach and mascot. It appears on the landing page to introduce the product and can answer questions about QuickFit’s features.
+
+During a workout, Coach Q can provide live tips for the selected exercise. In the AI Coach tab, users can have a more detailed conversation about their training, nutrition, plans, and progress.
+
+Coach Q is designed to be helpful, but it is not a replacement for medical advice. QuickFit displays a medical disclaimer in the AI Coach experience.
+
+## Memory and Personalization
+
+With user consent, QuickFit can remember useful context to make future recommendations more relevant. This may include workout selections, completed workouts, logged meals, weight entries, preferences, and reported pain or limitations.
+
+For example, if a user reports knee pain during a workout, QuickFit can use that context when adapting later recommendations. The goal is not to diagnose an injury, but to help the user choose a more suitable alternative and avoid repeating unsuitable movements.
+
+Memory is consent-based. Without consent, QuickFit does not persist extra memory snapshots. Saved workouts, plans, meals, and profile information remain available to the coach as part of the normal app experience.
+
+## Technical Overview
+
+QuickFit uses:
+
+- **Supabase** for authentication, database storage, and Edge Functions
+- **Basira** for long-term memory and context recall
+- **Lovable AI Gateway** for AI features
+- **Resend** for optional weekly insight emails
+
+### Required Secrets
+
+These are stored in Supabase Edge Function secrets and should never be exposed in the browser:
+
+- `BASIRA_KEY` — Basira API key
+- `BASIRA_SPACE` — Basira space ID
+- `LOVABLE_API_KEY` — AI gateway key
+- `RESEND_API_KEY` and `RESEND_FROM` — optional, for weekly insight emails
+
+### Testing the AI Coach
+
+1. Run the Basira adapter test:  
+   `deno test supabase/functions/_shared/basira_test.ts`
+
+2. Enable memory in **Settings → Memory**, then complete a workout, log a meal, or record weight.
+
+3. Test adaptive plans by reporting knee pain during a workout, then opening today’s workout to see the adaptation reason.
+
+4. Open **Coach Q → AI Coach** to test the coach and view the medical disclaimer.
+
+5. Test Coach Q on the landing page by asking:  
+   “Does QuickFit have paid features?”  
+   The expected answer is: **No.**
+
+6. During a workout, open an exercise and use the **Live workout** tab to receive a live tip.
+
+### Resilience
+
+If Basira is unavailable, QuickFit continues to work:
+
+- Consent is still saved
+- Plans fall back to generic recommendations
+- Coach Q can still answer product questions using `product_facts.md`
+- New workout, meal, preference, and pain notes are stored locally
+- Pending memory notes are retried later when Basira becomes available
+
+### Customization
+
+- Rename Coach Q or change its colors in `src/config/mascot.ts`
+- Edit product facts in `supabase/functions/mascot/product_facts.md`
+- Sync updated facts with:  
+  `python3 supabase/functions/mascot/sync_facts.py`
